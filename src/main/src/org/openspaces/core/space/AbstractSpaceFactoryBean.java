@@ -51,6 +51,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         primaryBackupListener = new PrimaryBackupListener();
         // register the space mode listener with the space
         // TODO Currently it fails when single space, will be fixed tomorrow
+        // TODO What happens with clustered proxy (but one that actually created the cluster memeber), will it register on the current cluster member, or should we handle it similar to the clustered flag
+        // TODO What happens with clustered proxy (one that DID NOT created any cluster member). We should get only PRIMARY event on it and that is it.
 //        try {
 //            ISpaceModeListener remoteListener = (ISpaceModeListener) space.getStubHandler().exportObject(primaryBackupListener);
 //            currentSpaceMode = ((IInternalRemoteJSpaceAdmin) space.getAdmin()).addSpaceModeListener(remoteListener);
@@ -110,6 +112,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
         public void beforeSpaceModeChange(SpaceMode spaceMode) throws RemoteException {
             currentSpaceMode = spaceMode;
+            if (logger.isDebugEnabled()) {
+                logger.debug("Space [" + space + "] mode is [" + currentSpaceMode + "]");
+            }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, spaceMode));
             }
@@ -117,6 +122,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
         public void afterSpaceModeChange(SpaceMode spaceMode) throws RemoteException {
             currentSpaceMode = spaceMode;
+            if (logger.isDebugEnabled()) {
+                logger.debug("Space [" + space + "] mode is [" + currentSpaceMode + "]");
+            }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, spaceMode));
             }
