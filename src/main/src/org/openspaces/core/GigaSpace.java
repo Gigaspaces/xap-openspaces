@@ -1,8 +1,7 @@
 package org.openspaces.core;
 
-import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.IJSpace;
-
+import com.j_spaces.core.LeaseContext;
 import org.openspaces.core.transaction.TransactionProvider;
 
 /**
@@ -82,4 +81,6 @@ public interface GigaSpace {
     LeaseContext write(Object entry, long lease) throws GigaSpaceException;
 
     LeaseContext write(Object entry, long lease, long timeout, int modifiers) throws GigaSpaceException;
+
+    // TODO write and update multiple (with write is simple, it performs update based on modifiers, what to do with multiple?)
 }
