@@ -1,16 +1,16 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
+import net.jini.core.lease.Lease;
+import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
+import org.openspaces.core.transaction.JiniPlatformTransactionManager;
 import org.openspaces.core.transaction.TransactionProvider;
-import org.openspaces.core.transaction.GigaSpaceTransactionManager;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import net.jini.space.JavaSpace;
-import net.jini.core.lease.Lease;
 
 /**
  * <p>A factory bean creating {@link org.openspaces.core.GigaSpace} implementation.
@@ -25,7 +25,7 @@ import net.jini.core.lease.Lease;
  *
  * <p>The factory accepts an optional {@link org.openspaces.core.transaction.TransactionProvider}
  * which defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}. The transactional
- * context used is based on {@link #setTransactionManager(org.openspaces.core.transaction.GigaSpaceTransactionManager)},
+ * context used is based on {@link #setTransactionManager(org.openspaces.core.transaction.JiniPlatformTransactionManager)},
  * so if transactional support is required, both the transaction manager need to be defined AND it needs to
  * be passed to this factory bean. Otherwise, operations will not execute transactionaly.
  *
@@ -45,7 +45,7 @@ import net.jini.core.lease.Lease;
  * @see org.openspaces.core.DefaultGigaSpace
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.exception.ExceptionTranslator
- * @see org.openspaces.core.transaction.GigaSpaceTransactionManager
+ * @see org.openspaces.core.transaction.AbstractJiniTransactionManager
  */
 public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
 
@@ -57,7 +57,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
 
     private ExceptionTranslator exTranslator;
 
-    private GigaSpaceTransactionManager transactionManager;
+    private JiniPlatformTransactionManager transactionManager;
 
     private boolean clustered = true;
 
@@ -140,7 +140,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
      * if transactional support is not required. NOTE: In order to enable transaction support both
      * the transaction manager needs to be defined as well as providing it to this factory bean.
      */
-    public void setTransactionManager(GigaSpaceTransactionManager transactionManager) {
+    public void setTransactionManager(JiniPlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 

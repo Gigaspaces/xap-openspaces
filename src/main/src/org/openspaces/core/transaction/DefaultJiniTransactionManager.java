@@ -6,20 +6,20 @@ import org.openspaces.core.jini.JiniServiceFactoryBean;
 /**
  * @author kimchy
  */
-public class JiniTransactionManagerFactoryBean extends AbstractTransactionManagerFactoryBean {
+public class DefaultJiniTransactionManager extends AbstractJiniTransactionManager {
 
     private String transactionManagerName;
-
-    protected TransactionManager createTransactionManager() throws Exception {
-        JiniServiceFactoryBean serviceFactory = new JiniServiceFactoryBean();
-        serviceFactory.setServiceClass(TransactionManager.class);
-        serviceFactory.setServiceName(transactionManagerName);
-        serviceFactory.afterPropertiesSet();
-
-        return (TransactionManager) serviceFactory.getObject();
-    }
 
     public void setTransactionManagerName(String transactionManagerName) {
         this.transactionManagerName = transactionManagerName;
     }
+
+    protected TransactionManager doCreateTransactionManager() throws Exception {
+        JiniServiceFactoryBean serviceFactory = new JiniServiceFactoryBean();
+        serviceFactory.setServiceClass(TransactionManager.class);
+        serviceFactory.setServiceName(transactionManagerName);
+        serviceFactory.afterPropertiesSet();
+        return (TransactionManager) serviceFactory.getObject();
+    }
+
 }

@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 /**
  * @author kimchy
  */
-public class LocalTransactionManagerFactoryBean extends AbstractTransactionManagerFactoryBean {
+public class LocalJiniTransactionManager extends AbstractJiniTransactionManager {
 
     private IJSpace space;
 
@@ -17,7 +17,7 @@ public class LocalTransactionManagerFactoryBean extends AbstractTransactionManag
         this.space = space;
     }
 
-    public TransactionManager createTransactionManager() throws Exception {
+    public TransactionManager doCreateTransactionManager() throws Exception {
         Assert.notNull(space, "space property must be set");
 
         while (space instanceof Advised) {
@@ -26,4 +26,3 @@ public class LocalTransactionManagerFactoryBean extends AbstractTransactionManag
         return LocalTransactionManager.getInstance(space);
     }
 }
-
