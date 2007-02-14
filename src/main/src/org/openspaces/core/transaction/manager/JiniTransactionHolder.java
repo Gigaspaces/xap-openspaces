@@ -1,4 +1,4 @@
-package org.openspaces.core.transaction;
+package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.Transaction;
 import org.springframework.transaction.support.ResourceHolderSupport;
@@ -7,7 +7,7 @@ import org.springframework.transaction.support.ResourceHolderSupport;
  * <p>A Jini transaction holder responsible for holding the current running transaction.
  *
  * @author kimchy
- * @see org.openspaces.core.transaction.AbstractJiniTransactionManager
+ * @see AbstractJiniTransactionManager
  */
 public class JiniTransactionHolder extends ResourceHolderSupport {
 

@@ -1,4 +1,4 @@
-package org.openspaces.core.transaction;
+package org.openspaces.core.transaction.manager;
 
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.LeaseDeniedException;
@@ -22,6 +22,7 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.Assert;
 
 import java.rmi.RemoteException;
 
@@ -51,6 +52,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     public void afterPropertiesSet() throws Exception {
         this.transactionManager = doCreateTransactionManager();
+        Assert.notNull(this.transactionManager, "Jini transactionManager is required");
         if (transactionalContext == null) {
             transactionalContext = transactionManager;
         }

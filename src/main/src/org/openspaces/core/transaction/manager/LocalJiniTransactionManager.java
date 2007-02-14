@@ -1,4 +1,4 @@
-package org.openspaces.core.transaction;
+package org.openspaces.core.transaction.manager;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.LocalTransactionManager;

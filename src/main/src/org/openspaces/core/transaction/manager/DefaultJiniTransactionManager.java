@@ -1,4 +1,4 @@
-package org.openspaces.core.transaction;
+package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.jini.JiniServiceFactoryBean;

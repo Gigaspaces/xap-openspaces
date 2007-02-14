@@ -1,4 +1,4 @@
-package org.openspaces.core.transaction;
+package org.openspaces.core.transaction.manager;
 
 import org.springframework.transaction.PlatformTransactionManager;
 

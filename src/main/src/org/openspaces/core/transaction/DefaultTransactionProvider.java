@@ -1,10 +1,11 @@
 package org.openspaces.core.transaction;
 
 import net.jini.core.transaction.Transaction;
+import org.openspaces.core.transaction.manager.JiniTransactionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
- * <p>Defaut transaction provider works in conjuction with {@link org.openspaces.core.transaction.AbstractJiniTransactionManager}
+ * <p>Defaut transaction provider works in conjuction with {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager}
  * and one of its derived classes. Uses Spring support for transactional resource binding (using therad local) in order to get
  * the current transaction. If no transaction is active, will return <code>null</code>
  * (which means the operation will be executed under no transaction).
@@ -13,9 +14,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * context provided to {@link #getCurrentTransaction(Object)}.
  *
  * @author kimchy
- * @see org.openspaces.core.transaction.AbstractJiniTransactionManager
+ * @see org.openspaces.core.transaction.manager.AbstractJiniTransactionManager
  * @see org.openspaces.core.GigaSpaceFactoryBean
- * @see org.openspaces.core.transaction.JiniTransactionHolder
+ * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
  * @see org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class DefaultTransactionProvider implements TransactionProvider {
@@ -37,9 +38,9 @@ public class DefaultTransactionProvider implements TransactionProvider {
      * context (Note that the passed transactional context is not used).
      *
      * <p>Uses Spring support for transactional resource registration in order to fetch the current
-     * running transaction (or the {@link org.openspaces.core.transaction.JiniTransactionHolder}. An example
+     * running transaction (or the {@link org.openspaces.core.transaction.manager.JiniTransactionHolder}. An example
      * of Spring platform transaction managers that register it are ones derived form
-     * {@link org.openspaces.core.transaction.AbstractJiniTransactionManager}.
+     * {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager}.
      *
      * <p>If no transaction is found bound the the transactional context (provided in the constructor),
      * <code>null</code> is returned. This means that operations will execute without a transaction.

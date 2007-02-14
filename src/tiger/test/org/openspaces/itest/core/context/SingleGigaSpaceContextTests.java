@@ -28,7 +28,7 @@ public class SingleGigaSpaceContextTests extends AbstractDependencyInjectionSpri
         assertSame(gigaSpace, testBean.gs1);
     }
 
-    public void testSetterInjection() {
+    public void testSeterInjection() {
         assertSame(gigaSpace, testBean.gs2);
     }
 }

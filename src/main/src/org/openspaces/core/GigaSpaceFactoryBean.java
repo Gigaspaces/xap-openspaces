@@ -6,8 +6,8 @@ import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
-import org.openspaces.core.transaction.JiniPlatformTransactionManager;
 import org.openspaces.core.transaction.TransactionProvider;
+import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
  *
  * <p>The factory accepts an optional {@link org.openspaces.core.transaction.TransactionProvider}
  * which defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}. The transactional
- * context used is based on {@link #setTransactionManager(org.openspaces.core.transaction.JiniPlatformTransactionManager)},
+ * context used is based on {@link #setTransactionManager(org.openspaces.core.transaction.manager.JiniPlatformTransactionManager)},
  * so if transactional support is required, both the transaction manager need to be defined AND it needs to
  * be passed to this factory bean. Otherwise, operations will not execute transactionaly.
  *
@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
  * @see org.openspaces.core.DefaultGigaSpace
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.exception.ExceptionTranslator
- * @see org.openspaces.core.transaction.AbstractJiniTransactionManager
+ * @see org.openspaces.core.transaction.manager.AbstractJiniTransactionManager
  */
 public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
 
