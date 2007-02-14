@@ -8,6 +8,7 @@ import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
+import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -154,11 +155,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
         Assert.notNull(this.space, "space property is required");
         IJSpace space = this.space;
         if (!clustered) {
-            try {
-                space = space.getContainer().getSpace(space.getName(), true);
-            } catch (Exception e) {
-                throw new GigaSpaceException("Failed to get direct space", e);
-            }
+            space = SpaceUtils.getClusterMemberSpace(space, true);
         }
         if (exTranslator == null) {
             exTranslator = new DefaultExceptionTranslator();

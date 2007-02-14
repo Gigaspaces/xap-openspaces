@@ -3,17 +3,23 @@ package org.openspaces.core.space;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import com.j_spaces.core.client.SpaceURL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpaceException;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
+import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.rmi.RemoteException;
 
@@ -21,12 +27,18 @@ import java.rmi.RemoteException;
  * <p>Base class for most space factory beans responsible for creating/finding
  * {@link com.j_spaces.core.IJSpace} implementation.
  *
+ * <p>Provides support for raising Spring application events: {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent}
+ * and {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent} alerting other beans of the current space mode
+ * (primary/backup). Beans that wish to be notified of it should implement Spring {@link org.springframework.context.ApplicationListener}.
+ * Note that this space mode events might be raised more than once for the same space mode, and beans that listen to it
+ * should take it into account.
+ *
  * <p>Derived classes should implement the {@link #doCreateSpace()} to obtain the
  * {@link com.j_spaces.core.IJSpace}.
  *
  * @author kimchy
  */
-public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, ApplicationContextAware {
+public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, ApplicationContextAware, ApplicationListener {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -44,33 +56,67 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Initializes the space by calling the {@link #doCreateSpace()}.
+     * <p>Initializes the space by calling the {@link #doCreateSpace()}.
+     *
+     * <p>Registers with the space an internal space mode listener in order to be able to send Spring level
+     * {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent}
+     * for primary and backup handling of different beans within the context.
      */
     public void afterPropertiesSet() throws GigaSpaceException {
         this.space = doCreateSpace();
-        primaryBackupListener = new PrimaryBackupListener();
         // register the space mode listener with the space
-        // TODO Currently it fails when single space, will be fixed tomorrow
-        // TODO What happens with clustered proxy (but one that actually created the cluster memeber), will it register on the current cluster member, or should we handle it similar to the clustered flag
-        // TODO What happens with clustered proxy (one that DID NOT created any cluster member). We should get only PRIMARY event on it and that is it.
-//        try {
-//            ISpaceModeListener remoteListener = (ISpaceModeListener) space.getStubHandler().exportObject(primaryBackupListener);
-//            currentSpaceMode = ((IInternalRemoteJSpaceAdmin) space.getAdmin()).addSpaceModeListener(remoteListener);
-//            if (logger.isDebugEnabled()) {
-//                logger.debug("Space [" + space + "] mode is [" + currentSpaceMode + "]");
-//            }
-//        } catch (RemoteException e) {
-//            throw new CannotCreateSpaceException("Failed to regsiter space mode listener with space [" + space + "]", e);
-//        }
+        if (isEmbeddedSpace()) {
+            primaryBackupListener = new PrimaryBackupListener();
+            try {
+                IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
+                ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler().exportObject(primaryBackupListener);
+                currentSpaceMode = ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).addSpaceModeListener(remoteListener);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Space [" + clusterMemberSpace + "] mode is [" + currentSpaceMode + "]");
+                }
+            } catch (RemoteException e) {
+                throw new CannotCreateSpaceException("Failed to regsiter space mode listener with space [" + space + "]", e);
+            }
+        } else {
+            currentSpaceMode = SpaceMode.PRIMARY;
+        }
     }
 
+    /**
+     * Destroys the space and unregisters the intenral space mode listener.
+     */
     public void destroy() throws Exception {
-//        try {
-//            ISpaceModeListener remoteListener = (ISpaceModeListener) space.getStubHandler().exportObject(primaryBackupListener);
-//            ((IInternalRemoteJSpaceAdmin) space.getAdmin()).removeSpaceModeListener(remoteListener);
-//        } catch (RemoteException e) {
-//            logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
-//        }
+        // unregister the sapce mode listener
+        if (isEmbeddedSpace()) {
+            IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
+            try {
+                ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler().exportObject(primaryBackupListener);
+                ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).removeSpaceModeListener(remoteListener);
+            } catch (RemoteException e) {
+                logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
+            }
+        }
+    }
+
+    /**
+     * <p>If {@link org.springframework.context.event.ContextRefreshedEvent} is raised will send two extra
+     * events: {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and
+     * {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent} with the current space mode. This is
+     * done since other beans that related on this events might not catch them only after the bean has Spring
+     * context has been refereshed.
+     *
+     * <p>Note, this will mean that events with the same Space mode might be raised, one after the other, and
+     * Spring beans that listens for them should take it into account.
+     *
+     * @param applicationEvent
+     */
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        if (applicationEvent instanceof ContextRefreshedEvent) {
+            if (applicationContext != null) {
+                applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, currentSpaceMode));
+                applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, currentSpaceMode));
+            }
+        }
     }
 
     /**
@@ -107,6 +153,14 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * @throws GigaSpaceException
      */
     protected abstract IJSpace doCreateSpace() throws GigaSpaceException;
+
+    /**
+     * Returns <code>true</code> if the space is an embedded one (i.e. does not start with <code>jini</code> or
+     * <code>rmi</code> protocols).
+     */
+    private boolean isEmbeddedSpace() {
+        return !(space.getURL().getProtocol().equals(SpaceURL.JINI_PROTOCOL) || space.getURL().getProtocol().equals(SpaceURL.RMI_PROTOCOL));
+    }
 
     private class PrimaryBackupListener implements ISpaceModeListener {
 
