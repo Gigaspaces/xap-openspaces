@@ -1,8 +1,12 @@
 package org.openspaces.core.space;
 
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.FinderException;
+import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.SpaceURLParser;
 import org.openspaces.core.GigaSpaceException;
+import org.openspaces.core.config.BeanLevelMergedPropertiesAware;
 import org.springframework.util.Assert;
 
 import java.net.MalformedURLException;
@@ -16,11 +20,16 @@ import java.util.Properties;
  *
  * @author kimchy
  */
-public class UrlSpaceFactoryBean extends AbstractSpaceUrlFactoryBean {
+public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware {
 
     private String url;
 
     private Map parameters;
+
+    private Properties urlProperties;
+
+    private Properties beanLevelProperties;
+
 
     /**
      * Creates a new url space factory bean. The url parameres is requires
@@ -64,10 +73,39 @@ public class UrlSpaceFactoryBean extends AbstractSpaceUrlFactoryBean {
      * <p>Sets the parameters the {@link com.j_spaces.core.IJSpace} will be created with.
      * Note this paramerters does not take affect after the bean has been initalized.
      *
+     * <p>Note, this should not be confused with {@link #setUrlProperties(java.util.Properties)}. The
+     * parameters here are the ones refered to as custom properties and allows for example to control
+     * the xpath injection to space schema.
+     *
      * @param parameters The parameters to create the {@link com.j_spaces.core.IJSpace} with.
      */
     public void setParameters(Map parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * <p>Sets the url properties (cluster_schema, total_members, ...).
+     */
+    public void setUrlProperties(Properties urlProperties) {
+        this.urlProperties = urlProperties;
+    }
+
+    /**
+     * <p>Externally mananed override properties using open spaces extended config support. Should
+     * not be set directly but allowed for different Spring context container to set it.
+     */
+    public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
+        this.beanLevelProperties = beanLevelProperties;
+    }
+
+
+    protected IJSpace doCreateSpace() throws GigaSpaceException {
+        SpaceURL spaceURL = doGetSpaceUrl();
+        try {
+            return (IJSpace) SpaceFinder.find(spaceURL);
+        } catch (FinderException e) {
+            throw new CannotCreateSpaceException("Failed to find space with url [" + spaceURL + "]");
+        }
     }
 
     /**
@@ -77,14 +115,30 @@ public class UrlSpaceFactoryBean extends AbstractSpaceUrlFactoryBean {
     protected SpaceURL doGetSpaceUrl() throws GigaSpaceException {
         Assert.notNull(url, "url property is required");
         Properties props = new Properties();
+        // copy over the parameters
         if (parameters != null) {
             for (Iterator it = parameters.entrySet().iterator(); it.hasNext();) {
                 Map.Entry entry = (Map.Entry) it.next();
                 props.put(entry.getKey(), entry.getValue());
             }
         }
-        // add ignore validation as it will be performed by the base class
-        props.setProperty(SpaceURL.IGNORE_VALIDATION, "true");
+
+        // copy over the space properties
+        if (urlProperties != null) {
+            for (Iterator it = urlProperties.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry) it.next();
+                props.put(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + entry.getKey(), entry.getValue());
+            }
+        }
+
+        // copy over the external config overrides
+        if (beanLevelProperties != null) {
+            for (Iterator it = beanLevelProperties.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry) it.next();
+                props.put(entry.getKey(), entry.getValue());
+            }
+        }
+
         try {
             return SpaceURLParser.parseURL(url, props);
         } catch (MalformedURLException e) {
