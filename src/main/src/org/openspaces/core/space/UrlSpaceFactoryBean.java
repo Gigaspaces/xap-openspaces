@@ -6,6 +6,8 @@ import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.SpaceURLParser;
 import org.openspaces.core.GigaSpaceException;
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.config.BeanLevelMergedPropertiesAware;
 import org.springframework.util.Assert;
 
@@ -20,7 +22,7 @@ import java.util.Properties;
  *
  * @author kimchy
  */
-public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware {
+public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
     private String url;
 
@@ -29,6 +31,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private Properties urlProperties;
 
     private Properties beanLevelProperties;
+
+    private ClusterInfo clusterInfo;
 
 
     /**
@@ -98,6 +102,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.beanLevelProperties = beanLevelProperties;
     }
 
+    public void setClusterInfo(ClusterInfo clusterInfo) {
+        this.clusterInfo = clusterInfo;
+    }
 
     protected IJSpace doCreateSpace() throws GigaSpaceException {
         SpaceURL spaceURL = doGetSpaceUrl();
@@ -136,6 +143,26 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             for (Iterator it = beanLevelProperties.entrySet().iterator(); it.hasNext();) {
                 Map.Entry entry = (Map.Entry) it.next();
                 props.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        // if deploy info is provided, apply it to the space url
+        if (clusterInfo != null) {
+            if (clusterInfo.getNumberOfInstances() != null) {
+                String totalMembers = clusterInfo.getNumberOfInstances().toString();
+                if (clusterInfo.getNumberOfBackups() != null) {
+                    totalMembers += "," + clusterInfo.getNumberOfBackups();
+                }
+                props.setProperty(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + SpaceURL.CLUSTER_TOTAL_MEMBERS, totalMembers);
+            }
+            if (clusterInfo.getInstanceId() != null) {
+                props.setProperty(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + SpaceURL.CLUSTER_MEMBER_ID, clusterInfo.getInstanceId().toString());
+            }
+            if (clusterInfo.getBackupId() != null) {
+                props.setProperty(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + SpaceURL.CLUSTER_BACKUP_ID, clusterInfo.getBackupId().toString());
+            }
+            if (clusterInfo.getSchema() != null) {
+                props.setProperty(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + SpaceURL.CLUSTER_SCHEMA, clusterInfo.getSchema());
             }
         }
 
