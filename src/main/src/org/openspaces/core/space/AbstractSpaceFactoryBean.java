@@ -32,6 +32,12 @@ import java.rmi.RemoteException;
  * Note that this space mode events might be raised more than once for the same space mode, and beans that listen to it
  * should take it into account.
  *
+ * <p>The space mode event will be raised regardless of the space "type" that is used. For embedded spaces, an actual space
+ * mode event listener will be regsitered with the actual cluster member (if not in cluster mode, than the actual space).
+ * For remote space lookups (jini/rmi), no listener will be regsitered. Space mode events will still be raise during
+ * context reffresh with a <code>PRIMARY</code> mode in order to allow beans to be written regardless of how the space
+ * is looked up.
+ *
  * <p>Derived classes should implement the {@link #doCreateSpace()} to obtain the
  * {@link com.j_spaces.core.IJSpace}.
  *
@@ -50,6 +56,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     private PrimaryBackupListener primaryBackupListener;
 
+    /**
+     * Injected by Spring thanks to {@link org.springframework.context.ApplicationContextAware}.
+     */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
@@ -58,7 +67,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * <p>Initializes the space by calling the {@link #doCreateSpace()}.
      *
      * <p>Registers with the space an internal space mode listener in order to be able to send Spring level
-     * {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent}
+     * {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and
+     * {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent}
      * for primary and backup handling of different beans within the context.
      */
     public void afterPropertiesSet() throws GigaSpaceException {
@@ -101,13 +111,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * <p>If {@link org.springframework.context.event.ContextRefreshedEvent} is raised will send two extra
      * events: {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and
      * {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent} with the current space mode. This is
-     * done since other beans that related on this events might not catch them only after the bean has Spring
-     * context has been refereshed.
+     * done since other beans that use this events might not catch them while the context is constructed.
      *
      * <p>Note, this will mean that events with the same Space mode might be raised, one after the other, and
      * Spring beans that listens for them should take it into account.
-     *
-     * @param applicationEvent
      */
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {

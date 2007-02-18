@@ -17,10 +17,20 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * <p>A space factory bean that creates a space based on a url and optional
- * map parameters.
+ * <p>A space factory bean that creates a space based on a url.
+ *
+ * <p>The factory allows to specify url properties using {@link #setUrlProperties(java.util.Properties)}
+ * and space parameters using {@link #setParameters(java.util.Map)}. It also accepts a
+ * {@link org.openspaces.core.cluster.ClusterInfo} using {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)}
+ * and translates it into the relevant space url properties automatically.
+ *
+ * <p>The factory uses the {@link org.openspaces.core.config.BeanLevelMergedPropertiesAware} in order to be injected
+ * with properties that were not parameterized in advance (using ${...} notation). This will directly inject additional
+ * properties in the Space creation/finding process.
  *
  * @author kimchy
+ * @see com.j_spaces.core.client.SpaceURLParser
+ * @see com.j_spaces.core.client.SpaceFinder
  */
 public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
@@ -122,8 +132,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * Parses the given space url using {@link com.j_spaces.core.client.SpaceURLParser}
+     * <p>Parses the given space url using {@link com.j_spaces.core.client.SpaceURLParser}
      * and returns the parsed {@link com.j_spaces.core.client.SpaceURL}.
+     *
+     * <p>Uses the {@link #setUrlProperties(java.util.Properties)} and
+     * {@link #setParameters(java.util.Map)} as parameters for the space. Also uses the
+     * {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)} by automatically
+     * translating the cluster information into relevant Space url properties.
      */
     protected SpaceURL doGetSpaceUrl() throws GigaSpaceException {
         Assert.notNull(url, "url property is required");
