@@ -16,6 +16,8 @@ public class DirectSpaceFactoryBean extends AbstractSpaceFactoryBean {
 
     private IJSpace space;
 
+    private boolean isEmbedded;
+
     /**
      * <p>Constucts a new direct space factory using the provided space.
      *
@@ -24,9 +26,9 @@ public class DirectSpaceFactoryBean extends AbstractSpaceFactoryBean {
      *
      * @param space The space to use
      */
-    public DirectSpaceFactoryBean(IJSpace space) {
+    public DirectSpaceFactoryBean(IJSpace space, boolean isEmbedded) {
         this.space = space;
-        afterPropertiesSet();
+        this.isEmbedded = isEmbedded;
     }
 
     /**
@@ -36,5 +38,9 @@ public class DirectSpaceFactoryBean extends AbstractSpaceFactoryBean {
      */
     protected IJSpace doCreateSpace() throws GigaSpaceException {
         return space;
+    }
+
+    protected boolean isEmbeddedSpace() {
+        return isEmbedded;
     }
 }

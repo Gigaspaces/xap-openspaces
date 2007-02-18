@@ -2,11 +2,11 @@ package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
-import org.openspaces.core.transaction.TransactionProvider;
-import org.openspaces.core.exception.ExceptionTranslator;
-import net.jini.space.JavaSpace;
-import net.jini.core.transaction.Transaction;
 import net.jini.core.lease.Lease;
+import net.jini.core.transaction.Transaction;
+import net.jini.space.JavaSpace;
+import org.openspaces.core.exception.ExceptionTranslator;
+import org.openspaces.core.transaction.TransactionProvider;
 
 /**
  * <p>Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},

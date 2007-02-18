@@ -50,7 +50,7 @@ public interface GigaSpace {
 
     /**
      * <p>Returns the transaction provider allowing to access the current running transaction. Allows to
-     * execute low level space operations that requires explicit transaction object.
+     * execute low level {@link com.j_spaces.core.IJSpace} operations that requires explicit transaction object.
      */
     TransactionProvider getTxProvider();
 

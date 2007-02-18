@@ -4,7 +4,6 @@ import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
-import com.j_spaces.core.client.SpaceURL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpaceException;
@@ -158,9 +157,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * Returns <code>true</code> if the space is an embedded one (i.e. does not start with <code>jini</code> or
      * <code>rmi</code> protocols).
      */
-    private boolean isEmbeddedSpace() {
-        return !(space.getURL().getProtocol().equals(SpaceURL.JINI_PROTOCOL) || space.getURL().getProtocol().equals(SpaceURL.RMI_PROTOCOL));
-    }
+    protected abstract boolean isEmbeddedSpace();
 
     private class PrimaryBackupListener implements ISpaceModeListener {
 
