@@ -127,7 +127,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         try {
             return (IJSpace) SpaceFinder.find(spaceURL);
         } catch (FinderException e) {
-            throw new CannotCreateSpaceException("Failed to find space with url [" + spaceURL + "]");
+            throw new CannotCreateSpaceException("Failed to find space with url [" + spaceURL + "]", e);
         }
     }
 
