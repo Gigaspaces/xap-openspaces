@@ -171,7 +171,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         public void beforeSpaceModeChange(SpaceMode spaceMode) throws RemoteException {
             currentSpaceMode = spaceMode;
             if (logger.isDebugEnabled()) {
-                logger.debug("Space [" + space + "] mode is [" + currentSpaceMode + "]");
+                logger.debug("Space [" + space + "] BEFORE mode is [" + currentSpaceMode + "]");
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, spaceMode));
@@ -181,7 +181,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         public void afterSpaceModeChange(SpaceMode spaceMode) throws RemoteException {
             currentSpaceMode = spaceMode;
             if (logger.isDebugEnabled()) {
-                logger.debug("Space [" + space + "] mode is [" + currentSpaceMode + "]");
+                logger.debug("Space [" + space + "] AFTER mode is [" + currentSpaceMode + "]");
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, spaceMode));

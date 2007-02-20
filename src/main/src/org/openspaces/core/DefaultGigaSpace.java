@@ -184,4 +184,18 @@ public class DefaultGigaSpace implements GigaSpace {
         return txCreated.transaction;
     }
 
+    public String toString() {
+        return space.toString();
+    }
+
+    public boolean equals(Object obj) {
+        if (!(obj instanceof GigaSpace)) {
+            return false;
+        }
+        return space.equals(((GigaSpace) obj).getSpace());
+    }
+
+    public int hashCode() {
+        return space.hashCode();
+    }
 }
