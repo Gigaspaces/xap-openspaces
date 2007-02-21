@@ -1,20 +1,25 @@
 package org.openspaces.core.config;
 
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.BeanDefinitionVisitor;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.BeansException;
-import org.openspaces.core.config.BeanLevelProperties;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionVisitor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
-import java.util.Properties;
 import java.util.HashSet;
+import java.util.Properties;
 
 /**
+ * <p>An extension on top of Spring {@link org.springframework.beans.factory.config.PropertyPlaceholderConfigurer} that
+ * works with {@link org.openspaces.core.config.BeanLevelProperties} in order to inject bean level propeties.
+ *
+ * <p>${..} notations are used to lookup bean level properties with the properites obtained based on the bean name
+ * using {@link org.openspaces.core.config.BeanLevelProperties#getMergedBeanProperties(String)}.
+ *
  * @author kimchy
  */
 public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware, BeanFactoryAware {
