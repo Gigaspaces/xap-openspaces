@@ -27,7 +27,18 @@ import org.springframework.util.Assert;
 import java.rmi.RemoteException;
 
 /**
+ * <p>Base class for Jini implementation of Springs {@link org.springframework.transaction.PlatformTransactionManager}.
+ * Uses Jini {@link net.jini.core.transaction.server.TransactionManager} in order to manage transactions with sub classes
+ * responsible for providing it using {@link #doCreateTransactionManager()}.
+ *
+ * <p>Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
+ * {@link org.springframework.transaction.support.TransactionSynchronizationManager#bindResource(Object,Object)}.
+ * The transactional context is optional and defaults to the Jini {@link net.jini.core.transaction.server.TransactionManager}
+ * instance.
+ *
  * @author kimchy
+ * @see org.openspaces.core.transaction.DefaultTransactionProvider
+ * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
  */
 // TODO Check if local transaction supports nested transactions, and if not, why not?
 // TODO Need to support transaction timeout    
