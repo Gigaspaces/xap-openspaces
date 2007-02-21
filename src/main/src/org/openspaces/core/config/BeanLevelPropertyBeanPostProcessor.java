@@ -4,8 +4,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * A Spring {@link org.springframework.beans.factory.config.BeanPostProcessor} that process
- * {@link org.openspaces.core.config.BeanLevelPropertiesAware} and
+ * A Spring {@link org.springframework.beans.factory.config.BeanPostProcessor} that process beans that
+ * implement {@link org.openspaces.core.config.BeanLevelPropertiesAware} or
  * {@link org.openspaces.core.config.BeanLevelMergedPropertiesAware} based on the provided
  * {@link org.openspaces.core.config.BeanLevelProperties}.
  *
