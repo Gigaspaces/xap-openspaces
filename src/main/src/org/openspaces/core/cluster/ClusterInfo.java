@@ -10,6 +10,13 @@ package org.openspaces.core.cluster;
  * means that beans that implement {@link org.openspaces.core.cluster.ClusterInfoAware} should take into account
  * the fact that the cluster info provided might be null.
  *
+ * <p>Naturally, this information can be used by plain Spring application context by constructing this class using
+ * Spring and providing it as a parameter to {@link org.openspaces.core.cluster.ClusterInfoBeanPostProcessor} which
+ * is also configured within Spring application context. Note, if the same application context will later be
+ * deployed into a container that provides cluster information, extra caution need to be taken to resolve clashed.
+ * The best solution would be to define the cluster info within a differnt Spring xml context, and excluding it
+ * when deploying the full context to a cluster info aware container.
+ *
  * <p>The absence (<code>null</code> value) of a certain cluster information property means that it was not set.
  *
  * @author kimchy
