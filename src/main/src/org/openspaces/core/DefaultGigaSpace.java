@@ -81,7 +81,6 @@ public class DefaultGigaSpace implements GigaSpace {
         return this.txProvider;
     }
 
-
     public void clean() throws GigaSpaceException {
         try {
             space.clean();
