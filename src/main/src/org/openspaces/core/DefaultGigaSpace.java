@@ -90,6 +90,14 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
+    public int count(Object template) throws GigaSpaceException {
+        try {
+            return space.count(template, getCurrentTransaction());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public Object read(Object template) throws GigaSpaceException {
         return read(template, defaultReadTimeout);
     }
