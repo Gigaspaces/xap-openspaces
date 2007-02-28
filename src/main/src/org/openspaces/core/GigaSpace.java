@@ -58,6 +58,8 @@ public interface GigaSpace {
 
     int count(Object template) throws GigaSpaceException;
 
+    Object snapshot(Object entry) throws GigaSpaceException;
+
     Object read(Object template) throws GigaSpaceException;
 
     Object read(Object template, long timeout) throws GigaSpaceException;
