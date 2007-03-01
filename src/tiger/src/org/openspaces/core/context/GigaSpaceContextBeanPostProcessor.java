@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A Spring bean post processor allowing to use {@link @org.openspaces.core.context.GigaSpaceContext} in order
+ * A Spring bean post processor allowing to use {@link org.openspaces.core.context.GigaSpaceContext} in order
  * to inject {@link org.openspaces.core.GigaSpace} instances using annotations.
  *
  * @author kimchy

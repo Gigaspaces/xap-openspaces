@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 public @interface GigaSpaceContext {
 
     /**
-     * The name of the {@link @org.openspaces.core.GigaSpace} bean. Used when more
+     * The name of the {@link org.openspaces.core.GigaSpace} bean. Used when more
      * than one {@link org.openspaces.core.GigaSpace} is defined.
      */
     String name() default "";
