@@ -137,7 +137,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel) throws InvalidIsolationLevelException {
         if (isolationLevel != TransactionDefinition.ISOLATION_DEFAULT) {
-            throw new InvalidIsolationLevelException("GigaSpaceTransactionManager does not ex custom isolation levels");
+            throw new InvalidIsolationLevelException("TransactionManager does not ex custom isolation levels");
         }
     }
 

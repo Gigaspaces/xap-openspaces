@@ -27,8 +27,13 @@ import org.springframework.util.Assert;
  * <p>The factory accepts an optional {@link org.openspaces.core.transaction.TransactionProvider}
  * which defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}. The transactional
  * context used is based on {@link #setTransactionManager(org.openspaces.core.transaction.manager.JiniPlatformTransactionManager)},
- * so if transactional support is required, both the transaction manager need to be defined AND it needs to
- * be passed to this factory bean. Otherwise, operations will not execute transactionaly.
+ * and if no transaction manager is provided, will use the space as the context.
+ *
+ * <p>When usin {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager} there is no need
+ * to pass the transaction manager to this factory, since both by default will use the space as the
+ * transactional context. When working with {@link org.openspaces.core.transaction.manager.LookupJiniTransactionManager}
+ * (which probably means Mahalo and support for more than one space as transaction resources) the transaction
+ * manager should be provided to this class.
  *
  * <p>The factory accepts an optional {@link org.openspaces.core.exception.ExceptionTranslator}
  * which defaults to {@link org.openspaces.core.exception.DefaultExceptionTranslator}.
@@ -164,6 +169,10 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
             Object transactionalContext = null;
             if (transactionManager != null) {
                 transactionalContext = transactionManager.getTransactionalContext();
+            }
+            // no transaciton context is set (probably since there is no transactionManager), use the space as the transaciton context
+            if (transactionalContext == null) {
+                transactionalContext = space;
             }
             txProvider = new DefaultTransactionProvider(transactionalContext);
         }

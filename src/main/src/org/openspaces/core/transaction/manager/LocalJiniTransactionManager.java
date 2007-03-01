@@ -3,6 +3,7 @@ package org.openspaces.core.transaction.manager;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.LocalTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
+import org.openspaces.core.GigaSpace;
 import org.springframework.aop.framework.Advised;
 import org.springframework.util.Assert;
 
@@ -18,26 +19,34 @@ import org.springframework.util.Assert;
  */
 public class LocalJiniTransactionManager extends AbstractJiniTransactionManager {
 
-    private IJSpace space;
+    private GigaSpace gigaSpace;
 
     /**
      * Sets the the {@link com.j_spaces.core.client.LocalTransactionManager} will work with.
      * This is a required property.
      */
-    public void setSpace(IJSpace space) {
-        this.space = space;
+    public void setGigaSpace(GigaSpace gigaSpace) {
+        this.gigaSpace = gigaSpace;
     }
 
     /**
      * Returns a new {@link com.j_spaces.core.client.LocalTransactionManager} using the provided
-     * {@link #setSpace(com.j_spaces.core.IJSpace)}.
+     * {@link #setGigaSpace(org.openspaces.core.GigaSpace)}.
      */
     public TransactionManager doCreateTransactionManager() throws Exception {
-        Assert.notNull(space, "space property must be set");
+        Assert.notNull(gigaSpace, "space property must be set");
+
+        IJSpace space = gigaSpace.getSpace();
+
+        // use the space as the transactional context (and not the transaction manager) in case of Local transactions
+        if (getTransactionalContext() == null) {
+            setTransactionalContext(space);
+        }
 
         while (space instanceof Advised) {
             space = (IJSpace) ((Advised) space).getTargetSource().getTarget();
         }
+        
         return LocalTransactionManager.getInstance(space);
     }
 }
