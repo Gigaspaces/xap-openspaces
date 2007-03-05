@@ -164,7 +164,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * Returns <code>true</code> if the space is an embedded one (i.e. does not start with <code>jini</code> or
      * <code>rmi</code> protocols).
      */
-    protected abstract boolean isEmbeddedSpace();
+    protected boolean isEmbeddedSpace() {
+        return space.isEmbedded();
+    }
 
     private class PrimaryBackupListener implements ISpaceModeListener {
 

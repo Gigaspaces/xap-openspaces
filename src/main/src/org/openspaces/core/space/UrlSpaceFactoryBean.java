@@ -118,10 +118,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.clusterInfo = clusterInfo;
     }
 
-    protected boolean isEmbeddedSpace() {
-        return !(spaceURL.getProtocol().equals(SpaceURL.JINI_PROTOCOL) || spaceURL.getProtocol().equals(SpaceURL.RMI_PROTOCOL));
-    }
-
     protected IJSpace doCreateSpace() throws GigaSpaceException {
         spaceURL = doGetSpaceUrl();
         try {
