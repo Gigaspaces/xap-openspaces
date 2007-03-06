@@ -47,7 +47,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private String schema;
 
-    private String groups;
+    private String lookupGroups;
 
     private Integer lookupTimeout;
 
@@ -153,8 +153,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * The Jini Lookup Service group to find container or space using multicast (jini protocol). Groups
      * are comma separated list.
      */
-    public void setGroups(String groups) {
-        this.groups = groups;
+    public void setLookupGroups(String lookupGroups) {
+        this.lookupGroups = lookupGroups;
     }
 
 
@@ -317,8 +317,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         props.put(spaceUrlProperty(SpaceURL.FIFO_MODE), Boolean.toString(fifo));
 
-        if (groups != null) {
-            props.put(spaceUrlProperty(SpaceURL.GROUPS), groups);
+        if (lookupGroups != null) {
+            props.put(spaceUrlProperty(SpaceURL.GROUPS), lookupGroups);
         }
 
         if (lookupTimeout != null) {
