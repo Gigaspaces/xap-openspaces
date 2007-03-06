@@ -74,8 +74,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private ClusterInfo clusterInfo;
 
 
-    private SpaceURL spaceURL;
-
     /**
      * Creates a new url space factory bean. The url parameres is requires
      * so the {@link #setUrl(String)} must be called before the bean is initalized.
@@ -279,7 +277,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     protected IJSpace doCreateSpace() throws GigaSpaceException {
-        spaceURL = doGetSpaceUrl();
+        SpaceURL spaceURL = doGetSpaceUrl();
         try {
             return (IJSpace) SpaceFinder.find(spaceURL);
         } catch (FinderException e) {
