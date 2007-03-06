@@ -58,18 +58,26 @@ public interface GigaSpace {
 
     int count(Object template) throws GigaSpaceException;
 
+    int count(Object template, int modifiers) throws GigaSpaceException;
+    
     Object snapshot(Object entry) throws GigaSpaceException;
 
     Object read(Object template) throws GigaSpaceException;
 
     Object read(Object template, long timeout) throws GigaSpaceException;
 
+    Object read(Object template, long timeout, int modifiers) throws GigaSpaceException;
+
     Object readIfExists(Object template) throws GigaSpaceException;
 
     Object readIfExists(Object template, long timeout) throws GigaSpaceException;
 
+    Object readIfExists(Object template, long timeout, int modifiers) throws GigaSpaceException;
+
     Object[] readMultiple(Object template, int maxEntries) throws GigaSpaceException;
 
+    Object[] readMultiple(Object template, int maxEntries, int modifiers) throws GigaSpaceException;
+    
     Object take(Object template) throws GigaSpaceException;
 
     Object take(Object template, long timeout) throws GigaSpaceException;

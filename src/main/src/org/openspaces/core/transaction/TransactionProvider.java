@@ -28,4 +28,6 @@ public interface TransactionProvider {
      * @return The transaction object to be used with {@link com.j_spaces.core.IJSpace} operations. Can be <code>null</code>.
      */
     Transaction.Created getCurrentTransaction(Object transactionalContext);
+
+    int getCurrentTransactionIsolationLevel(Object transactionalContext);
 }

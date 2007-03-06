@@ -11,6 +11,8 @@ import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.Constants;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
 /**
@@ -46,6 +48,13 @@ import org.springframework.util.Assert;
  * <p>The factory allows to set the default read/take timeout and write lease when using
  * the same operations without the relevant parameters.
  *
+ * <p>The factory also allows to set the default isolation level for read operations that will
+ * be perfomed by {@link org.openspaces.core.GigaSpace} API. The isolation level can be set
+ * either using {@link #setDefaultIsolationLevel(int)} or {@link #setDefaultIsolationLevelName(String)}.
+ * Note, this setting will apply when not working under Spring declarative transactions or when using
+ * Spring declarative transaction with the default isolation level
+ * ({@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT}).
+ *
  * @author kimchy
  * @see org.openspaces.core.GigaSpace
  * @see org.openspaces.core.DefaultGigaSpace
@@ -54,6 +63,16 @@ import org.springframework.util.Assert;
  * @see org.openspaces.core.transaction.manager.AbstractJiniTransactionManager
  */
 public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
+
+    /**
+     * Prefix for the isolation constants defined in TransactionDefinition
+     */
+    public static final String PREFIX_ISOLATION = "ISOLATION_";
+
+    /**
+     * Constants instance for TransactionDefinition
+     */
+    private static final Constants constants = new Constants(TransactionDefinition.class);
 
     private DefaultGigaSpace gigaSpace;
 
@@ -72,6 +91,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
     private long defaultTakeTimeout = JavaSpace.NO_WAIT;
 
     private long defaultWriteLease = Lease.FOREVER;
+
+    private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
 
     /**
      * <p>Sets the space that will be used by the created {@link org.openspaces.core.GigaSpace}.
@@ -140,6 +161,37 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
         this.defaultWriteLease = defaultWriteLease;
     }
 
+    /**
+     * Set the default isolation level by the name of the corresponding constant in
+     * TransactionDefinition, e.g. "ISOLATION_DEFAULT".
+     *
+     * @param constantName name of the constant
+     * @throws IllegalArgumentException if the supplied value is not resolvable
+     *                                  to one of the <code>ISOLATION_</code> constants or is <code>null</code>
+     * @see #setDefaultIsolationLevel(int)
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT
+     */
+    public final void setDefaultIsolationLevelName(String constantName) throws IllegalArgumentException {
+        if (constantName == null || !constantName.startsWith(PREFIX_ISOLATION)) {
+            throw new IllegalArgumentException("Only isolation constants allowed");
+        }
+        setDefaultIsolationLevel(constants.asNumber(constantName).intValue());
+    }
+
+    /**
+     * Set the default isolation level. Must be one of the isolation constants
+     * in the TransactionDefinition interface. Default is ISOLATION_DEFAULT.
+     *
+     * @throws IllegalArgumentException if the supplied value is not
+     *                                  one of the <code>ISOLATION_</code> constants
+     * @see org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT
+     */
+    public void setDefaultIsolationLevel(int defaultIsolationLevel) {
+        if (!constants.getValues(PREFIX_ISOLATION).contains(new Integer(defaultIsolationLevel))) {
+            throw new IllegalArgumentException("Only values of isolation constants allowed");
+        }
+        this.defaultIsolationLevel = defaultIsolationLevel;
+    }
 
     /**
      * <p>Set the transaction manager to enable transactional operations. Can be <code>null</code>
@@ -176,7 +228,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
             }
             txProvider = new DefaultTransactionProvider(transactionalContext);
         }
-        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator);
+        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);

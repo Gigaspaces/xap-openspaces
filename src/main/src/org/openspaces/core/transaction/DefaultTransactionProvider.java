@@ -2,6 +2,7 @@ package org.openspaces.core.transaction;
 
 import net.jini.core.transaction.Transaction;
 import org.openspaces.core.transaction.manager.JiniTransactionHolder;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
@@ -59,5 +60,18 @@ public class DefaultTransactionProvider implements TransactionProvider {
             return txObject.getTxCreated();
         }
         return null;
+    }
+
+    public int getCurrentTransactionIsolationLevel(Object transactionalContext) {
+        if (actualTransactionalContext == null) {
+            return TransactionDefinition.ISOLATION_DEFAULT;
+        }
+
+        JiniTransactionHolder txObject =
+                (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
+        if (txObject != null && txObject.hasTransaction()) {
+            return txObject.getIsolationLevel();
+        }
+        return TransactionDefinition.ISOLATION_DEFAULT;
     }
 }

@@ -2,11 +2,13 @@ package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.ReadTakeModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.TransactionProvider;
+import org.springframework.transaction.TransactionDefinition;
 
 /**
  * <p>Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
@@ -38,14 +40,33 @@ public class DefaultGigaSpace implements GigaSpace {
     /**
      * Constructs a new DefaultGigaSpace implementation.
      *
-     * @param space        The space implementation to delegate operations to
-     * @param txProvider   The transaction provider for declarative transaction ex.
-     * @param exTranslator Exception translator to translate low level exceptions into GigaSpaces runtime exception
+     * @param space                 The space implementation to delegate operations to
+     * @param txProvider            The transaction provider for declarative transaction ex.
+     * @param exTranslator          Exception translator to translate low level exceptions into GigaSpaces runtime exception
+     * @param defaultIsolationLevel The default isolation level for read operations without modifiers.
+     *                              Maps to {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()} levels values.
      */
-    public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator) {
+    public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
+                            int defaultIsolationLevel) {
         this.space = space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
+        // set the default read take modifiers according to the default isolation level
+        switch (defaultIsolationLevel) {
+            case TransactionDefinition.ISOLATION_DEFAULT:
+                break;
+            case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
+                space.setReadTakeModifiers(ReadTakeModifiers.DIRTY_READ);
+                break;
+            case TransactionDefinition.ISOLATION_READ_COMMITTED:
+                space.setReadTakeModifiers(ReadTakeModifiers.READ_COMMITTED);
+                break;
+            case TransactionDefinition.ISOLATION_REPEATABLE_READ:
+                space.setReadTakeModifiers(ReadTakeModifiers.REPEATABLE_READ);
+                break;
+            case TransactionDefinition.ISOLATION_SERIALIZABLE:
+                throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
+        }
     }
 
     /**
@@ -90,8 +111,12 @@ public class DefaultGigaSpace implements GigaSpace {
     }
 
     public int count(Object template) throws GigaSpaceException {
+        return count(template, getModifiersForIsolationLevel());
+    }
+
+    public int count(Object template, int modifiers) throws GigaSpaceException {
         try {
-            return space.count(template, getCurrentTransaction());
+            return space.count(template, getCurrentTransaction(), modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -110,8 +135,12 @@ public class DefaultGigaSpace implements GigaSpace {
     }
 
     public Object read(Object template, long timeout) throws GigaSpaceException {
+        return read(template, timeout, getModifiersForIsolationLevel());
+    }
+
+    public Object read(Object template, long timeout, int modifiers) throws GigaSpaceException {
         try {
-            return space.read(template, getCurrentTransaction(), timeout);
+            return space.read(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -122,16 +151,24 @@ public class DefaultGigaSpace implements GigaSpace {
     }
 
     public Object readIfExists(Object template, long timeout) throws GigaSpaceException {
+        return readIfExists(template, timeout, getModifiersForIsolationLevel());
+    }
+
+    public Object readIfExists(Object template, long timeout, int modifiers) throws GigaSpaceException {
         try {
-            return space.readIfExists(template, getCurrentTransaction(), timeout);
+            return space.readIfExists(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
     public Object[] readMultiple(Object template, int maxEntries) throws GigaSpaceException {
+        return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
+    }
+
+    public Object[] readMultiple(Object template, int maxEntries, int modifiers) throws GigaSpaceException {
         try {
-            return space.readMultiple(template, getCurrentTransaction(), maxEntries);
+            return space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -199,18 +236,28 @@ public class DefaultGigaSpace implements GigaSpace {
         return txCreated.transaction;
     }
 
+    /**
+     * Gets the isolation level from the current running transaction (enabling the usage of
+     * Spring declarative isolation level settings). If there is no transaction in progress
+     * or the transaction isolation is {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT}
+     * will use the default isolation level associated with this class.
+     */
+    private int getModifiersForIsolationLevel() {
+        int isolationLevel = txProvider.getCurrentTransactionIsolationLevel(this);
+        if (isolationLevel == TransactionDefinition.ISOLATION_DEFAULT) {
+            return space.getReadTakeModifiers();
+        } else if (isolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED) {
+            return ReadTakeModifiers.DIRTY_READ;
+        } else if (isolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED) {
+            return ReadTakeModifiers.READ_COMMITTED;
+        } else if (isolationLevel == TransactionDefinition.ISOLATION_REPEATABLE_READ) {
+            return ReadTakeModifiers.REPEATABLE_READ;
+        } else {
+            throw new IllegalArgumentException("GigaSpaces does not support isolation level [" + isolationLevel + "]");
+        }
+    }
+
     public String toString() {
         return space.toString();
-    }
-
-    public boolean equals(Object obj) {
-        if (!(obj instanceof GigaSpace)) {
-            return false;
-        }
-        return space.equals(((GigaSpace) obj).getSpace());
-    }
-
-    public int hashCode() {
-        return space.hashCode();
     }
 }

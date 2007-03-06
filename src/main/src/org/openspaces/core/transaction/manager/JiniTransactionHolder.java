@@ -13,8 +13,11 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
 
     private Transaction.Created txCreated;
 
-    public JiniTransactionHolder(Transaction.Created txCreated) {
+    private int isolationLevel;
+
+    public JiniTransactionHolder(Transaction.Created txCreated, int isolationLevel) {
         this.txCreated = txCreated;
+        this.isolationLevel = isolationLevel;
     }
 
     public Transaction.Created getTxCreated() {
@@ -25,4 +28,7 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
         return (txCreated != null && txCreated.transaction != null);
     }
 
+    public int getIsolationLevel() {
+        return this.isolationLevel;
+    }
 }

@@ -37,6 +37,11 @@ import java.rmi.RemoteException;
  * The transactional context is optional and defaults to the Jini {@link net.jini.core.transaction.server.TransactionManager}
  * instance.
  *
+ * <p>By default the transaciton timeout will be FOREVER. The deafult timeout on the transaction manager level can
+ * be set using {@link #setDefaultTimeout(Long)}. If the timeout is explicitly set using Spring support for
+ * transactions (for example using {@link org.springframework.transaction.TransactionDefinition}) this value
+ * will be used.
+ *
  * @author kimchy
  * @see org.openspaces.core.transaction.DefaultTransactionProvider
  * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
@@ -124,11 +129,14 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                     logger.debug("Creating new transaction for [" + transactionalContext + "]");
                 }
                 long timeout = Lease.FOREVER;
+                if (defaultTimeout != null) {
+                    timeout = defaultTimeout.longValue();
+                }
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                     timeout = definition.getTimeout() * 1000;
                 }
                 Transaction.Created txCreated = TransactionFactory.create(transactionManager, timeout);
-                JiniTransactionHolder jiniHolder = new JiniTransactionHolder(txCreated);
+                JiniTransactionHolder jiniHolder = new JiniTransactionHolder(txCreated, definition.getIsolationLevel());
                 jiniHolder.setTimeoutInSeconds(definition.getTimeout());
                 txObject.setJiniHolder(jiniHolder, true);
             }
@@ -266,7 +274,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
      *
      * TODO: can SmartTransactionObject be implemented?
      */
-    private static class JiniTransactionObject {
+    static class JiniTransactionObject {
 
         private JiniTransactionHolder jiniHolder;
 
