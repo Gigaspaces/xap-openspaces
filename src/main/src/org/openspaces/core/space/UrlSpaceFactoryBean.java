@@ -25,6 +25,10 @@ import java.util.Properties;
  * {@link org.openspaces.core.cluster.ClusterInfo} using {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)}
  * and translates it into the relevant space url properties automatically.
  *
+ * <p>Most url properties are explicitly exposed using different setters. Though they can also be set using
+ * the {@link #setUrlProperties(java.util.Properties)} the explicit setters allow for more readable and simpler
+ * configuration. Some examples of explicit url properties are: {@link #setSchema(String)}, {@link #setFifo(boolean)}.
+ *
  * <p>The factory uses the {@link org.openspaces.core.config.BeanLevelMergedPropertiesAware} in order to be injected
  * with properties that were not parameterized in advance (using ${...} notation). This will directly inject additional
  * properties in the Space creation/finding process.
