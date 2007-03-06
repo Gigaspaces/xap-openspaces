@@ -1,6 +1,7 @@
 package org.openspaces.core.transaction.manager;
 
 import net.jini.core.entry.UnusableEntryException;
+import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.LeaseException;
 import net.jini.core.transaction.CannotAbortException;
@@ -51,12 +52,23 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     // to take part in the transaction
     private Object transactionalContext;
 
+    private Long defaultTimeout;
+
     public Object getTransactionalContext() {
         return transactionalContext;
     }
 
     public void setTransactionalContext(Object txResource) {
         this.transactionalContext = txResource;
+    }
+
+    /**
+     * Sets the default timeout to use if {@link org.springframework.transaction.TransactionDefinition#TIMEOUT_DEFAULT}
+     * is used. Set in <b>seconds</b> (in order to follow the {@link org.springframework.transaction.TransactionDefinition}
+     * contract. Defaults to {@link net.jini.core.lease.Lease#FOREVER}.
+     */
+    public void setDefaultTimeout(Long defaultTimeout) {
+        this.defaultTimeout = defaultTimeout;
     }
 
     protected abstract TransactionManager doCreateTransactionManager() throws Exception;
@@ -111,7 +123,11 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 if (logger.isDebugEnabled()) {
                     logger.debug("Creating new transaction for [" + transactionalContext + "]");
                 }
-                Transaction.Created txCreated = TransactionFactory.create(transactionManager, definition.getTimeout());
+                long timeout = Lease.FOREVER;
+                if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
+                    timeout = definition.getTimeout() * 1000;
+                }
+                Transaction.Created txCreated = TransactionFactory.create(transactionManager, timeout);
                 JiniTransactionHolder jiniHolder = new JiniTransactionHolder(txCreated);
                 jiniHolder.setTimeoutInSeconds(definition.getTimeout());
                 txObject.setJiniHolder(jiniHolder, true);
@@ -137,14 +153,14 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel) throws InvalidIsolationLevelException {
         if (isolationLevel != TransactionDefinition.ISOLATION_DEFAULT) {
-            throw new InvalidIsolationLevelException("TransactionManager does not ex custom isolation levels");
+            throw new InvalidIsolationLevelException("TransactionManager does not support custom isolation levels");
         }
     }
 
     protected void applyTimeout(JiniTransactionObject txObject, int timeout) throws InvalidTimeoutException {
         // TODO: maybe use a LeaseRenewalManager
         if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
-            throw new InvalidTimeoutException("GigaSpaceTransactionManager does not ex custom timeouts", timeout);
+            throw new InvalidTimeoutException("TransactionManager does not ex custom timeouts", timeout);
         }
     }
 
