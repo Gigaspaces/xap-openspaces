@@ -2,7 +2,7 @@ package org.openspaces.utest.core;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.ReadTakeModifiers;
+import com.j_spaces.core.client.ReadModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
 import org.jmock.Mock;
@@ -40,7 +40,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -54,7 +54,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(10l), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(10l), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -69,7 +69,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(11l), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(11l), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -83,7 +83,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -97,7 +97,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(10l), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(10l), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -112,7 +112,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(11l), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(11l), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -126,7 +126,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object[] retVal = new Object[]{new Object(), new Object()};
 
-        mockIJSpace.expects(once()).method("readMultiple").with(same(template), NULL, eq(2), eq(ReadTakeModifiers.READ_COMMITTED))
+        mockIJSpace.expects(once()).method("readMultiple").with(same(template), NULL, eq(2), eq(ReadModifiers.READ_COMMITTED))
                 .will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
