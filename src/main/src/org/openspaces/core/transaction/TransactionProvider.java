@@ -19,7 +19,7 @@ public interface TransactionProvider {
 
     /**
      * <p>Returns the currently running transaction (usually managed externally/declarative). A transactional
-     * context can be passed and optionally used in order to fetch the current running transactino.
+     * context can be passed and optionally used in order to fetch the current running transaction.
      *
      * <p>If no transaction is currently executing, <code>null</code> value will be returned. This usually
      * means that the operation will be performed without a transaction.
@@ -29,5 +29,13 @@ public interface TransactionProvider {
      */
     Transaction.Created getCurrentTransaction(Object transactionalContext);
 
+    /**
+     * <p>Returns the currently running transaction isolation level (mapping to Spring
+     * {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()} values). A transactional
+     * context can be passed and optionally used in order to fetch the current running transaction.
+     *
+     * @param transactionalContext Transactional context to (optionally) fetch the transcation by
+     * @return The transaction isolation level mapping to Spring {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}.
+     */
     int getCurrentTransactionIsolationLevel(Object transactionalContext);
 }
