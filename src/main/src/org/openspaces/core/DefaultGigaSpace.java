@@ -226,6 +226,34 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
+    public LeaseContext[] writeMultiple(Object[] entries) throws GigaSpaceException {
+        return writeMultiple(entries, defaultWriteLease);
+    }
+
+    public LeaseContext[] writeMultiple(Object[] entries, long lease) throws GigaSpaceException {
+        try {
+            return space.writeMultiple(entries, getCurrentTransaction(), lease);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public Object[] updateMultiple(Object[] entries, long[] leases) throws GigaSpaceException {
+        try {
+            return space.updateMultiple(entries, getCurrentTransaction(), leases);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public Object[] updateMultiple(Object[] entries, long[] leases, int updateModifiers) throws GigaSpaceException {
+        try {
+            return space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     // Support methods
 
     private Transaction getCurrentTransaction() {

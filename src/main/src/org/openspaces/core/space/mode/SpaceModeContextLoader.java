@@ -116,7 +116,10 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
                     } catch (Exception e) {
                         logger.error("Failed to load context [" + location + "] when moving to primary mode", e);
                     }
-                } else {
+                }
+            } else if (applicationEvent instanceof BeforeSpaceModeChangeEvent) {
+                BeforeSpaceModeChangeEvent spEvent = (BeforeSpaceModeChangeEvent) applicationEvent;
+                if (!spEvent.isPrimary()) {
                     closeApplicationContext();
                 }
             }

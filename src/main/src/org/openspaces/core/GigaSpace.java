@@ -94,5 +94,11 @@ public interface GigaSpace {
 
     LeaseContext write(Object entry, long lease, long timeout, int modifiers) throws GigaSpaceException;
 
-    // TODO write and update multiple (with write is simple, it performs update based on modifiers, what to do with multiple?)
+    LeaseContext[] writeMultiple(Object[] entries) throws GigaSpaceException;
+
+    LeaseContext[] writeMultiple(Object[] entries, long lease) throws GigaSpaceException;
+
+    Object[] updateMultiple(Object[] entries, long[] leases) throws GigaSpaceException;
+
+    Object[] updateMultiple(Object[] entries, long[] leases, int updateModifiers) throws GigaSpaceException;
 }
