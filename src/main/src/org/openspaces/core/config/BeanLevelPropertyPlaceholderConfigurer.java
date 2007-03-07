@@ -49,17 +49,17 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
             throws BeansException {
 
         String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
-        for (int i = 0; i < beanNames.length; i++) {
+        for (String beanName1 : beanNames) {
             // Check that we're not parsing our own bean definition,
             // to avoid failing on unresolvable placeholders in properties file locations.
-            if (!(beanNames[i].equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-                BeanDefinitionVisitor visitor = new PlaceholderResolvingBeanDefinitionVisitor(beanLevelProperties.getMergedBeanProperties(beanNames[i]));
-                BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanNames[i]);
+            if (!(beanName1.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
+                BeanDefinitionVisitor visitor = new PlaceholderResolvingBeanDefinitionVisitor(beanLevelProperties.getMergedBeanProperties(beanName1));
+                BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanName1);
                 try {
                     visitor.visitBeanDefinition(bd);
                 }
                 catch (BeanDefinitionStoreException ex) {
-                    throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanNames[i], ex.getMessage());
+                    throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanName1, ex.getMessage());
                 }
             }
         }

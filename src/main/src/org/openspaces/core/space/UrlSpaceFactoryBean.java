@@ -13,7 +13,6 @@ import org.openspaces.core.config.BeanLevelMergedPropertiesAware;
 import org.springframework.util.Assert;
 
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -299,16 +298,15 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         Properties props = new Properties();
         // copy over the parameters
         if (parameters != null) {
-            for (Iterator it = parameters.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Map.Entry) it.next();
+            for (Object o : parameters.entrySet()) {
+                Map.Entry entry = (Map.Entry) o;
                 props.put(entry.getKey(), entry.getValue());
             }
         }
 
         // copy over the space properties
         if (urlProperties != null) {
-            for (Iterator it = urlProperties.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Map.Entry) it.next();
+            for (Map.Entry<Object, Object> entry : urlProperties.entrySet()) {
                 props.put(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + entry.getKey(), entry.getValue());
             }
         }
@@ -344,8 +342,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         // copy over the external config overrides
         if (beanLevelProperties != null) {
-            for (Iterator it = beanLevelProperties.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Map.Entry) it.next();
+            for (Map.Entry<Object, Object> entry : beanLevelProperties.entrySet()) {
                 props.put(entry.getKey(), entry.getValue());
             }
         }
@@ -354,7 +351,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         if (clusterInfo != null) {
             if (clusterInfo.getNumberOfInstances() != null) {
                 String totalMembers = clusterInfo.getNumberOfInstances().toString();
-                if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups().intValue() != 0) {
+                if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() != 0) {
                     totalMembers += "," + clusterInfo.getNumberOfBackups();
                 }
                 props.setProperty(spaceUrlProperty(SpaceURL.CLUSTER_TOTAL_MEMBERS), totalMembers);
