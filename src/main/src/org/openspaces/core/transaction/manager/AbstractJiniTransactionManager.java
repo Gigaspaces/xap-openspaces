@@ -6,6 +6,7 @@ import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.LeaseException;
 import net.jini.core.transaction.CannotAbortException;
 import net.jini.core.transaction.CannotCommitException;
+import net.jini.core.transaction.TimeoutExpiredException;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.UnknownTransactionException;
@@ -20,6 +21,7 @@ import org.springframework.transaction.NestedTransactionNotSupportedException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -59,6 +61,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     private Long defaultTimeout;
 
+    private Long commitTimeout;
+
+    private Long rollbackTimeout;
+
     public Object getTransactionalContext() {
         return transactionalContext;
     }
@@ -74,6 +80,22 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
      */
     public void setDefaultTimeout(Long defaultTimeout) {
         this.defaultTimeout = defaultTimeout;
+    }
+
+    /**
+     * Sets an optional timeout when performing commit. If not set {@link net.jini.core.transaction.Transaction#commit()}
+     * will be called. If set {@link net.jini.core.transaction.Transaction#commit(long)} will be called.
+     */
+    public void setCommitTimeout(Long commitTimeout) {
+        this.commitTimeout = commitTimeout;
+    }
+
+    /**
+     * Sets an optional timeout when performing rollback/abort. If not set {@link net.jini.core.transaction.Transaction#abort()}
+     * will be called. If set {@link net.jini.core.transaction.Transaction#abort(long)} will be called.
+     */
+    public void setRollbackTimeout(Long rollbackTimeout) {
+        this.rollbackTimeout = rollbackTimeout;
     }
 
     protected abstract TransactionManager doCreateTransactionManager() throws Exception;
@@ -130,7 +152,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 }
                 long timeout = Lease.FOREVER;
                 if (defaultTimeout != null) {
-                    timeout = defaultTimeout.longValue();
+                    timeout = defaultTimeout;
                 }
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                     timeout = definition.getTimeout() * 1000;
@@ -177,12 +199,18 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         if (logger.isDebugEnabled())
             logger.debug("Committing Jini transaction [" + txObject.toString() + "]");
         try {
-            txObject.getTransaction().commit();
+            if (commitTimeout == null) {
+                txObject.getTransaction().commit();
+            } else {
+                txObject.getTransaction().commit(commitTimeout);
+            }
         } catch (UnknownTransactionException e) {
             throw convertJiniException(e);
         } catch (CannotCommitException e) {
             throw convertJiniException(e);
         } catch (RemoteException e) {
+            throw convertJiniException(e);
+        } catch (TimeoutExpiredException e) {
             throw convertJiniException(e);
         }
     }
@@ -197,12 +225,18 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         if (logger.isDebugEnabled())
             logger.debug("Rolling back Jini transaction" + txObject.toString());
         try {
-            txObject.getTransaction().abort();
+            if (rollbackTimeout == null) {
+                txObject.getTransaction().abort();
+            } else {
+                txObject.getTransaction().abort(rollbackTimeout);
+            }
         } catch (UnknownTransactionException e) {
             throw convertJiniException(e);
         } catch (CannotAbortException e) {
             throw convertJiniException(e);
         } catch (RemoteException e) {
+            throw convertJiniException(e);
+        } catch (TimeoutExpiredException e) {
             throw convertJiniException(e);
         }
     }
@@ -262,6 +296,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
         if (exception instanceof RuntimeException) {
             return (RuntimeException) exception;
+        }
+
+        if (exception instanceof TimeoutExpiredException) {
+            throw new TransactionTimedOutException("Transaction timed out (either the transaction or commit/abort)", e);
         }
 
         return new TransactionException("unexpected exception ", exception) {
