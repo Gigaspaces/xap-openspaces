@@ -299,7 +299,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
 
         if (exception instanceof TimeoutExpiredException) {
-            throw new TransactionTimedOutException("Transaction timed out (either the transaction or commit/abort)", e);
+            throw new TransactionTimedOutException("Transaction timed out (either the transaction or commit/abort)", exception);
         }
 
         return new TransactionException("unexpected exception ", exception) {
