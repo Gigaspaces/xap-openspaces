@@ -16,14 +16,16 @@ import org.springframework.util.Assert;
 import java.util.Properties;
 
 /**
- * <p>Base class for different Local cache space proxies that work with a master <code>IJSpace</code>. The master
- * is set using {@link #setSpace(com.j_spaces.core.IJSpace)}. This factory represents an <code>IJSpace</code>
- * that is the local cache proxy on top of the master space.
+ * <p>Base class for different Local cache space proxies that work with a master
+ * {@link com.j_spaces.core.IJSpace IJSpace}. The master is set using {@link #setSpace(com.j_spaces.core.IJSpace)}.
+ * This factory represents an {@link com.j_spaces.core.IJSpace IJSpace} that is the
+ * local cache proxy on top of the master space.
  *
- * <p>A clustered flag allows to control if this GigaSpace instance will work against a clustered view of
- * the space or directly against a clustered memeber.  By default if this flag is not set it will be set
- * automatically by this factory. It will be set to <code>true</code> if the space is an embedded one. It will be set
- * to <code>false</code> otherwise (i.e. the space is not an embedded space).
+ * <p>A clustered flag allows to control if this GigaSpace instance will work against
+ * a clustered view of the space or directly against a clustered memeber.  By default
+ * if this flag is not set it will be set automatically by this factory. It will be set
+ * to <code>true</code> if the space is an embedded one. It will be set to <code>false</code>
+ * otherwise (i.e. the space is not an embedded space).
  *
  * @author kimchy
  */
@@ -49,10 +51,11 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     }
 
     /**
-     * <p>A clustered flag allows to control if this GigaSpace instance will work against a clustered view of
-     * the space or directly against a clustered memeber.  By default if this flag is not set it will be set
-     * automatically by this factory. It will be set to <code>true</code> if the space is an embedded one. It will be set
-     * to <code>false</code> otherwise (i.e. the space is not an embedded space).
+     * <p>A clustered flag allows to control if this GigaSpace instance will work against
+     * a clustered view of the space or directly against a clustered memeber. By default
+     * if this flag is not set it will be set automatically by this factory. It will be
+     * set to <code>true</code> if the space is an embedded one. It will be set to
+     * <code>false</code> otherwise (i.e. the space is not an embedded space).
      */
     public void setClustered(boolean clustered) {
         this.clustered = clustered;
@@ -72,6 +75,21 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
         this.beanName = beanName;
     }
 
+    /**
+     * <p>Constructs a new local cache {@link com.j_spaces.core.IJSpace IJSpace} based
+     * on the master local cache set using {@link #setSpace(com.j_spaces.core.IJSpace)}
+     * and a set of properties driving the actual local cache type based on
+     * {@link #createCacheProeprties()}. Additional properties are applied based on
+     * {@link #setProperties(java.util.Properties)}.
+     *
+     * <p>A clustered flag allows to control if this GigaSpace instance will work against
+     * a clustered view of the space or directly against a clustered memeber. By default
+     * if this flag is not set it will be set automatically by this factory. It will be
+     * set to <code>true</code> if the space is an embedded one. It will be set to
+     * <code>false</code> otherwise (i.e. the space is not an embedded space).
+     *
+     * @see com.j_spaces.core.client.SpaceFinder#find(com.j_spaces.core.client.SpaceURL,com.j_spaces.core.IJSpace,com.sun.jini.start.LifeCycle)
+     */
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(space, "space property must be set");
         IJSpace actualSpace = space;
@@ -106,14 +124,24 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      */
     protected abstract Properties createCacheProeprties();
 
+    /**
+     * Returns an {@link com.j_spaces.core.IJSpace IJSpace} that is the local cache
+     * wrapping the master proxy set using {@link #setSpace(com.j_spaces.core.IJSpace)}.
+     */
     public Object getObject() throws Exception {
         return this.localCacheSpace;
     }
 
+    /**
+     * Returns the type of the factory object.
+     */
     public Class getObjectType() {
         return (localCacheSpace == null ? IJSpace.class : localCacheSpace.getClass());
     }
 
+    /**
+     * Returns <code>true</code> since this bean is a singleton.
+     */
     public boolean isSingleton() {
         return true;
     }

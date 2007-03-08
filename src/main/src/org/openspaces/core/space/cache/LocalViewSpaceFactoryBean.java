@@ -14,8 +14,8 @@ import java.util.Properties;
  * ({@link org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean}), that is loaded into the client on-
  * demand, and later updated or evicted.
  *
- * <p>The local view is defined via a filter ({@link #setLocalViews(com.j_spaces.core.client.view.View[])}) Ð as
- * opposed to the local cache that caches data at the client side only after the data has been read
+ * <p>The local view is defined via a filter ({@link #setLocalViews(com.j_spaces.core.client.view.View[])} localViews)
+ * Ð as opposed to the local cache that caches data at the client side only after the data has been read
  *
  * @author kimchy
  */
@@ -38,6 +38,10 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         super.afterPropertiesSet();
     }
 
+    /**
+     * Creates newly created properties that holds the views set using
+     * {@link #setLocalViews(com.j_spaces.core.client.view.View[]) locaViews}.
+     */
     protected Properties createCacheProeprties() {
         Properties props = new Properties();
         props.put(SpaceURL.VIEWS, localViews);

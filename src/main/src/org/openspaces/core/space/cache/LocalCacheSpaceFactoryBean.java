@@ -18,7 +18,7 @@ import java.util.Properties;
  * cache. If it is not found in the master cache, it will reload the data from the data source. Updates
  * on the central cache will be propagated into all local embedded cache instances in either pull or
  * push mode, using unicast or multicast protocol.
- * 
+ *
  * @author kimchy
  */
 public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
@@ -26,7 +26,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     private static final String LOCAL_CACHE_UPDATE_MODE_PUSH = "push";
 
     private static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
-    
+
     private int localCacheUpdateMode = SpaceURL.UPDATE_MODE_PULL;
 
     /**
@@ -47,7 +47,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
 
     /**
      * Allows to set the local cahce update mode using a descriptive name instead of integer constants using
-     * {@link #setLocalCacheUpdateMode(int)}. Accepts either <code>push</code> or <code>pull</code>.
+     * {@link #setLocalCacheUpdateMode(int) localCacheUpdateMode}. Accepts either <code>push</code> or <code>pull</code>.
      *
      * @see #setLocalCacheUpdateMode(int)
      */
@@ -62,7 +62,12 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
         }
     }
 
-    
+
+    /**
+     * Returns newly created properties setting the {@link com.j_spaces.core.client.SpaceURL#LOCAL_CACHE_UPDATE_MODE}
+     * based on either {@link #setLocalCacheUpdateMode(int) localCacheUpdateMode} or
+     * {@link #setLocalCacheUpdateModeName(String) localCacheUpdateModeName}.
+     */
     protected Properties createCacheProeprties() {
         Properties props = new Properties();
         props.put(SpaceURL.LOCAL_CACHE_UPDATE_MODE, Integer.toString(localCacheUpdateMode));
