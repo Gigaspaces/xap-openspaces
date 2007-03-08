@@ -3,7 +3,6 @@ package org.openspaces.core;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
-import com.j_spaces.core.client.SQLQuery;
 import org.openspaces.core.transaction.TransactionProvider;
 
 /**
@@ -71,11 +70,11 @@ public interface GigaSpace {
 
     <T> T read(T template, long timeout, int modifiers) throws GigaSpaceException;
 
-    <T> T read(SQLQuery<T> template) throws GigaSpaceException;
+    <T> T read(Query<T> template) throws GigaSpaceException;
 
-    <T> T read(SQLQuery<T> template, long timeout) throws GigaSpaceException;
+    <T> T read(Query<T> template, long timeout) throws GigaSpaceException;
 
-    <T> T read(SQLQuery<T> template, long timeout, int modifiers) throws GigaSpaceException;
+    <T> T read(Query<T> template, long timeout, int modifiers) throws GigaSpaceException;
 
     <T> T readIfExists(T template) throws GigaSpaceException;
 

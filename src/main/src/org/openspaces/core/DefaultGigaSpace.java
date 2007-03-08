@@ -4,7 +4,6 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.ReadModifiers;
-import com.j_spaces.core.client.SQLQuery;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
@@ -148,15 +147,15 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T> T read(SQLQuery<T> template) throws GigaSpaceException {
+    public <T> T read(Query<T> template) throws GigaSpaceException {
         return read(template, defaultReadTimeout);
     }
 
-    public <T> T read(SQLQuery<T> template, long timeout) throws GigaSpaceException {
+    public <T> T read(Query<T> template, long timeout) throws GigaSpaceException {
         return read(template, timeout, getModifiersForIsolationLevel());
     }
 
-    public <T> T read(SQLQuery<T> template, long timeout, int modifiers) throws GigaSpaceException {
+    public <T> T read(Query<T> template, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return (T) space.read(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
