@@ -17,7 +17,7 @@ public class BeanLevelProperties {
 
     private Properties contextProperties = new Properties();
 
-    private Map beanProperties = new HashMap();
+    private Map<String, Properties> beanProperties = new HashMap<String, Properties>();
 
     /**
      * Returns the Spring context level properties.
@@ -41,7 +41,7 @@ public class BeanLevelProperties {
      * @return The properties assigned to the bean
      */
     public Properties getBeanProperties(String beanName) {
-        Properties props = (Properties) beanProperties.get(beanName);
+        Properties props = beanProperties.get(beanName);
         if (props == null) {
             props = new Properties();
             beanProperties.put(beanName, props);

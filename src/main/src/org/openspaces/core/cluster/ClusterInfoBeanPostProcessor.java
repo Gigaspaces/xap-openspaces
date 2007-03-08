@@ -4,9 +4,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * A Spring {@link org.springframework.beans.factory.config.BeanPostProcessor} that takes a
- * {@link org.openspaces.core.cluster.ClusterInfo} and injects it to all the beans that implements
- * {@link org.openspaces.core.cluster.ClusterInfoAware} interface.
+ * A Spring {@link org.springframework.beans.factory.config.BeanPostProcessor BeanPostProcessor}
+ * that takes a {@link org.openspaces.core.cluster.ClusterInfo ClusterInfo} and injects it to all
+ * the beans that implements {@link org.openspaces.core.cluster.ClusterInfoAware ClusterInfoAware} interface.
  *
  * @author kimchy
  */

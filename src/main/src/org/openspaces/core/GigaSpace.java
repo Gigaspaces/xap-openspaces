@@ -30,6 +30,7 @@ import org.openspaces.core.transaction.TransactionProvider;
  *
  * @author kimchy
  * @see com.j_spaces.core.IJSpace
+ * @see com.j_spaces.core.client.Query
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.DefaultGigaSpace
