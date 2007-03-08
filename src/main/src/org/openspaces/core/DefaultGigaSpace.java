@@ -2,6 +2,7 @@ package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.core.client.SQLQuery;
 import net.jini.core.lease.Lease;
@@ -179,15 +180,15 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T> T readIfExists(SQLQuery<T> template) throws GigaSpaceException {
+    public <T> T readIfExists(Query<T> template) throws GigaSpaceException {
         return readIfExists(template, defaultReadTimeout);
     }
 
-    public <T> T readIfExists(SQLQuery<T> template, long timeout) throws GigaSpaceException {
+    public <T> T readIfExists(Query<T> template, long timeout) throws GigaSpaceException {
         return readIfExists(template, timeout, getModifiersForIsolationLevel());
     }
 
-    public <T> T readIfExists(SQLQuery<T> template, long timeout, int modifiers) throws GigaSpaceException {
+    public <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return (T) space.readIfExists(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
@@ -195,25 +196,25 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T> T[] readMultiple(T template, int maxEntries) throws GigaSpaceException {
+    public Object[] readMultiple(Object template, int maxEntries) throws GigaSpaceException {
         return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
     }
 
-    public <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws GigaSpaceException {
+    public Object[] readMultiple(Object template, int maxEntries, int modifiers) throws GigaSpaceException {
         try {
-            return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+            return space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
-    public <T> T[] readMultiple(SQLQuery<T> template, int maxEntries) throws GigaSpaceException {
+    public Object[] readMultiple(Query template, int maxEntries) throws GigaSpaceException {
         return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
     }
 
-    public <T> T[] readMultiple(SQLQuery<T> template, int maxEntries, int modifiers) throws GigaSpaceException {
+    public Object[] readMultiple(Query template, int maxEntries, int modifiers) throws GigaSpaceException {
         try {
-            return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+            return space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -231,11 +232,11 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T> T take(SQLQuery<T> template) throws GigaSpaceException {
+    public <T> T take(Query<T> template) throws GigaSpaceException {
         return take(template, defaultTakeTimeout);
     }
 
-    public <T> T take(SQLQuery<T> template, long timeout) throws GigaSpaceException {
+    public <T> T take(Query<T> template, long timeout) throws GigaSpaceException {
         try {
             return (T) space.take(template, getCurrentTransaction(), timeout);
         } catch (Exception e) {
@@ -255,11 +256,11 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T> T takeIfExists(SQLQuery<T> template) throws GigaSpaceException {
+    public <T> T takeIfExists(Query<T> template) throws GigaSpaceException {
         return takeIfExists(template, defaultTakeTimeout);
     }
 
-    public <T> T takeIfExists(SQLQuery<T> template, long timeout) throws GigaSpaceException {
+    public <T> T takeIfExists(Query<T> template, long timeout) throws GigaSpaceException {
         try {
             return (T) space.takeIfExists(template, getCurrentTransaction(), timeout);
         } catch (Exception e) {
@@ -267,17 +268,17 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T> T[] takeMultiple(T template, int maxEntries) throws GigaSpaceException {
+    public Object[] takeMultiple(Object template, int maxEntries) throws GigaSpaceException {
         try {
-            return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries);
+            return space.takeMultiple(template, getCurrentTransaction(), maxEntries);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
-    public <T> T[] takeMultiple(SQLQuery<T> template, int maxEntries) throws GigaSpaceException {
+    public Object[] takeMultiple(Query template, int maxEntries) throws GigaSpaceException {
         try {
-            return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries);
+            return space.takeMultiple(template, getCurrentTransaction(), maxEntries);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

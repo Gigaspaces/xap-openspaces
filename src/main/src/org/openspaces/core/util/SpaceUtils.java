@@ -1,6 +1,7 @@
 package org.openspaces.core.util;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.SpaceURL;
 import org.openspaces.core.GigaSpaceException;
 
 /**
@@ -28,4 +29,9 @@ public abstract class SpaceUtils {
             throw new GigaSpaceException("Failed to find space under name [" + space.getName() + "]", e);
         }
     }
+
+    public static String spaceUrlProperty(String propertyName) {
+        return SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + propertyName;
+    }
+
 }

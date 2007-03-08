@@ -1,14 +1,19 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.DCacheSpaceImpl;
+import com.j_spaces.core.client.view.LocalSpaceView;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 import org.openspaces.core.util.SpaceUtils;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Constants;
@@ -40,10 +45,15 @@ import org.springframework.util.Assert;
  * <p>The factory accepts an optional {@link org.openspaces.core.exception.ExceptionTranslator}
  * which defaults to {@link org.openspaces.core.exception.DefaultExceptionTranslator}.
  *
- * <p>A clustered flag (default to <code>true</code>) allows to control if this GigaSpace
- * instance will work against a clustered view of the space or directly against a clustered
- * memeber. This flag has no affect when not working in a clustered mode (partitioned or
- * primary/backup).
+ * <p>A clustered flag allows to control if this GigaSpace instance will work against a clustered view of
+ * the space or directly against a clustered memeber. This flag has no affect when not working in a
+ * clustered mode (partitioned or primary/backup). By default if this flag is not set it will be set
+ * automatically by this factory. It will be set to <code>true</code> if the space is an embedded one AND
+ * the space is not a local cache proxy. It will be set to <code>false</code> otherwise (i.e. the space
+ * is not an embedded space OR the space is a local cache proxy). A local cache proxy is an <code>IJSpace</code>
+ * that is injected using {@link #setSpace(com.j_spaces.core.IJSpace)} and was created using either
+ * {@link org.openspaces.core.space.cache.LocalViewSpaceFactoryBean} or
+ * {@link org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean}.
  *
  * <p>The factory allows to set the default read/take timeout and write lease when using
  * the same operations without the relevant parameters.
@@ -62,7 +72,9 @@ import org.springframework.util.Assert;
  * @see org.openspaces.core.exception.ExceptionTranslator
  * @see org.openspaces.core.transaction.manager.AbstractJiniTransactionManager
  */
-public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
+public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
+
+    private static Log logger = LogFactory.getLog(GigaSpaceFactoryBean.class);
 
     /**
      * Prefix for the isolation constants defined in TransactionDefinition
@@ -74,6 +86,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
      */
     private static final Constants constants = new Constants(TransactionDefinition.class);
 
+    private String beanName;
+
     private DefaultGigaSpace gigaSpace;
 
     private IJSpace space;
@@ -84,7 +98,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
 
     private JiniPlatformTransactionManager transactionManager;
 
-    private boolean clustered = true;
+    private Boolean clustered;
 
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
@@ -126,7 +140,10 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
 
     /**
      * <p>Sets the cluster flag controlling if this {@link org.openspaces.core.GigaSpace} will work with a clustered
-     * view of the space or directly with a cluster member. The flag default to <code>true</code>.
+     * view of the space or directly with a cluster member. By default if this flag is not set it will be set
+     * automatically by this factory. It will be set to <code>true</code> if the space is an embedded one AND
+     * the space is not a local cache proxy. It will be set to <code>false</code> otherwise (i.e. the space
+     * is not an embedded space OR the space is a local cache proxy).
      *
      * @param clustered If the {@link org.openspaces.core.GigaSpace} is going to work with a clsutered view of the
      *                  space or directly with a cluster memeber
@@ -202,6 +219,10 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
         this.transactionManager = transactionManager;
     }
 
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
+
     /**
      * Constructs the {@link org.openspaces.core.GigaSpace} instance using the
      * {@link org.openspaces.core.DefaultGigaSpace} implementation. Uses the clustered flag to
@@ -211,6 +232,21 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean {
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.space, "space property is required");
         IJSpace space = this.space;
+        if (clustered == null) {
+            // in case the space is a local cache space, set the clustered flag to true since we do
+            // not want to get the actual memeber (the cluster flag was set on the local cache already)
+            if (space instanceof LocalSpaceView || space instanceof DCacheSpaceImpl) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");
+                }
+                clustered = true;
+            } else {
+                clustered = !space.isEmbedded();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Clustered flag automatically set to [" + clustered + "] for bean [" + beanName + "]");
+                }
+            }
+        }
         if (!clustered) {
             space = SpaceUtils.getClusterMemberSpace(space, true);
         }

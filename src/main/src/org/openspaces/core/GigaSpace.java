@@ -2,6 +2,7 @@ package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.SQLQuery;
 import org.openspaces.core.transaction.TransactionProvider;
 
@@ -82,39 +83,39 @@ public interface GigaSpace {
 
     <T> T readIfExists(T template, long timeout, int modifiers) throws GigaSpaceException;
 
-    <T> T readIfExists(SQLQuery<T> template) throws GigaSpaceException;
+    <T> T readIfExists(Query<T> template) throws GigaSpaceException;
 
-    <T> T readIfExists(SQLQuery<T> template, long timeout) throws GigaSpaceException;
+    <T> T readIfExists(Query<T> template, long timeout) throws GigaSpaceException;
 
-    <T> T readIfExists(SQLQuery<T> template, long timeout, int modifiers) throws GigaSpaceException;
+    <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws GigaSpaceException;
 
     <T> T[] readMultiple(T template, int maxEntries) throws GigaSpaceException;
 
-    <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws GigaSpaceException;
+    Object[] readMultiple(Object template, int maxEntries, int modifiers) throws GigaSpaceException;
 
-    <T> T[] readMultiple(SQLQuery<T> template, int maxEntries) throws GigaSpaceException;
+    Object[] readMultiple(Query template, int maxEntries) throws GigaSpaceException;
 
-    <T> T[] readMultiple(SQLQuery<T> template, int maxEntries, int modifiers) throws GigaSpaceException;
+    Object[] readMultiple(Query template, int maxEntries, int modifiers) throws GigaSpaceException;
 
     <T> T take(T template) throws GigaSpaceException;
 
     <T> T take(T template, long timeout) throws GigaSpaceException;
 
-    <T> T take(SQLQuery<T> template) throws GigaSpaceException;
+    <T> T take(Query<T> template) throws GigaSpaceException;
 
-    <T> T take(SQLQuery<T> template, long timeout) throws GigaSpaceException;
+    <T> T take(Query<T> template, long timeout) throws GigaSpaceException;
 
     <T> T takeIfExists(T template) throws GigaSpaceException;
 
     <T> T takeIfExists(T template, long timeout) throws GigaSpaceException;
 
-    <T> T takeIfExists(SQLQuery<T> template) throws GigaSpaceException;
+    <T> T takeIfExists(Query<T> template) throws GigaSpaceException;
 
-    <T> T takeIfExists(SQLQuery<T> template, long timeout) throws GigaSpaceException;
+    <T> T takeIfExists(Query<T> template, long timeout) throws GigaSpaceException;
 
-    <T> T[] takeMultiple(T template, int maxEntries) throws GigaSpaceException;
+    Object[] takeMultiple(Object template, int maxEntries) throws GigaSpaceException;
 
-    <T> T[] takeMultiple(SQLQuery<T> template, int maxEntries) throws GigaSpaceException;
+    Object[] takeMultiple(Query template, int maxEntries) throws GigaSpaceException;
 
     <T> LeaseContext<T> write(T entry) throws GigaSpaceException;
 
