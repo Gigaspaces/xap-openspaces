@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * <p>A space factory bean that creates a space based on a url.
+ * <p>A space factory bean that creates a space ({@link com.j_spaces.core.IJSpace IJSpace}) based on a url.
  *
  * <p>The factory allows to specify url properties using {@link #setUrlProperties(java.util.Properties)}
  * and space parameters using {@link #setParameters(java.util.Map)}. It also accepts a
@@ -40,7 +40,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private String url;
 
-    private Map parameters;
+    private Map<String, Object> parameters;
+
+    private Properties properties;
 
     private Properties urlProperties;
 
@@ -111,8 +113,15 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      *
      * @param parameters The parameters to create the {@link com.j_spaces.core.IJSpace} with.
      */
-    public void setParameters(Map parameters) {
+    public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * Same as {@link #setParameters(java.util.Map)} just with properties.
+     */
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 
     /**
@@ -215,10 +224,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         Properties props = new Properties();
         // copy over the parameters
         if (parameters != null) {
-            for (Object o : parameters.entrySet()) {
-                Map.Entry entry = (Map.Entry) o;
-                props.put(entry.getKey(), entry.getValue());
-            }
+            props.putAll(parameters);
+        }
+        if (properties != null) {
+            props.putAll(properties);
         }
 
         // copy over the space properties
@@ -247,11 +256,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
 
         // copy over the external config overrides
-        if (beanLevelProperties != null) {
-            for (Map.Entry<Object, Object> entry : beanLevelProperties.entrySet()) {
-                props.put(entry.getKey(), entry.getValue());
-            }
-        }
+        props.putAll(beanLevelProperties);
 
         // if deploy info is provided, apply it to the space url
         if (clusterInfo != null) {

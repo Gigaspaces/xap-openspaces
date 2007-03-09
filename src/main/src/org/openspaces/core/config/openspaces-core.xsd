@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.openspaces.org/schema/core"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://www.openspaces.org/schema/core"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+    <xsd:element name="space">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
+                A space factory bean that creates a space (IJSpace) based on a url.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence>
+                        <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:complexContent>
+                                    <xsd:extension base="beans:propsType">
+                                    </xsd:extension>
+                                </xsd:complexContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:complexContent>
+                                    <xsd:extension base="beans:propsType">
+                                    </xsd:extension>
+                                </xsd:complexContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:complexContent>
+                                    <xsd:extension base="beans:mapType">
+                                    </xsd:extension>
+                                </xsd:complexContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="url" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The url the space will be created with.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-groups" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jini Lookup Service group to find container or space using multicast (jini
+                                protocol). Groups are comma separated list.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-timeout" type="xsd:positiveInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The max timeout in milliseconds to find a Container or Space using multicast (jini
+                                protocol). Defaults to 6000 (i.e. 6 seconds).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="versioned" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When false, optimistic lock is disabled. Default is true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="no-write-lease" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If true - Lease object would not return from the write/writeMultiple operations.
+                                Defaults to false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="mirror" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When setting this URL property to true it will allow the space to connect to the Mirror
+                                service to push its data and operations for asynchronous persistency. Defaults to false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="fifo" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicates that all take/write operations be conducted in FIFO mode. Default is false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
