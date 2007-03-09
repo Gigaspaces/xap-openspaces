@@ -8,7 +8,7 @@ import com.j_spaces.core.client.SpaceURLParser;
 import org.openspaces.core.GigaSpaceException;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.config.BeanLevelMergedPropertiesAware;
+import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.util.Assert;
 
@@ -28,7 +28,7 @@ import java.util.Properties;
  * the {@link #setUrlProperties(java.util.Properties)} the explicit setters allow for more readable and simpler
  * configuration. Some examples of explicit url properties are: {@link #setSchema(String)}, {@link #setFifo(boolean)}.
  *
- * <p>The factory uses the {@link org.openspaces.core.config.BeanLevelMergedPropertiesAware} in order to be injected
+ * <p>The factory uses the {@link org.openspaces.core.properties.BeanLevelMergedPropertiesAware} in order to be injected
  * with properties that were not parameterized in advance (using ${...} notation). This will directly inject additional
  * properties in the Space creation/finding process.
  *

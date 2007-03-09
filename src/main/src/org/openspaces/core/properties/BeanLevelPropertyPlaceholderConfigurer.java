@@ -1,4 +1,4 @@
-package org.openspaces.core.config;
+package org.openspaces.core.properties;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -15,10 +15,10 @@ import java.util.Properties;
 
 /**
  * <p>An extension on top of Spring {@link org.springframework.beans.factory.config.PropertyPlaceholderConfigurer} that
- * works with {@link org.openspaces.core.config.BeanLevelProperties} in order to inject bean level propeties.
+ * works with {@link BeanLevelProperties} in order to inject bean level propeties.
  *
  * <p>${..} notations are used to lookup bean level properties with the properites obtained based on the bean name
- * using {@link org.openspaces.core.config.BeanLevelProperties#getMergedBeanProperties(String)}.
+ * using {@link BeanLevelProperties#getMergedBeanProperties(String)}.
  *
  * @author kimchy
  */

@@ -5,10 +5,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
-import org.openspaces.core.config.BeanLevelProperties;
-import org.openspaces.core.config.BeanLevelPropertiesAware;
-import org.openspaces.core.config.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.config.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.core.properties.BeanLevelProperties;
+import org.openspaces.core.properties.BeanLevelPropertiesAware;
+import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
+import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -67,7 +67,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     }
 
     /**
-     * Used to pass the {@link org.openspaces.core.config.BeanLevelProperties} to the newly created
+     * Used to pass the {@link org.openspaces.core.properties.BeanLevelProperties} to the newly created
      * application context.
      */
     public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {

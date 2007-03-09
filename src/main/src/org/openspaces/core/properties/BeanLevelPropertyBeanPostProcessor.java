@@ -1,18 +1,18 @@
-package org.openspaces.core.config;
+package org.openspaces.core.properties;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
  * A Spring {@link org.springframework.beans.factory.config.BeanPostProcessor} that process beans that
- * implement {@link org.openspaces.core.config.BeanLevelPropertiesAware} or
- * {@link org.openspaces.core.config.BeanLevelMergedPropertiesAware} based on the provided
- * {@link org.openspaces.core.config.BeanLevelProperties}.
+ * implement {@link BeanLevelPropertiesAware} or
+ * {@link BeanLevelMergedPropertiesAware} based on the provided
+ * {@link BeanLevelProperties}.
  *
  * @author kimchy
- * @see org.openspaces.core.config.BeanLevelProperties
- * @see org.openspaces.core.config.BeanLevelMergedPropertiesAware
- * @see org.openspaces.core.config.BeanLevelPropertiesAware
+ * @see BeanLevelProperties
+ * @see BeanLevelMergedPropertiesAware
+ * @see BeanLevelPropertiesAware
  */
 public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
 
@@ -29,13 +29,13 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
     }
 
     /**
-     * Post process a given bean. If the bean implements {@link org.openspaces.core.config.BeanLevelPropertiesAware}
-     * the provided {@link org.openspaces.core.config.BeanLevelProperties} will be injected to it. If the bean
-     * implements {@link org.openspaces.core.config.BeanLevelMergedPropertiesAware} then the merged properties based
+     * Post process a given bean. If the bean implements {@link BeanLevelPropertiesAware}
+     * the provided {@link BeanLevelProperties} will be injected to it. If the bean
+     * implements {@link BeanLevelMergedPropertiesAware} then the merged properties based
      * on the provided beanName will be injected
-     * (using {@link org.openspaces.core.config.BeanLevelProperties#getMergedBeanProperties(String)}).
+     * (using {@link BeanLevelProperties#getMergedBeanProperties(String)}).
      *
-     * @param bean     The bean to possibly perform injection of {@link org.openspaces.core.config.BeanLevelProperties}
+     * @param bean     The bean to possibly perform injection of {@link BeanLevelProperties}
      * @param beanName The bean name
      * @return The bean unmodified
      * @throws BeansException

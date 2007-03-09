@@ -1,4 +1,4 @@
-package org.openspaces.core.config;
+package org.openspaces.core.properties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +10,8 @@ import java.util.Properties;
  * properties.
  *
  * @author kimchy
- * @see org.openspaces.core.config.BeanLevelPropertiesAware
- * @see org.openspaces.core.config.BeanLevelPropertyPlaceholderConfigurer
+ * @see BeanLevelPropertiesAware
+ * @see BeanLevelPropertyPlaceholderConfigurer
  */
 public class BeanLevelProperties {
 
