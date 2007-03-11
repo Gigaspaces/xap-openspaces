@@ -160,8 +160,8 @@
                     <xsd:attribute name="update-mode">
                         <xsd:simpleType>
                             <xsd:restriction base="xsd:string">
-                                <xsd:enumeration value="pull"/>
-                                <xsd:enumeration value="push"/>
+                                <xsd:enumeration value="PULL"/>
+                                <xsd:enumeration value="PUSH"/>
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
@@ -286,6 +286,7 @@
 
     <xsd:element name="sql-query" type="sqlQueryType"/>
     <xsd:element name="view-query" type="viewQueryType"/>
+    <xsd:element name="template" type="templateType"/>
 
     <xsd:complexType name="sqlQueryType">
         <xsd:annotation>

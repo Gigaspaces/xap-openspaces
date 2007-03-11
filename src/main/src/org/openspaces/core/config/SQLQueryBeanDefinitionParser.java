@@ -11,13 +11,13 @@ import org.w3c.dom.Element;
  */
 public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-    public static final String WHERE = "where";
+    private static final String WHERE = "where";
 
-    public static final String CLASS = "class";
+    private static final String CLASS = "class";
 
-    public static final String CLASS_NAME = "class-name";
+    private static final String CLASS_NAME = "class-name";
 
-    public static final String TEMPLATE = "template";
+    private static final String TEMPLATE = "template";
 
     protected Class getBeanClass(Element element) {
         return SQLQueryFactoryBean.class;
