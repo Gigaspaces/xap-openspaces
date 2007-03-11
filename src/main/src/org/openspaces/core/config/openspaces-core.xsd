@@ -257,8 +257,6 @@
     <xsd:element name="sql-query" type="sqlQueryType"/>
     <xsd:element name="view-query" type="viewQueryType"/>
 
-    <xsd:element name="template" type="templateType"/>
-
     <xsd:complexType name="sqlQueryType">
         <xsd:annotation>
             <xsd:documentation source="java:com.j_spaces.core.client.SQLQuery">
@@ -298,12 +296,22 @@
     </xsd:complexType>
 
     <xsd:complexType name="templateType">
-        <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
-                <xsd:group ref="beans:beanElements"/>
-                <xsd:attributeGroup ref="beans:beanAttributes"/>
-            </xsd:extension>
-        </xsd:complexContent>
+        <xsd:sequence>
+            <xsd:element ref="beans:description" minOccurs="0"/>
+            <xsd:choice minOccurs="0" maxOccurs="1">
+                <xsd:element ref="beans:bean"/>
+                <xsd:element ref="beans:ref"/>
+                <xsd:element ref="beans:idref"/>
+                <xsd:element ref="beans:null"/>
+            </xsd:choice>
+        </xsd:sequence>
+        <xsd:attribute name="ref" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[
+    A short-cut alternative to a nested "<ref bean='...'/>".
+                ]]></xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
 
     <xsd:simpleType name="txManagerType">

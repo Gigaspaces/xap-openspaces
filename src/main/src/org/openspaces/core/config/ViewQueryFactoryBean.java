@@ -33,6 +33,10 @@ public class ViewQueryFactoryBean implements FactoryBean, InitializingBean {
         this.className = className;
     }
 
+    public void setTemplate(Object template) {
+        this.template = template;
+    }
+
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(where, "where property is requried");
         if (template == null && type == null && className == null) {

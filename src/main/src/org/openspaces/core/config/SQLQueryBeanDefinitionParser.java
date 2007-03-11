@@ -1,6 +1,5 @@
 package org.openspaces.core.config;
 
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -39,11 +38,8 @@ public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionPa
 
         Element templateEle = DomUtils.getChildElementByTagName(element, TEMPLATE);
         if (templateEle != null) {
-            BeanDefinitionHolder bdHolder = parserContext.getDelegate().parseBeanDefinitionElement(templateEle, builder.getRawBeanDefinition());
-            if (bdHolder != null) {
-                bdHolder = parserContext.getDelegate().decorateBeanDefinitionIfRequired(templateEle, bdHolder);
-                builder.addPropertyValue("template", bdHolder);
-            }
+            Object template = parserContext.getDelegate().parsePropertyValue(templateEle, builder.getRawBeanDefinition(), "template");
+            builder.addPropertyValue("template", template);
         }
     }
 }
