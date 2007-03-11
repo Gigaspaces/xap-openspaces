@@ -8,7 +8,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class CoreNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
-        registerBeanDefinitionParser("space", new SpaceBeanDefinitionParser());
+        registerBeanDefinitionParser("space", new UrlSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("sql-query", new SQLQueryBeanDefinitionParser());
         registerBeanDefinitionParser("view-query", new ViewQueryBeanDefinitionParser());
         registerBeanDefinitionParser("local-cache", new LocalCacheSpaceBeanDefinitionParser());

@@ -28,26 +28,44 @@
                     <xsd:sequence>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:complexContent>
-                                    <xsd:extension base="beans:propsType">
-                                    </xsd:extension>
-                                </xsd:complexContent>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props" />
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:complexContent>
-                                    <xsd:extension base="beans:propsType">
-                                    </xsd:extension>
-                                </xsd:complexContent>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props" />
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:complexContent>
-                                    <xsd:extension base="beans:mapType">
-                                    </xsd:extension>
-                                </xsd:complexContent>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:map" />
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>
@@ -125,10 +143,16 @@
                     <xsd:sequence>
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:complexContent>
-                                    <xsd:extension base="beans:propsType">
-                                    </xsd:extension>
-                                </xsd:complexContent>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props" />
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>
@@ -163,10 +187,16 @@
                         <xsd:element ref="view-query" minOccurs="1" maxOccurs="unbounded"/>
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:complexContent>
-                                    <xsd:extension base="beans:propsType">
-                                    </xsd:extension>
-                                </xsd:complexContent>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props" />
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>
@@ -296,15 +326,7 @@
     </xsd:complexType>
 
     <xsd:complexType name="templateType">
-        <xsd:sequence>
-            <xsd:element ref="beans:description" minOccurs="0"/>
-            <xsd:choice minOccurs="0" maxOccurs="1">
-                <xsd:element ref="beans:bean"/>
-                <xsd:element ref="beans:ref"/>
-                <xsd:element ref="beans:idref"/>
-                <xsd:element ref="beans:null"/>
-            </xsd:choice>
-        </xsd:sequence>
+        <xsd:group ref="beans:collectionElements"/>
         <xsd:attribute name="ref" type="xsd:string">
             <xsd:annotation>
                 <xsd:documentation><![CDATA[

@@ -7,8 +7,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
-import java.util.Properties;
-
 /**
  * @author kimchy
  */
@@ -26,7 +24,7 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
         }
         Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
         if (propertiesEle != null) {
-            Properties properties = parserContext.getDelegate().parsePropsElement(propertiesEle);
+            Object properties = parserContext.getDelegate().parsePropertyValue(propertiesEle, builder.getRawBeanDefinition(), "properties");
             builder.addPropertyValue("properties", properties);
         }
     }
