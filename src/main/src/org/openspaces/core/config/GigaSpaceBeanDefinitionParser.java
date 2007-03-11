@@ -44,6 +44,7 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             }
             if (TX_MANAGER.equals(name)) {
                 builder.addPropertyReference("transactionManager", attribute.getValue());
+                continue;
             }
 
             Assert.state(StringUtils.hasText(propertyName),
