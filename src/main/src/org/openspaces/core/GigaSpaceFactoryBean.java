@@ -86,10 +86,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      */
     private static final Constants constants = new Constants(TransactionDefinition.class);
 
-    private String beanName;
-
-    private DefaultGigaSpace gigaSpace;
-
     private IJSpace space;
 
     private TransactionProvider txProvider;
@@ -107,6 +103,11 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     private long defaultWriteLease = Lease.FOREVER;
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
+
+    
+    private String beanName;
+
+    private DefaultGigaSpace gigaSpace;
 
     /**
      * <p>Sets the space that will be used by the created {@link org.openspaces.core.GigaSpace}.
@@ -212,8 +213,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     /**
      * <p>Set the transaction manager to enable transactional operations. Can be <code>null</code>
-     * if transactional support is not required. NOTE: In order to enable transaction support both
-     * the transaction manager needs to be defined as well as providing it to this factory bean.
+     * if transactional support is not required or the default space is used as a transactional context.
      */
     public void setTransactionManager(JiniPlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;

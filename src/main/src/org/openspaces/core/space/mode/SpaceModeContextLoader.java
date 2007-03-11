@@ -41,6 +41,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     private Resource location;
 
     private boolean activeWhenPrimary = true;
+    
 
     private ApplicationContext parentApplicationContext;
 
