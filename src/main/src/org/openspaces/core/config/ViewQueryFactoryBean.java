@@ -14,7 +14,9 @@ public class ViewQueryFactoryBean implements FactoryBean, InitializingBean {
 
     private Object template;
 
-    private String type;
+    private Class<Object> type;
+
+    private String className;
 
 
     private View<Object> view;
@@ -23,23 +25,25 @@ public class ViewQueryFactoryBean implements FactoryBean, InitializingBean {
         this.where = where;
     }
 
-    public void setTemplate(Object template) {
-        this.template = template;
+    public void setType(Class<Object> clazz) {
+        this.type = clazz;
     }
 
-    public void setType(String clazz) {
-        this.type = clazz;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(where, "where property is requried");
-        if (template == null && type == null) {
-            throw new IllegalArgumentException("either template property or type property must be set");
+        if (template == null && type == null && className == null) {
+            throw new IllegalArgumentException("either template property or type property or className must be set");
         }
         if (template != null) {
             view = new View<Object>(template, where);
-        } else {
+        } else if (type != null) {
             view = new View<Object>(type, where);
+        } else {
+            view = new View<Object>(className, where);
         }
     }
 

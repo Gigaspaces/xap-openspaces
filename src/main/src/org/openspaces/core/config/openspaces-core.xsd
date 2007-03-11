@@ -211,7 +211,7 @@
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
-                    <xsd:attribute name="tx-manager" type="txManagerType" />
+                    <xsd:attribute name="tx-manager" type="txManagerType"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -239,7 +239,7 @@
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="giga-space-context" />
+    <xsd:element name="giga-space-context"/>
 
     <xsd:element name="context-loader">
         <xsd:annotation>
@@ -250,7 +250,7 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
                     <xsd:attribute name="location" type="xsd:string" use="required"/>
-                    <xsd:attribute name="active-when-primary" type="xsd:boolean" />
+                    <xsd:attribute name="active-when-primary" type="xsd:boolean"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -277,7 +277,8 @@
                     <xsd:element name="template" type="templateType" minOccurs="0"/>
                 </xsd:sequence>
                 <xsd:attribute name="where" type="xsd:string" use="required"/>
-                <xsd:attribute name="class" type="xsd:string"/>
+                <xsd:attribute name="class" type="classType"/>
+                <xsd:attribute name="class-name" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -340,4 +341,14 @@
         <xsd:union memberTypes="xsd:string"/>
     </xsd:simpleType>
 
+    <xsd:simpleType name="classType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <tool:annotation kind="ref">
+                    <tool:expected-type type="java.lang.Class"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+    </xsd:simpleType>
 </xsd:schema>

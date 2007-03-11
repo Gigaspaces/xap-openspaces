@@ -16,6 +16,8 @@ public class ViewQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionP
 
     public static final String CLASS = "class";
 
+    public static final String CLASS_NAME = "class-name";
+
     public static final String TEMPLATE = "template";
 
     protected Class getBeanClass(Element element) {
@@ -29,6 +31,10 @@ public class ViewQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionP
         String clazz = element.getAttribute(CLASS);
         if (clazz != null) {
             builder.addPropertyValue("type", clazz);
+        }
+        String className = element.getAttribute(CLASS_NAME);
+        if (className != null) {
+            builder.addPropertyValue("className", className);
         }
 
         Element templateEle = DomUtils.getChildElementByTagName(element, TEMPLATE);

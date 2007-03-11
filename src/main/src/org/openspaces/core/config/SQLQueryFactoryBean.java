@@ -14,7 +14,9 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
 
     private Object template;
 
-    private String type;
+    private Class type;
+
+    private String className;
 
 
     private SQLQuery<Object> sqlQuery;
@@ -27,19 +29,25 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
         this.template = template;
     }
 
-    public void setType(String clazz) {
+    public void setType(Class clazz) {
         this.type = clazz;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(where, "where property is requried");
-        if (template == null && type == null) {
-            throw new IllegalArgumentException("either template property or type property must be set");
+        if (template == null && type == null && className == null) {
+            throw new IllegalArgumentException("either template property or type property or className must be set");
         }
         if (template != null) {
             sqlQuery = new SQLQuery<Object>(template, where);
-        } else {
+        } else if (type != null) {
             sqlQuery = new SQLQuery<Object>(type, where);
+        } else {
+            sqlQuery = new SQLQuery<Object>(className, where);
         }
     }
 
