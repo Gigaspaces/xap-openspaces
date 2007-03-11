@@ -34,7 +34,7 @@ public class SpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionParse
         }
         Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
         if (propertiesEle != null) {
-            Properties properties = parserContext.getDelegate().parsePropsElement(parametersEle);
+            Properties properties = parserContext.getDelegate().parsePropsElement(propertiesEle);
             builder.addPropertyValue("properties", properties);
         }
         Element urlPropertiesEle = DomUtils.getChildElementByTagName(element, URL_PROPERTIES);

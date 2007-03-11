@@ -256,7 +256,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
 
         // copy over the external config overrides
-        props.putAll(beanLevelProperties);
+        if (beanLevelProperties != null) {
+            props.putAll(beanLevelProperties);
+        }
 
         // if deploy info is provided, apply it to the space url
         if (clusterInfo != null) {

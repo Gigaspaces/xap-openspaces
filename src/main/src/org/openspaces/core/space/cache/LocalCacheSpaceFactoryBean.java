@@ -39,23 +39,23 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      * <p>If set to {@link com.j_spaces.core.client.SpaceURL#UPDATE_MODE_PUSH} (<code>2</code>) the master pushes
      * the updates to the local cache, which holds a reference to the same updated object.
      *
-     * @see #setLocalCacheUpdateModeName(String)
+     * @see #setUpdateModeName(String)
      */
-    public void setLocalCacheUpdateMode(int localCacheUpdateMode) {
+    public void setUpdateMode(int localCacheUpdateMode) {
         this.localCacheUpdateMode = localCacheUpdateMode;
     }
 
     /**
      * Allows to set the local cahce update mode using a descriptive name instead of integer constants using
-     * {@link #setLocalCacheUpdateMode(int) localCacheUpdateMode}. Accepts either <code>push</code> or <code>pull</code>.
+     * {@link #setUpdateMode(int) localCacheUpdateMode}. Accepts either <code>push</code> or <code>pull</code>.
      *
-     * @see #setLocalCacheUpdateMode(int)
+     * @see #setUpdateMode (int)
      */
-    public void setLocalCacheUpdateModeName(String localCacheUpdateModeName) {
+    public void setUpdateModeName(String localCacheUpdateModeName) {
         if (LOCAL_CACHE_UPDATE_MODE_PULL.equalsIgnoreCase(localCacheUpdateModeName)) {
-            setLocalCacheUpdateMode(SpaceURL.UPDATE_MODE_PULL);
+            setUpdateMode(SpaceURL.UPDATE_MODE_PULL);
         } else if (LOCAL_CACHE_UPDATE_MODE_PUSH.equalsIgnoreCase(localCacheUpdateModeName)) {
-            setLocalCacheUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
+            setUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
         } else {
             throw new IllegalArgumentException("Wrong localCacheUpdateModeName [" + localCacheUpdateModeName + "], " +
                     "shoudl be either '" + LOCAL_CACHE_UPDATE_MODE_PULL + "' or '" + LOCAL_CACHE_UPDATE_MODE_PUSH + "'");
@@ -65,8 +65,8 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
 
     /**
      * Returns newly created properties setting the {@link com.j_spaces.core.client.SpaceURL#LOCAL_CACHE_UPDATE_MODE}
-     * based on either {@link #setLocalCacheUpdateMode(int) localCacheUpdateMode} or
-     * {@link #setLocalCacheUpdateModeName(String) localCacheUpdateModeName}.
+     * based on either {@link #setUpdateMode(int) localCacheUpdateMode} or
+     * {@link #setUpdateModeName(String) localCacheUpdateModeName}.
      */
     protected Properties createCacheProeprties() {
         Properties props = new Properties();

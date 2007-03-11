@@ -3,17 +3,24 @@
 <xsd:schema xmlns="http://www.openspaces.org/schema/core"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:beans="http://www.springframework.org/schema/beans"
+            xmlns:tool="http://www.springframework.org/schema/tool"
             targetNamespace="http://www.openspaces.org/schema/core"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified">
 
     <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+    <xsd:import namespace="http://www.springframework.org/schema/tool"/>
 
     <xsd:element name="space">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
                 A space factory bean that creates a space (IJSpace) based on a url.
             </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
         </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
@@ -59,7 +66,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="lookup-timeout" type="xsd:positiveInteger">
+                    <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The max timeout in milliseconds to find a Container or Space using multicast (jini
@@ -101,4 +108,224 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="local-cache">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence>
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:complexContent>
+                                    <xsd:extension base="beans:propsType">
+                                    </xsd:extension>
+                                </xsd:complexContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean"/>
+                    <xsd:attribute name="update-mode">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="pull"/>
+                                <xsd:enumeration value="push"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="local-view">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.cache.LocalViewSpaceFactoryBean">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence>
+                        <xsd:element ref="view-query" minOccurs="1" maxOccurs="unbounded"/>
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:complexContent>
+                                    <xsd:extension base="beans:propsType">
+                                    </xsd:extension>
+                                </xsd:complexContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="giga-space">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.GigaSpaceFactoryBean">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="org.openspaces.core.GigaSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean"/>
+                    <xsd:attribute name="default-read-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-take-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-write-lease" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-isolation" default="DEFAULT">
+                        <xsd:simpleType>
+                            <xsd:annotation>
+                                <xsd:documentation source="java:org.springframework.transaction.annotation.Isolation">
+                                    <![CDATA[The transaction isolation level.]]>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="DEFAULT"/>
+                                <xsd:enumeration value="READ_UNCOMMITTED"/>
+                                <xsd:enumeration value="READ_COMMITTED"/>
+                                <xsd:enumeration value="REPEATABLE_READ"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="local-tx-manager">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.transaction.manager.LocalJiniTransactionManager">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="org.openspaces.core.transaction.manager.JiniPlatformTransactionManager"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="required"/>
+                    <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="giga-space-context" />
+
+    <xsd:element name="context-loader">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.mode.SpaceModeContextLoader">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="location" type="xsd:string" use="required"/>
+                    <xsd:attribute name="active-when-primary" type="xsd:boolean" />
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="sql-query" type="sqlQueryType"/>
+    <xsd:element name="view-query" type="viewQueryType"/>
+
+    <xsd:element name="template" type="templateType"/>
+
+    <xsd:complexType name="sqlQueryType">
+        <xsd:annotation>
+            <xsd:documentation source="java:com.j_spaces.core.client.SQLQuery">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.client.SQLQuery"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="template" type="templateType" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:attribute name="where" type="xsd:string" use="required"/>
+                <xsd:attribute name="class" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="viewQueryType">
+        <xsd:annotation>
+            <xsd:documentation source="java:com.j_spaces.core.client.view.View">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.client.view.View"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="sqlQueryType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="templateType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:group ref="beans:beanElements"/>
+                <xsd:attributeGroup ref="beans:beanAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="spaceRefType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <tool:annotation kind="ref">
+                    <tool:expected-type type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="gigaSpaceRefType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <tool:annotation kind="ref">
+                    <tool:expected-type type="org.openspaces.core.GigaSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+    </xsd:simpleType>
+
 </xsd:schema>

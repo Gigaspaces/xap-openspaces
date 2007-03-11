@@ -33,15 +33,16 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
 
     protected Log logger = LogFactory.getLog(this.getClass());
 
-    private String beanName;
-
     private IJSpace space;
-
-    private IJSpace localCacheSpace;
 
     private Boolean clustered;
 
     private Properties properties;
+
+    
+    private String beanName;
+
+    private IJSpace localCacheSpace;
 
     /**
      * Sets the master space that a local cache will be built on top.
