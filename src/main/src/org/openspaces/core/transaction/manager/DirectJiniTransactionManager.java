@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
  * directly injected Jini {@link TransactionManager}. This transaction manager is mostly used with applications
  * that obtain the Jini transaction maanger by other means than the ones provided by
  * {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager} and
- * {@link org.openspaces.core.transaction.manager.LookupJiniTransactionManager}.
+ * {@link org.openspaces.core.transaction.manager.DistributedJiniTransactionManager}.
  *
  * @author kimchy
  */

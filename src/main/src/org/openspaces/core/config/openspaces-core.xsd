@@ -211,6 +211,7 @@
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
+                    <xsd:attribute name="tx-manager" type="txManagerType" />
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -305,6 +306,17 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+    <xsd:simpleType name="txManagerType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <tool:annotation kind="ref">
+                    <tool:expected-type type="org.openspaces.core.transaction.manager.JiniPlatformTransactionManager"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+    </xsd:simpleType>
 
     <xsd:simpleType name="spaceRefType">
         <xsd:annotation>

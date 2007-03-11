@@ -19,6 +19,8 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
 
     public static final String SPACE = "space";
 
+    public static final String TX_MANAGER = "tx-manager";
+
     protected Class getBeanClass(Element element) {
         return GigaSpaceFactoryBean.class;
     }
@@ -39,6 +41,9 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             if (SPACE.equals(name)) {
                 builder.addPropertyReference("space", attribute.getValue());
                 continue;
+            }
+            if (TX_MANAGER.equals(name)) {
+                builder.addPropertyReference("transactionManager", attribute.getValue());
             }
 
             Assert.state(StringUtils.hasText(propertyName),

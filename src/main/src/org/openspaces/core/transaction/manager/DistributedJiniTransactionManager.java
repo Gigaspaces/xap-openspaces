@@ -8,11 +8,12 @@ import org.openspaces.core.jini.JiniServiceFactoryBean;
  * Jini in order to lookup the transaction manager based on a name (can have <code>null</code> value).
  *
  * <p>Uses {@link org.openspaces.core.jini.JiniServiceFactoryBean} in order to perform the lookup based on
- * the specified {@link #setTransactionManagerName(String)} and {@link #setTimeout(Long)}.
+ * the specified {@link #setTransactionManagerName(String)} and {@link #setTimeout(Long)}. This usually works
+ * with Jini Mahalo transaction manager.
  *
  * @author kimchy
  */
-public class LookupJiniTransactionManager extends AbstractJiniTransactionManager {
+public class DistributedJiniTransactionManager extends AbstractJiniTransactionManager {
 
     private String transactionManagerName;
 
