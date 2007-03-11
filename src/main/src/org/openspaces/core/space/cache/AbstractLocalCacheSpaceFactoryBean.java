@@ -7,7 +7,6 @@ import com.j_spaces.core.client.SpaceURL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.CannotCreateSpaceException;
-import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,12 +20,6 @@ import java.util.Properties;
  * This factory represents an {@link com.j_spaces.core.IJSpace IJSpace} that is the
  * local cache proxy on top of the master space.
  *
- * <p>A clustered flag allows to control if this GigaSpace instance will work against
- * a clustered view of the space or directly against a clustered memeber.  By default
- * if this flag is not set it will be set automatically by this factory. It will be set
- * to <code>true</code> if the space is an embedded one. It will be set to <code>false</code>
- * otherwise (i.e. the space is not an embedded space).
- *
  * @author kimchy
  */
 public abstract class AbstractLocalCacheSpaceFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
@@ -35,11 +28,9 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
 
     private IJSpace space;
 
-    private Boolean clustered;
-
     private Properties properties;
 
-    
+
     private String beanName;
 
     private IJSpace localCacheSpace;
@@ -49,17 +40,6 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      */
     public void setSpace(IJSpace space) {
         this.space = space;
-    }
-
-    /**
-     * <p>A clustered flag allows to control if this GigaSpace instance will work against
-     * a clustered view of the space or directly against a clustered memeber. By default
-     * if this flag is not set it will be set automatically by this factory. It will be
-     * set to <code>true</code> if the space is an embedded one. It will be set to
-     * <code>false</code> otherwise (i.e. the space is not an embedded space).
-     */
-    public void setClustered(boolean clustered) {
-        this.clustered = clustered;
     }
 
     /**
@@ -83,26 +63,11 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * {@link #createCacheProeprties()}. Additional properties are applied based on
      * {@link #setProperties(java.util.Properties)}.
      *
-     * <p>A clustered flag allows to control if this GigaSpace instance will work against
-     * a clustered view of the space or directly against a clustered memeber. By default
-     * if this flag is not set it will be set automatically by this factory. It will be
-     * set to <code>true</code> if the space is an embedded one. It will be set to
-     * <code>false</code> otherwise (i.e. the space is not an embedded space).
-     *
      * @see com.j_spaces.core.client.SpaceFinder#find(com.j_spaces.core.client.SpaceURL,com.j_spaces.core.IJSpace,com.sun.jini.start.LifeCycle)
      */
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(space, "space property must be set");
         IJSpace actualSpace = space;
-        if (clustered == null) {
-            clustered = !space.isEmbedded();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Clustered flag automatically set to [" + clustered + "] for bean [" + beanName + "]");
-            }
-        }
-        if (!clustered) {
-            actualSpace = SpaceUtils.getClusterMemberSpace(actualSpace, true);
-        }
         Properties props = createCacheProeprties();
         props.put(SpaceURL.USE_LOCAL_CACHE, "true");
         if (properties != null) {

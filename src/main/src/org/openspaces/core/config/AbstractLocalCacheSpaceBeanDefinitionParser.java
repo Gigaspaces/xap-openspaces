@@ -16,8 +16,6 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
 
     public static final String SPACE = "space";
 
-    public static final String CLUSTERED = "clustered";
-
     public static final String PROPERTIES = "properties";
 
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -25,10 +23,6 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
         String space = element.getAttribute(SPACE);
         if (StringUtils.hasLength(space)) {
             builder.addPropertyReference("space", space);
-        }
-        String clustered = element.getAttribute(CLUSTERED);
-        if (StringUtils.hasLength(clustered)) {
-            builder.addPropertyValue("clustered", Boolean.valueOf(clustered));
         }
         Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
         if (propertiesEle != null) {
