@@ -3,6 +3,8 @@ package org.openspaces.core.config;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
+ * A Spring name space handler for OpenSpaces core package.
+ *
  * @author kimchy
  */
 public class CoreNamespaceHandler extends NamespaceHandlerSupport {
@@ -15,7 +17,8 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("local-view", new LocalViewSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("giga-space", new GigaSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("local-tx-manager", new LocalTxManagerBeanDefinitionParser());
-        //TODO add lookup tx manager
+        registerBeanDefinitionParser("distributed-tx-manager", new DistributedTxManagerBeanDefinitionParser());
+        //TODO add distributed tx manager
         try {
             registerBeanDefinitionParser("giga-space-context", new GigaSpaceContextBeanDefinitionParser());
         } catch (Throwable t) {

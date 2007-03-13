@@ -29,7 +29,7 @@
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element ref="beans:props" />
+                                    <xsd:element ref="beans:props"/>
                                 </xsd:sequence>
                                 <xsd:attribute name="ref" type="xsd:string">
                                     <xsd:annotation>
@@ -43,7 +43,7 @@
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element ref="beans:props" />
+                                    <xsd:element ref="beans:props"/>
                                 </xsd:sequence>
                                 <xsd:attribute name="ref" type="xsd:string">
                                     <xsd:annotation>
@@ -57,7 +57,7 @@
                         <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element ref="beans:map" />
+                                    <xsd:element ref="beans:map"/>
                                 </xsd:sequence>
                                 <xsd:attribute name="ref" type="xsd:string">
                                     <xsd:annotation>
@@ -144,7 +144,7 @@
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element ref="beans:props" />
+                                    <xsd:element ref="beans:props"/>
                                 </xsd:sequence>
                                 <xsd:attribute name="ref" type="xsd:string">
                                     <xsd:annotation>
@@ -188,7 +188,7 @@
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:sequence>
-                                    <xsd:element ref="beans:props" />
+                                    <xsd:element ref="beans:props"/>
                                 </xsd:sequence>
                                 <xsd:attribute name="ref" type="xsd:string">
                                     <xsd:annotation>
@@ -251,21 +251,48 @@
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
-                    <tool:exports type="org.openspaces.core.transaction.manager.JiniPlatformTransactionManager"/>
+                    <tool:exports type="org.openspaces.core.transaction.manager.LocalJiniTransactionManager"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
-                <xsd:extension base="beans:identifiedType">
+                <xsd:extension base="baseTxManagerType">
                     <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="required"/>
-                    <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="distributed-tx-manager">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.transaction.manager.DistributedJiniTransactionManager">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="org.openspaces.core.transaction.manager.DistributedJiniTransactionManager"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="baseTxManagerType">
+                    <xsd:attribute name="tx-manager-name" type="xsd:string" />
+                    <xsd:attribute name="lookup-timeout" type="xsd:nonPositiveInteger" />
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="baseTxManagerType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger"/>
+                <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger"/>
+                <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
 
     <xsd:element name="giga-space-context"/>
 

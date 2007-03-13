@@ -8,7 +8,7 @@ import org.openspaces.core.jini.JiniServiceFactoryBean;
  * Jini in order to lookup the transaction manager based on a name (can have <code>null</code> value).
  *
  * <p>Uses {@link org.openspaces.core.jini.JiniServiceFactoryBean} in order to perform the lookup based on
- * the specified {@link #setTransactionManagerName(String)} and {@link #setTimeout(Long)}. This usually works
+ * the specified {@link #setTransactionManagerName(String)} and {@link #setLookupTimeout(Long)}. This usually works
  * with Jini Mahalo transaction manager.
  *
  * @author kimchy
@@ -17,7 +17,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
 
     private String transactionManagerName;
 
-    private Long timeout;
+    private Long lookupTimeout;
 
     /**
      * Sets the transaction manager name to perform the lookup by.
@@ -27,24 +27,24 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
     }
 
     /**
-     * Sets the timeout for the transaction manager lookup operation.
+     * Sets the lookupTimeout for the transaction manager lookup operation.
      */
-    public void setTimeout(Long timeout) {
-        this.timeout = timeout;
+    public void setLookupTimeout(Long lookupTimeout) {
+        this.lookupTimeout = lookupTimeout;
     }
 
     /**
      * Returns a Jini {@link net.jini.core.transaction.server.TransactionManager} that is lookup
      * up using {@link org.openspaces.core.jini.JiniServiceFactoryBean}. The lookup can use a
      * specified {@link #setTransactionManagerName(String)} and a
-     * {@link #setTimeout(Long)}.
+     * {@link #setLookupTimeout(Long)}.
      */
     protected TransactionManager doCreateTransactionManager() throws Exception {
         JiniServiceFactoryBean serviceFactory = new JiniServiceFactoryBean();
         serviceFactory.setServiceClass(TransactionManager.class);
         serviceFactory.setServiceName(transactionManagerName);
-        if (timeout != null) {
-            serviceFactory.setTimeout(timeout.longValue());
+        if (lookupTimeout != null) {
+            serviceFactory.setTimeout(lookupTimeout);
         }
         serviceFactory.afterPropertiesSet();
         return (TransactionManager) serviceFactory.getObject();
