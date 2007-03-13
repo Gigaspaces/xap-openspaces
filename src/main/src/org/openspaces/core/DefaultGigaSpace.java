@@ -111,6 +111,14 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
+    public void clear(Object template) throws GigaSpaceException {
+        try {
+            space.clear(template, getCurrentTransaction());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public int count(Object template) throws GigaSpaceException {
         return count(template, getModifiersForIsolationLevel());
     }

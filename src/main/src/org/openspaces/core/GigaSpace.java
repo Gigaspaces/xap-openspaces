@@ -59,6 +59,8 @@ public interface GigaSpace {
 
     void clean() throws GigaSpaceException;
 
+    void clear(Object template) throws GigaSpaceException;
+
     int count(Object template) throws GigaSpaceException;
 
     int count(Object template, int modifiers) throws GigaSpaceException;
