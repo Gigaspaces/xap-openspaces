@@ -98,6 +98,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="schema" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The schema name associated with the space
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="lookup-groups" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
