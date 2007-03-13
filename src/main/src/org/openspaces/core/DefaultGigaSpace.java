@@ -12,18 +12,21 @@ import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.TransactionDefinition;
 
 /**
- * <p>Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
- * {@link org.openspaces.core.transaction.TransactionProvider} and {@link org.openspaces.core.exception.ExceptionTranslator}.
- *
- * <p>Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions aquired using
+ * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
+ * {@link org.openspaces.core.transaction.TransactionProvider} and
+ * {@link org.openspaces.core.exception.ExceptionTranslator}.
+ * 
+ * <p>
+ * Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions aquired using
  * {@link org.openspaces.core.transaction.TransactionProvider}. Any exceptions thrown during the
  * operations are translated using {@link org.openspaces.core.exception.ExceptionTranslator}.
- *
- * <p>Allows to set default timeouts for read and take operations and default lease for write operation.
- *
+ * 
+ * <p>
+ * Allows to set default timeouts for read and take operations and default lease for write
+ * operation.
+ * 
  * @author kimchy
  */
-// TODO Allow to set default modifiers
 public class DefaultGigaSpace implements GigaSpace {
 
     private IJSpace space;
@@ -40,33 +43,39 @@ public class DefaultGigaSpace implements GigaSpace {
 
     /**
      * Constructs a new DefaultGigaSpace implementation.
-     *
-     * @param space                 The space implementation to delegate operations to
-     * @param txProvider            The transaction provider for declarative transaction ex.
-     * @param exTranslator          Exception translator to translate low level exceptions into GigaSpaces runtime exception
-     * @param defaultIsolationLevel The default isolation level for read operations without modifiers.
-     *                              Maps to {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()} levels values.
+     * 
+     * @param space
+     *            The space implementation to delegate operations to
+     * @param txProvider
+     *            The transaction provider for declarative transaction ex.
+     * @param exTranslator
+     *            Exception translator to translate low level exceptions into GigaSpaces runtime
+     *            exception
+     * @param defaultIsolationLevel
+     *            The default isolation level for read operations without modifiers. Maps to
+     *            {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}
+     *            levels values.
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
-                            int defaultIsolationLevel) {
+            int defaultIsolationLevel) {
         this.space = space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         // set the default read take modifiers according to the default isolation level
         switch (defaultIsolationLevel) {
-            case TransactionDefinition.ISOLATION_DEFAULT:
-                break;
-            case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
-                space.setReadModifiers(ReadModifiers.DIRTY_READ);
-                break;
-            case TransactionDefinition.ISOLATION_READ_COMMITTED:
-                space.setReadModifiers(ReadModifiers.READ_COMMITTED);
-                break;
-            case TransactionDefinition.ISOLATION_REPEATABLE_READ:
-                space.setReadModifiers(ReadModifiers.REPEATABLE_READ);
-                break;
-            case TransactionDefinition.ISOLATION_SERIALIZABLE:
-                throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
+        case TransactionDefinition.ISOLATION_DEFAULT:
+            break;
+        case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
+            space.setReadModifiers(ReadModifiers.DIRTY_READ);
+            break;
+        case TransactionDefinition.ISOLATION_READ_COMMITTED:
+            space.setReadModifiers(ReadModifiers.READ_COMMITTED);
+            break;
+        case TransactionDefinition.ISOLATION_REPEATABLE_READ:
+            space.setReadModifiers(ReadModifiers.REPEATABLE_READ);
+            break;
+        case TransactionDefinition.ISOLATION_SERIALIZABLE:
+            throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
     }
 
@@ -215,18 +224,6 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public Object[] readMultiple(Query template, int maxEntries) throws GigaSpaceException {
-        return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
-    }
-
-    public Object[] readMultiple(Query template, int maxEntries, int modifiers) throws GigaSpaceException {
-        try {
-            return space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
-        } catch (Exception e) {
-            throw exTranslator.translate(e);
-        }
-    }
-
     public <T> T take(T template) throws GigaSpaceException {
         return take(template, defaultTakeTimeout);
     }
@@ -276,14 +273,6 @@ public class DefaultGigaSpace implements GigaSpace {
     }
 
     public Object[] takeMultiple(Object template, int maxEntries) throws GigaSpaceException {
-        try {
-            return space.takeMultiple(template, getCurrentTransaction(), maxEntries);
-        } catch (Exception e) {
-            throw exTranslator.translate(e);
-        }
-    }
-
-    public Object[] takeMultiple(Query template, int maxEntries) throws GigaSpaceException {
         try {
             return space.takeMultiple(template, getCurrentTransaction(), maxEntries);
         } catch (Exception e) {
@@ -350,10 +339,11 @@ public class DefaultGigaSpace implements GigaSpace {
     }
 
     /**
-     * Gets the isolation level from the current running transaction (enabling the usage of
-     * Spring declarative isolation level settings). If there is no transaction in progress
-     * or the transaction isolation is {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT}
-     * will use the default isolation level associated with this class.
+     * Gets the isolation level from the current running transaction (enabling the usage of Spring
+     * declarative isolation level settings). If there is no transaction in progress or the
+     * transaction isolation is
+     * {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT} will use the
+     * default isolation level associated with this class.
      */
     private int getModifiersForIsolationLevel() {
         int isolationLevel = txProvider.getCurrentTransactionIsolationLevel(this);

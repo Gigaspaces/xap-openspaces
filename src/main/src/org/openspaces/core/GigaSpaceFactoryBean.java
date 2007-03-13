@@ -278,7 +278,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         return this.gigaSpace;
     }
 
-    public Class getObjectType() {
+    public Class<? extends GigaSpace> getObjectType() {
         return (gigaSpace == null ? GigaSpace.class : gigaSpace.getClass());
     }
 
