@@ -6,6 +6,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
+ * A helper factory beans for {@link com.j_spaces.core.client.view.View} so namespace
+ * based configuration will be simpler.
+ *
  * @author kimchy
  */
 public class ViewQueryFactoryBean implements FactoryBean, InitializingBean {

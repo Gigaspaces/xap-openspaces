@@ -27,6 +27,12 @@
                 <xsd:extension base="beans:identifiedType">
                     <xsd:sequence>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the url properties. Note, most if not all url level properties can be set using
+                                    explicit attributes.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
                                 <xsd:sequence>
                                     <xsd:element ref="beans:props"/>
@@ -41,6 +47,14 @@
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the properties the IJSpace will be created with (same as paramters). Note, this
+                                    should not be confused with url-properties. The properties here are the ones refered
+                                    to as custom properties and allows for example to control the xpath injection to
+                                    space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
                                 <xsd:sequence>
                                     <xsd:element ref="beans:props"/>
@@ -55,6 +69,14 @@
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the parameters the IJSpace will be created with (same as paramters). Note, this
+                                    should not be confused with url-properties. The properties here are the ones refered
+                                    to as custom properties and allows for example to control the xpath injection to
+                                    space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
                                 <xsd:sequence>
                                     <xsd:element ref="beans:map"/>
@@ -277,8 +299,8 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseTxManagerType">
-                    <xsd:attribute name="tx-manager-name" type="xsd:string" />
-                    <xsd:attribute name="lookup-timeout" type="xsd:nonPositiveInteger" />
+                    <xsd:attribute name="tx-manager-name" type="xsd:string"/>
+                    <xsd:attribute name="lookup-timeout" type="xsd:nonPositiveInteger"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

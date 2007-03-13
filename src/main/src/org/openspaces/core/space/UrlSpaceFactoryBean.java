@@ -88,7 +88,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param url    The url to create the {@link com.j_spaces.core.IJSpace} with.
      * @param params The parameters to create the {@link com.j_spaces.core.IJSpace} with.
      */
-    public UrlSpaceFactoryBean(String url, Map params) {
+    public UrlSpaceFactoryBean(String url, Map<String, Object> params) {
         this.url = url;
         this.parameters = params;
     }
@@ -118,14 +118,15 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * Same as {@link #setParameters(java.util.Map)} just with properties.
+     * Same as {@link #setParameters(java.util.Map) parameters} just with properties.
      */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
     /**
-     * <p>Sets the url properties (cluster_schema, total_members, ...).
+     * <p>Sets the url properties. Note, most if not all url level properties can be set using
+     * explicit setters.
      */
     public void setUrlProperties(Properties urlProperties) {
         this.urlProperties = urlProperties;
