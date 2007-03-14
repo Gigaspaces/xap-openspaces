@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A Spring bean post processor allowing to use {@link org.openspaces.core.context.GigaSpaceContext} in order
- * to inject {@link org.openspaces.core.GigaSpace} instances using annotations.
- *
+ * A Spring bean post processor allowing to use {@link GigaSpaceContext} in order to inject
+ * {@link GigaSpaceContext} instances using annotations.
+ * 
  * @author kimchy
  * @see org.openspaces.core.context.GigaSpaceContext
  * @see org.openspaces.core.GigaSpace
  */
-public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
-        implements ApplicationContextAware {
+public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter implements
+        ApplicationContextAware {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -52,14 +52,18 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
         if (this.gsByName == null) {
             this.gsByName = new HashMap<String, GigaSpace>();
             // Look for named GigaSpaces
-            for (String gsName : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext, GigaSpace.class)) {
+
+            for (String gsName : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext,
+                    GigaSpace.class)) {
+
                 GigaSpace gs = (GigaSpace) this.applicationContext.getBean(gsName);
                 gsByName.put(gsName, gs);
             }
 
             if (this.gsByName.isEmpty()) {
                 // Try to find a unique GigaSpaces.
-                String[] gsNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext, GigaSpace.class);
+                String[] gsNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext,
+                        GigaSpace.class);
                 if (gsNames.length == 1) {
                     this.uniqueGs = (GigaSpace) this.applicationContext.getBean(gsNames[0]);
                 }
@@ -73,16 +77,14 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
         }
     }
 
-    protected GigaSpace findGigaSpaceByName(String gsName)
-            throws NoSuchBeanDefinitionException {
+    protected GigaSpace findGigaSpaceByName(String gsName) throws NoSuchBeanDefinitionException {
 
         initMapsIfNecessary();
         if (gsName == null || "".equals(gsName)) {
             if (this.uniqueGs != null) {
                 return this.uniqueGs;
             } else {
-                throw new NoSuchBeanDefinitionException(
-                        "No GigaSpaces name given and factory contains several");
+                throw new NoSuchBeanDefinitionException("No GigaSpaces name given and factory contains several");
             }
         }
         GigaSpace namedGs = this.gsByName.get(gsName);
@@ -124,7 +126,6 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
         return metadata;
     }
 
-
     private void addIfPresent(List<AnnotatedMember> metadata, AccessibleObject ao) {
         GigaSpaceContext gsContext = ao.getAnnotation(GigaSpaceContext.class);
         if (gsContext != null) {
@@ -132,10 +133,8 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
         }
     }
 
-
     /**
-     * Class representing injection information about an annotated field
-     * or setter method.
+     * Class representing injection information about an annotated field or setter method.
      */
     private class AnnotatedMember {
 
@@ -167,14 +166,12 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
                 } else {
                     throw new IllegalArgumentException("Cannot inject unknown AccessibleObject type " + this.member);
                 }
-            }
-            catch (IllegalAccessException ex) {
+            } catch (IllegalAccessException ex) {
                 throw new IllegalArgumentException("Cannot inject member " + this.member, ex);
-            }
-            catch (InvocationTargetException ex) {
+            } catch (InvocationTargetException ex) {
                 // Method threw an exception
-                throw new IllegalArgumentException("Attempt to inject setter method " + this.member +
-                        " resulted in an exception", ex);
+                throw new IllegalArgumentException("Attempt to inject setter method " + this.member
+                        + " resulted in an exception", ex);
             }
         }
 
@@ -187,15 +184,13 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
             } else if (member instanceof Method) {
                 Method setter = (Method) member;
                 if (setter.getParameterTypes().length != 1) {
-                    throw new IllegalArgumentException(
-                            "Supposed setter " + this.member + " must have 1 argument, not " +
-                                    setter.getParameterTypes().length);
+                    throw new IllegalArgumentException("Supposed setter " + this.member + " must have 1 argument, not "
+                            + setter.getParameterTypes().length);
                 }
                 return setter.getParameterTypes()[0];
             } else {
-                throw new IllegalArgumentException(
-                        "Unknown AccessibleObject type " + this.member.getClass() +
-                                "; Can only inject settermethods or fields");
+                throw new IllegalArgumentException("Unknown AccessibleObject type " + this.member.getClass()
+                        + "; Can only inject settermethods or fields");
             }
         }
 
@@ -207,8 +202,8 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
             GigaSpace gs = findGigaSpaceByName(this.name);
             if (GigaSpace.class.isAssignableFrom(getMemberType())) {
                 if (!getMemberType().isInstance(gs)) {
-                    throw new IllegalArgumentException("Cannot inject " + this.member +
-                            " with GigaSpaces [" + this.name + "]: type mismatch");
+                    throw new IllegalArgumentException("Cannot inject " + this.member + " with GigaSpaces ["
+                            + this.name + "]: type mismatch");
                 }
                 return gs;
             } else {
@@ -217,4 +212,3 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
         }
     }
 }
-
