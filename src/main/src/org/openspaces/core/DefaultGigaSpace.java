@@ -1,33 +1,29 @@
 package org.openspaces.core;
 
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.Query;
+import com.j_spaces.core.client.ReadModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
-
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.Query;
-import com.j_spaces.core.client.ReadModifiers;
-
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
  * {@link org.openspaces.core.transaction.TransactionProvider} and
  * {@link org.openspaces.core.exception.ExceptionTranslator}.
- * 
- * <p>
- * Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions aquired using
+ *
+ * <p>Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions aquired using
  * {@link org.openspaces.core.transaction.TransactionProvider}. Any exceptions thrown during the
  * operations are translated using {@link org.openspaces.core.exception.ExceptionTranslator}.
- * 
- * <p>
- * Allows to set default timeouts for read and take operations and default lease for write
+ *
+ * <p>Allows to set default timeouts for read and take operations and default lease for write
  * operation.
- * 
+ *
  * @author kimchy
  */
 public class DefaultGigaSpace implements GigaSpace {
@@ -46,39 +42,35 @@ public class DefaultGigaSpace implements GigaSpace {
 
     /**
      * Constructs a new DefaultGigaSpace implementation.
-     * 
-     * @param space
-     *            The space implementation to delegate operations to
-     * @param txProvider
-     *            The transaction provider for declarative transaction ex.
-     * @param exTranslator
-     *            Exception translator to translate low level exceptions into GigaSpaces runtime
-     *            exception
-     * @param defaultIsolationLevel
-     *            The default isolation level for read operations without modifiers. Maps to
-     *            {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}
-     *            levels values.
+     *
+     * @param space                 The space implementation to delegate operations to
+     * @param txProvider            The transaction provider for declarative transaction ex.
+     * @param exTranslator          Exception translator to translate low level exceptions into GigaSpaces runtime
+     *                              exception
+     * @param defaultIsolationLevel The default isolation level for read operations without modifiers. Maps to
+     *                              {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}
+     *                              levels values.
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
-            int defaultIsolationLevel) {
+                            int defaultIsolationLevel) {
         this.space = space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         // set the default read take modifiers according to the default isolation level
         switch (defaultIsolationLevel) {
-        case TransactionDefinition.ISOLATION_DEFAULT:
-            break;
-        case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
-            space.setReadModifiers(ReadModifiers.DIRTY_READ);
-            break;
-        case TransactionDefinition.ISOLATION_READ_COMMITTED:
-            space.setReadModifiers(ReadModifiers.READ_COMMITTED);
-            break;
-        case TransactionDefinition.ISOLATION_REPEATABLE_READ:
-            space.setReadModifiers(ReadModifiers.REPEATABLE_READ);
-            break;
-        case TransactionDefinition.ISOLATION_SERIALIZABLE:
-            throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
+            case TransactionDefinition.ISOLATION_DEFAULT:
+                break;
+            case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
+                space.setReadModifiers(ReadModifiers.DIRTY_READ);
+                break;
+            case TransactionDefinition.ISOLATION_READ_COMMITTED:
+                space.setReadModifiers(ReadModifiers.READ_COMMITTED);
+                break;
+            case TransactionDefinition.ISOLATION_REPEATABLE_READ:
+                space.setReadModifiers(ReadModifiers.REPEATABLE_READ);
+                break;
+            case TransactionDefinition.ISOLATION_SERIALIZABLE:
+                throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
     }
 
