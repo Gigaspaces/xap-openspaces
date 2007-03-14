@@ -1,5 +1,7 @@
 package org.openspaces.core.transaction.manager;
 
+import java.rmi.RemoteException;
+
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
@@ -12,12 +14,14 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.UnknownTransactionException;
 import net.jini.core.transaction.server.NestableTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.InvalidTimeoutException;
 import org.springframework.transaction.NestedTransactionNotSupportedException;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionSystemException;
@@ -27,30 +31,30 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
-import java.rmi.RemoteException;
-
 /**
- * <p>Base class for Jini implementation of Springs {@link org.springframework.transaction.PlatformTransactionManager}.
- * Uses Jini {@link net.jini.core.transaction.server.TransactionManager} in order to manage transactions with sub classes
- * responsible for providing it using {@link #doCreateTransactionManager()}.
- *
- * <p>Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
- * {@link org.springframework.transaction.support.TransactionSynchronizationManager#bindResource(Object,Object)}.
- * The transactional context is optional and defaults to the Jini {@link net.jini.core.transaction.server.TransactionManager}
- * instance.
- *
- * <p>By default the transaciton timeout will be FOREVER. The deafult timeout on the transaction manager level can
- * be set using {@link #setDefaultTimeout(Long)}. If the timeout is explicitly set using Spring support for
- * transactions (for example using {@link org.springframework.transaction.TransactionDefinition}) this value
- * will be used.
- *
+ * Base class for Jini implementation of Springs {@link PlatformTransactionManager}. Uses Jini
+ * {@link TransactionManager} in order to manage transactions with sub classes responsible for
+ * providing it using {@link #doCreateTransactionManager()}.
+ * 
+ * <p>
+ * Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
+ * {@link TransactionSynchronizationManager#bindResource(Object,Object)}. The transactional context
+ * is optional and defaults to the Jini {@link TransactionManager} instance. Note, this can be
+ * overriden by sub classes.
+ * 
+ * <p>
+ * By default the transaciton timeout will be <code>FOREVER</code>. The deafult timeout on the
+ * transaction manager level can be set using {@link #setDefaultTimeout(Long)}. If the timeout is
+ * explicitly set using Spring support for transactions (for example using
+ * {@link org.springframework.transaction.TransactionDefinition}) this value will be used.
+ * 
  * @author kimchy
  * @see org.openspaces.core.transaction.DefaultTransactionProvider
  * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
  */
-// TODO Check if local transaction supports nested transactions, and if not, why not?
-// TODO Need to support transaction timeout    
-public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements JiniPlatformTransactionManager, InitializingBean {
+// TODO Need to support relative transaction timeout
+public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements
+        JiniPlatformTransactionManager, InitializingBean {
 
     // TransactionManager used for creating the actual transaction
     private transient TransactionManager transactionManager;
@@ -74,30 +78,34 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     }
 
     /**
-     * Sets the default timeout to use if {@link org.springframework.transaction.TransactionDefinition#TIMEOUT_DEFAULT}
-     * is used. Set in <b>seconds</b> (in order to follow the {@link org.springframework.transaction.TransactionDefinition}
-     * contract. Defaults to {@link net.jini.core.lease.Lease#FOREVER}.
+     * Sets the default timeout to use if {@link TransactionDefinition#TIMEOUT_DEFAULT} is used. Set
+     * in <b>seconds</b> (in order to follow the {@link TransactionDefinition} contract. Defaults
+     * to {@link Lease#FOREVER}.
      */
     public void setDefaultTimeout(Long defaultTimeout) {
         this.defaultTimeout = defaultTimeout;
     }
 
     /**
-     * Sets an optional timeout when performing commit. If not set {@link net.jini.core.transaction.Transaction#commit()}
-     * will be called. If set {@link net.jini.core.transaction.Transaction#commit(long)} will be called.
+     * Sets an optional timeout when performing commit. If not set {@link Transaction#commit()} will
+     * be called. If set {@link Transaction#commit(long)} will be called.
      */
     public void setCommitTimeout(Long commitTimeout) {
         this.commitTimeout = commitTimeout;
     }
 
     /**
-     * Sets an optional timeout when performing rollback/abort. If not set {@link net.jini.core.transaction.Transaction#abort()}
-     * will be called. If set {@link net.jini.core.transaction.Transaction#abort(long)} will be called.
+     * Sets an optional timeout when performing rollback/abort. If not set
+     * {@link Transaction#abort()} will be called. If set {@link Transaction#abort(long)} will be
+     * called.
      */
     public void setRollbackTimeout(Long rollbackTimeout) {
         this.rollbackTimeout = rollbackTimeout;
     }
 
+    /**
+     * Implemented by sub classes to provide a Jini {@link TransactionManager}.
+     */
     protected abstract TransactionManager doCreateTransactionManager() throws Exception;
 
     public void afterPropertiesSet() throws Exception {
@@ -121,7 +129,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         if (TransactionSynchronizationManager.hasResource(transactionalContext)) {
             JiniTransactionHolder jiniHolder = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(transactionalContext);
             if (logger.isDebugEnabled()) {
-                logger.debug("Found thread-bound tx data [" + jiniHolder + "] for Jini resource [" + transactionalContext + "]");
+                logger.debug("Found thread-bound tx data [" + jiniHolder + "] for Jini resource ["
+                        + transactionalContext + "]");
             }
             txObject.setJiniHolder(jiniHolder, false);
         }
@@ -181,7 +190,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     }
 
-    protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel) throws InvalidIsolationLevelException {
+    protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
+            throws InvalidIsolationLevelException {
         if (isolationLevel != TransactionDefinition.ISOLATION_DEFAULT) {
             throw new InvalidIsolationLevelException("TransactionManager does not support custom isolation levels");
         }
@@ -299,17 +309,18 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
 
         if (exception instanceof TimeoutExpiredException) {
-            throw new TransactionTimedOutException("Transaction timed out (either the transaction or commit/abort)", exception);
+            throw new TransactionTimedOutException("Transaction timed out (either the transaction or commit/abort)",
+                    exception);
         }
 
         return new TransactionException("unexpected exception ", exception) {
+            private static final long serialVersionUID = -2829436028739682240L;
         };
     }
 
     /**
-     * Jini Transaction object. Used as transaction object by
-     * GigaSpaceTransactionManager.
-     *
+     * Jini Transaction object. Used as transaction object by GigaSpaceTransactionManager.
+     * 
      * TODO: can SmartTransactionObject be implemented?
      */
     static class JiniTransactionObject {
