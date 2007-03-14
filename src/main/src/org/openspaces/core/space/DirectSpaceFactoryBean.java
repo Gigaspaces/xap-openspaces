@@ -1,7 +1,8 @@
 package org.openspaces.core.space;
 
+import org.springframework.dao.DataAccessException;
+
 import com.j_spaces.core.IJSpace;
-import org.openspaces.core.GigaSpaceException;
 
 /**
  * A direct space factory bean, initalized with an existing {@link IJSpace} and provides it as the
@@ -33,7 +34,7 @@ public class DirectSpaceFactoryBean extends AbstractSpaceFactoryBean {
      * 
      * @see AbstractSpaceFactoryBean#doCreateSpace()
      */
-    protected IJSpace doCreateSpace() throws GigaSpaceException {
+    protected IJSpace doCreateSpace() throws DataAccessException {
         return space;
     }
 }

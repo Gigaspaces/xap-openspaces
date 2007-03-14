@@ -1,9 +1,9 @@
 package org.openspaces.core.exception;
 
-import org.openspaces.core.GigaSpaceException;
+import org.springframework.dao.DataAccessException;
 
 /**
- * Translates a low level JavaSpaces/Jini exception into a {@link GigaSpaceException} runtime
+ * Translates a low level JavaSpaces/Jini exception into a {@link DataAccessException} runtime
  * exception.
  * 
  * @author kimchy
@@ -11,11 +11,11 @@ import org.openspaces.core.GigaSpaceException;
 public interface ExceptionTranslator {
 
     /**
-     * Translates a low leval exception into a {@link GigaSpaceException} rutime exception.
+     * Translates a low leval exception into a {@link DataAccessException} rutime exception.
      * 
      * @param e
      *            The low level exception to translate
      * @return The translated exception
      */
-    GigaSpaceException translate(Exception e);
+    DataAccessException translate(Exception e);
 }

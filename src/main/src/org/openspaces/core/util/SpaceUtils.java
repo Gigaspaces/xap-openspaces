@@ -1,8 +1,10 @@
 package org.openspaces.core.util;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
+
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
-import org.openspaces.core.GigaSpaceException;
 
 /**
  * A set of {@link IJSpace} utilites.
@@ -24,11 +26,11 @@ public abstract class SpaceUtils {
      * @return A cluster member of the specified space
      * @throws GigaSpaceException
      */
-    public static IJSpace getClusterMemberSpace(IJSpace space, boolean embedded) throws GigaSpaceException {
+    public static IJSpace getClusterMemberSpace(IJSpace space, boolean embedded) throws DataAccessException {
         try {
             return space.getContainer().getSpace(space.getName(), embedded);
         } catch (Exception e) {
-            throw new GigaSpaceException("Failed to find space under name [" + space.getName() + "]", e);
+            throw new DataAccessResourceFailureException("Failed to find space under name [" + space.getName() + "]", e);
         }
     }
 

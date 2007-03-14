@@ -7,6 +7,7 @@ import com.j_spaces.core.client.Query;
 import net.jini.space.JavaSpace;
 
 import org.openspaces.core.transaction.TransactionProvider;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Provides a simpler inteface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
@@ -34,7 +35,7 @@ import org.openspaces.core.transaction.TransactionProvider;
  * {@link IJSpace}.
  * 
  * <p>
- * Operations throw a {@link org.openspaces.core.GigaSpaceException} allowing for simplified
+ * Operations throw a {@link org.openspaces.core.DataAccessException} allowing for simplified
  * development model as it is a runtime exception. The cause of the exception can be aquired from
  * the GigaSpace exception.
  * 
@@ -44,7 +45,7 @@ import org.openspaces.core.transaction.TransactionProvider;
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.DefaultGigaSpace
- * @see org.openspaces.core.GigaSpaceException
+ * @see org.openspaces.core.DataAccessException
  */
 public interface GigaSpace {
 
@@ -70,73 +71,73 @@ public interface GigaSpace {
      */
     TransactionProvider getTxProvider();
 
-    void clean() throws GigaSpaceException;
+    void clean() throws DataAccessException;
 
-    void clear(Object template) throws GigaSpaceException;
+    void clear(Object template) throws DataAccessException;
 
-    int count(Object template) throws GigaSpaceException;
+    int count(Object template) throws DataAccessException;
 
-    int count(Object template, int modifiers) throws GigaSpaceException;
+    int count(Object template, int modifiers) throws DataAccessException;
 
-    Object snapshot(Object entry) throws GigaSpaceException;
+    Object snapshot(Object entry) throws DataAccessException;
 
-    <T> T read(T template) throws GigaSpaceException;
+    <T> T read(T template) throws DataAccessException;
 
-    <T> T read(T template, long timeout) throws GigaSpaceException;
+    <T> T read(T template, long timeout) throws DataAccessException;
 
-    <T> T read(T template, long timeout, int modifiers) throws GigaSpaceException;
+    <T> T read(T template, long timeout, int modifiers) throws DataAccessException;
 
-    <T> T read(Query<T> template) throws GigaSpaceException;
+    <T> T read(Query<T> template) throws DataAccessException;
 
-    <T> T read(Query<T> template, long timeout) throws GigaSpaceException;
+    <T> T read(Query<T> template, long timeout) throws DataAccessException;
 
-    <T> T read(Query<T> template, long timeout, int modifiers) throws GigaSpaceException;
+    <T> T read(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
-    <T> T readIfExists(T template) throws GigaSpaceException;
+    <T> T readIfExists(T template) throws DataAccessException;
 
-    <T> T readIfExists(T template, long timeout) throws GigaSpaceException;
+    <T> T readIfExists(T template, long timeout) throws DataAccessException;
 
-    <T> T readIfExists(T template, long timeout, int modifiers) throws GigaSpaceException;
+    <T> T readIfExists(T template, long timeout, int modifiers) throws DataAccessException;
 
-    <T> T readIfExists(Query<T> template) throws GigaSpaceException;
+    <T> T readIfExists(Query<T> template) throws DataAccessException;
 
-    <T> T readIfExists(Query<T> template, long timeout) throws GigaSpaceException;
+    <T> T readIfExists(Query<T> template, long timeout) throws DataAccessException;
 
-    <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws GigaSpaceException;
+    <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
-    Object[] readMultiple(Object template, int maxEntries) throws GigaSpaceException;
+    Object[] readMultiple(Object template, int maxEntries) throws DataAccessException;
 
-    Object[] readMultiple(Object template, int maxEntries, int modifiers) throws GigaSpaceException;
+    Object[] readMultiple(Object template, int maxEntries, int modifiers) throws DataAccessException;
 
-    <T> T take(T template) throws GigaSpaceException;
+    <T> T take(T template) throws DataAccessException;
 
-    <T> T take(T template, long timeout) throws GigaSpaceException;
+    <T> T take(T template, long timeout) throws DataAccessException;
 
-    <T> T take(Query<T> template) throws GigaSpaceException;
+    <T> T take(Query<T> template) throws DataAccessException;
 
-    <T> T take(Query<T> template, long timeout) throws GigaSpaceException;
+    <T> T take(Query<T> template, long timeout) throws DataAccessException;
 
-    <T> T takeIfExists(T template) throws GigaSpaceException;
+    <T> T takeIfExists(T template) throws DataAccessException;
 
-    <T> T takeIfExists(T template, long timeout) throws GigaSpaceException;
+    <T> T takeIfExists(T template, long timeout) throws DataAccessException;
 
-    <T> T takeIfExists(Query<T> template) throws GigaSpaceException;
+    <T> T takeIfExists(Query<T> template) throws DataAccessException;
 
-    <T> T takeIfExists(Query<T> template, long timeout) throws GigaSpaceException;
+    <T> T takeIfExists(Query<T> template, long timeout) throws DataAccessException;
 
-    Object[] takeMultiple(Object template, int maxEntries) throws GigaSpaceException;
+    Object[] takeMultiple(Object template, int maxEntries) throws DataAccessException;
 
-    <T> LeaseContext<T> write(T entry) throws GigaSpaceException;
+    <T> LeaseContext<T> write(T entry) throws DataAccessException;
 
-    <T> LeaseContext<T> write(T entry, long lease) throws GigaSpaceException;
+    <T> LeaseContext<T> write(T entry, long lease) throws DataAccessException;
 
-    <T> LeaseContext<T> write(T entry, long lease, long timeout, int modifiers) throws GigaSpaceException;
+    <T> LeaseContext<T> write(T entry, long lease, long timeout, int modifiers) throws DataAccessException;
 
-    <T> LeaseContext<T>[] writeMultiple(T[] entries) throws GigaSpaceException;
+    <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException;
 
-    <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws GigaSpaceException;
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws DataAccessException;
 
-    <T> T[] updateMultiple(T[] entries, long[] leases) throws GigaSpaceException;
+    <T> T[] updateMultiple(T[] entries, long[] leases) throws DataAccessException;
 
-    <T> T[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws GigaSpaceException;
+    <T> T[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
 }

@@ -1,12 +1,9 @@
 package org.openspaces.core.space;
 
-import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
-import com.gigaspaces.cluster.activeelection.SpaceMode;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import java.rmi.RemoteException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openspaces.core.GigaSpaceException;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
 import org.openspaces.core.util.SpaceUtils;
@@ -19,8 +16,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.dao.DataAccessException;
 
-import java.rmi.RemoteException;
+import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
+import com.gigaspaces.cluster.activeelection.SpaceMode;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
@@ -75,7 +76,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * level {@link BeforeSpaceModeChangeEvent} and {@link AfterSpaceModeChangeEvent} for primary
      * and backup handling of different beans within the context.
      */
-    public void afterPropertiesSet() throws GigaSpaceException {
+    public void afterPropertiesSet() throws DataAccessException {
         this.space = doCreateSpace();
         // register the space mode listener with the space
         if (isEmbeddedSpace()) {
@@ -162,9 +163,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * Responsible for creating/finding the actual {@link IJSpace} implementation.
      * 
      * @return The IJSpace implementation used for the factory bean
-     * @throws GigaSpaceException
+     * @throws DataAccessException
      */
-    protected abstract IJSpace doCreateSpace() throws GigaSpaceException;
+    protected abstract IJSpace doCreateSpace() throws DataAccessException;
 
     /**
      * Returns <code>true</code> if the space is an embedded one (i.e. does not start with

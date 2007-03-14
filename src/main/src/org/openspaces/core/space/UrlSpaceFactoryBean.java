@@ -4,11 +4,11 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspaces.core.GigaSpaceException;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.util.SpaceUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 
 import com.j_spaces.core.IJSpace;
@@ -227,7 +227,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * Creates the space by calling {@link #doGetSpaceUrl()} and then using the returned
      * {@link SpaceURL} a space is found using {@link SpaceFinder#find(SpaceURL)}.
      */
-    protected IJSpace doCreateSpace() throws GigaSpaceException {
+    protected IJSpace doCreateSpace() throws DataAccessException {
         SpaceURL spaceURL = doGetSpaceUrl();
         try {
             return (IJSpace) SpaceFinder.find(spaceURL);
@@ -246,7 +246,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)} by automatically translating
      * the cluster information into relevant Space url properties.
      */
-    protected SpaceURL doGetSpaceUrl() throws GigaSpaceException {
+    protected SpaceURL doGetSpaceUrl() throws DataAccessException {
         Assert.notNull(url, "url property is required");
         Properties props = new Properties();
         // copy over the parameters
