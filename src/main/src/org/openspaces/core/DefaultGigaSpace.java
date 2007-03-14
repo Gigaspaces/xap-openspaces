@@ -156,6 +156,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return read(template, timeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T read(T template, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return (T) space.read(template, getCurrentTransaction(), timeout, modifiers);
@@ -172,6 +173,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return read(template, timeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T read(Query<T> template, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return (T) space.read(template, getCurrentTransaction(), timeout, modifiers);
@@ -188,6 +190,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return readIfExists(template, timeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readIfExists(T template, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return (T) space.readIfExists(template, getCurrentTransaction(), timeout, modifiers);
@@ -204,6 +207,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return readIfExists(template, timeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return (T) space.readIfExists(template, getCurrentTransaction(), timeout, modifiers);
@@ -228,6 +232,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return take(template, defaultTakeTimeout);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T take(T template, long timeout) throws GigaSpaceException {
         try {
             return (T) space.take(template, getCurrentTransaction(), timeout);
@@ -240,6 +245,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return take(template, defaultTakeTimeout);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T take(Query<T> template, long timeout) throws GigaSpaceException {
         try {
             return (T) space.take(template, getCurrentTransaction(), timeout);
@@ -252,6 +258,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return takeIfExists(template, defaultTakeTimeout);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeIfExists(T template, long timeout) throws GigaSpaceException {
         try {
             return (T) space.takeIfExists(template, getCurrentTransaction(), timeout);
@@ -264,6 +271,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return takeIfExists(template, defaultTakeTimeout);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeIfExists(Query<T> template, long timeout) throws GigaSpaceException {
         try {
             return (T) space.takeIfExists(template, getCurrentTransaction(), timeout);
@@ -284,6 +292,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return write(entry, defaultWriteLease);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> LeaseContext<T> write(T entry, long lease) throws GigaSpaceException {
         try {
             return space.write(entry, getCurrentTransaction(), lease);
@@ -292,6 +301,7 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> LeaseContext<T> write(T entry, long lease, long timeout, int modifiers) throws GigaSpaceException {
         try {
             return space.write(entry, getCurrentTransaction(), lease, timeout, modifiers);
@@ -304,6 +314,7 @@ public class DefaultGigaSpace implements GigaSpace {
         return writeMultiple(entries, defaultWriteLease);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws GigaSpaceException {
         try {
             return space.writeMultiple(entries, getCurrentTransaction(), lease);
@@ -312,6 +323,7 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T[] updateMultiple(T[] entries, long[] leases) throws GigaSpaceException {
         try {
             return (T[]) space.updateMultiple(entries, getCurrentTransaction(), leases);
@@ -320,6 +332,7 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws GigaSpaceException {
         try {
             return (T[]) space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
