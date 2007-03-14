@@ -28,7 +28,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
      */
     public DataAccessException translate(Throwable e) {
         if (e instanceof InternalSpaceException) {
-            return translate(((InternalSpaceException) e).nestedException);
+            if (((InternalSpaceException) e).nestedException == null) {
+                return new UncategorizedSpaceException(e.getMessage(), e);
+            } else {
+                return translate(((InternalSpaceException) e).nestedException);
+            }
         }
         if (e instanceof EntryVersionConflictException) {
             return new OptimisticLockingFailureException(e.getMessage(), e);
