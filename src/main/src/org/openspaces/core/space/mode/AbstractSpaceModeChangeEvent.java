@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * Base class for different space mode events.
- *
+ * 
  * @author kimchy
  */
 public abstract class AbstractSpaceModeChangeEvent extends ApplicationEvent {
@@ -15,9 +15,11 @@ public abstract class AbstractSpaceModeChangeEvent extends ApplicationEvent {
 
     /**
      * Creates a new Space mode event.
-     *
-     * @param space     The space that changed its mode
-     * @param spaceMode The space mode of the space
+     * 
+     * @param space
+     *            The space that changed its mode
+     * @param spaceMode
+     *            The space mode of the space
      */
     public AbstractSpaceModeChangeEvent(IJSpace space, SpaceMode spaceMode) {
         super(space);
