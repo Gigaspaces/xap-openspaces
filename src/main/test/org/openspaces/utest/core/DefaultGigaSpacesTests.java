@@ -228,22 +228,24 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         assertEquals(retVal, actualRetVal);
     }
 
+    @SuppressWarnings("unchecked")
     public void testWriteOperation() {
         Object entry = new Object();
         Mock mockLeaseContext = mock(LeaseContext.class);
-        LeaseContext leaseContext = (LeaseContext) mockLeaseContext.proxy();
+        LeaseContext<Object> leaseContext = (LeaseContext<Object>) mockLeaseContext.proxy();
 
         mockIJSpace.expects(once()).method("write").with(same(entry), NULL, eq(Lease.FOREVER)).will(returnValue(leaseContext));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
 
-        LeaseContext actualLeaseContext = gs.write(entry);
+        LeaseContext<Object> actualLeaseContext = gs.write(entry);
         assertEquals(leaseContext, actualLeaseContext);
     }
 
+    @SuppressWarnings("unchecked")
     public void testWriteOperationWithDefaultLease() {
         Object entry = new Object();
         Mock mockLeaseContext = mock(LeaseContext.class);
-        LeaseContext leaseContext = (LeaseContext) mockLeaseContext.proxy();
+        LeaseContext<Object> leaseContext = (LeaseContext<Object>) mockLeaseContext.proxy();
 
         mockIJSpace.expects(once()).method("write").with(same(entry), NULL, eq(10l)).will(returnValue(leaseContext));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
@@ -254,23 +256,25 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         assertEquals(leaseContext, actualLeaseContext);
     }
 
+    @SuppressWarnings("unchecked")
     public void testWriteOperationWithLeaseParameter() {
         Object entry = new Object();
         Mock mockLeaseContext = mock(LeaseContext.class);
-        LeaseContext leaseContext = (LeaseContext) mockLeaseContext.proxy();
+        LeaseContext<Object> leaseContext = (LeaseContext<Object>) mockLeaseContext.proxy();
 
         mockIJSpace.expects(once()).method("write").with(same(entry), NULL, eq(10l)).will(returnValue(leaseContext));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs));
 
-        LeaseContext actualLeaseContext = gs.write(entry, 10l);
+        LeaseContext<Object> actualLeaseContext = gs.write(entry, 10l);
 
         assertEquals(leaseContext, actualLeaseContext);
     }
 
+    @SuppressWarnings("unchecked")
     public void testWriteOperationWithLeaseTimeoutModifiersParameters() {
         Object entry = new Object();
         Mock mockLeaseContext = mock(LeaseContext.class);
-        LeaseContext leaseContext = (LeaseContext) mockLeaseContext.proxy();
+        LeaseContext<Object> leaseContext = (LeaseContext<Object>) mockLeaseContext.proxy();
 
         mockIJSpace.expects(once()).method("write")
                 .with(new Constraint[]{same(entry), NULL, eq(10l), eq(2l), eq(3)})
