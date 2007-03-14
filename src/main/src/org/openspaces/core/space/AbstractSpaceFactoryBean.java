@@ -23,27 +23,32 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import java.rmi.RemoteException;
 
 /**
- * <p>Base class for most space factory beans responsible for creating/finding
- * {@link com.j_spaces.core.IJSpace} implementation.
- *
- * <p>Provides support for raising Spring application events: {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent}
- * and {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent} alerting other beans of the current space mode
- * (primary/backup). Beans that wish to be notified of it should implement Spring {@link org.springframework.context.ApplicationListener}.
- * Note that this space mode events might be raised more than once for the same space mode, and beans that listen to it
- * should take it into account.
- *
- * <p>The space mode event will be raised regardless of the space "type" that is used. For embedded spaces, an actual space
- * mode event listener will be regsitered with the actual cluster member (if not in cluster mode, than the actual space).
- * For remote space lookups (jini/rmi), no listener will be regsitered. Space mode events will still be raise during
- * context reffresh with a <code>PRIMARY</code> mode in order to allow beans to be written regardless of how the space
- * is looked up.
- *
- * <p>Derived classes should implement the {@link #doCreateSpace()} to obtain the
- * {@link com.j_spaces.core.IJSpace}.
- *
+ * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
+ * implementation.
+ * 
+ * <p>
+ * Provides support for raising Spring application events: {@link BeforeSpaceModeChangeEvent} and
+ * {@link AfterSpaceModeChangeEvent} alerting other beans of the current space mode
+ * (primary/backup). Beans that wish to be notified of it should implement Spring
+ * {@link org.springframework.context.ApplicationListener}. Note that this space mode events might
+ * be raised more than once for the same space mode, and beans that listen to it should take it into
+ * account.
+ * 
+ * <p>
+ * The space mode event will be raised regardless of the space "type" that is used. For embedded
+ * spaces, an actual space mode event listener will be regsitered with the actual cluster member (if
+ * not in cluster mode, the actual space). For remote space lookups (jini/rmi), no listener will be
+ * regsitered and Space mode events will still be raised during context refresh with a
+ * <code>PRIMARY</code> mode in order to allow beans to be written regardless of how the space is
+ * looked up.
+ * 
+ * <p>
+ * Derived classes should implement the {@link #doCreateSpace()} to obtain the {@link IJSpace}.
+ * 
  * @author kimchy
  */
-public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, ApplicationContextAware, ApplicationListener {
+public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean,
+        ApplicationContextAware, ApplicationListener {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -51,25 +56,24 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     private ApplicationContext applicationContext;
 
-
     private SpaceMode currentSpaceMode;
 
     private PrimaryBackupListener primaryBackupListener;
 
     /**
-     * Injected by Spring thanks to {@link org.springframework.context.ApplicationContextAware}.
+     * Injected by Spring thanks to {@link ApplicationContextAware}.
      */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
     /**
-     * <p>Initializes the space by calling the {@link #doCreateSpace()}.
-     *
-     * <p>Registers with the space an internal space mode listener in order to be able to send Spring level
-     * {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and
-     * {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent}
-     * for primary and backup handling of different beans within the context.
+     * Initializes the space by calling the {@link #doCreateSpace()}.
+     * 
+     * <p>
+     * Registers with the space an internal space mode listener in order to be able to send Spring
+     * level {@link BeforeSpaceModeChangeEvent} and {@link AfterSpaceModeChangeEvent} for primary
+     * and backup handling of different beans within the context.
      */
     public void afterPropertiesSet() throws GigaSpaceException {
         this.space = doCreateSpace();
@@ -78,13 +82,15 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             primaryBackupListener = new PrimaryBackupListener();
             try {
                 IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
-                ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler().exportObject(primaryBackupListener);
+                ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
+                    .exportObject(primaryBackupListener);
                 currentSpaceMode = ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).addSpaceModeListener(remoteListener);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Space [" + clusterMemberSpace + "] mode is [" + currentSpaceMode + "]");
                 }
             } catch (RemoteException e) {
-                throw new CannotCreateSpaceException("Failed to regsiter space mode listener with space [" + space + "]", e);
+                throw new CannotCreateSpaceException("Failed to regsiter space mode listener with space [" + space
+                        + "]", e);
             }
         } else {
             currentSpaceMode = SpaceMode.PRIMARY;
@@ -99,7 +105,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         if (isEmbeddedSpace()) {
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
             try {
-                ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler().exportObject(primaryBackupListener);
+                ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
+                    .exportObject(primaryBackupListener);
                 ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).removeSpaceModeListener(remoteListener);
             } catch (RemoteException e) {
                 logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
@@ -108,13 +115,14 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * <p>If {@link org.springframework.context.event.ContextRefreshedEvent} is raised will send two extra
-     * events: {@link org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent} and
-     * {@link org.openspaces.core.space.mode.AfterSpaceModeChangeEvent} with the current space mode. This is
-     * done since other beans that use this events might not catch them while the context is constructed.
-     *
-     * <p>Note, this will mean that events with the same Space mode might be raised, one after the other, and
-     * Spring beans that listens for them should take it into account.
+     * If {@link ContextRefreshedEvent} is raised will send two extra events:
+     * {@link BeforeSpaceModeChangeEvent} and {@link AfterSpaceModeChangeEvent} with the current
+     * space mode. This is done since other beans that use this events might not catch them while
+     * the context is constructed.
+     * 
+     * <p>
+     * Note, this will mean that events with the same Space mode might be raised, one after the
+     * other, and Spring beans that listens for them should take it into account.
      */
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
@@ -126,10 +134,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Spring factory bean returning the {@link com.j_spaces.core.IJSpace} created
-     * during the bean initializtion ({@link #afterPropertiesSet()}).
-     *
-     * @return The {@link com.j_spaces.core.IJSpace} implementation
+     * Spring factory bean returning the {@link IJSpace} created during the bean initializtion ({@link #afterPropertiesSet()}).
+     * 
+     * @return The {@link IJSpace} implementation
      * @throws Exception
      */
     public Object getObject() throws Exception {
@@ -137,10 +144,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Returns the object type of the factory bean. Defaults to IJSpace class or the
-     * actual {@link com.j_spaces.core.IJSpace} implementation class.
+     * Returns the object type of the factory bean. Defaults to IJSpace class or the actual
+     * {@link IJSpace} implementation class.
      */
-    public Class getObjectType() {
+    public Class<? extends IJSpace> getObjectType() {
         return (space == null ? IJSpace.class : space.getClass());
     }
 
@@ -152,17 +159,19 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Responsible for creating/finding the actual {@link com.j_spaces.core.IJSpace}
-     * implementation.
-     *
+     * Responsible for creating/finding the actual {@link IJSpace} implementation.
+     * 
      * @return The IJSpace implementation used for the factory bean
      * @throws GigaSpaceException
      */
     protected abstract IJSpace doCreateSpace() throws GigaSpaceException;
 
     /**
-     * Returns <code>true</code> if the space is an embedded one (i.e. does not start with <code>jini</code> or
-     * <code>rmi</code> protocols).
+     * Returns <code>true</code> if the space is an embedded one (i.e. does not start with
+     * <code>jini</code> or <code>rmi</code> protocols).
+     * 
+     * <p>
+     * Default implementation delegates to {@link IJSpace#isEmbedded()}.
      */
     protected boolean isEmbeddedSpace() {
         return space.isEmbedded();

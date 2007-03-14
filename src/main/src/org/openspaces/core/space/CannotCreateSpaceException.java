@@ -9,6 +9,8 @@ import org.openspaces.core.GigaSpaceException;
  */
 public class CannotCreateSpaceException extends GigaSpaceException {
 
+    private static final long serialVersionUID = -8026907614225627043L;
+
     public CannotCreateSpaceException(String message) {
         super(message);
     }
