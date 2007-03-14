@@ -7,13 +7,15 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
+ * A bean definition builder for {@link LocalCacheSpaceFactoryBean}.
+ * 
  * @author kimchy
  */
 public class LocalCacheSpaceBeanDefinitionParser extends AbstractLocalCacheSpaceBeanDefinitionParser {
 
     public static final String UPDATE_MODE = "update-mode";
 
-    protected Class getBeanClass(Element element) {
+    protected Class<LocalCacheSpaceFactoryBean> getBeanClass(Element element) {
         return LocalCacheSpaceFactoryBean.class;
     }
 

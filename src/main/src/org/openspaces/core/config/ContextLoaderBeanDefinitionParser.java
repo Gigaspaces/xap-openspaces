@@ -5,11 +5,13 @@ import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.w3c.dom.Element;
 
 /**
+ * A bean definition builder for {@link SpaceModeContextLoader}.
+ * 
  * @author kimchy
  */
 public class ContextLoaderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
-    protected Class getBeanClass(Element element) {
+    protected Class<SpaceModeContextLoader> getBeanClass(Element element) {
         return SpaceModeContextLoader.class;
     }
 }

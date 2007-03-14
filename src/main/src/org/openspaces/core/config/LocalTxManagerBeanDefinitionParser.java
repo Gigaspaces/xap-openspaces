@@ -11,13 +11,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
+ * A bean definition builder for {@link LocalJiniTransactionManager}.
+ * 
  * @author kimchy
  */
 public class LocalTxManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     public static final String GIGA_SPACE = "giga-space";
 
-    protected Class getBeanClass(Element element) {
+    protected Class<LocalJiniTransactionManager> getBeanClass(Element element) {
         return LocalJiniTransactionManager.class;
     }
 

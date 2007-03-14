@@ -11,6 +11,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
+ * A bean definition builder for {@link GigaSpaceFactoryBean}.
+ * 
  * @author kimchy
  */
 public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -21,7 +23,7 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
 
     public static final String TX_MANAGER = "tx-manager";
 
-    protected Class getBeanClass(Element element) {
+    protected Class<GigaSpaceFactoryBean> getBeanClass(Element element) {
         return GigaSpaceFactoryBean.class;
     }
 
@@ -35,7 +37,8 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             }
             String propertyName = extractPropertyName(name);
             if (DEFAULT_ISOLATION.equals(name)) {
-                builder.addPropertyValue("defaultIsolationLevelName", GigaSpaceFactoryBean.PREFIX_ISOLATION + attribute.getValue());
+                builder.addPropertyValue("defaultIsolationLevelName", GigaSpaceFactoryBean.PREFIX_ISOLATION
+                        + attribute.getValue());
                 continue;
             }
             if (SPACE.equals(name)) {
@@ -48,7 +51,7 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             }
 
             Assert.state(StringUtils.hasText(propertyName),
-                    "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
+                "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
             builder.addPropertyValue(propertyName, attribute.getValue());
         }
     }

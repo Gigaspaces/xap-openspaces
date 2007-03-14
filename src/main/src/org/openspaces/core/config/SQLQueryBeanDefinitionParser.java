@@ -7,6 +7,8 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
+ * A bean definition builder for {@link SQLQueryFactoryBean}.
+ * 
  * @author kimchy
  */
 public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -19,7 +21,7 @@ public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionPa
 
     private static final String TEMPLATE = "template";
 
-    protected Class getBeanClass(Element element) {
+    protected Class<? extends SQLQueryFactoryBean> getBeanClass(Element element) {
         return SQLQueryFactoryBean.class;
     }
 

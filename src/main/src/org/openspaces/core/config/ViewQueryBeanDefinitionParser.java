@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
  */
 public class ViewQueryBeanDefinitionParser extends SQLQueryBeanDefinitionParser {
 
-    protected Class getBeanClass(Element element) {
+    protected Class<ViewQueryFactoryBean> getBeanClass(Element element) {
         return ViewQueryFactoryBean.class;
     }
 }

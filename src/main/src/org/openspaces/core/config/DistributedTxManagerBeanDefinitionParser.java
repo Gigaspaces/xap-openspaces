@@ -1,6 +1,6 @@
 package org.openspaces.core.config;
 
-import org.openspaces.core.transaction.manager.LocalJiniTransactionManager;
+import org.openspaces.core.transaction.manager.DistributedJiniTransactionManager;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.core.Conventions;
@@ -11,14 +11,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
+ * A bean definition builder for {@link DistributedJiniTransactionManager}.
+ * 
  * @author kimchy
  */
 public class DistributedTxManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     public static final String TX_MANAGER_NAME = "tx-manager-name";
 
-    protected Class getBeanClass(Element element) {
-        return LocalJiniTransactionManager.class;
+    protected Class<DistributedJiniTransactionManager> getBeanClass(Element element) {
+        return DistributedJiniTransactionManager.class;
     }
 
     // TODO allow for transactional context to be set as well
@@ -37,7 +39,7 @@ public class DistributedTxManagerBeanDefinitionParser extends AbstractSingleBean
             }
 
             Assert.state(StringUtils.hasText(propertyName),
-                    "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
+                "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
             builder.addPropertyValue(propertyName, attribute.getValue());
         }
     }

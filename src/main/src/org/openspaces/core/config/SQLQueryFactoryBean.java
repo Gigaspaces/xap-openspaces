@@ -1,14 +1,15 @@
 package org.openspaces.core.config;
 
-import com.j_spaces.core.client.SQLQuery;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+import com.j_spaces.core.client.SQLQuery;
+
 /**
- * A helper factory beans for {@link com.j_spaces.core.client.SQLQuery} so namespace
- * based configuration will be simpler.
- *
+ * A helper factory beans for {@link com.j_spaces.core.client.SQLQuery} so namespace based
+ * configuration will be simpler.
+ * 
  * @author kimchy
  */
 public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
@@ -17,40 +18,59 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
 
     private Object template;
 
-    private Class type;
+    private Class<Object> type;
 
     private String className;
-
 
     private SQLQuery<Object> sqlQuery;
 
     public void setWhere(String where) {
         this.where = where;
     }
-
+    
+    protected String getWhere() {
+        return this.where;
+    }
+    
     public void setTemplate(Object template) {
         this.template = template;
     }
 
-    public void setType(Class clazz) {
+    protected Object getTemplate() {
+        return this.template;
+    }
+
+    public void setType(Class<Object> clazz) {
         this.type = clazz;
+    }
+    
+    protected Class<Object> getType() {
+        return this.type;
     }
 
     public void setClassName(String className) {
         this.className = className;
     }
+    
+    protected String getClassName() {
+        return this.className;
+    }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(where, "where property is requried");
-        if (template == null && type == null && className == null) {
-            throw new IllegalArgumentException("either template property or type property or className must be set");
-        }
-        if (template != null) {
-            sqlQuery = new SQLQuery<Object>(template, where);
+        validate();
+        if (getTemplate() != null) {
+            sqlQuery = new SQLQuery<Object>(getTemplate(), getWhere());
         } else if (type != null) {
-            sqlQuery = new SQLQuery<Object>(type, where);
+            sqlQuery = new SQLQuery<Object>(getType(), getWhere());
         } else {
-            sqlQuery = new SQLQuery<Object>(className, where);
+            sqlQuery = new SQLQuery<Object>(getClassName(), getWhere());
+        }
+    }
+
+    protected void validate() throws IllegalArgumentException {
+        Assert.notNull(where, "where property is requried");
+        if (getTemplate() == null && getType() == null && getClassName() == null) {
+            throw new IllegalArgumentException("either template property or type property or className must be set");
         }
     }
 
@@ -58,7 +78,8 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
         return this.sqlQuery;
     }
 
-    public Class getObjectType() {
+    @SuppressWarnings("unchecked")
+    public Class<SQLQuery> getObjectType() {
         return SQLQuery.class;
     }
 

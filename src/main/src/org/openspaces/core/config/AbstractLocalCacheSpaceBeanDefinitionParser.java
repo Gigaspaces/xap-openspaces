@@ -8,6 +8,8 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
+ * A base class for local cache based beans.
+ * 
  * @author kimchy
  */
 public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -24,7 +26,9 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
         }
         Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
         if (propertiesEle != null) {
-            Object properties = parserContext.getDelegate().parsePropertyValue(propertiesEle, builder.getRawBeanDefinition(), "properties");
+            Object properties = parserContext.getDelegate().parsePropertyValue(propertiesEle,
+                builder.getRawBeanDefinition(), "properties");
+
             builder.addPropertyValue("properties", properties);
         }
     }

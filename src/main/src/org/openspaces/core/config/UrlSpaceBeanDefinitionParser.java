@@ -8,6 +8,8 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
+ * A bean definition builder for {@link UrlSpaceFactoryBean}.
+ * 
  * @author kimchy
  */
 public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
@@ -18,7 +20,7 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
     public static final String URL_PROPERTIES = "url-properties";
 
-    protected Class getBeanClass(Element element) {
+    protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
         return UrlSpaceFactoryBean.class;
     }
 
@@ -26,17 +28,20 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         super.doParse(element, parserContext, builder);
         Element parametersEle = DomUtils.getChildElementByTagName(element, PARAMETERS);
         if (parametersEle != null) {
-            Object parameters = parserContext.getDelegate().parsePropertyValue(parametersEle, builder.getRawBeanDefinition(), "parameters");
+            Object parameters = parserContext.getDelegate().parsePropertyValue(parametersEle,
+                builder.getRawBeanDefinition(), "parameters");
             builder.addPropertyValue("parameters", parameters);
         }
         Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
         if (propertiesEle != null) {
-            Object properties = parserContext.getDelegate().parsePropertyValue(propertiesEle, builder.getRawBeanDefinition(), "properties");
+            Object properties = parserContext.getDelegate().parsePropertyValue(propertiesEle,
+                builder.getRawBeanDefinition(), "properties");
             builder.addPropertyValue("properties", properties);
         }
         Element urlPropertiesEle = DomUtils.getChildElementByTagName(element, URL_PROPERTIES);
         if (urlPropertiesEle != null) {
-            Object properties = parserContext.getDelegate().parsePropertyValue(urlPropertiesEle, builder.getRawBeanDefinition(), "urlProperties");
+            Object properties = parserContext.getDelegate().parsePropertyValue(urlPropertiesEle,
+                builder.getRawBeanDefinition(), "urlProperties");
             builder.addPropertyValue("urlProperties", properties);
         }
     }
