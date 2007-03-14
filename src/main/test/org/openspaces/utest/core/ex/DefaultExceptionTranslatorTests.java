@@ -6,12 +6,12 @@ import org.openspaces.core.EntryAlreadyInSpaceException;
 import org.openspaces.core.EntryNotInSpaceException;
 import org.openspaces.core.InvalidFifoClassException;
 import org.openspaces.core.InvalidFifoTemplateException;
+import org.openspaces.core.SpaceOptimisticLockingFailureException;
 import org.openspaces.core.UncategorizedSpaceException;
 import org.openspaces.core.UnusableEntryException;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.OptimisticLockingFailureException;
 
 /**
  * @author kimchy
@@ -57,7 +57,7 @@ public class DefaultExceptionTranslatorTests extends TestCase {
 
     public void testEntryVersionConflictException() {
         DataAccessException dae = exTranslator.translate(new EntryVersionConflictException("UID", 1, 2, "operation"));
-        assertEquals(OptimisticLockingFailureException.class, dae.getClass());
+        assertEquals(SpaceOptimisticLockingFailureException.class, dae.getClass());
     }
 
     public void testInvalidFifoClassException() {

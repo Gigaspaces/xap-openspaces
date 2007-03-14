@@ -8,10 +8,10 @@ import org.openspaces.core.EntryNotInSpaceException;
 import org.openspaces.core.InvalidFifoClassException;
 import org.openspaces.core.InvalidFifoTemplateException;
 import org.openspaces.core.InvalidTypeDataAccessException;
+import org.openspaces.core.SpaceOptimisticLockingFailureException;
 import org.openspaces.core.UncategorizedSpaceException;
 import org.openspaces.core.UnusableEntryException;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.OptimisticLockingFailureException;
 
 /**
  * The default exception translator.
@@ -35,7 +35,7 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             }
         }
         if (e instanceof EntryVersionConflictException) {
-            return new OptimisticLockingFailureException(e.getMessage(), e);
+            return new SpaceOptimisticLockingFailureException((EntryVersionConflictException) e);
         }
         if (e instanceof com.j_spaces.core.client.EntryNotInSpaceException) {
             return new EntryNotInSpaceException((com.j_spaces.core.client.EntryNotInSpaceException) e);
