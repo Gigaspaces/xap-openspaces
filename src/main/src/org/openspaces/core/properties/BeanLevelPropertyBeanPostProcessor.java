@@ -4,11 +4,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * A Spring {@link org.springframework.beans.factory.config.BeanPostProcessor} that process beans that
- * implement {@link BeanLevelPropertiesAware} or
- * {@link BeanLevelMergedPropertiesAware} based on the provided
+ * A Spring {@link BeanPostProcessor} that process beans that implement
+ * {@link BeanLevelPropertiesAware} or {@link BeanLevelMergedPropertiesAware} based on the provided
  * {@link BeanLevelProperties}.
- *
+ * 
  * @author kimchy
  * @see BeanLevelProperties
  * @see BeanLevelMergedPropertiesAware
@@ -19,24 +18,25 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
     private BeanLevelProperties beanLevelProperties;
 
     /**
-     * Constructs a new bean level bean post processor based on the provided bean
-     * level proeprties.
-     *
-     * @param beanLevelProperties The bean level properites to be used for injection
+     * Constructs a new bean level bean post processor based on the provided bean level proeprties.
+     * 
+     * @param beanLevelProperties
+     *            The bean level properites to be used for injection
      */
     public BeanLevelPropertyBeanPostProcessor(BeanLevelProperties beanLevelProperties) {
         this.beanLevelProperties = beanLevelProperties;
     }
 
     /**
-     * Post process a given bean. If the bean implements {@link BeanLevelPropertiesAware}
-     * the provided {@link BeanLevelProperties} will be injected to it. If the bean
-     * implements {@link BeanLevelMergedPropertiesAware} then the merged properties based
-     * on the provided beanName will be injected
-     * (using {@link BeanLevelProperties#getMergedBeanProperties(String)}).
-     *
-     * @param bean     The bean to possibly perform injection of {@link BeanLevelProperties}
-     * @param beanName The bean name
+     * Post process a given bean. If the bean implements {@link BeanLevelPropertiesAware} the
+     * provided {@link BeanLevelProperties} will be injected to it. If the bean implements
+     * {@link BeanLevelMergedPropertiesAware} then the merged properties based on the provided
+     * beanName will be injected (using {@link BeanLevelProperties#getMergedBeanProperties(String)}).
+     * 
+     * @param bean
+     *            The bean to possibly perform injection of {@link BeanLevelProperties}
+     * @param beanName
+     *            The bean name
      * @return The bean unmodified
      * @throws BeansException
      */

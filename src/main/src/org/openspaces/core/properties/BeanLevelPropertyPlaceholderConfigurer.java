@@ -14,15 +14,17 @@ import java.util.HashSet;
 import java.util.Properties;
 
 /**
- * <p>An extension on top of Spring {@link org.springframework.beans.factory.config.PropertyPlaceholderConfigurer} that
- * works with {@link BeanLevelProperties} in order to inject bean level propeties.
- *
- * <p>${..} notations are used to lookup bean level properties with the properites obtained based on the bean name
- * using {@link BeanLevelProperties#getMergedBeanProperties(String)}.
- *
+ * An extension on top of Spring {@link PropertyPlaceholderConfigurer} that works with
+ * {@link BeanLevelProperties} in order to inject bean level propeties.
+ * 
+ * <p>
+ * ${..} notations are used to lookup bean level properties with the properites obtained based on
+ * the bean name using {@link BeanLevelProperties#getMergedBeanProperties(String)}.
+ * 
  * @author kimchy
  */
-public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware, BeanFactoryAware {
+public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware,
+        BeanFactoryAware {
 
     private BeanLevelProperties beanLevelProperties;
 
@@ -53,12 +55,12 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
             // Check that we're not parsing our own bean definition,
             // to avoid failing on unresolvable placeholders in properties file locations.
             if (!(beanName1.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-                BeanDefinitionVisitor visitor = new PlaceholderResolvingBeanDefinitionVisitor(beanLevelProperties.getMergedBeanProperties(beanName1));
+                BeanDefinitionVisitor visitor = new PlaceholderResolvingBeanDefinitionVisitor(
+                        beanLevelProperties.getMergedBeanProperties(beanName1));
                 BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanName1);
                 try {
                     visitor.visitBeanDefinition(bd);
-                }
-                catch (BeanDefinitionStoreException ex) {
+                } catch (BeanDefinitionStoreException ex) {
                     throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanName1, ex.getMessage());
                 }
             }
@@ -66,9 +68,8 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
     }
 
     /**
-     * BeanDefinitionVisitor that resolves placeholders in String values,
-     * delegating to the <code>parseStringValue</code> method of the
-     * containing class.
+     * BeanDefinitionVisitor that resolves placeholders in String values, delegating to the
+     * <code>parseStringValue</code> method of the containing class.
      */
     private class PlaceholderResolvingBeanDefinitionVisitor extends BeanDefinitionVisitor {
 
@@ -79,7 +80,7 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
         }
 
         protected String resolveStringValue(String strVal) throws BeansException {
-            return parseStringValue(strVal, this.props, new HashSet());
+            return parseStringValue(strVal, this.props, new HashSet<Object>());
         }
     }
 }
