@@ -1,17 +1,17 @@
 package org.openspaces.utest.core.ex;
 
+import com.j_spaces.core.client.EntryVersionConflictException;
 import junit.framework.TestCase;
-
 import org.openspaces.core.EntryAlreadyInSpaceException;
 import org.openspaces.core.EntryNotInSpaceException;
-import org.openspaces.core.UncategorizedGigaSpaceException;
+import org.openspaces.core.InvalidFifoClassException;
+import org.openspaces.core.InvalidFifoTemplateException;
+import org.openspaces.core.UncategorizedSpaceException;
 import org.openspaces.core.UnusableEntryException;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
-
-import com.j_spaces.core.client.EntryVersionConflictException;
 
 /**
  * @author kimchy
@@ -27,7 +27,7 @@ public class DefaultExceptionTranslatorTests extends TestCase {
     public void testGeneralException() {
         Exception e = new Exception("test");
         DataAccessException dae = exTranslator.translate(e);
-        assertEquals(UncategorizedGigaSpaceException.class, dae.getClass());
+        assertEquals(UncategorizedSpaceException.class, dae.getClass());
         assertSame(e, dae.getCause());
     }
 
@@ -58,5 +58,18 @@ public class DefaultExceptionTranslatorTests extends TestCase {
     public void testEntryVersionConflictException() {
         DataAccessException dae = exTranslator.translate(new EntryVersionConflictException("UID", 1, 2, "operation"));
         assertEquals(OptimisticLockingFailureException.class, dae.getClass());
+    }
+
+    public void testInvalidFifoClassException() {
+        DataAccessException dae = exTranslator.translate(new com.j_spaces.core.InvalidFifoClassException("test", false, true));
+        assertEquals(InvalidFifoClassException.class, dae.getClass());
+        assertEquals("test", ((InvalidFifoClassException) dae).getClassName());
+        assertEquals(true, ((InvalidFifoClassException) dae).isFifoClass());
+    }
+
+    public void testInvalidFifoTemplateException() {
+        DataAccessException dae = exTranslator.translate(new com.j_spaces.core.InvalidFifoTemplateException("test"));
+        assertEquals(InvalidFifoTemplateException.class, dae.getClass());
+        assertEquals("test", ((InvalidFifoTemplateException) dae).getTemplateClassName());
     }
 }

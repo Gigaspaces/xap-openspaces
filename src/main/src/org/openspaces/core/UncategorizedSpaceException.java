@@ -9,11 +9,11 @@ import org.springframework.dao.UncategorizedDataAccessException;
  * 
  * @author kimchy
  */
-public class UncategorizedGigaSpaceException extends UncategorizedDataAccessException {
+public class UncategorizedSpaceException extends UncategorizedDataAccessException {
 
     private static final long serialVersionUID = -5799478121195480605L;
 
-    public UncategorizedGigaSpaceException(String msg, Throwable cause) {
+    public UncategorizedSpaceException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }
