@@ -90,6 +90,9 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
+                        <xsd:element ref="space-filter" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
@@ -151,6 +154,59 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="space-filter">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="baseFilterProviderType">
+                    <xsd:sequence>
+                        <xsd:element name="operation" minOccurs="1" maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:attribute name="code" type="xsd:nonNegativeInteger" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="annotation-adapter-filter">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="baseFilterProviderType"/>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="method-adapter-filter">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="baseFilterProviderType">
+                    <xsd:attribute name="filter-init" type="xsd:string"/>
+                    <xsd:attribute name="filter-close" type="xsd:string"/>
+                    <xsd:attribute name="before-write" type="xsd:string"/>
+                    <xsd:attribute name="after-write" type="xsd:string"/>
+                    <xsd:attribute name="before-read" type="xsd:string"/>
+                    <xsd:attribute name="before-take" type="xsd:string"/>
+                    <xsd:attribute name="before-notify" type="xsd:string"/>
+                    <xsd:attribute name="before-clean-space" type="xsd:string"/>
+                    <xsd:attribute name="before-update" type="xsd:string"/>
+                    <xsd:attribute name="after-update" type="xsd:string"/>
+                    <xsd:attribute name="before-read-multiple" type="xsd:string"/>
+                    <xsd:attribute name="after-read-multiple" type="xsd:string"/>
+                    <xsd:attribute name="before-take-multiple" type="xsd:string"/>
+                    <xsd:attribute name="after-take-multiple" type="xsd:string"/>
+                    <xsd:attribute name="before-notify-trigger" type="xsd:string"/>
+                    <xsd:attribute name="after-notify-trigger" type="xsd:string"/>
+                    <xsd:attribute name="before-all-notify-trigger" type="xsd:string"/>
+                    <xsd:attribute name="after-all-notify-trigger" type="xsd:string"/>
+                    <xsd:attribute name="before-remove-by-lease" type="xsd:string"/>
+                    <xsd:attribute name="after-remove-by-lease" type="xsd:string"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -383,6 +439,31 @@
     </xsd:complexType>
 
     <xsd:complexType name="templateType">
+        <xsd:group ref="beans:collectionElements"/>
+        <xsd:attribute name="ref" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[
+    A short-cut alternative to a nested "<ref bean='...'/>".
+                ]]></xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="baseFilterProviderType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="filter" type="filterType" minOccurs="1" maxOccurs="1"/>
+                </xsd:sequence>
+                <xsd:attribute name="active-when-backup" type="xsd:boolean"/>
+                <xsd:attribute name="enabled" type="xsd:boolean"/>
+                <xsd:attribute name="security-filter" type="xsd:boolean"/>
+                <xsd:attribute name="shutdown-space-on-init-failure"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="filterType">
         <xsd:group ref="beans:collectionElements"/>
         <xsd:attribute name="ref" type="xsd:string">
             <xsd:annotation>

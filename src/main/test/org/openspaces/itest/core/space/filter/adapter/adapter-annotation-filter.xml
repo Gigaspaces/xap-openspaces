@@ -13,19 +13,12 @@
 
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter" />
 
-    <bean id="space" class="org.openspaces.core.space.UrlSpaceFactoryBean">
-        <property name="url" value="/./spaceAdapterSimpleFilterAnnotation"/>
-        <property name="filterProviders">
-            <list>
-                <bean class="org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
-                    <property name="filter" ref="simpleFilter" />
-                </bean>
-            </list>
-        </property>
-    </bean>
+    <gs-core:space id="space" url="/./spaceAdapterSimpleFilterAnnotation">
+        <gs-core:annotation-adapter-filter>
+            <gs-core:filter ref="simpleFilter" />
+        </gs-core:annotation-adapter-filter>
+    </gs-core:space>
 
-    <bean id="gigaSpace" class="org.openspaces.core.GigaSpaceFactoryBean">
-        <property name="space" ref="space"/>
-    </bean>
+    <gs-core:giga-space id="gigaSpace" space="space" />
 
 </beans>

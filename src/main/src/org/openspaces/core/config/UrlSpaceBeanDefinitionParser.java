@@ -2,10 +2,13 @@ package org.openspaces.core.config;
 
 import org.openspaces.core.space.UrlSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
+
+import java.util.List;
 
 /**
  * A bean definition builder for {@link UrlSpaceFactoryBean}.
@@ -44,5 +47,20 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
                 builder.getRawBeanDefinition(), "urlProperties");
             builder.addPropertyValue("urlProperties", properties);
         }
+        
+        List<Element> spaceFilterElements = DomUtils.getChildElementsByTagName(element, "space-filter");
+        ManagedList list = new ManagedList();
+        for (Element ele : spaceFilterElements) {
+            list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition()));
+        }
+        spaceFilterElements = DomUtils.getChildElementsByTagName(element, "annotation-adapter-filter");
+        for (Element ele : spaceFilterElements) {
+            list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition(), null));
+        }
+        spaceFilterElements = DomUtils.getChildElementsByTagName(element, "method-adapter-filter");
+        for (Element ele : spaceFilterElements) {
+            list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition(), null));
+        }
+        builder.addPropertyValue("filterProviders", list);
     }
 }

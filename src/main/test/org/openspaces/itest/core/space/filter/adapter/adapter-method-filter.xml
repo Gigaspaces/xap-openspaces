@@ -11,27 +11,15 @@
 
     <gs-core:giga-space-context/>
 
-    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter" />
+    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter"/>
 
-    <bean id="space" class="org.openspaces.core.space.UrlSpaceFactoryBean">
-        <property name="url" value="/./spaceAdapterSimpleFilterMethod"/>
-        <property name="filterProviders">
-            <list>
-                <bean class="org.openspaces.core.space.filter.MethodFilterFactoryBean">
-                    <property name="filter" ref="simpleFilter" />
-                    <property name="filterInit" value="onInit" />
-                    <property name="filterClose" value="onClose" />
-                    <property name="beforeWrite" value="beforeWrite" />
-                    <property name="afterWrite" value="afterWrite" />
-                    <property name="beforeRead" value="beforeRead" />
-                    <property name="beforeTake" value="beforeTake" />
-                </bean>
-            </list>
-        </property>
-    </bean>
+    <gs-core:space id="space" url="/./spaceAdapterSimpleFilterMethod">
+        <gs-core:method-adapter-filter filter-init="onInit" filter-close="onClose" before-write="beforeWrite"
+                                       after-write="afterWrite" before-read="beforeRead" before-take="beforeTake">
+            <gs-core:filter ref="simpleFilter"/>
+        </gs-core:method-adapter-filter>
+    </gs-core:space>
 
-    <bean id="gigaSpace" class="org.openspaces.core.GigaSpaceFactoryBean">
-        <property name="space" ref="space"/>
-    </bean>
+    <gs-core:giga-space id="gigaSpace" space="space"/>
 
 </beans>

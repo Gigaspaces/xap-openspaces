@@ -13,28 +13,16 @@
 
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.SimpleFilter" />
 
-    <bean id="space" class="org.openspaces.core.space.UrlSpaceFactoryBean">
-        <property name="url" value="/./spaceSimpleFilter"/>
-        <property name="filterProviders">
-            <list>
-                <bean class="com.j_spaces.core.filters.FilterProvider">
-                    <constructor-arg index="0" value="test" />
-                    <constructor-arg index="1" ref="simpleFilter" />
-                    <property name="opCodes">
-                        <list>
-                            <value>0</value>
-                            <value>1</value>
-                            <value>2</value>
-                            <value>3</value>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
+    <gs-core:space id="space" url="/./spaceSimpleFilter">
+        <gs-core:space-filter>
+            <gs-core:filter ref="simpleFilter" />
+            <gs-core:operation code="0" />
+            <gs-core:operation code="1" />
+            <gs-core:operation code="2" />
+            <gs-core:operation code="3" />
+        </gs-core:space-filter>
+    </gs-core:space>
 
-    <bean id="gigaSpace" class="org.openspaces.core.GigaSpaceFactoryBean">
-        <property name="space" ref="space"/>
-    </bean>
+    <gs-core:giga-space id="gigaSpace" space="space" />
 
 </beans>

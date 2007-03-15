@@ -1,10 +1,6 @@
 package org.openspaces.core.space.filter;
 
 import com.j_spaces.core.filters.FilterProvider;
-import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,73 +10,18 @@ import java.util.Map;
 /**
  * @author kimchy
  */
-public abstract class AbstractFilterProviderAdapterFactoryBean implements FactoryBean, InitializingBean, BeanNameAware {
+public abstract class AbstractFilterProviderAdapterFactoryBean extends AbstractFilterProviderFactoryBean {
 
-    private Object filter;
-
-    private boolean activeWhenBackup = true;
-
-    private boolean enabled = true;
-
-    private boolean securityFilter = false;
-
-    private boolean shutdownSpaceOnInitFailure = false;
-
-    private int priority = 0;
-
-
-    private String beanName;
-
-    private FilterProvider filterProvider;
-
-    public void setFilter(Object filter) {
-        this.filter = filter;
-    }
-
-    protected Object getFilter() {
-        return filter;
-    }
-
-    public void setActiveWhenBackup(boolean activeWhenBackup) {
-        this.activeWhenBackup = activeWhenBackup;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setSecurityFilter(boolean securityFilter) {
-        this.securityFilter = securityFilter;
-    }
-
-    public void setShutdownSpaceOnInitFailure(boolean shutdownSpaceOnInitFailure) {
-        this.shutdownSpaceOnInitFailure = shutdownSpaceOnInitFailure;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public void setBeanName(String name) {
-        this.beanName = name;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(filter, "filter property is required");
+    protected FilterProvider doGetFilterProvider() throws IllegalArgumentException {
         Map<Integer, FilterOperationDelegateInvoker> invokerLookup = doGetInvokerLookup();
         if (invokerLookup.size() == 0) {
-            throw new IllegalArgumentException("No invoker found in filter [" + filter + "]");
+            throw new IllegalArgumentException("No invoker found in filter [" + getFilter() + "]");
         }
-        FilterOperationDelegate delegate = new FilterOperationDelegate(filter, invokerLookup);
+        FilterOperationDelegate delegate = new FilterOperationDelegate(getFilter(), invokerLookup);
         delegate.setInitMethod(doGetInitMethod());
         delegate.setCloseMethod(doGetCloseMethod());
 
-        filterProvider = new FilterProvider(beanName, delegate);
-        filterProvider.setPriority(priority);
-        filterProvider.setActiveWhenBackup(activeWhenBackup);
-        filterProvider.setEnabled(enabled);
-        filterProvider.setSecurityFilter(securityFilter);
-        filterProvider.setShutdownSpaceOnInitFailure(shutdownSpaceOnInitFailure);
+        FilterProvider filterProvider = new FilterProvider(getBeanName(), delegate);
 
         // set up operation codes
         List<Integer> operationCodes = new ArrayList<Integer>();
@@ -92,18 +33,7 @@ public abstract class AbstractFilterProviderAdapterFactoryBean implements Factor
             opCodes[i] = operationCodes.get(i);
         }
         filterProvider.setOpCodes(opCodes);
-    }
-
-    public Object getObject() throws Exception {
-        return this.filterProvider;
-    }
-
-    public Class getObjectType() {
-        return FilterProvider.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
+        return filterProvider;
     }
 
     protected void addInvoker(Map<Integer, FilterOperationDelegateInvoker> invokerLookup, Method method, int operationCode) throws IllegalArgumentException {

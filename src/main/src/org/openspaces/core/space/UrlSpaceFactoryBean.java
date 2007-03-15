@@ -286,7 +286,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
 
-        if (filterProviders != null) {
+        if (filterProviders != null && filterProviders.length > 0) {
             props.put(Constants.Filter.FILTER_PROVIDERS, filterProviders);
         }
 
