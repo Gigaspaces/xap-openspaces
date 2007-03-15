@@ -8,9 +8,9 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  *
  * @author kimchy
  */
-public class InvalidFifoException extends InvalidDataAccessResourceUsageException {
+public class InvalidFifoOperationException extends InvalidDataAccessResourceUsageException {
 
-    public InvalidFifoException(FifoOperationException e) {
+    public InvalidFifoOperationException(FifoOperationException e) {
         super(e.getMessage(), e);
     }
 }

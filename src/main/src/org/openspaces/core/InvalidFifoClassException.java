@@ -7,7 +7,7 @@ package org.openspaces.core;
  *
  * @author kimchy
  */
-public class InvalidFifoClassException extends InvalidFifoException {
+public class InvalidFifoClassException extends InvalidFifoOperationException {
 
     private com.j_spaces.core.InvalidFifoClassException e;
 
