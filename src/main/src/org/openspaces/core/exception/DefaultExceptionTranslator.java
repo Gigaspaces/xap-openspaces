@@ -4,6 +4,8 @@ import com.gigaspaces.converter.ConversionException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.UnknownTypeException;
 import com.j_spaces.core.client.EntryVersionConflictException;
+import com.j_spaces.core.client.OperationTimeoutException;
+import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
 
@@ -63,6 +65,20 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new UnusableEntryException((net.jini.core.entry.UnusableEntryException) e);
         }
 
+        // handle transaction exceptions
+        if (e instanceof TransactionException) {
+            if (e.getMessage().indexOf("not active") > -1) {
+                return new InactiveTransactionException((TransactionException) e);
+            }
+            if (e.getMessage().indexOf("wrong") > -1) {
+                return new InvalidTransactionUsageException((TransactionException) e);
+            }
+            return new TransactionDataAccessException((TransactionException) e);
+        }
+        if (e instanceof com.j_spaces.core.TransactionNotActiveException) {
+            return new InactiveTransactionException((com.j_spaces.core.TransactionNotActiveException) e);
+        }
+
         // UnknownTypeException
         if (e instanceof UnknownTypeException) {
             return new InvalidTypeDataAccessException((UnknownTypeException) e);
@@ -75,6 +91,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof MemoryShortageException) {
             return new SpaceMemoryShortageException((MemoryShortageException) e);
         }
+
+        if (e instanceof OperationTimeoutException) {
+            return new UpdateOperationTimeoutException((OperationTimeoutException) e);
+        }
+
         return null;
     }
 }

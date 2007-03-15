@@ -3,7 +3,9 @@ package org.openspaces.utest.core.ex;
 import com.gigaspaces.converter.ConversionException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.EntryVersionConflictException;
+import com.j_spaces.core.client.OperationTimeoutException;
 import junit.framework.TestCase;
+import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -100,5 +102,25 @@ public class DefaultExceptionTranslatorTests extends TestCase {
     public void testMemoryShortageException() {
         DataAccessException dae = exTranslator.translate(new MemoryShortageException("test"));
         assertEquals(SpaceMemoryShortageException.class, dae.getClass());
+    }
+
+    public void testOperationTimeoutException() {
+        DataAccessException dae = exTranslator.translate(new OperationTimeoutException());
+        assertEquals(UpdateOperationTimeoutException.class, dae.getClass());
+    }
+
+    public void testUnmatchedTransactionException() {
+        DataAccessException dae = exTranslator.translate(new TransactionException("xxx"));
+        assertEquals(TransactionDataAccessException.class, dae.getClass());
+    }
+
+    public void testInactiveTransactionException() {
+        DataAccessException dae = exTranslator.translate(new TransactionException("not active"));
+        assertEquals(InactiveTransactionException.class, dae.getClass());
+    }
+
+    public void testInvalidTransactionUsageException() {
+        DataAccessException dae = exTranslator.translate(new TransactionException("wrong"));
+        assertEquals(InvalidTransactionUsageException.class, dae.getClass());
     }
 }
