@@ -2,12 +2,13 @@ package org.openspaces.core.exception;
 
 import com.gigaspaces.converter.ConversionException;
 import com.j_spaces.core.MemoryShortageException;
-import com.j_spaces.core.UnknownTypeException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
 import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
+
+import java.rmi.RemoteException;
 
 /**
  * The default exception translator.
@@ -39,6 +40,17 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
                 }
             }
             return new InternalSpaceException((net.jini.space.InternalSpaceException) e);
+        }
+
+        if (e instanceof RemoteException) {
+            RemoteException remoteException = (RemoteException) e;
+            if (remoteException.getCause() != null) {
+                DataAccessException dae = internalTranslate(remoteException.getCause());
+                if (dae != null) {
+                    return dae;
+                }
+            }
+            return new RemoteDataAccessException(remoteException);
         }
 
         if (e instanceof ConversionException) {
@@ -80,9 +92,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         }
 
         // UnknownTypeException
-        if (e instanceof UnknownTypeException) {
-            return new InvalidTypeDataAccessException((UnknownTypeException) e);
-        }
 
         if (e instanceof com.j_spaces.core.EntrySerializationException) {
             return new EntrySerializationException((com.j_spaces.core.EntrySerializationException) e);
