@@ -5,8 +5,9 @@ import org.springframework.dao.DataRetrievalFailureException;
 /**
  * This exception is thrown when <code>update</code>, <code>readIfExist</code> or
  * <code>takeIfExist</code> operations are rejected. The entry specified by the UID is not in the
- * space - it was not found or has been deleted
- * 
+ * space - it was not found or has been deleted. It is a wrapper for
+ * {@link com.j_spaces.core.client.EntryNotInSpaceException}.
+ *
  * @author kimchy
  */
 public class EntryNotInSpaceException extends DataRetrievalFailureException {
@@ -22,8 +23,9 @@ public class EntryNotInSpaceException extends DataRetrievalFailureException {
 
     /**
      * Returns Entry UID.
-     * 
+     *
      * @return unique ID of the entry that caused this exception
+     * @see com.j_spaces.core.client.EntryNotInSpaceException#getUID()
      */
     public String getUID() {
         return e.getUID();
@@ -31,8 +33,9 @@ public class EntryNotInSpaceException extends DataRetrievalFailureException {
 
     /**
      * Check if deleted in the same transaction.
-     * 
+     *
      * @return <code>true</code> if deleted by the same transaction
+     * @see com.j_spaces.core.client.EntryNotInSpaceException#isDeletedByOwnTxn()
      */
     public boolean isDeletedByOwnTxn() {
         return e.isDeletedByOwnTxn();

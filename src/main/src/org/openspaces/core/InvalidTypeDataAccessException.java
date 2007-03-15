@@ -1,12 +1,12 @@
 package org.openspaces.core;
 
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
-
 import com.j_spaces.core.UnknownTypeException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 /**
  * Exception thrown when a space receives an entry/template of type that is not in his type table.
- * 
+ * It is a wrapper for {@link com.j_spaces.core.UnknownTypeException}.
+ *
  * @author kimchy
  */
 public class InvalidTypeDataAccessException extends InvalidDataAccessResourceUsageException {
@@ -15,11 +15,6 @@ public class InvalidTypeDataAccessException extends InvalidDataAccessResourceUsa
 
     /**
      * Constructor for {@link InvalidTypeDataAccessException}.
-     * 
-     * @param msg
-     *            the detail message
-     * @param cause
-     *            the root cause from the data access API in use
      */
     public InvalidTypeDataAccessException(UnknownTypeException e) {
         super(e.getMessage(), e);

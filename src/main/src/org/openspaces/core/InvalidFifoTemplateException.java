@@ -5,6 +5,7 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 /**
  * This exception is thrown if read or take operations executed in FIFO mode,
  * but the template class FIFO mode already been set to non FIFO.
+ * It is a wrapper for {@link com.j_spaces.core.InvalidFifoTemplateException}.
  *
  * @author kimchy
  */
@@ -19,6 +20,8 @@ public class InvalidFifoTemplateException extends InvalidDataAccessResourceUsage
 
     /**
      * Returns invalid template className.
+     *
+     * @see com.j_spaces.core.InvalidFifoTemplateException#getTemplateClassName()
      */
     public String getTemplateClassName() {
         return e.getTemplateClassName();

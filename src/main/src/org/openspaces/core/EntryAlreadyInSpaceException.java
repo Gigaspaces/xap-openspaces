@@ -4,8 +4,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * This exception is thrown when write operation is rejected when the entry (or another with same
- * UID) is already in space.
- * 
+ * UID) is already in space. It is a wrapper for {@link com.j_spaces.core.client.EntryAlreadyInSpaceException}.
+ *
  * @author kimchy
  */
 public class EntryAlreadyInSpaceException extends DataIntegrityViolationException {
@@ -21,6 +21,8 @@ public class EntryAlreadyInSpaceException extends DataIntegrityViolationExceptio
 
     /**
      * Returns the rejected entry UID.
+     *
+     * @see com.j_spaces.core.client.EntryAlreadyInSpaceException#getUID()
      */
     public String getUID() {
         return e.getUID();
@@ -28,6 +30,8 @@ public class EntryAlreadyInSpaceException extends DataIntegrityViolationExceptio
 
     /**
      * Returns the rejected entry class name.
+     *
+     * @see com.j_spaces.core.client.EntryAlreadyInSpaceException#getClassName()
      */
     public String getClassName() {
         return e.getClassName();

@@ -1,16 +1,9 @@
 package org.openspaces.core.exception;
 
+import com.gigaspaces.converter.ConversionException;
 import com.j_spaces.core.UnknownTypeException;
 import com.j_spaces.core.client.EntryVersionConflictException;
-import net.jini.space.InternalSpaceException;
-import org.openspaces.core.EntryAlreadyInSpaceException;
-import org.openspaces.core.EntryNotInSpaceException;
-import org.openspaces.core.InvalidFifoClassException;
-import org.openspaces.core.InvalidFifoTemplateException;
-import org.openspaces.core.InvalidTypeDataAccessException;
-import org.openspaces.core.SpaceOptimisticLockingFailureException;
-import org.openspaces.core.UncategorizedSpaceException;
-import org.openspaces.core.UnusableEntryException;
+import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -27,13 +20,29 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
      * Translateds general JavaSpaces and Jini exceptions into a DataAccess exception.
      */
     public DataAccessException translate(Throwable e) {
-        if (e instanceof InternalSpaceException) {
-            if (((InternalSpaceException) e).nestedException == null) {
-                return new UncategorizedSpaceException(e.getMessage(), e);
-            } else {
-                return translate(((InternalSpaceException) e).nestedException);
-            }
+        DataAccessException dae = internalTranslate(e);
+        if (dae != null) {
+            return dae;
         }
+        return new UncategorizedSpaceException(e.getMessage(), e);
+    }
+
+    private DataAccessException internalTranslate(Throwable e) {
+        if (e instanceof net.jini.space.InternalSpaceException) {
+            if (((net.jini.space.InternalSpaceException) e).nestedException != null) {
+                DataAccessException dae = internalTranslate(((net.jini.space.InternalSpaceException) e).nestedException);
+                if (dae != null) {
+                    return dae;
+                }
+            }
+            return new InternalSpaceException((net.jini.space.InternalSpaceException) e);
+        }
+
+        if (e instanceof ConversionException) {
+            return new ObjectConversionException((ConversionException) e);
+        }
+
+        // UnusableEntryException and its subclasses
         if (e instanceof EntryVersionConflictException) {
             return new SpaceOptimisticLockingFailureException((EntryVersionConflictException) e);
         }
@@ -52,9 +61,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof net.jini.core.entry.UnusableEntryException) {
             return new UnusableEntryException((net.jini.core.entry.UnusableEntryException) e);
         }
+
+        // UnknownTypeException
         if (e instanceof UnknownTypeException) {
             return new InvalidTypeDataAccessException((UnknownTypeException) e);
         }
-        return new UncategorizedSpaceException(e.getMessage(), e);
+        return null;
     }
 }
