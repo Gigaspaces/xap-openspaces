@@ -34,6 +34,10 @@ public class SimpleFilter {
         return onCloseCalled;
     }
 
+    public List<Object[]> getLastExecutions() {
+        return this.lastExecutions;
+    }
+
     @OnFilterInit
     void onInit() {
         onInitCalled = true;
@@ -52,10 +56,6 @@ public class SimpleFilter {
     @AfterWrite
     public void afterWrite(Echo echo) {
         lastExecutions.add(new Object[] {echo});
-    }
-
-    public List<Object[]> getLastExecutions() {
-        return this.lastExecutions;
     }
 
     @BeforeRead
