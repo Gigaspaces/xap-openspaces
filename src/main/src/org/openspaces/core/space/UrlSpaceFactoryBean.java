@@ -1,9 +1,12 @@
 package org.openspaces.core.space;
 
-import java.net.MalformedURLException;
-import java.util.Map;
-import java.util.Properties;
-
+import com.j_spaces.core.Constants;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.FinderException;
+import com.j_spaces.core.client.SpaceFinder;
+import com.j_spaces.core.client.SpaceURL;
+import com.j_spaces.core.client.SpaceURLParser;
+import com.j_spaces.core.filters.FilterProvider;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
@@ -11,15 +14,13 @@ import org.openspaces.core.util.SpaceUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.FinderException;
-import com.j_spaces.core.client.SpaceFinder;
-import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.SpaceURLParser;
+import java.net.MalformedURLException;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
- * 
+ *
  * <p>
  * The factory allows to specify url properties using
  * {@link #setUrlProperties(java.util.Properties) urlProperties} and space parameters using
@@ -27,18 +28,18 @@ import com.j_spaces.core.client.SpaceURLParser;
  * {@link #setProperties(Properties) properties}. It also accepts a {@link ClusterInfo} using
  * {@link #setClusterInfo(ClusterInfo)} and translates it into the relevant space url properties
  * automatically.
- * 
+ *
  * <p>
  * Most url properties are explicitly exposed using different setters. Though they can also be set
  * using the {@link #setUrlProperties(java.util.Properties) urlProperties} the explicit setters
  * allow for more readable and simpler configuration. Some examples of explicit url properties are:
  * {@link #setSchema(String)}, {@link #setFifo(boolean)}.
- * 
+ *
  * <p>
  * The factory uses the {@link BeanLevelMergedPropertiesAware} in order to be injected with
  * properties that were not parameterized in advance (using ${...} notation). This will directly
  * inject additional properties in the Space creation/finding process.
- * 
+ *
  * @author kimchy
  * @see com.j_spaces.core.client.SpaceURLParser
  * @see com.j_spaces.core.client.SpaceFinder
@@ -68,6 +69,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private boolean fifo = false;
 
+    private FilterProvider[] filterProviders;
+
+
     private Properties beanLevelProperties;
 
     private ClusterInfo clusterInfo;
@@ -82,9 +86,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * Creates a new url space factory bean based on the url provided.
-     * 
-     * @param url
-     *            The url to create the {@link com.j_spaces.core.IJSpace} with.
+     *
+     * @param url The url to create the {@link com.j_spaces.core.IJSpace} with.
      */
     public UrlSpaceFactoryBean(String url) {
         this(url, null);
@@ -92,11 +95,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * Creates a new url space factory bean based on the url and map parameters provided.
-     * 
-     * @param url
-     *            The url to create the {@link IJSpace} with.
-     * @param params
-     *            The parameters to create the {@link IJSpace} with.
+     *
+     * @param url    The url to create the {@link IJSpace} with.
+     * @param params The parameters to create the {@link IJSpace} with.
      */
     public UrlSpaceFactoryBean(String url, Map<String, Object> params) {
         this.url = url;
@@ -106,9 +107,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     /**
      * Sets the url the {@link IJSpace} will be created with. Note this url does not take affect
      * after the bean has been initalized.
-     * 
-     * @param url
-     *            The url to create the {@link IJSpace} with.
+     *
+     * @param url The url to create the {@link IJSpace} with.
      */
     public void setUrl(String url) {
         this.url = url;
@@ -117,14 +117,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     /**
      * Sets the parameters the {@link IJSpace} will be created with. Note this paramerters does not
      * take affect after the bean has been initalized.
-     * 
+     *
      * <p>
      * Note, this should not be confused with {@link #setUrlProperties(java.util.Properties)}. The
      * parameters here are the ones refered to as custom properties and allows for example to
      * control the xpath injection to space schema.
-     * 
-     * @param parameters
-     *            The parameters to create the {@link com.j_spaces.core.IJSpace} with.
+     *
+     * @param parameters The parameters to create the {@link com.j_spaces.core.IJSpace} with.
      */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
@@ -150,7 +149,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * The space instance is created using a space schema file which can be used as a template
      * configuration file for creating a space. The user specifies one of the pre-configured schema
      * names (to create a space instance from its template) or a custom one using this property.
-     * 
+     *
      * <p>
      * If a schema name is not defined, a default schema name called <code>default</code> will be
      * used.
@@ -207,6 +206,11 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.mirror = mirror;
     }
 
+    public void setFilterProviders(FilterProvider[] filterProviders) {
+        this.filterProviders = filterProviders;
+    }
+
+
     /**
      * Externally mananed override properties using open spaces extended config support. Should not
      * be set directly but allowed for different Spring context container to set it.
@@ -239,7 +243,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     /**
      * Parses the given space url using {@link SpaceURLParser} and returns the parsed
      * {@link SpaceURL}.
-     * 
+     *
      * <p>
      * Uses the {@link #setUrlProperties(java.util.Properties)} and
      * {@link #setParameters(java.util.Map)} as parameters for the space. Also uses the
@@ -282,6 +286,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
 
+        if (filterProviders != null) {
+            props.put(Constants.Filter.FILTER_PROVIDERS, filterProviders);
+        }
+
         // copy over the external config overrides
         if (beanLevelProperties != null) {
             props.putAll(beanLevelProperties);
@@ -298,11 +306,11 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
             if (clusterInfo.getInstanceId() != null) {
                 props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_MEMBER_ID), clusterInfo.getInstanceId()
-                    .toString());
+                        .toString());
             }
             if (clusterInfo.getBackupId() != null) {
                 props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_BACKUP_ID), clusterInfo.getBackupId()
-                    .toString());
+                        .toString());
             }
             if (clusterInfo.getSchema() != null) {
                 props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_SCHEMA), clusterInfo.getSchema());

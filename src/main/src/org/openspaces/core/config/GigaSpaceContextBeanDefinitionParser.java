@@ -1,6 +1,7 @@
 package org.openspaces.core.config;
 
 import org.openspaces.core.context.GigaSpaceContextBeanPostProcessor;
+import org.openspaces.core.context.GigaSpaceLateContextBeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
@@ -10,7 +11,7 @@ import org.w3c.dom.Element;
 
 /**
  * A bean definition builder for {@link GigaSpaceContextBeanPostProcessor}.
- * 
+ *
  * @author kimchy
  */
 public class GigaSpaceContextBeanDefinitionParser implements BeanDefinitionParser {
@@ -22,7 +23,11 @@ public class GigaSpaceContextBeanDefinitionParser implements BeanDefinitionParse
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(GigaSpaceContextBeanPostProcessor.class);
             builder.setSource(parserContext.extractSource(element));
             BeanDefinitionReaderUtils.registerWithGeneratedName(builder.getBeanDefinition(),
-                parserContext.getRegistry());
+                    parserContext.getRegistry());
+            builder = BeanDefinitionBuilder.rootBeanDefinition(GigaSpaceLateContextBeanFactoryPostProcessor.class);
+            builder.setSource(parserContext.extractSource(element));
+            BeanDefinitionReaderUtils.registerWithGeneratedName(builder.getBeanDefinition(),
+                    parserContext.getRegistry());
             this.registered = true;
         }
         return null;

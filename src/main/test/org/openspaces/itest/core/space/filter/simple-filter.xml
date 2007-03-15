@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:gs-core="http://www.openspaces.org/schema/core"
+       xmlns:gs-events="http://www.openspaces.org/schema/events"
+       xmlns:gs-remoting="http://www.openspaces.org/schema/remoting"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
+
+    <gs-core:giga-space-context/>
+
+    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.SimpleFilter" />
+
+    <bean id="space" class="org.openspaces.core.space.UrlSpaceFactoryBean">
+        <property name="url" value="/./spaceSimpleFilter"/>
+        <property name="filterProviders">
+            <list>
+                <bean class="com.j_spaces.core.filters.FilterProvider">
+                    <constructor-arg index="0" value="test" />
+                    <constructor-arg index="1" ref="simpleFilter" />
+                    <property name="opCodes">
+                        <list>
+                            <value>0</value>
+                            <value>1</value>
+                            <value>2</value>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="gigaSpace" class="org.openspaces.core.GigaSpaceFactoryBean">
+        <property name="space" ref="space"/>
+    </bean>
+
+</beans>
