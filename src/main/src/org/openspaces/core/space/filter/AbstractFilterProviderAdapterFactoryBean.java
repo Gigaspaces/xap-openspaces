@@ -67,13 +67,13 @@ public abstract class AbstractFilterProviderAdapterFactoryBean implements Factor
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(filter, "filter property is required");
-        Map<Integer, FilterOperationDelegateInvoker> invokerLookup = doGetInvokerLookup(filter);
+        Map<Integer, FilterOperationDelegateInvoker> invokerLookup = doGetInvokerLookup();
         if (invokerLookup.size() == 0) {
             throw new IllegalArgumentException("No invoker found in filter [" + filter + "]");
         }
         FilterOperationDelegate delegate = new FilterOperationDelegate(filter, invokerLookup);
-        delegate.setInitMethod(doGetInitMethod(filter));
-        delegate.setCloseMethod(doGetCloseMethod(filter));
+        delegate.setInitMethod(doGetInitMethod());
+        delegate.setCloseMethod(doGetCloseMethod());
 
         filterProvider = new FilterProvider(beanName, delegate);
         filterProvider.setPriority(priority);
@@ -106,9 +106,20 @@ public abstract class AbstractFilterProviderAdapterFactoryBean implements Factor
         return true;
     }
 
-    protected abstract Map<Integer, FilterOperationDelegateInvoker> doGetInvokerLookup(Object filter);
+    protected void addInvoker(Map<Integer, FilterOperationDelegateInvoker> invokerLookup, Method method, int operationCode) throws IllegalArgumentException {
+        FilterOperationDelegateInvoker invoker = invokerLookup.get(operationCode);
+        if (invoker != null) {
+            throw new IllegalArgumentException("Filter adapter only allows for a single method for each operation. " +
+                    "operation [" + operationCode + "] has method [" + invoker.getProcessMethod().getName() + "] and method [" +
+                    method.getName() + "]");
+        }
+        // TODO add paramter validation
+        invokerLookup.put(operationCode, new FilterOperationDelegateInvoker(operationCode, method));
+    }
 
-    protected abstract Method doGetInitMethod(Object filter);
+    protected abstract Map<Integer, FilterOperationDelegateInvoker> doGetInvokerLookup();
 
-    protected abstract Method doGetCloseMethod(Object filter);
+    protected abstract Method doGetInitMethod();
+
+    protected abstract Method doGetCloseMethod();
 }

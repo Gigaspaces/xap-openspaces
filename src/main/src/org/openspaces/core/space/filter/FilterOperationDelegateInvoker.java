@@ -29,23 +29,31 @@ class FilterOperationDelegateInvoker {
         return operationCode;
     }
 
+    public Method getProcessMethod() {
+        return processMethod;
+    }
+
     public void invokeProcess(IJSpace space, Object delegate, SpaceContext context, ISpaceFilterEntry entry)
             throws FilterExecutionException {
-        Object[] params = null;
+        Object[] params;
         int numberOfParams = processMethod.getParameterTypes().length;
         if (numberOfParams == 0) {
             params = null;
         } else {
-            Object entryParam = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[0], space, entry);
-            if (entryParam == null) {
-                return;
+            Object entryParam = entry;
+            if (entryParam != null) {
+                entryParam = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[0], space, entry);
+                // perform filtering based on type
+                if (entryParam == null) {
+                    return;
+                }
             }
             if (numberOfParams == 1) {
                 params = new Object[]{entryParam};
             } else if (numberOfParams == 2) {
-                params = new Object[]{entryParam, context};
+                params = new Object[]{entryParam, operationCode};
             } else if (numberOfParams == 3) {
-                params = new Object[]{entryParam, context, operationCode};
+                params = new Object[]{entryParam, operationCode, context};
             } else {
                 throw new FilterExecutionException("Method [" + processMethod.getName() + "] should not have more than 3 parameters");
             }
@@ -68,23 +76,29 @@ class FilterOperationDelegateInvoker {
         if (numberOfParams == 0) {
             params = null;
         } else {
-            Object entryParam1 = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[0], space, entries[0]);
-            if (entryParam1 == null) {
-                return;
+            Object entryParam1 = entries[0];
+            if (entryParam1 != null) {
+                entryParam1 = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[0], space, entries[0]);
+                if (entryParam1 == null) {
+                    return;
+                }
             }
             if (numberOfParams == 1) {
                 params = new Object[]{entryParam1};
             } else {
-                Object entryParam2 = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[1], space, entries[1]);
-                if (entryParam2 == null) {
-                    return;
+                Object entryParam2 = entries[1];
+                if (entryParam2 != null) {
+                    entryParam2 = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[1], space, entries[1]);
+                    if (entryParam2 == null) {
+                        return;
+                    }
                 }
                 if (numberOfParams == 2) {
                     params = new Object[]{entryParam1, entryParam2};
                 } else if (numberOfParams == 3) {
-                    params = new Object[]{entryParam1, entryParam2, context};
+                    params = new Object[]{entryParam1, entryParam2, operationCode};
                 } else if (numberOfParams == 4) {
-                    params = new Object[]{entryParam1, entryParam2, context, operationCode};
+                    params = new Object[]{entryParam1, entryParam2, operationCode, context};
                 } else {
                     throw new FilterExecutionException("Method [" + processMethod.getName() + "] should not have more than 4 parameters");
                 }

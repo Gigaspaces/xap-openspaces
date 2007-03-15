@@ -29,13 +29,19 @@ public class FilterOperationDelegate implements ISpaceFilter {
         this.delegate = delegate;
         this.invokerLookup = invokerLookup;
     }
-    
+
     public void setInitMethod(Method initMethod) {
         this.initMethod = initMethod;
+        if (initMethod != null) {
+            initMethod.setAccessible(true);
+        }
     }
 
     public void setCloseMethod(Method closeMethod) {
         this.closeMethod = closeMethod;
+        if (closeMethod != null) {
+            closeMethod.setAccessible(true);
+        }
     }
 
     public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
@@ -43,7 +49,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
         if (initMethod == null) {
             return;
         }
-        Object params = null;
+        Object[] params = null;
         if (initMethod.getParameterTypes().length == 1) {
             params = new Object[]{space};
         }
