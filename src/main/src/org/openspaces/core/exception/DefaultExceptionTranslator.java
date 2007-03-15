@@ -1,6 +1,7 @@
 package org.openspaces.core.exception;
 
 import com.gigaspaces.converter.ConversionException;
+import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.UnknownTypeException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import org.openspaces.core.*;
@@ -65,6 +66,14 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         // UnknownTypeException
         if (e instanceof UnknownTypeException) {
             return new InvalidTypeDataAccessException((UnknownTypeException) e);
+        }
+
+        if (e instanceof com.j_spaces.core.EntrySerializationException) {
+            return new EntrySerializationException((com.j_spaces.core.EntrySerializationException) e);
+        }
+
+        if (e instanceof MemoryShortageException) {
+            return new SpaceMemoryShortageException((MemoryShortageException) e);
         }
         return null;
     }

@@ -1,17 +1,10 @@
 package org.openspaces.utest.core.ex;
 
 import com.gigaspaces.converter.ConversionException;
+import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import junit.framework.TestCase;
-import org.openspaces.core.EntryAlreadyInSpaceException;
-import org.openspaces.core.EntryNotInSpaceException;
-import org.openspaces.core.InternalSpaceException;
-import org.openspaces.core.InvalidFifoClassException;
-import org.openspaces.core.InvalidFifoTemplateException;
-import org.openspaces.core.ObjectConversionException;
-import org.openspaces.core.SpaceOptimisticLockingFailureException;
-import org.openspaces.core.UncategorizedSpaceException;
-import org.openspaces.core.UnusableEntryException;
+import org.openspaces.core.*;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.DataAccessException;
@@ -97,5 +90,15 @@ public class DefaultExceptionTranslatorTests extends TestCase {
         DataAccessException dae = exTranslator.translate(new net.jini.space.InternalSpaceException("test", uee));
         assertEquals(UnusableEntryException.class, dae.getClass());
         assertSame(uee, dae.getCause());
+    }
+
+    public void testEntrySerializationException() {
+        DataAccessException dae = exTranslator.translate(new com.j_spaces.core.EntrySerializationException("test", new Exception()));
+        assertEquals(EntrySerializationException.class, dae.getClass());
+    }
+
+    public void testMemoryShortageException() {
+        DataAccessException dae = exTranslator.translate(new MemoryShortageException("test"));
+        assertEquals(SpaceMemoryShortageException.class, dae.getClass());
     }
 }

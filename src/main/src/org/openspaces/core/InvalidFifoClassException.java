@@ -1,7 +1,5 @@
 package org.openspaces.core;
 
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
-
 /**
  * This exception is thrown during write operation when the Entry's class FIFO
  * mode already been defined and a later write operation define different FIFO mode.
@@ -9,12 +7,12 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  *
  * @author kimchy
  */
-public class InvalidFifoClassException extends InvalidDataAccessResourceUsageException {
+public class InvalidFifoClassException extends InvalidFifoException {
 
     private com.j_spaces.core.InvalidFifoClassException e;
 
     public InvalidFifoClassException(com.j_spaces.core.InvalidFifoClassException e) {
-        super(e.getMessage(), e);
+        super(e);
         this.e = e;
     }
 

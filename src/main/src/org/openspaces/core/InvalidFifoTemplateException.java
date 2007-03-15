@@ -1,7 +1,5 @@
 package org.openspaces.core;
 
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
-
 /**
  * This exception is thrown if read or take operations executed in FIFO mode,
  * but the template class FIFO mode already been set to non FIFO.
@@ -9,12 +7,12 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  *
  * @author kimchy
  */
-public class InvalidFifoTemplateException extends InvalidDataAccessResourceUsageException {
+public class InvalidFifoTemplateException extends InvalidFifoException {
 
     private com.j_spaces.core.InvalidFifoTemplateException e;
 
     public InvalidFifoTemplateException(com.j_spaces.core.InvalidFifoTemplateException e) {
-        super(e.getMessage(), e);
+        super(e);
         this.e = e;
     }
 
