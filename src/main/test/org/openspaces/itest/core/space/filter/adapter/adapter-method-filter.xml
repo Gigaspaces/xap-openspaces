@@ -14,11 +14,17 @@
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter" />
 
     <bean id="space" class="org.openspaces.core.space.UrlSpaceFactoryBean">
-        <property name="url" value="/./spaceAdapterSimpleFilter"/>
+        <property name="url" value="/./spaceAdapterSimpleFilterMethod"/>
         <property name="filterProviders">
             <list>
-                <bean class="org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
+                <bean class="org.openspaces.core.space.filter.MethodFilterFactoryBean">
                     <property name="filter" ref="simpleFilter" />
+                    <property name="filterInit" value="onInit" />
+                    <property name="filterClose" value="onClose" />
+                    <property name="beforeWrite" value="beforeWrite" />
+                    <property name="afterWrite" value="afterWrite" />
+                    <property name="beforeRead" value="beforeRead" />
+                    <property name="beforeTake" value="beforeTake" />
                 </bean>
             </list>
         </property>
