@@ -4,7 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * This exception is thrown when write operation is rejected when the entry (or another with same
- * UID) is already in space. It is a wrapper for {@link com.j_spaces.core.client.EntryAlreadyInSpaceException}.
+ * UID) is already in space. Wraps {@link com.j_spaces.core.client.EntryAlreadyInSpaceException}.
  *
  * @author kimchy
  */

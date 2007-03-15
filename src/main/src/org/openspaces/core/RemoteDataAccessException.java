@@ -5,7 +5,7 @@ import org.springframework.dao.DataAccessException;
 import java.rmi.RemoteException;
 
 /**
- * A wrapper around {@link java.rmi.RemoteException}.
+ * Wraps {@link java.rmi.RemoteException}.
  *
  * @author kimchy
  */

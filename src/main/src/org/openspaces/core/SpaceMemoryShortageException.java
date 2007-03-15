@@ -5,7 +5,7 @@ import org.springframework.dao.DataAccessException;
 
 /**
  * This Exception indicates that the space server process reached
- * the predefined percentage usage ratio. It is a wrapper for
+ * the predefined percentage usage ratio. Wraps
  * {@link com.j_spaces.core.MemoryShortageException MemoryShortageException}.
  *
  * @author kimchy

@@ -91,8 +91,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new InactiveTransactionException((com.j_spaces.core.TransactionNotActiveException) e);
         }
 
-        // UnknownTypeException
-
         if (e instanceof com.j_spaces.core.EntrySerializationException) {
             return new EntrySerializationException((com.j_spaces.core.EntrySerializationException) e);
         }

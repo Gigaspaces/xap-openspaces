@@ -3,7 +3,7 @@ package org.openspaces.core;
 /**
  * This exception is thrown during write operation when the Entry's class FIFO
  * mode already been defined and a later write operation define different FIFO mode.
- * It is a wrapper for {@link com.j_spaces.core.InvalidFifoClassException}.
+ * Wraps {@link com.j_spaces.core.InvalidFifoClassException}.
  *
  * @author kimchy
  */

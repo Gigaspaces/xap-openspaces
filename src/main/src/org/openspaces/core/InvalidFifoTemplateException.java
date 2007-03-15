@@ -3,7 +3,7 @@ package org.openspaces.core;
 /**
  * This exception is thrown if read or take operations executed in FIFO mode,
  * but the template class FIFO mode already been set to non FIFO.
- * It is a wrapper for {@link com.j_spaces.core.InvalidFifoTemplateException}.
+ * Wraps {@link com.j_spaces.core.InvalidFifoTemplateException}.
  *
  * @author kimchy
  */

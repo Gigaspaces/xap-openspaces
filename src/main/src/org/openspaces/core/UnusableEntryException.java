@@ -4,7 +4,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 
 /**
  * Thrown when one tries to get an Entry from a service, but the entry is unusable (due to
- * serialization or other errors). It is a wrapper for {@link net.jini.core.entry.UnusableEntryException}.
+ * serialization or other errors). Wraps {@link net.jini.core.entry.UnusableEntryException}.
  * 
  * @author kimchy
  */
