@@ -8,7 +8,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 /**
  * @author kimchy
  */
-public class AbstractAdapterFilterTests extends AbstractDependencyInjectionSpringContextTests {
+public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjectionSpringContextTests {
 
     protected SimpleFilter simpleFilter;
 
