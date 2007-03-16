@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:gs-core="http://www.openspaces.org/schema/core"
-       xmlns:gs-events="http://www.openspaces.org/schema/events"
-       xmlns:gs-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
 
-    <gs-core:giga-space-context/>
+    <os-core:giga-space-context/>
 
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter"/>
 
-    <gs-core:space id="space" url="/./spaceAdapterSimpleFilterMethod">
-        <gs-core:method-adapter-filter filter-init="onInit" filter-close="onClose" before-write="beforeWrite"
+    <os-core:space id="space" url="/./spaceAdapterSimpleFilterMethod">
+        <os-core:method-adapter-filter filter-init="onInit" filter-close="onClose" before-write="beforeWrite"
                                        after-write="afterWrite" before-read="beforeRead" before-take="beforeTake">
-            <gs-core:filter ref="simpleFilter"/>
-        </gs-core:method-adapter-filter>
-    </gs-core:space>
+            <os-core:filter ref="simpleFilter"/>
+        </os-core:method-adapter-filter>
+    </os-core:space>
 
-    <gs-core:giga-space id="gigaSpace" space="space"/>
+    <os-core:giga-space id="gigaSpace" space="space"/>
 
 </beans>
