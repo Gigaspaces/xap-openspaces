@@ -9,6 +9,36 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ * <p>A filter operation delegate invoker, invoking a method associated with the given operation code.
+ *
+ * <p>For sinlge {@link com.j_spaces.core.filters.entry.ISpaceFilterEntry ISpaceFilterEntry} invocation
+ * (see {@link com.j_spaces.core.filters.ISpaceFilter#process(com.j_spaces.core.SpaceContext,com.j_spaces.core.filters.entry.ISpaceFilterEntry,int) process})
+ * support the following different structures:
+ * <ul>
+ * <li>A no op method callback. For example <code>test()</code></li>
+ * <li>A single parameter. The parameter can either be an {@link com.j_spaces.core.filters.entry.ISpaceFilterEntry}
+ * or the actual template object wrapped by the entry. Note, if using actual types, this delegate will filter out
+ * all the types that are not assignable to it. For example: <code>test(ISpaceFilterEntry entry)</li> or
+ * <code>test(Message message)</code>.
+ * <li>Two parameters. The first one maps to the prevoius option, the second one is the operation code.</li>
+ * <li>Three parameters. The first two maps to the previous option, the third one is a {@link com.j_spaces.core.SpaceContext}.
+ * </ul>
+ *
+ * <p>For multiple {@link com.j_spaces.core.filters.entry.ISpaceFilterEntry} invocation
+ * (see {@link com.j_spaces.core.filters.ISpaceFilter#process(com.j_spaces.core.SpaceContext,com.j_spaces.core.filters.entry.ISpaceFilterEntry[],int) process})
+ * supprt the following different structures:
+ * <ul>
+ * <li>A no op method callback. For example <code>test()</code></li>
+ * <li>A single parameter. The parameter can either be an {@link com.j_spaces.core.filters.entry.ISpaceFilterEntry}
+ * or the actual template object wrapped by the entry. Note, if using actual types, this delegate will filter out
+ * all the types that are not assignable to it. For example: <code>test(ISpaceFilterEntry entry)</li> or
+ * <code>test(Message message)</code>.
+ * <li>Two parameters. The first one maps to the prevoius option, the second is the same as the first one since
+ * multiple entries always have two entries (mainly for update operations).</li>
+ * <li>Three parameters. The first two maps to the previous option, the third one is the operaiton code.</li>
+ * <li>Four parameters. The first three maps to the previous option, the fourth one is a {@link com.j_spaces.core.SpaceContext}.
+ * </ul>
+ *
  * @author kimchy
  */
 class FilterOperationDelegateInvoker {
@@ -19,20 +49,32 @@ class FilterOperationDelegateInvoker {
 
     private Method processMethod;
 
+    /**
+     * Constructs a new delegate for the given operation code and a method to invoke.
+     */
     public FilterOperationDelegateInvoker(int operationCode, Method processMethod) {
         this.operationCode = operationCode;
         this.processMethod = processMethod;
         this.processMethod.setAccessible(true);
     }
 
+    /**
+     * Returns the operation code this delegate represents.
+     */
     public int getOperationCode() {
         return operationCode;
     }
 
+    /**
+     * Returns the method that will be delegated to.
+     */
     public Method getProcessMethod() {
         return processMethod;
     }
 
+    /**
+     * Invokes the method based on a single entry. See {@link FilterOperationDelegateInvoker}.
+     */
     public void invokeProcess(IJSpace space, Object delegate, SpaceContext context, ISpaceFilterEntry entry)
             throws FilterExecutionException {
         Object[] params;
@@ -69,6 +111,9 @@ class FilterOperationDelegateInvoker {
         }
     }
 
+    /**
+     * Invokes the method based on a multiple entries. See {@link FilterOperationDelegateInvoker}.
+     */
     public void invokeProcess(IJSpace space, Object delegate, SpaceContext context, ISpaceFilterEntry[] entries)
             throws FilterExecutionException {
         Object[] params = null;

@@ -10,7 +10,19 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
+ * <p>An {@link com.j_spaces.core.filters.ISpaceFilter} implementation that acts as an adapter
+ * delegating the execution of the filter lifecycle methods and specific operation to pluggable
+ * reflection based methods.
+ *
+ * <p>Holds a {@link java.lang.reflect.Method} representing an init callback, and one representing
+ * close callback. Both can be <code>null</code> for cases where no delegation is required.
+ *
+ * <p>Holds a map of {@link FilterOperationDelegateInvoker} per operation code. Once <code>process</code> is
+ * called, a {@link FilterOperationDelegateInvoker} is aquired based on the operation code, and if found,
+ * the invocation is delegated to it.
+ *
  * @author kimchy
+ * @see org.openspaces.core.space.filter.FilterOperationDelegateInvoker
  */
 public class FilterOperationDelegate implements ISpaceFilter {
 
@@ -25,11 +37,18 @@ public class FilterOperationDelegate implements ISpaceFilter {
 
     private IJSpace space;
 
+    /**
+     * Constructs a new filter operation delegate. Providing the delgate to perform the invocation on and a map
+     * of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker}.
+     */
     public FilterOperationDelegate(Object delegate, Map<Integer, FilterOperationDelegateInvoker> invokerLookup) {
         this.delegate = delegate;
         this.invokerLookup = invokerLookup;
     }
 
+    /**
+     * Sets an optional init method callback.
+     */
     public void setInitMethod(Method initMethod) {
         this.initMethod = initMethod;
         if (initMethod != null) {
@@ -37,6 +56,9 @@ public class FilterOperationDelegate implements ISpaceFilter {
         }
     }
 
+    /**
+     * Sets an optional close method callback.
+     */
     public void setCloseMethod(Method closeMethod) {
         this.closeMethod = closeMethod;
         if (closeMethod != null) {
@@ -44,6 +66,10 @@ public class FilterOperationDelegate implements ISpaceFilter {
         }
     }
 
+    /**
+     * If {@link #setInitMethod(java.lang.reflect.Method) initMethod} is supplied, will invoke it.
+     * The method signature can have no parameters or can have a single {@link com.j_spaces.core.IJSpace}.
+     */
     public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
         this.space = space;
         if (initMethod == null) {
@@ -62,6 +88,10 @@ public class FilterOperationDelegate implements ISpaceFilter {
         }
     }
 
+    /**
+     * Fetch a {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} based on the operation
+     * code. If found, delegates to its process method.
+     */
     public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
         FilterOperationDelegateInvoker invoker = invokerLookup.get(operationCode);
         if (invoker != null) {
@@ -69,6 +99,10 @@ public class FilterOperationDelegate implements ISpaceFilter {
         }
     }
 
+    /**
+     * Fetch a {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} based on the operation
+     * code. If found, delegates to its process method.
+     */
     public void process(SpaceContext context, ISpaceFilterEntry[] entries, int operationCode) throws RuntimeException {
         FilterOperationDelegateInvoker invoker = invokerLookup.get(operationCode);
         if (invoker != null) {
@@ -76,6 +110,10 @@ public class FilterOperationDelegate implements ISpaceFilter {
         }
     }
 
+    /**
+     * If {@link #setCloseMethod(java.lang.reflect.Method) closeMethod} is supplied, will invoke it.
+     * The method signature should have no parameters.
+     */
     public void close() throws RuntimeException {
         if (closeMethod == null) {
             return;
