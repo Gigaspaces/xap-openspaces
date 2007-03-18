@@ -169,82 +169,183 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
         return ref.get();
     }
 
+    /**
+     * Method name for filter lifecycle init callback. Can either have no arguments or a single
+     * argument thata accepts {@link com.j_spaces.core.IJSpace}.
+     */
     public void setFilterInit(String filterInit) {
         this.filterInit = filterInit;
     }
 
+    /**
+     * Method name for filter lifecycle close callback. Should have no arguments.
+     */
     public void setFilterClose(String filterClose) {
         this.filterClose = filterClose;
     }
 
+    /**
+     * Filter callback before write operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_WRITE
+     */
     public void setBeforeWrite(String beforeWrite) {
         this.beforeWrite = beforeWrite;
     }
 
+    /**
+     * Filter callback after write operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_WRITE
+     */
     public void setAfterWrite(String afterWrite) {
         this.afterWrite = afterWrite;
     }
 
+    /**
+     * Filter callback before read operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_READ
+     */
     public void setBeforeRead(String beforeRead) {
         this.beforeRead = beforeRead;
     }
 
+    /**
+     * Filter callback before take operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_TAKE
+     */
     public void setBeforeTake(String beforeTake) {
         this.beforeTake = beforeTake;
     }
 
+    /**
+     * Filter callback before notify operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_NOTIFY
+     */
     public void setBeforeNotify(String beforeNotify) {
         this.beforeNotify = beforeNotify;
     }
 
+    /**
+     * Filter callback after clean space operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_CLEAN_SPACE
+     */
     public void setBeforeCleanSpace(String beforeCleanSpace) {
         this.beforeCleanSpace = beforeCleanSpace;
     }
 
+    /**
+     * Filter callback before update operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_UPDATE
+     */
     public void setBeforeUpdate(String beforeUpdate) {
         this.beforeUpdate = beforeUpdate;
     }
 
+    /**
+     * Filter callback after update operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_UPDATE
+     */
     public void setAfteruUpdate(String afteruUpdate) {
         this.afteruUpdate = afteruUpdate;
     }
 
+    /**
+     * Filter callback before read multiple operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_READ_MULTIPLE
+     */
     public void setBeforeReadMultiple(String beforeReadMultiple) {
         this.beforeReadMultiple = beforeReadMultiple;
     }
 
+    /**
+     * Filter callback after read multiple operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_READ_MULTIPLE
+     */
     public void setAfterReadMultiple(String afterReadMultiple) {
         this.afterReadMultiple = afterReadMultiple;
     }
 
+    /**
+     * Filter callback before take multiple operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_TAKE_MULTIPLE
+     */
     public void setBeforeTakeMultiple(String beforeTakeMultiple) {
         this.beforeTakeMultiple = beforeTakeMultiple;
     }
 
+    /**
+     * Filter callback after take multiple operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_TAKE_MULTIPLE
+     */
     public void setAfterTakeMultiple(String afterTakeMultiple) {
         this.afterTakeMultiple = afterTakeMultiple;
     }
 
+    /**
+     * Filter callback before notify trigger. Indicates that a matched notify template was
+     * found to the current entry event.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_NOTIFY_TRIGGER
+     */
     public void setBeforeNotifyTrigger(String beforeNotifyTrigger) {
         this.beforeNotifyTrigger = beforeNotifyTrigger;
     }
 
+    /**
+     * Filter callback after notify trigger. Indicates that a notify trigger was
+     * successful.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_NOTIFY_TRIGGER
+     */
     public void setAfterNotifyTrigger(String afterNotifyTrigger) {
         this.afterNotifyTrigger = afterNotifyTrigger;
     }
 
+    /**
+     * Filter callback before all notify trigger. Indicates that at least one notify template is
+     * matched to the current entry event.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_ALL_NOTIFY_TRIGGER
+     */
     public void setBeforeAllNotifyTrigger(String beforeAllNotifyTrigger) {
         this.beforeAllNotifyTrigger = beforeAllNotifyTrigger;
     }
 
+    /**
+     * Filter callback after all notify trigger. Indicates that all notify templates that are
+     * matched to the current entry event were triggered and returned or failed.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_ALL_NOTIFY_TRIGGER
+     */
     public void setAfterAllNotifyTrigger(String afterAllNotifyTrigger) {
         this.afterAllNotifyTrigger = afterAllNotifyTrigger;
     }
 
+    /**
+     * Filter callback before an entry was removed due to lease expression or lease cancel.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_REMOVE
+     */
     public void setBeforeRemoveByLease(String beforeRemoveByLease) {
         this.beforeRemoveByLease = beforeRemoveByLease;
     }
 
+    /**
+     * Filter callback after an entry was removed due to lease expression or lease cancel.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_REMOVE
+     */
     public void setAfterRemoveByLease(String afterRemoveByLease) {
         this.afterRemoveByLease = afterRemoveByLease;
     }

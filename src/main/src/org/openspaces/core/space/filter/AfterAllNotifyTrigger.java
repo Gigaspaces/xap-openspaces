@@ -6,7 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Filter callback after all notify trigger. Indicates that all notify templates that are
+ * matched to the current entry event were triggered and returned or failed.
+ *
  * @author kimchy
+ * @see org.openspaces.core.space.filter.AnnotationFilterFactoryBean
+ * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_ALL_NOTIFY_TRIGGER
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
