@@ -4,6 +4,7 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import net.jini.core.entry.UnusableEntryException;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -165,18 +166,22 @@ class FilterOperationDelegateInvoker {
         if (ISpaceFilterEntry.class.isAssignableFrom(paramType)) {
             return entry;
         }
+        if (filterOnTypes) {
+            Class entryClass;
+            try {
+                entryClass = ClassUtils.getDefaultClassLoader().loadClass(entry.getClassName());
+            } catch (ClassNotFoundException e) {
+                throw new FilterExecutionException("Failed to find class [" + entry.getClassName() + "]", e);
+            }
+            if (!paramType.isAssignableFrom(entryClass)) {
+                return null;
+            }
+        }
         Object retVal;
         try {
             retVal = entry.getObject(space);
         } catch (UnusableEntryException e) {
             throw new FilterExecutionException("Failed to get object from entry [" + entry + "]", e);
-        }
-        if (filterOnTypes) {
-            if (paramType.isAssignableFrom(retVal.getClass())) {
-                return retVal;
-            } else {
-                return null;
-            }
         }
         return retVal;
     }
