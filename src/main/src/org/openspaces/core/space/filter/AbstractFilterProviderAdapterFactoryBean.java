@@ -9,11 +9,11 @@ import java.util.Map;
 
 /**
  * <p>A base class for filter adapters that delegate the invocation of filter operation and lifecycle
- * methods to another class. The delegate invocation is done using {@link FilterOperationDelegate}.
+ * methods to another class. The delegate invocation is done using {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate}.
  *
  * <p>Subclasses should implement three methods. The first, {@link #doGetInvokerLookup()} provides a
- * map of operaion per {@link FilterOperationDelegateInvoker}. The other two provide filter lifecycle
- * methods {@link #doGetInitMethod()} and {@link #doGetCloseMethod()}.
+ * map of operaion per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}.
+ * The other two provide filter lifecycle methods {@link #doGetInitMethod()} and {@link #doGetCloseMethod()}.
  *
  * @author kimchy
  * @see org.openspaces.core.space.filter.FilterOperationDelegate
@@ -21,12 +21,12 @@ import java.util.Map;
 public abstract class AbstractFilterProviderAdapterFactoryBean extends AbstractFilterProviderFactoryBean {
 
     /**
-     * <p>Constructs a new {@link com.j_spaces.core.filters.FilterProvider} using
-     * {@link org.openspaces.core.space.filter.FilterOperationDelegate} as the <code>ISpaceFilter</code>
+     * <p>Constructs a new {@link com.j_spaces.core.filters.FilterProvider FilterProvider} using
+     * {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate} as the <code>ISpaceFilter</code>
      * implemenation.
      *
-     * <p>Subclasses should provide the main Map of operation per {@link FilterOperationDelegateInvoker}
-     * which is used to initialize the {@link FilterOperationDelegate}.
+     * <p>Subclasses should provide the main Map of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}
+     * which is used to initialize the {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate}.
      */
     protected FilterProvider doGetFilterProvider() throws IllegalArgumentException {
         Map<Integer, FilterOperationDelegateInvoker> invokerLookup = doGetInvokerLookup();

@@ -3,9 +3,7 @@ package org.openspaces.core;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
-
 import net.jini.space.JavaSpace;
-
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 
@@ -35,7 +33,7 @@ import org.springframework.dao.DataAccessException;
  * {@link IJSpace}.
  * 
  * <p>
- * Operations throw a {@link org.openspaces.core.DataAccessException} allowing for simplified
+ * Operations throw a {@link org.springframework.dao.DataAccessException} allowing for simplified
  * development model as it is a runtime exception. The cause of the exception can be aquired from
  * the GigaSpace exception.
  * 
@@ -45,7 +43,7 @@ import org.springframework.dao.DataAccessException;
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.DefaultGigaSpace
- * @see org.openspaces.core.DataAccessException
+ * @see org.springframework.dao.DataAccessException
  */
 public interface GigaSpace {
 

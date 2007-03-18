@@ -10,16 +10,17 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * <p>An {@link com.j_spaces.core.filters.ISpaceFilter} implementation that acts as an adapter
+ * <p>An {@link com.j_spaces.core.filters.ISpaceFilter ISpaceFilter} implementation that acts as an adapter
  * delegating the execution of the filter lifecycle methods and specific operation to pluggable
  * reflection based methods.
  *
  * <p>Holds a {@link java.lang.reflect.Method} representing an init callback, and one representing
  * close callback. Both can be <code>null</code> for cases where no delegation is required.
  *
- * <p>Holds a map of {@link FilterOperationDelegateInvoker} per operation code. Once <code>process</code> is
- * called, a {@link FilterOperationDelegateInvoker} is aquired based on the operation code, and if found,
- * the invocation is delegated to it.
+ * <p>Holds a map of {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}
+ * per operation code. Once <code>process</code> is called, a
+ * {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker} is required
+ * based on the operation code, and if found, the invocation is delegated to it.
  *
  * @author kimchy
  * @see org.openspaces.core.space.filter.FilterOperationDelegateInvoker
@@ -39,7 +40,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
 
     /**
      * Constructs a new filter operation delegate. Providing the delgate to perform the invocation on and a map
-     * of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker}.
+     * of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}.
      */
     public FilterOperationDelegate(Object delegate, Map<Integer, FilterOperationDelegateInvoker> invokerLookup) {
         this.delegate = delegate;
