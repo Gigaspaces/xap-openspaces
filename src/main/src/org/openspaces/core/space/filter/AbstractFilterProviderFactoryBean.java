@@ -97,12 +97,17 @@ public abstract class AbstractFilterProviderFactoryBean implements FactoryBean, 
     }
 
     /**
-     * Constructs the filter provider and applies its different aspects. Delegates to
+     * <p>Constructs the filter provider and applies its different aspects. Delegates to
      * {@link #doGetFilterProvider()} for the actual filter provider creation.
+     *
+     * <p>Note, subclasses will need to intialize the filter provider with the relevant
+     * operation codes it will listen on.
      */
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(filter, "filter property is required");
         this.filterProvider = doGetFilterProvider();
+        Assert.notNull(filterProvider.getOpCodes(), "At least one operation code is required for filter provider");
+        Assert.isTrue(filterProvider.getOpCodes().length > 0, "At least one operation code is required for filter provider");
 
         filterProvider.setPriority(priority);
         filterProvider.setActiveWhenBackup(activeWhenBackup);
@@ -112,7 +117,9 @@ public abstract class AbstractFilterProviderFactoryBean implements FactoryBean, 
     }
 
     /**
-     * Sub classes should implement this method in order to create the actual filter provider.
+     * Sub classes should implement this method in order to create the actual filter provider. Note,
+     * the created filter provider will have to be intialized with at least one operation code is
+     * will listen on.
      */
     protected abstract FilterProvider doGetFilterProvider() throws IllegalArgumentException;
 

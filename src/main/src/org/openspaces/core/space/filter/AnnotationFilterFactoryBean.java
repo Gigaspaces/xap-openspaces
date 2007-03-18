@@ -9,10 +9,31 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * A {@link com.j_spaces.core.filters.FilterProvider FilterProvider} factory that accepts
+ * a Pojo filter with annotation markers as to which filter operarion to listen to. The
+ * available annotations are the different annotations found within this package with
+ * either the <code>Before</code> prefix or the <code>After</code> prefix (for example:
+ * {@link BeforeWrite} and {@link AfterWrite}). Filter lifecycle methods can be marked
+ * using {@link OnFilterInit} and {@link OnFilterClose} annotations.
+ *
+ * <p>The annotated operation callback methods can different arguments. Please see
+ * {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} for all
+ * the different possibilites.
+ *
+ * <p>For a Pojo adapter that does not use annotations please see {@link MethodFilterFactoryBean}.
+ *
  * @author kimchy
+ * @see org.openspaces.core.space.filter.FilterOperationDelegate
+ * @see com.j_spaces.core.filters.FilterProvider
+ * @see com.j_spaces.core.filters.ISpaceFilter
+ * @see com.j_spaces.core.filters.FilterOperationCodes
  */
 public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFactoryBean {
 
+    /**
+     * Creates an operation code to filter invoker map based on the {@link #getFilter()}
+     * delegate and its annotated methods.
+     */
     protected Map<Integer, FilterOperationDelegateInvoker> doGetInvokerLookup() {
         final Map<Integer, FilterOperationDelegateInvoker> invokerLookup = new HashMap<Integer, FilterOperationDelegateInvoker>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
@@ -76,6 +97,9 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
         return invokerLookup;
     }
 
+    /**
+     * Returns the filter lifcycle method anntated with {@link OnFilterInit}.
+     */
     protected Method doGetInitMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
@@ -88,6 +112,9 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
         return ref.get();
     }
 
+    /**
+     * Returns the filter lifcycle method anntated with {@link OnFilterClose}.
+     */
     protected Method doGetCloseMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {

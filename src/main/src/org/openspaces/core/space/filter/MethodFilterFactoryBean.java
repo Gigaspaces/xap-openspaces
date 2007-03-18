@@ -10,7 +10,25 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * A {@link com.j_spaces.core.filters.FilterProvider FilterProvider} factory that accepts
+ * a Pojo filter with different operation callbacks that are marked using this factory.
+ * For each available operation there is a setter that accepts the method name to be invoked
+ * if the operation happened. Not setting a callback means that this filter will not listen
+ * to the mentioned operation. For example, if the filter ({@link #setFilter(Object)}) has
+ * a method called <code>doSomethingBeforeWrite</code>, the {@link #setBeforeWrite(String)}
+ * will need to be set with <code>doSomethingBeforeWrite</code>.
+ *
+ * <p>The operation callback methods can different arguments. Please see
+ * {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} for all
+ * the different possibilites.
+ *
+ * <p>For a Pojo adapter that uses annotation please see {@link AnnotationFilterFactoryBean}.
+ *
  * @author kimchy
+ * @see org.openspaces.core.space.filter.FilterOperationDelegate
+ * @see com.j_spaces.core.filters.FilterProvider
+ * @see com.j_spaces.core.filters.ISpaceFilter
+ * @see com.j_spaces.core.filters.FilterOperationCodes
  */
 public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactoryBean {
 
@@ -54,6 +72,10 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     private String afterRemoveByLease;
 
+    /**
+     * Creates an operation code to filter invoker map based on the {@link #getFilter()}
+     * delegate and the callbacks set on this factory.
+     */
     protected Map<Integer, FilterOperationDelegateInvoker> doGetInvokerLookup() {
         final Map<Integer, FilterOperationDelegateInvoker> invokerLookup = new HashMap<Integer, FilterOperationDelegateInvoker>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
@@ -117,6 +139,9 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
         return invokerLookup;
     }
 
+    /**
+     * Returns the filter lifcycle method set with {@link #setFilterInit(String)}.
+     */
     protected Method doGetInitMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
@@ -129,6 +154,9 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
         return ref.get();
     }
 
+    /**
+     * Returns the filter lifcycle method set with {@link #setFilterClose(String)}.
+     */
     protected Method doGetCloseMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
