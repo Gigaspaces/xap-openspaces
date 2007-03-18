@@ -312,7 +312,7 @@ public class DefaultGigaSpace implements GigaSpace {
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), lease);
+            return (LeaseContext<T>[]) space.writeMultiple(entries, getCurrentTransaction(), lease);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
