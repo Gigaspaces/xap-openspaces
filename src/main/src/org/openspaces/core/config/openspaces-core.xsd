@@ -380,6 +380,7 @@
     </xsd:complexType>
 
     <xsd:element name="giga-space-context"/>
+    <xsd:element name="giga-space-late-context"/>
 
     <xsd:element name="context-loader">
         <xsd:annotation>

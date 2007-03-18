@@ -10,6 +10,7 @@
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
 
     <os-core:giga-space-context/>
+    <os-core:giga-space-late-context/>
 
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.SimpleFilter" />
 

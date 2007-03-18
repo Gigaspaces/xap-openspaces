@@ -23,13 +23,12 @@ import java.util.Map;
 /**
  * A Spring bean post processor allowing to use {@link GigaSpaceContext} in order to inject
  * {@link GigaSpaceContext} instances using annotations.
- * 
+ *
  * @author kimchy
  * @see org.openspaces.core.context.GigaSpaceContext
  * @see org.openspaces.core.GigaSpace
  */
-public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter implements
-        ApplicationContextAware {
+public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter implements ApplicationContextAware {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -53,8 +52,7 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
             this.gsByName = new HashMap<String, GigaSpace>();
             // Look for named GigaSpaces
 
-            for (String gsName : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext,
-                    GigaSpace.class)) {
+            for (String gsName : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext, GigaSpace.class)) {
 
                 GigaSpace gs = (GigaSpace) this.applicationContext.getBean(gsName);
                 gsByName.put(gsName, gs);
@@ -62,8 +60,7 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
 
             if (this.gsByName.isEmpty()) {
                 // Try to find a unique GigaSpaces.
-                String[] gsNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext,
-                        GigaSpace.class);
+                String[] gsNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext, GigaSpace.class);
                 if (gsNames.length == 1) {
                     this.uniqueGs = (GigaSpace) this.applicationContext.getBean(gsNames[0]);
                 }
@@ -103,7 +100,7 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
         return true;
     }
 
-    private synchronized List<AnnotatedMember> findClassMetadata(Class<? extends Object> clazz) {
+    private synchronized List<AnnotatedMember> findClassMetadata(Class<?> clazz) {
         List<AnnotatedMember> metadata = this.classMetadata.get(clazz);
         if (metadata == null) {
             final List<AnnotatedMember> newMetadata = new LinkedList<AnnotatedMember>();

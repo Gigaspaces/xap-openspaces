@@ -18,9 +18,9 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("giga-space", new GigaSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("local-tx-manager", new LocalTxManagerBeanDefinitionParser());
         registerBeanDefinitionParser("distributed-tx-manager", new DistributedTxManagerBeanDefinitionParser());
-        // TODO add distributed tx manager
         try {
             registerBeanDefinitionParser("giga-space-context", new GigaSpaceContextBeanDefinitionParser());
+            registerBeanDefinitionParser("giga-space-late-context", new GigaSpaceLateContextBeanDefinitionParser());
         } catch (Throwable t) {
             // do nothing, working under 1.4
         }

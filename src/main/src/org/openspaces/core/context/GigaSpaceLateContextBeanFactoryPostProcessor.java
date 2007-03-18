@@ -48,8 +48,7 @@ public class GigaSpaceLateContextBeanFactoryPostProcessor implements BeanFactory
             this.gsByName = new HashMap<String, GigaSpace>();
             // Look for named GigaSpaces
 
-            for (String gsName : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext,
-                    GigaSpace.class)) {
+            for (String gsName : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext, GigaSpace.class)) {
 
                 GigaSpace gs = (GigaSpace) this.applicationContext.getBean(gsName);
                 gsByName.put(gsName, gs);
@@ -57,8 +56,7 @@ public class GigaSpaceLateContextBeanFactoryPostProcessor implements BeanFactory
 
             if (this.gsByName.isEmpty()) {
                 // Try to find a unique GigaSpaces.
-                String[] gsNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext,
-                        GigaSpace.class);
+                String[] gsNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.applicationContext, GigaSpace.class);
                 if (gsNames.length == 1) {
                     this.uniqueGs = (GigaSpace) this.applicationContext.getBean(gsNames[0]);
                 }
@@ -89,7 +87,7 @@ public class GigaSpaceLateContextBeanFactoryPostProcessor implements BeanFactory
         return namedGs;
     }
 
-    private synchronized List<AnnotatedMember> findClassMetadata(Class<? extends Object> clazz) {
+    private synchronized List<AnnotatedMember> findClassMetadata(Class<?> clazz) {
         List<AnnotatedMember> metadata = this.classMetadata.get(clazz);
         if (metadata == null) {
             final List<AnnotatedMember> newMetadata = new LinkedList<AnnotatedMember>();
