@@ -1,10 +1,11 @@
 package org.openspaces.core.util;
 
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.JSpaceProxy;
+import com.j_spaces.core.client.SpaceURL;
+import com.j_spaces.core.cluster.JSpaceClusteredProxy;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
-
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.SpaceURL;
 
 /**
  * A set of {@link IJSpace} utilites.
@@ -24,7 +25,7 @@ public abstract class SpaceUtils {
      *            If <code>true</code> and embedded (collocated) proxy is returned. Otherwise, a
      *            regular proxy (which contains a remote reference) is returned.
      * @return A cluster member of the specified space
-     * @throws GigaSpaceException
+     * @throws DataAccessException
      */
     public static IJSpace getClusterMemberSpace(IJSpace space, boolean embedded) throws DataAccessException {
         try {
@@ -36,6 +37,19 @@ public abstract class SpaceUtils {
 
     public static String spaceUrlProperty(String propertyName) {
         return SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + propertyName;
+    }
+
+    public static boolean isSameSpace(IJSpace space1, IJSpace space2) throws DataAccessException {
+        if ((space1 instanceof JSpaceProxy) && (space2 instanceof JSpaceProxy)) {
+            return space1.equals(space2);
+        }
+        if ((space1 instanceof JSpaceClusteredProxy) && (space2 instanceof JSpaceClusteredProxy)) {
+            return space1.equals(space2);
+        }
+        if ((space1 instanceof JSpaceClusteredProxy) || (space2 instanceof JSpaceClusteredProxy)) {
+            return getClusterMemberSpace(space1, true).equals(getClusterMemberSpace(space2, true));
+        }
+        return false;
     }
 
 }
