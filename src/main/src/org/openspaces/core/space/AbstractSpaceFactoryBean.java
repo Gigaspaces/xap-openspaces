@@ -1,7 +1,9 @@
 package org.openspaces.core.space;
 
-import java.rmi.RemoteException;
-
+import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
+import com.gigaspaces.cluster.activeelection.SpaceMode;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
@@ -18,10 +20,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.dao.DataAccessException;
 
-import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
-import com.gigaspaces.cluster.activeelection.SpaceMode;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import java.rmi.RemoteException;
 
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
@@ -102,8 +101,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * Destroys the space and unregisters the intenral space mode listener.
      */
     public void destroy() throws Exception {
-        // unregister the sapce mode listener
         if (isEmbeddedSpace()) {
+            // unregister the sapce mode listener
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
             try {
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
@@ -112,6 +111,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             } catch (RemoteException e) {
                 logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
             }
+            // shutdown the space if we are in embedded mode
+            space.getContainer().shutdown();
         }
     }
 
@@ -168,10 +169,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     protected abstract IJSpace doCreateSpace() throws DataAccessException;
 
     /**
-     * Returns <code>true</code> if the space is an embedded one (i.e. does not start with
+     * <p>Returns <code>true</code> if the space is an embedded one (i.e. does not start with
      * <code>jini</code> or <code>rmi</code> protocols).
      * 
-     * <p>
      * Default implementation delegates to {@link IJSpace#isEmbedded()}.
      */
     protected boolean isEmbeddedSpace() {

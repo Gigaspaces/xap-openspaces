@@ -317,6 +317,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
         }
 
+        // no need for a shutdown hook in the space as well
+        props.setProperty(Constants.Container.CONTAINER_SHUTDOWN_HOOK_PROP, "false");
+
         try {
             return SpaceURLParser.parseURL(url, props);
         } catch (MalformedURLException e) {
