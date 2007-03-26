@@ -319,18 +319,18 @@ public class DefaultGigaSpace implements GigaSpace {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T[] updateMultiple(T[] entries, long[] leases) throws DataAccessException {
+    public <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException {
         try {
-            return (T[]) space.updateMultiple(entries, getCurrentTransaction(), leases);
+            return space.updateMultiple(entries, getCurrentTransaction(), leases);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException {
+    public <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException {
         try {
-            return (T[]) space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
+            return space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

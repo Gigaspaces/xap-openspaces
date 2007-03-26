@@ -135,7 +135,7 @@ public interface GigaSpace {
 
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws DataAccessException;
 
-    <T> T[] updateMultiple(T[] entries, long[] leases) throws DataAccessException;
+    <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException;
 
-    <T> T[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
+    <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
 }
