@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @author kimchy
  * @see org.openspaces.core.space.filter.AnnotationFilterFactoryBean
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OnFilterInit {
 }

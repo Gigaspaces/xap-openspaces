@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @see org.openspaces.core.space.filter.AnnotationFilterFactoryBean
  * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_CLEAN_SPACE
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BeforeCleanSpace {
 }
