@@ -1,25 +1,24 @@
 package org.openspaces.core.space.cache;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.springframework.util.Assert;
-
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.view.View;
+import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.Properties;
 
 /**
  * The space local view proxy maintains a subset of the master space's data, allowing the client to
  * read distributed data without any remote operations.
- * 
+ *
  * <p>
- * Data is streamed into the client view in an implicit manner Ð as opposed to local cache data ({@link LocalCacheSpaceFactoryBean}),
+ * Data is streamed into the client view in an implicit manner - as opposed to local cache data ({@link LocalCacheSpaceFactoryBean}),
  * that is loaded into the client on- demand, and later updated or evicted.
- * 
+ *
  * <p>
- * The local view is defined via a filter ({@link #setLocalViews(java.util.List)} localViews) Ð as
+ * The local view is defined via a filter ({@link #setLocalViews(java.util.List)} localViews) - as
  * opposed to the local cache that caches data at the client side only after the data has been read
- * 
+ *
  * @author kimchy
  */
 public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
