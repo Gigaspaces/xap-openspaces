@@ -123,4 +123,14 @@ public class ClusterInfo {
     public void setNumberOfBackups(Integer numberOfBackups) {
         this.numberOfBackups = numberOfBackups;
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("schema[").append(schema).append("]");
+        sb.append("numberOfInstances[").append(numberOfInstances).append("]");
+        sb.append("numberOfBackups[").append(numberOfBackups).append("]");
+        sb.append("instanceId[").append(instanceId).append("]");
+        sb.append("backupId[").append(backupId).append("]");
+        return sb.toString();
+    }
 }
