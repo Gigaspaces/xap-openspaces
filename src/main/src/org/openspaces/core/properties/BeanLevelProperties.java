@@ -27,7 +27,7 @@ public class BeanLevelProperties {
     }
 
     /**
-     * Sets the Sprign context level proeprties.
+     * Sets the Spring context level properties.
      */
     public void setContextProperties(Properties contextProperties) {
         this.contextProperties = contextProperties;
