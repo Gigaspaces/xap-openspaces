@@ -241,7 +241,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
                 }
                 clustered = true;
             } else {
-                clustered = !space.isEmbedded();
+                clustered = SpaceUtils.isRemoteProtocol(space);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] for bean [" + beanName + "]");
                 }

@@ -154,6 +154,16 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="register-for-space-mode-notifications" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicates that this space will register for space mode notifications.
+                                Default behaviour (if the flag was not set) will register to primary backup notification
+                                if the space was found using an embedded protocol, and will not register for notification
+                                if the space was found using rmi or jini protocols.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

@@ -35,6 +35,10 @@ public abstract class SpaceUtils {
         }
     }
 
+    public static boolean isRemoteProtocol(IJSpace space) {
+        return !space.isEmbedded();
+    }
+
     public static String spaceUrlProperty(String propertyName) {
         return SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + propertyName;
     }

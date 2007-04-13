@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
  * implementation.
- * 
+ *
  * <p>
  * Provides support for raising Spring application events: {@link BeforeSpaceModeChangeEvent} and
  * {@link AfterSpaceModeChangeEvent} alerting other beans of the current space mode
@@ -33,7 +33,7 @@ import java.rmi.RemoteException;
  * {@link org.springframework.context.ApplicationListener}. Note that this space mode events might
  * be raised more than once for the same space mode, and beans that listen to it should take it into
  * account.
- * 
+ *
  * <p>
  * The space mode event will be raised regardless of the space "type" that is used. For embedded
  * spaces, an actual space mode event listener will be regsitered with the actual cluster member (if
@@ -41,10 +41,10 @@ import java.rmi.RemoteException;
  * regsitered and Space mode events will still be raised during context refresh with a
  * <code>PRIMARY</code> mode in order to allow beans to be written regardless of how the space is
  * looked up.
- * 
+ *
  * <p>
  * Derived classes should implement the {@link #doCreateSpace()} to obtain the {@link IJSpace}.
- * 
+ *
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean,
@@ -60,6 +60,18 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     private PrimaryBackupListener primaryBackupListener;
 
+    private Boolean registerForSpaceMode;
+
+    /**
+     * Sets if the space should register for primary backup (mode) notifications. Default behaviour (if the flag was not set)
+     * will register to primary backup notification if the space was found using an embedded
+     * protocol, and will not register for notification if the space was found using <code>rmi</code>
+     * or <code>jini</code> protocols.
+     */
+    public void setRegisterForSpaceModeNotifications(boolean registerForSpaceMode) {
+        this.registerForSpaceMode = registerForSpaceMode;
+    }
+
     /**
      * Injected by Spring thanks to {@link ApplicationContextAware}.
      */
@@ -69,7 +81,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     /**
      * Initializes the space by calling the {@link #doCreateSpace()}.
-     * 
+     *
      * <p>
      * Registers with the space an internal space mode listener in order to be able to send Spring
      * level {@link BeforeSpaceModeChangeEvent} and {@link AfterSpaceModeChangeEvent} for primary
@@ -78,12 +90,12 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     public void afterPropertiesSet() throws DataAccessException {
         this.space = doCreateSpace();
         // register the space mode listener with the space
-        if (isEmbeddedSpace()) {
+        if (isRegisterForSpaceModeNotifications()) {
             primaryBackupListener = new PrimaryBackupListener();
             try {
                 IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
-                    .exportObject(primaryBackupListener);
+                        .exportObject(primaryBackupListener);
                 currentSpaceMode = ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).addSpaceModeListener(remoteListener);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Space [" + clusterMemberSpace + "] mode is [" + currentSpaceMode + "]");
@@ -101,12 +113,12 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * Destroys the space and unregisters the intenral space mode listener.
      */
     public void destroy() throws Exception {
-        if (isEmbeddedSpace()) {
+        if (isRegisterForSpaceModeNotifications()) {
             // unregister the sapce mode listener
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
             try {
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
-                    .exportObject(primaryBackupListener);
+                        .exportObject(primaryBackupListener);
                 ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).removeSpaceModeListener(remoteListener);
             } catch (RemoteException e) {
                 logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
@@ -121,7 +133,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * {@link BeforeSpaceModeChangeEvent} and {@link AfterSpaceModeChangeEvent} with the current
      * space mode. This is done since other beans that use this events might not catch them while
      * the context is constructed.
-     * 
+     *
      * <p>
      * Note, this will mean that events with the same Space mode might be raised, one after the
      * other, and Spring beans that listens for them should take it into account.
@@ -137,7 +149,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     /**
      * Spring factory bean returning the {@link IJSpace} created during the bean initializtion ({@link #afterPropertiesSet()}).
-     * 
+     *
      * @return The {@link IJSpace} implementation
      * @throws Exception
      */
@@ -162,20 +174,23 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     /**
      * Responsible for creating/finding the actual {@link IJSpace} implementation.
-     * 
+     *
      * @return The IJSpace implementation used for the factory bean
      * @throws DataAccessException
      */
     protected abstract IJSpace doCreateSpace() throws DataAccessException;
 
     /**
-     * <p>Returns <code>true</code> if the space is an embedded one (i.e. does not start with
-     * <code>jini</code> or <code>rmi</code> protocols).
-     * 
-     * Default implementation delegates to {@link IJSpace#isEmbedded()}.
+     * Returns if the space should register for primary backup notifications. If {@link #setRegisterForSpaceModeNotifications(boolean)}
+     * was set, will return this flag. If not, will register to primary backup notification if the space was
+     * found using an embedded protocol, and will not register for notification if the space was found using <code>rmi</code>
+     * or <code>jini</code> protocols.
      */
-    protected boolean isEmbeddedSpace() {
-        return space.isEmbedded();
+    protected boolean isRegisterForSpaceModeNotifications() {
+        if (registerForSpaceMode != null) {
+            return registerForSpaceMode;
+        }
+        return !SpaceUtils.isRemoteProtocol(space);
     }
 
     private class PrimaryBackupListener implements ISpaceModeListener {
