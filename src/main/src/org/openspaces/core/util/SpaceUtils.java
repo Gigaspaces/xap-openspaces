@@ -2,6 +2,7 @@ package org.openspaces.core.util;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.JSpaceProxy;
+import com.j_spaces.core.client.JSpaceProxyUtil;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.cluster.JSpaceClusteredProxy;
 import org.springframework.dao.DataAccessException;
@@ -9,7 +10,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * A set of {@link IJSpace} utilites.
- * 
+ *
  * @author kimchy
  */
 public abstract class SpaceUtils {
@@ -18,12 +19,10 @@ public abstract class SpaceUtils {
      * Returns a proxy space to the specified space name. In case of clustered proxy to a space,
      * will return an acutal cluster member proxy (i.e. not cluster aware). If the proxy does not
      * point to a clusered space, will return the same space.
-     * 
-     * @param space
-     *            The space to get the cluster member space from.
-     * @param embedded
-     *            If <code>true</code> and embedded (collocated) proxy is returned. Otherwise, a
-     *            regular proxy (which contains a remote reference) is returned.
+     *
+     * @param space    The space to get the cluster member space from.
+     * @param embedded If <code>true</code> and embedded (collocated) proxy is returned. Otherwise, a
+     *                 regular proxy (which contains a remote reference) is returned.
      * @return A cluster member of the specified space
      * @throws DataAccessException
      */
@@ -36,7 +35,8 @@ public abstract class SpaceUtils {
     }
 
     public static boolean isRemoteProtocol(IJSpace space) {
-        return !space.isEmbedded();
+        // TODO currently, isMarshall makes sense, need to find a nicer solution
+        return JSpaceProxyUtil.isMarshalled(space);
     }
 
     public static String spaceUrlProperty(String propertyName) {
