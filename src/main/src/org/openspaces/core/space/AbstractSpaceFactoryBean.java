@@ -124,9 +124,13 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
                 logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
             }
         }
-        if (!SpaceUtils.isRemoteProtocol(space)) {
-            // shutdown the space if we are in embedded mode
-            space.getContainer().shutdown();
+        try {
+            if (!SpaceUtils.isRemoteProtocol(space)) {
+                // shutdown the space if we are in embedded mode
+                space.getContainer().shutdown();
+            }
+        } finally {
+            space = null;
         }
     }
 
