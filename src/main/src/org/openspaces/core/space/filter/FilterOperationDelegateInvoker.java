@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
  * or the actual template object wrapped by the entry. Note, if using actual types, this delegate will filter out
  * all the types that are not assignable to it. For example: <code>test(ISpaceFilterEntry entry)</li> or
  * <code>test(Message message)</code>.
- * <li>Two parameters. The first one maps to the prevoius option, the second is the same as the first one since
+ * <li>Two parameters. The first one maps to the previous option, the second is the same as the first one since
  * multiple entries always have two entries (mainly for update operations).</li>
  * <li>Three parameters. The first two maps to the previous option, the third one is the operaiton code.</li>
  * <li>Four parameters. The first three maps to the previous option, the fourth one is a {@link com.j_spaces.core.SpaceContext}.
