@@ -15,7 +15,7 @@
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.SimpleFilter" />
 
     <os-core:space id="space" url="/./spaceSimpleFilter">
-        <os-core:space-filter>
+        <os-core:space-filter priority="2">
             <os-core:filter ref="simpleFilter" />
             <os-core:operation code="0" />
             <os-core:operation code="1" />

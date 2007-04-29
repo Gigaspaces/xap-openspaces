@@ -15,7 +15,7 @@
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter" />
 
     <os-core:space id="space" url="/./spaceAdapterSimpleFilterAnnotation">
-        <os-core:annotation-adapter-filter>
+        <os-core:annotation-adapter-filter priority="2">
             <os-core:filter ref="simpleFilter" />
         </os-core:annotation-adapter-filter>
     </os-core:space>
