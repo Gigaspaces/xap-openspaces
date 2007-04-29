@@ -466,6 +466,7 @@
                 <xsd:sequence>
                     <xsd:element name="filter" type="filterType" minOccurs="1" maxOccurs="1"/>
                 </xsd:sequence>
+                <xsd:attribute name="priority" type="xsd:nonNegativeInteger"/>
                 <xsd:attribute name="active-when-backup" type="xsd:boolean"/>
                 <xsd:attribute name="enabled" type="xsd:boolean"/>
                 <xsd:attribute name="security-filter" type="xsd:boolean"/>
