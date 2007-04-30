@@ -1,26 +1,22 @@
 package org.openspaces.core.transaction.manager;
 
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.LocalTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
-
 import org.openspaces.core.GigaSpace;
 import org.springframework.aop.framework.Advised;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.LocalTransactionManager;
-
 /**
  * Springs transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
  * using GigaSpaces {@link LocalJiniTransactionManager}.
  * 
- * <p>
- * Local transaction manager is high performance single space transaction manager and should be used
+ * <p>Local transaction manager is high performance single space transaction manager and should be used
  * in most if not all space related operations.
  * 
- * <p>
- * The local transaction manager also allows for most transaction isolation levels excluding
+ * <p>The local transaction manager also allows for most transaction isolation levels excluding
  * <code>SERIALIZABLE</code>. This is automatically applied when using this transaction manager
  * in conjuction with {@link org.openspaces.core.GigaSpace} API.
  * 

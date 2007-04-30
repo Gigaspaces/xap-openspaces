@@ -1,7 +1,5 @@
 package org.openspaces.core.transaction.manager;
 
-import java.rmi.RemoteException;
-
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
@@ -14,7 +12,6 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.UnknownTransactionException;
 import net.jini.core.transaction.server.NestableTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -31,19 +28,19 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
+import java.rmi.RemoteException;
+
 /**
  * Base class for Jini implementation of Springs {@link PlatformTransactionManager}. Uses Jini
  * {@link TransactionManager} in order to manage transactions with sub classes responsible for
  * providing it using {@link #doCreateTransactionManager()}.
  * 
- * <p>
- * Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
+ * <p>Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
  * {@link TransactionSynchronizationManager#bindResource(Object,Object)}. The transactional context
  * is optional and defaults to the Jini {@link TransactionManager} instance. Note, this can be
  * overriden by sub classes.
  * 
- * <p>
- * By default the transaciton timeout will be <code>FOREVER</code>. The deafult timeout on the
+ * <p>By default the transaciton timeout will be <code>FOREVER</code>. The deafult timeout on the
  * transaction manager level can be set using {@link #setDefaultTimeout(Long)}. If the timeout is
  * explicitly set using Spring support for transactions (for example using
  * {@link org.springframework.transaction.TransactionDefinition}) this value will be used.

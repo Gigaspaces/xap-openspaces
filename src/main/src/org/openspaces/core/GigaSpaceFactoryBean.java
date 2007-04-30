@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
  *
  * <p>When usin {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager} there is no need
  * to pass the transaction manager to this factory, since both by default will use the space as the
- * transactional context. When working with {@link org.openspaces.core.transaction.manager.DistributedJiniTransactionManager}
+ * transactional context. When working with {@link org.openspaces.core.transaction.manager.LookupJiniTransactionManager}
  * (which probably means Mahalo and support for more than one space as transaction resources) the transaction
  * manager should be provided to this class.
  *

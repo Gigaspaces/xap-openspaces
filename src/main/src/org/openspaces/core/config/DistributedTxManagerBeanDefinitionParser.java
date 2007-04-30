@@ -1,6 +1,6 @@
 package org.openspaces.core.config;
 
-import org.openspaces.core.transaction.manager.DistributedJiniTransactionManager;
+import org.openspaces.core.transaction.manager.LookupJiniTransactionManager;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.core.Conventions;
@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
- * A bean definition builder for {@link DistributedJiniTransactionManager}.
+ * A bean definition builder for {@link LookupJiniTransactionManager}.
  * 
  * @author kimchy
  */
@@ -19,8 +19,8 @@ public class DistributedTxManagerBeanDefinitionParser extends AbstractSingleBean
 
     public static final String TX_MANAGER_NAME = "tx-manager-name";
 
-    protected Class<DistributedJiniTransactionManager> getBeanClass(Element element) {
-        return DistributedJiniTransactionManager.class;
+    protected Class<LookupJiniTransactionManager> getBeanClass(Element element) {
+        return LookupJiniTransactionManager.class;
     }
 
     // TODO allow for transactional context to be set as well

@@ -361,11 +361,11 @@
 
     <xsd:element name="distributed-tx-manager">
         <xsd:annotation>
-            <xsd:documentation source="java:org.openspaces.core.transaction.manager.DistributedJiniTransactionManager">
+            <xsd:documentation source="java:org.openspaces.core.transaction.manager.LookupJiniTransactionManager">
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
-                    <tool:exports type="org.openspaces.core.transaction.manager.DistributedJiniTransactionManager"/>
+                    <tool:exports type="org.openspaces.core.transaction.manager.LookupJiniTransactionManager"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>
