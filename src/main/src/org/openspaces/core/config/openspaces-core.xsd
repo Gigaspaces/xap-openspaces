@@ -359,7 +359,7 @@
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="distributed-tx-manager">
+    <xsd:element name="lookup-tx-manager">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LookupJiniTransactionManager">
             </xsd:documentation>
@@ -373,7 +373,7 @@
             <xsd:complexContent>
                 <xsd:extension base="baseTxManagerType">
                     <xsd:attribute name="tx-manager-name" type="xsd:string"/>
-                    <xsd:attribute name="lookup-timeout" type="xsd:nonPositiveInteger"/>
+                    <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
