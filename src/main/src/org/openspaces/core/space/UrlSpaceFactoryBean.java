@@ -61,7 +61,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private Integer lookupTimeout;
 
-    private boolean versioned = true;
+    private Boolean versioned;
 
     private boolean noWriteLease = false;
 
@@ -183,7 +183,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * When <code>false</code>, optimistic lock is disabled. Default is <code>true</code>.
+     * When <code>false</code>, optimistic lock is disabled. Default to the Space deault value.
      */
     public void setVersioned(boolean versioned) {
         this.versioned = versioned;
@@ -282,7 +282,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             props.put(SpaceUtils.spaceUrlProperty(SpaceURL.TIMEOUT), lookupTimeout.toString());
         }
 
-        props.put(SpaceUtils.spaceUrlProperty(SpaceURL.VERSIONED), Boolean.toString(versioned));
+        if (versioned != null) {
+            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.VERSIONED), Boolean.toString(versioned));
+        }
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
         props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
 
