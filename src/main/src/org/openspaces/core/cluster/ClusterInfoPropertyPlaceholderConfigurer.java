@@ -25,6 +25,8 @@ import java.util.Properties;
  * <li>${clusterInfo.schema} : Maps to {@link ClusterInfo#getSchema()}</li>
  * </ul>
  *
+ * <p>If the cluster info parameter is not set (has <code>null</code> value) an empty string will be used.
+ *
  * @author kimchy
  */
 public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware,
@@ -40,21 +42,11 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
 
     public ClusterInfoPropertyPlaceholderConfigurer(ClusterInfo clusterInfo) {
         properties = new Properties();
-        if (clusterInfo.getNumberOfInstances() != null) {
-            properties.setProperty(NUMBER_OF_INSTANCES_PROP, clusterInfo.getNumberOfInstances().toString());
-        }
-        if (clusterInfo.getNumberOfBackups() != null) {
-            properties.setProperty(NUMBER_OF_BACKUPS_PROP, clusterInfo.getNumberOfBackups().toString());
-        }
-        if (clusterInfo.getInstanceId() != null) {
-            properties.setProperty(INSTANCE_ID_PROP, clusterInfo.getInstanceId().toString());
-        }
-        if (clusterInfo.getBackupId() != null) {
-            properties.setProperty(BACKUP_ID_PROP, clusterInfo.getBackupId().toString());
-        }
-        if (clusterInfo.getSchema() != null) {
-            properties.setProperty(SCHEMA_PROP, clusterInfo.getSchema());
-        }
+        properties.setProperty(NUMBER_OF_INSTANCES_PROP, toPropertyValue(clusterInfo.getNumberOfInstances()));
+        properties.setProperty(NUMBER_OF_BACKUPS_PROP, toPropertyValue(clusterInfo.getNumberOfBackups()));
+        properties.setProperty(INSTANCE_ID_PROP, toPropertyValue(clusterInfo.getInstanceId().toString()));
+        properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo.getBackupId().toString()));
+        properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
         setIgnoreUnresolvablePlaceholders(true);
         setSystemPropertiesMode(SYSTEM_PROPERTIES_MODE_NEVER);
         setOrder(2);
@@ -89,6 +81,13 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
                 }
             }
         }
+    }
+
+    private String toPropertyValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toString();
     }
 
     /**
