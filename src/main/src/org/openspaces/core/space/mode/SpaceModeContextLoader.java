@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
+import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
@@ -140,12 +141,12 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
         applicationContext = new ResourceApplicationContext(new Resource[] { location }, parentApplicationContext);
         // add config information if provided
         if (beanLevelProperties != null) {
-            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(
-                    beanLevelProperties));
+            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties));
             applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
         }
         if (clusterInfo != null) {
             applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
+            applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
         }
         try {
             applicationContext.refresh();
