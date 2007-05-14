@@ -92,7 +92,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
     }
 
     private String toPropertyValue(Object value) {
-        if (clusterInfo == null || value == null) {
+        if (value == null) {
             return "";
         }
         return value.toString();
