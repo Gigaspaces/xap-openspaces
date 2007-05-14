@@ -42,11 +42,11 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
 
     public ClusterInfoPropertyPlaceholderConfigurer(ClusterInfo clusterInfo) {
         properties = new Properties();
-        properties.setProperty(NUMBER_OF_INSTANCES_PROP, toPropertyValue(clusterInfo.getNumberOfInstances()));
-        properties.setProperty(NUMBER_OF_BACKUPS_PROP, toPropertyValue(clusterInfo.getNumberOfBackups()));
-        properties.setProperty(INSTANCE_ID_PROP, toPropertyValue(clusterInfo.getInstanceId().toString()));
-        properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo.getBackupId().toString()));
-        properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
+        properties.setProperty(NUMBER_OF_INSTANCES_PROP, toPropertyValue(clusterInfo, clusterInfo.getNumberOfInstances()));
+        properties.setProperty(NUMBER_OF_BACKUPS_PROP, toPropertyValue(clusterInfo, clusterInfo.getNumberOfBackups()));
+        properties.setProperty(INSTANCE_ID_PROP, toPropertyValue(clusterInfo, clusterInfo.getInstanceId()));
+        properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo, clusterInfo.getBackupId()));
+        properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo, clusterInfo.getSchema()));
         setIgnoreUnresolvablePlaceholders(true);
         setSystemPropertiesMode(SYSTEM_PROPERTIES_MODE_NEVER);
         setOrder(2);
@@ -83,8 +83,8 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
         }
     }
 
-    private String toPropertyValue(Object value) {
-        if (value == null) {
+    private String toPropertyValue(ClusterInfo clusterInfo, Object value) {
+        if (clusterInfo == null || value == null) {
             return "";
         }
         return value.toString();
