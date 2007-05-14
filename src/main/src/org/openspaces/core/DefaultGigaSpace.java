@@ -338,7 +338,7 @@ public class DefaultGigaSpace implements GigaSpace {
 
     // Support methods
 
-    private Transaction getCurrentTransaction() {
+    public Transaction getCurrentTransaction() {
         Transaction.Created txCreated = txProvider.getCurrentTransaction(this);
         if (txCreated == null) {
             return null;
@@ -353,7 +353,7 @@ public class DefaultGigaSpace implements GigaSpace {
      * {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT} will use the
      * default isolation level associated with this class.
      */
-    private int getModifiersForIsolationLevel() {
+    public int getModifiersForIsolationLevel() {
         int isolationLevel = txProvider.getCurrentTransactionIsolationLevel(this);
         if (isolationLevel == TransactionDefinition.ISOLATION_DEFAULT) {
             return space.getReadModifiers();

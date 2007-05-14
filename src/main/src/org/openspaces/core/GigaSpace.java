@@ -3,6 +3,7 @@ package org.openspaces.core;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
+import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
@@ -61,6 +62,20 @@ public interface GigaSpace {
      * transaction object.
      */
     TransactionProvider getTxProvider();
+
+    /**
+     * Returns the current running transaction. Can be <code>null</code> if no transaction is in progress.
+     */
+    Transaction getCurrentTransaction();
+
+    /**
+     * Gets the isolation level from the current running transaction (enabling the usage of Spring
+     * declarative isolation level settings). If there is no transaction in progress or the
+     * transaction isolation is
+     * {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT} will use the
+     * default isolation level associated with this class.
+     */
+    int getModifiersForIsolationLevel();
 
     /**
      * Cleans this space. The side-effects of cleaning the space are:
