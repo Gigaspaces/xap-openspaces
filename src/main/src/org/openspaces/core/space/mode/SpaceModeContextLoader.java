@@ -146,8 +146,8 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
         }
         if (clusterInfo != null) {
             applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
-            applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
         }
+        applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
         try {
             applicationContext.refresh();
         } catch (Exception e) {
