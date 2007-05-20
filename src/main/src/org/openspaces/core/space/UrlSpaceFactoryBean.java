@@ -21,22 +21,19 @@ import java.util.Properties;
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
  *
- * <p>
- * The factory allows to specify url properties using
+ * <p>The factory allows to specify url properties using
  * {@link #setUrlProperties(java.util.Properties) urlProperties} and space parameters using
  * {@link #setParameters(java.util.Map) parameters} or using
  * {@link #setProperties(Properties) properties}. It also accepts a {@link ClusterInfo} using
  * {@link #setClusterInfo(ClusterInfo)} and translates it into the relevant space url properties
  * automatically.
  *
- * <p>
- * Most url properties are explicitly exposed using different setters. Though they can also be set
+ * <p>Most url properties are explicitly exposed using different setters. Though they can also be set
  * using the {@link #setUrlProperties(java.util.Properties) urlProperties} the explicit setters
  * allow for more readable and simpler configuration. Some examples of explicit url properties are:
  * {@link #setSchema(String)}, {@link #setFifo(boolean)}.
  *
- * <p>
- * The factory uses the {@link BeanLevelMergedPropertiesAware} in order to be injected with
+ * <p>The factory uses the {@link BeanLevelMergedPropertiesAware} in order to be injected with
  * properties that were not parameterized in advance (using ${...} notation). This will directly
  * inject additional properties in the Space creation/finding process.
  *
@@ -63,11 +60,11 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private Boolean versioned;
 
-    private boolean noWriteLease = false;
+    private Boolean noWriteLease;
 
-    private boolean mirror = false;
+    private Boolean mirror;
 
-    private boolean fifo = false;
+    private Boolean fifo;
 
     private FilterProvider[] filterProviders;
 
@@ -150,8 +147,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * configuration file for creating a space. The user specifies one of the pre-configured schema
      * names (to create a space instance from its template) or a custom one using this property.
      *
-     * <p>
-     * If a schema name is not defined, a default schema name called <code>default</code> will be
+     * <p>If a schema name is not defined, a default schema name called <code>default</code> will be
      * used.
      */
     public void setSchema(String schema) {
@@ -160,7 +156,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * Indicates that all take/write operations be conducted in FIFO mode. Default is
-     * <code>false</code>.
+     * the Space default (<code>false</code>).
      */
     public void setFifo(boolean fifo) {
         this.fifo = fifo;
@@ -191,7 +187,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * If <code>true</code> - Lease object would not return from the write/writeMultiple
-     * operations. Defaults to <code>false</code>.
+     * operations. Defaults to the Space default value (<code>false</code>).
      */
     public void setNoWriteLease(boolean noWriteLease) {
         this.noWriteLease = noWriteLease;
@@ -200,7 +196,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     /**
      * When setting this URL property to <code>true</code> it will allow the space to connect to
      * the Mirror service to push its data and operations for asynchronous persistency. Defaults to
-     * <code>false</code>.
+     * the Space default (which defaults to <code>false</code>).
      */
     public void setMirror(boolean mirror) {
         this.mirror = mirror;
@@ -272,8 +268,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             props.put(SpaceUtils.spaceUrlProperty(SpaceURL.SCHEMA_NAME), schema);
         }
 
-        props.put(SpaceUtils.spaceUrlProperty(SpaceURL.FIFO_MODE), Boolean.toString(fifo));
-
         if (lookupGroups != null) {
             props.put(SpaceUtils.spaceUrlProperty(SpaceURL.GROUPS), lookupGroups);
         }
@@ -282,11 +276,18 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             props.put(SpaceUtils.spaceUrlProperty(SpaceURL.TIMEOUT), lookupTimeout.toString());
         }
 
+        if (fifo != null) {
+            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.FIFO_MODE), Boolean.toString(fifo));
+        }
         if (versioned != null) {
             props.put(SpaceUtils.spaceUrlProperty(SpaceURL.VERSIONED), Boolean.toString(versioned));
         }
-        props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
-        props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
+        if (noWriteLease != null) {
+            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
+        }
+        if (mirror != null) {
+            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
+        }
 
         if (filterProviders != null && filterProviders.length > 0) {
             props.put(Constants.Filter.FILTER_PROVIDERS, filterProviders);

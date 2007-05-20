@@ -26,24 +26,21 @@ import java.rmi.RemoteException;
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
  * implementation.
  *
- * <p>
- * Provides support for raising Spring application events: {@link BeforeSpaceModeChangeEvent} and
+ * <p>Provides support for raising Spring application events: {@link BeforeSpaceModeChangeEvent} and
  * {@link AfterSpaceModeChangeEvent} alerting other beans of the current space mode
  * (primary/backup). Beans that wish to be notified of it should implement Spring
  * {@link org.springframework.context.ApplicationListener}. Note that this space mode events might
  * be raised more than once for the same space mode, and beans that listen to it should take it into
  * account.
  *
- * <p>
- * The space mode event will be raised regardless of the space "type" that is used. For embedded
+ * <p>The space mode event will be raised regardless of the space "type" that is used. For embedded
  * spaces, an actual space mode event listener will be regsitered with the actual cluster member (if
  * not in cluster mode, the actual space). For remote space lookups (jini/rmi), no listener will be
  * regsitered and Space mode events will still be raised during context refresh with a
  * <code>PRIMARY</code> mode in order to allow beans to be written regardless of how the space is
  * looked up.
  *
- * <p>
- * Derived classes should implement the {@link #doCreateSpace()} to obtain the {@link IJSpace}.
+ * <p>Derived classes should implement the {@link #doCreateSpace()} to obtain the {@link IJSpace}.
  *
  * @author kimchy
  */
@@ -82,10 +79,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     /**
      * Initializes the space by calling the {@link #doCreateSpace()}.
      *
-     * <p>
-     * Registers with the space an internal space mode listener in order to be able to send Spring
+     * <p>Registers with the Space an internal space mode listener in order to be able to send Spring
      * level {@link BeforeSpaceModeChangeEvent} and {@link AfterSpaceModeChangeEvent} for primary
-     * and backup handling of different beans within the context.
+     * and backup handling of different beans within the context. The registration is based on
+     * {@link #isRegisterForSpaceModeNotifications()}.
      */
     public void afterPropertiesSet() throws DataAccessException {
         this.space = doCreateSpace();
@@ -110,7 +107,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Destroys the space and unregisters the intenral space mode listener.
+     * Destroys the space and unregisters the intenral space mode listener (if registered).
      */
     public void destroy() throws Exception {
         if (isRegisterForSpaceModeNotifications()) {
@@ -140,8 +137,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * space mode. This is done since other beans that use this events might not catch them while
      * the context is constructed.
      *
-     * <p>
-     * Note, this will mean that events with the same Space mode might be raised, one after the
+     * <p>Note, this will mean that events with the same Space mode might be raised, one after the
      * other, and Spring beans that listens for them should take it into account.
      */
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
@@ -154,7 +150,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Spring factory bean returning the {@link IJSpace} created during the bean initializtion ({@link #afterPropertiesSet()}).
+     * Spring factory bean returning the {@link IJSpace} created during the bean initializtion
+     * ({@link #afterPropertiesSet()}).
      *
      * @return The {@link IJSpace} implementation
      * @throws Exception
