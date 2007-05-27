@@ -2,6 +2,7 @@ package org.openspaces.core.space.mode;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openspaces.core.GigaSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
@@ -10,6 +11,7 @@ import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
 import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -23,18 +25,18 @@ import org.springframework.core.io.Resource;
 /**
  * A Space mode based Spring context loader allows to load Spring application context if the Space
  * is in <code>PRIMARY</code> mode.
- * 
+ *
  * <p>
  * The space mode context loader allows to assemble beans that only operate when a space is in a
  * <code>PRIMARY</code> mode which basically applies when directly working with cluster members
  * and not a clsutered space proxy (since in such cases it will always be <code>PRIMARY</code>).
- * 
+ *
  * <p>
  * The context loader accepts a Spring {@link org.springframework.core.io.Resource} as the location.
  * A flag called {@link #setActiveWhenPrimary(boolean)} which defaults to <code>true</code> allows
  * to control if the context will be loaded only when the cluster member moves to
  * <code>PRIMARY</code> mode.
- * 
+ *
  * @author kimchy
  */
 public class SpaceModeContextLoader implements ApplicationContextAware, InitializingBean, DisposableBean,
@@ -43,6 +45,8 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     private static final Log logger = LogFactory.getLog(SpaceModeContextLoader.class);
 
     private Resource location;
+
+    private GigaSpace gigaSpace;
 
     private boolean activeWhenPrimary = true;
 
@@ -59,6 +63,15 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      */
     public void setLocation(Resource location) {
         this.location = location;
+    }
+
+    /**
+     * Allows to set the GigaSpace instnace that will control (based on its Space mode)
+     * if the context will be loaded or not. Useful when more than one space is defined
+     * within a Spring context.
+     */
+    public void setGigaSpace(GigaSpace gigaSpace) {
+        this.gigaSpace = gigaSpace;
     }
 
     /**
@@ -112,16 +125,32 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
             if (applicationEvent instanceof AfterSpaceModeChangeEvent) {
                 AfterSpaceModeChangeEvent spEvent = (AfterSpaceModeChangeEvent) applicationEvent;
                 if (spEvent.isPrimary()) {
-                    try {
-                        loadApplicationContext();
-                    } catch (Exception e) {
-                        logger.error("Failed to load context [" + location + "] when moving to primary mode", e);
+                    if (gigaSpace != null) {
+                        if (SpaceUtils.isSameSpace(spEvent.getSpace(), gigaSpace.getSpace())) {
+                            try {
+                                loadApplicationContext();
+                            } catch (Exception e) {
+                                logger.error("Failed to load context [" + location + "] when moving to primary mode", e);
+                            }
+                        }
+                    } else {
+                        try {
+                            loadApplicationContext();
+                        } catch (Exception e) {
+                            logger.error("Failed to load context [" + location + "] when moving to primary mode", e);
+                        }
                     }
                 }
             } else if (applicationEvent instanceof BeforeSpaceModeChangeEvent) {
                 BeforeSpaceModeChangeEvent spEvent = (BeforeSpaceModeChangeEvent) applicationEvent;
                 if (!spEvent.isPrimary()) {
-                    closeApplicationContext();
+                    if (gigaSpace != null) {
+                        if (SpaceUtils.isSameSpace(spEvent.getSpace(), gigaSpace.getSpace())) {
+                            closeApplicationContext();
+                        }
+                    } else {
+                        closeApplicationContext();
+                    }
                 }
             }
         }
@@ -138,7 +167,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
         if (logger.isDebugEnabled()) {
             logger.debug("Loading application context [" + location + "]");
         }
-        applicationContext = new ResourceApplicationContext(new Resource[] { location }, parentApplicationContext);
+        applicationContext = new ResourceApplicationContext(new Resource[]{location}, parentApplicationContext);
         // add config information if provided
         if (beanLevelProperties != null) {
             applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties));

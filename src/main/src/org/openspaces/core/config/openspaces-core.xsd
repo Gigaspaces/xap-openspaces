@@ -401,6 +401,7 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
                     <xsd:attribute name="location" type="xsd:string" use="required"/>
+                    <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="optional"/>
                     <xsd:attribute name="active-when-primary" type="xsd:boolean"/>
                 </xsd:extension>
             </xsd:complexContent>
