@@ -32,6 +32,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
     }
 
     private DataAccessException internalTranslate(Throwable e) {
+
+        if (e instanceof InterruptedException) {
+            return new SpaceInterruptedException(e.getMessage(), (InterruptedException) e);
+        }
+
         if (e instanceof net.jini.space.InternalSpaceException) {
             if (((net.jini.space.InternalSpaceException) e).nestedException != null) {
                 DataAccessException dae = internalTranslate(((net.jini.space.InternalSpaceException) e).nestedException);
