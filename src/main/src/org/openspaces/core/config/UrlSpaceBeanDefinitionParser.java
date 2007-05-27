@@ -33,6 +33,8 @@ import java.util.List;
  */
 public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
+    public static final String DATA_SOURCE = "data-source";
+
     public static final String PARAMETERS = "parameters";
 
     public static final String PROPERTIES = "properties";
@@ -43,8 +45,18 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         return UrlSpaceFactoryBean.class;
     }
 
+    protected boolean isEligibleAttribute(String attributeName) {
+        return super.isEligibleAttribute(attributeName) && !DATA_SOURCE.equals(attributeName);
+    }
+
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
+
+        String dataSource = element.getAttribute(DATA_SOURCE);
+        if (dataSource != null) {
+            builder.addPropertyReference("dataSource", dataSource);
+        }
+
         Element parametersEle = DomUtils.getChildElementByTagName(element, PARAMETERS);
         if (parametersEle != null) {
             Object parameters = parserContext.getDelegate().parsePropertyValue(parametersEle,

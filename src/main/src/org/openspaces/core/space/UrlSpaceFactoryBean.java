@@ -16,6 +16,7 @@
 
 package org.openspaces.core.space;
 
+import com.gigaspaces.datasource.ManagedDataSource;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.FinderException;
@@ -23,6 +24,7 @@ import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.SpaceURLParser;
 import com.j_spaces.core.filters.FilterProvider;
+import com.j_spaces.sadapter.datasource.DataAdapter;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
@@ -83,6 +85,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private Boolean fifo;
 
     private FilterProvider[] filterProviders;
+
+    private ManagedDataSource dataSource;
 
 
     private Properties beanLevelProperties;
@@ -218,10 +222,20 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.mirror = mirror;
     }
 
+    /**
+     * Inject a list of {@link com.j_spaces.core.filters.FilterProvider}s providing the ability to
+     * inject actual Space filters.
+     */
     public void setFilterProviders(FilterProvider[] filterProviders) {
         this.filterProviders = filterProviders;
     }
 
+    /**
+     * A data source 
+     */
+    public void setDataSource(ManagedDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     /**
      * Externally mananed override properties using open spaces extended config support. Should not
@@ -307,6 +321,15 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         if (filterProviders != null && filterProviders.length > 0) {
             props.put(Constants.Filter.FILTER_PROVIDERS, filterProviders);
+        }
+
+        if (dataSource != null) {
+            props.put(Constants.DataAdapter.DATA_SOURCE, dataSource);
+            props.put(Constants.StorageAdapter.FULL_STORAGE_STORAGE_ADAPTER_CLASS_PROP, DataAdapter.class.getName());
+            props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Data Source [" + dataSource + "] provided, enabling data source");
+            }
         }
 
         // copy over the external config overrides
