@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 
 /**
  * A bean definition builder for {@link SpaceModeContextLoader}.
- * 
+ *
  * @author kimchy
  */
 public class ContextLoaderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
@@ -39,6 +39,9 @@ public class ContextLoaderBeanDefinitionParser extends AbstractSimpleBeanDefinit
     }
 
     protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
-        beanDefinition.addPropertyReference("gigaSpace", element.getAttribute(GIGA_SPACE));
+        String gigaSpace = element.getAttribute(GIGA_SPACE);
+        if (gigaSpace != null) {
+            beanDefinition.addPropertyReference("gigaSpace", gigaSpace);
+        }
     }
 }
