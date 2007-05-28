@@ -21,6 +21,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -53,7 +54,7 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         super.doParse(element, parserContext, builder);
 
         String dataSource = element.getAttribute(DATA_SOURCE);
-        if (dataSource != null) {
+        if (StringUtils.hasLength(dataSource)) {
             builder.addPropertyReference("dataSource", dataSource);
         }
 

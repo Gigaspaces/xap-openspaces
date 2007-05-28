@@ -19,6 +19,7 @@ package org.openspaces.core.config;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -46,11 +47,11 @@ public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionPa
         String where = element.getAttribute(WHERE);
         builder.addPropertyValue("where", where);
         String clazz = element.getAttribute(CLASS);
-        if (clazz != null) {
+        if (StringUtils.hasLength(clazz)) {
             builder.addPropertyValue("type", clazz);
         }
         String className = element.getAttribute(CLASS_NAME);
-        if (className != null) {
+        if (StringUtils.hasLength(className)) {
             builder.addPropertyValue("className", className);
         }
 

@@ -19,6 +19,7 @@ package org.openspaces.core.config;
 import org.openspaces.core.space.mode.SpaceModeContextLoader;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -40,7 +41,7 @@ public class ContextLoaderBeanDefinitionParser extends AbstractSimpleBeanDefinit
 
     protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
         String gigaSpace = element.getAttribute(GIGA_SPACE);
-        if (gigaSpace != null) {
+        if (StringUtils.hasLength(gigaSpace)) {
             beanDefinition.addPropertyReference("gigaSpace", gigaSpace);
         }
     }
