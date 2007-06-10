@@ -20,10 +20,12 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.FinderException;
 import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
+import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.CannotCreateSpaceException;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -34,15 +36,15 @@ import java.util.Properties;
  * Base class for different Local cache space proxies that work with a master {@link IJSpace}. The
  * master is set using {@link #setSpace(IJSpace)}. This factory represents an {@link IJSpace} that
  * is the local cache proxy on top of the master space.
- * 
+ *
  * <p>
  * Allows to set additional proprties that further configure the local cache using
  * {@link #setProperties(Properties)}. Properties that control the nature of the local cache are
  * obtained using {@link #createCacheProeprties()} callback.
- * 
+ *
  * @author kimchy
  */
-public abstract class AbstractLocalCacheSpaceFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
+public abstract class AbstractLocalCacheSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, BeanNameAware {
 
     protected Log logger = LogFactory.getLog(this.getClass());
 
@@ -84,7 +86,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * {@link #setSpace(IJSpace)} and a set of properties driving the actual local cache type based
      * on {@link #createCacheProeprties()}. Additional properties are applied based on
      * {@link #setProperties(java.util.Properties)}.
-     * 
+     *
      * @see com.j_spaces.core.client.SpaceFinder#find(com.j_spaces.core.client.SpaceURL,com.j_spaces.core.IJSpace,com.sun.jini.start.LifeCycle)
      */
     public void afterPropertiesSet() throws Exception {
@@ -103,6 +105,15 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
             localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, null);
         } catch (FinderException e) {
             throw new CannotCreateSpaceException("Failed to create local cache space for space [" + space + "]", e);
+        }
+    }
+
+    /**
+     * Closes the local cache space
+     */
+    public void destroy() throws Exception {
+        if (localCacheSpace instanceof ISpaceLocalCache) {
+            ((ISpaceLocalCache) localCacheSpace).close();
         }
     }
 

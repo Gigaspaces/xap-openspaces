@@ -17,8 +17,7 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.DCacheSpaceImpl;
-import com.j_spaces.core.client.view.LocalSpaceView;
+import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
 import org.apache.commons.logging.Log;
@@ -121,7 +120,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
 
-    
+
     private String beanName;
 
     private DefaultGigaSpace gigaSpace;
@@ -252,7 +251,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
             // not want to get the actual memeber (the cluster flag was set on the local cache already)
-            if (space instanceof LocalSpaceView || space instanceof DCacheSpaceImpl) {
+            if (space instanceof ISpaceLocalCache) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");
                 }
