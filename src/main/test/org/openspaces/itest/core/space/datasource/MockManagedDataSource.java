@@ -1,5 +1,6 @@
 package org.openspaces.itest.core.space.datasource;
 
+import com.gigaspaces.datasource.DataIterator;
 import com.gigaspaces.datasource.DataSourceException;
 import com.gigaspaces.datasource.ManagedDataSource;
 
@@ -21,5 +22,9 @@ public class MockManagedDataSource implements ManagedDataSource {
 
     public boolean isInitCalled() {
         return initCalled;
+    }
+
+    public DataIterator initialLoad() throws DataSourceException {
+        return null;
     }
 }
