@@ -44,5 +44,9 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("space-filter", new SpaceFilterBeanDefinitionParser());
         registerBeanDefinitionParser("annotation-adapter-filter", new AnnotationFilterBeanDefinitionParser());
         registerBeanDefinitionParser("method-adapter-filter", new MethodFilterBeanDefinitionParser());
+
+        registerBeanDefinitionParser("simple-map", new SimpleMapBeanDefinitionParser());
+        registerBeanDefinitionParser("local-cache-map", new LocalCacheMapBeanDefinitionParser());
+        registerBeanDefinitionParser("giga-map", new GigaMapBeanDefinitionParser());
     }
 }

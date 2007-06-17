@@ -18,6 +18,8 @@ package org.openspaces.core.exception;
 
 import com.gigaspaces.converter.ConversionException;
 import com.j_spaces.core.MemoryShortageException;
+import com.j_spaces.core.client.CacheException;
+import com.j_spaces.core.client.CacheTimeoutException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
 import net.jini.core.transaction.TransactionException;
@@ -48,6 +50,21 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
     }
 
     private DataAccessException internalTranslate(Throwable e) {
+        if (e == null) {
+            return null;
+        }
+
+        if (e instanceof CacheException) {
+            if (e instanceof CacheTimeoutException) {
+                throw new SpaceTimeoutException(e.getMessage(), e);
+            }
+            Exception e1 = ((CacheException) e).getUnderlyingException();
+            if (e1 != null) {
+                return internalTranslate(e1);
+            } else {
+                return null;
+            }
+        }
 
         if (e instanceof InterruptedException) {
             return new SpaceInterruptedException(e.getMessage(), (InterruptedException) e);

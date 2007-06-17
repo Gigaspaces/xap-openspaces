@@ -159,14 +159,15 @@
                             <xsd:documentation>
                                 Indicates that this space will register for space mode notifications.
                                 Default behaviour (if the flag was not set) will register to primary backup notification
-                                if the space was found using an embedded protocol, and will not register for notification
+                                if the space was found using an embedded protocol, and will not register for
+                                notification
                                 if the space was found using rmi or jini protocols.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="data-source" type="xsd:string">
                         <xsd:annotation>
-                            
+
                         </xsd:annotation>
                     </xsd:attribute>
                 </xsd:extension>
@@ -344,6 +345,97 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="simple-map">
+        <xsd:annotation>
+            <xsd:documentation source="com.j_spaces.map.IMap"></xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.map.IMap"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean"/>
+                    <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="local-cache-map">
+        <xsd:annotation>
+            <xsd:documentation source="com.j_spaces.map.IMap"></xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.map.IMap"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean"/>
+                    <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional"/>
+                    <xsd:attribute name="versioned" type="xsd:boolean" use="optional"/>
+                    <xsd:attribute name="eviction-strategy" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="update-mode">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="PULL"/>
+                                <xsd:enumeration value="PUSH"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="use-multicast" type="xsd:boolean" use="optional"/>
+                    <xsd:attribute name="put-first" type="xsd:boolean" use="optional"/>
+                    <xsd:attribute name="size-limit" type="xsd:nonNegativeInteger" use="optional"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="giga-map">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.GigaMapFactoryBean">
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.map.IMap"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="map" type="xsd:string" use="required"/>
+                    <xsd:attribute name="default-time-to-live" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-wait-for-response" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-isolation" default="DEFAULT">
+                        <xsd:simpleType>
+                            <xsd:annotation>
+                                <xsd:documentation source="java:org.springframework.transaction.annotation.Isolation">
+                                    <![CDATA[The transaction isolation level.]]>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="DEFAULT"/>
+                                <xsd:enumeration value="READ_UNCOMMITTED"/>
+                                <xsd:enumeration value="READ_COMMITTED"/>
+                                <xsd:enumeration value="REPEATABLE_READ"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="tx-manager" type="txManagerType"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
 
     <xsd:element name="local-tx-manager">
         <xsd:annotation>

@@ -56,6 +56,9 @@ public class DefaultGigaSpace implements GigaSpace {
 
     private long defaultWriteLease = Lease.FOREVER;
 
+
+    private int defaultIsolationLevel;
+
     /**
      * Constructs a new DefaultGigaSpace implementation.
      *
@@ -75,15 +78,16 @@ public class DefaultGigaSpace implements GigaSpace {
         // set the default read take modifiers according to the default isolation level
         switch (defaultIsolationLevel) {
             case TransactionDefinition.ISOLATION_DEFAULT:
+                this.defaultIsolationLevel = space.getReadModifiers();
                 break;
             case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
-                space.setReadModifiers(ReadModifiers.DIRTY_READ);
+                this.defaultIsolationLevel = ReadModifiers.DIRTY_READ;
                 break;
             case TransactionDefinition.ISOLATION_READ_COMMITTED:
-                space.setReadModifiers(ReadModifiers.READ_COMMITTED);
+                this.defaultIsolationLevel = ReadModifiers.READ_COMMITTED;
                 break;
             case TransactionDefinition.ISOLATION_REPEATABLE_READ:
-                space.setReadModifiers(ReadModifiers.REPEATABLE_READ);
+                this.defaultIsolationLevel = ReadModifiers.REPEATABLE_READ;
                 break;
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
@@ -372,7 +376,7 @@ public class DefaultGigaSpace implements GigaSpace {
     public int getModifiersForIsolationLevel() {
         int isolationLevel = txProvider.getCurrentTransactionIsolationLevel(this);
         if (isolationLevel == TransactionDefinition.ISOLATION_DEFAULT) {
-            return space.getReadModifiers();
+            return defaultIsolationLevel;
         } else if (isolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED) {
             return ReadModifiers.DIRTY_READ;
         } else if (isolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED) {
