@@ -17,6 +17,9 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.client.ReadModifiers;
+import com.j_spaces.javax.cache.CacheEntry;
+import com.j_spaces.javax.cache.CacheException;
+import com.j_spaces.javax.cache.CacheListener;
 import com.j_spaces.map.IMap;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
@@ -30,9 +33,19 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * An implementation of the {@link org.openspaces.core.GigaMap} interface simplifying the work with
+ * JCache and Map interface on top of the Space.
+ *
+ * <p>Provides declarative transactions support (for methods that are by nature transactional, such as
+ * <code>get</code> and <code>put</code>) and the ability to set defaults for both <code>timeToLive</code>
+ * and <code>waitForResponse</code>.
+ *
+ * <p>Will also automatically apply the current running transaction isolation level when performing read
+ * operations (that in turn are translated into the Space).
+ *
  * @author kimchy
  */
-public class DefaultGigaMap<K, V> implements GigaMap<K, V> {
+public class DefaultGigaMap implements GigaMap {
 
     private IMap map;
 
@@ -96,99 +109,185 @@ public class DefaultGigaMap<K, V> implements GigaMap<K, V> {
     }
 
     public int size() {
-        // TODO add transactional context here + modifiers
-        return map.size();
+        try {
+            return map.size();
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
     public boolean isEmpty() {
-        // TODO add transactional context here + modifiers
-        return map.isEmpty();
+        try {
+            return map.isEmpty();
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
     public boolean containsKey(Object key) {
-        // TODO add transactional context here + modifiers
-        return map.containsKey(key);
+        try {
+            return map.containsKey(key);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
     public boolean containsValue(Object value) {
-        // TODO add transactional context here + modifiers
-        return map.containsValue(value);
+        try {
+            return map.containsValue(value);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
-    public V get(Object key) {
+    public Object get(Object key) {
         return get(key, defaultWaitForResponse);
     }
 
-    public V get(Object key, long waitForResponse) {
+    public Object get(Object key, long waitForResponse) {
         return get(key, waitForResponse, getModifiersForIsolationLevel());
     }
 
-    @SuppressWarnings({"unchecked"})
-    public V get(Object key, long waitForResponse, int modifiers) {
+    public Object get(Object key, long waitForResponse, int modifiers) {
         try {
-            return (V) map.get(key, getCurrentTransaction(), waitForResponse, modifiers);
+            return map.get(key, getCurrentTransaction(), waitForResponse, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
-    public V put(K key, V value) {
+    public Object put(Object key, Object value) {
         return put(key, value, defaultTimeToLive);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public V put(K key, V value, long timeToLive) {
+    public Object put(Object key, Object value, long timeToLive) {
         try {
-            return (V) map.put(key, value, getCurrentTransaction(), timeToLive);
+            return map.put(key, value, getCurrentTransaction(), timeToLive);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
-    public V remove(Object key) {
+    public Object remove(Object key) {
         return remove(key, defaultWaitForResponse);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public V remove(Object key, long waitForReponse) {
+    public Object remove(Object key, long waitForReponse) {
         try {
-            return (V) map.remove(key, getCurrentTransaction(), waitForReponse);
+            return map.remove(key, getCurrentTransaction(), waitForReponse);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
-    public void putAll(Map<? extends K, ? extends V> t) {
-        // TODO add transactional context here + modifiers
-        map.putAll(t);
+    public void putAll(Map t) {
+        putAll(t, defaultTimeToLive);
+    }
+
+    public void putAll(Map t, long timeToLive) {
+        try {
+            map.putAll(t, getCurrentTransaction(), timeToLive);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
     public void clear() {
-        // TODO add transactional context here + modifiers
-        map.clear();
+        try {
+            map.clear();
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
     public void clear(boolean clearMaster) {
-        // TODO add transactional context here + modifiers
-        map.clear(clearMaster);
+        try {
+            map.clear(clearMaster);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Set<K> keySet() {
-        // TODO add transactional context here + modifiers
-        return map.keySet();
+    public Set keySet() {
+        try {
+            return map.keySet();
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Collection<V> values() {
-        // TODO add transactional context here + modifiers
-        return map.values();
+    public Collection values() {
+        try {
+            return map.values();
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Set<Entry<K, V>> entrySet() {
-        // TODO add transactional context here + modifiers
-        return map.entrySet();
+    public Set entrySet() {
+        try {
+            return map.entrySet();
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+
+    // Cache methods
+    public void addListener(CacheListener cacheListener) {
+        map.addListener(cacheListener);
+    }
+
+    public boolean evict(Object key) {
+        try {
+            return map.evict(key);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public Map getAll(Collection keys) throws CacheException {
+        try {
+            return map.getAll(keys);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public CacheEntry getCacheEntry(Object key) {
+        try {
+            return map.getCacheEntry(key);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public void load(Object key) throws CacheException {
+        try {
+            map.load(key);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public void loadAll(Collection keys) throws CacheException {
+        try {
+            map.load(keys);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public Object peek(Object key) {
+        try {
+            return map.peek(key);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public void removeListener(CacheListener cacheListener) {
+        map.removeListener(cacheListener);
     }
 
     // Support methods

@@ -16,6 +16,7 @@
 
 package org.openspaces.core;
 
+import com.j_spaces.javax.cache.Cache;
 import com.j_spaces.map.IMap;
 import net.jini.core.transaction.Transaction;
 import org.openspaces.core.transaction.TransactionProvider;
@@ -23,7 +24,7 @@ import org.openspaces.core.transaction.TransactionProvider;
 import java.util.Map;
 
 /**
- * Provides a simpler inteface of {@link com.j_spaces.map.IMap} implemenation.
+ * Provides a simpler inteface of {@link com.j_spaces.map.IMap} and {@link com.j_spaces.javax.cache.Cache} implemenation.
  *
  * <p>Though this interface has a single implementation it is still important to work against the
  * interface as it allows for simpler testing and mocking.
@@ -35,7 +36,7 @@ import java.util.Map;
  *
  * @author kimchy
  */
-public interface GigaMap<K, V> extends Map<K, V> {
+public interface GigaMap extends Map, Cache {
 
     /**
      * Returns the <code>IMap</code> used by this GigaMap implementation to delegate
@@ -71,7 +72,7 @@ public interface GigaMap<K, V> extends Map<K, V> {
      * @param waitForResponse time to wait for response
      * @return Returns the object that is associated with the key
      */
-    V get(Object key, long waitForResponse);
+    Object get(Object key, long waitForResponse);
 
     /**
      * Returns the object that is associated with <code>key</code> in this cache.
@@ -83,7 +84,7 @@ public interface GigaMap<K, V> extends Map<K, V> {
      * @param modifiers       one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return Returns the object that is associated with the key
      */
-    V get(Object key, long waitForResponse, int modifiers);
+    Object get(Object key, long waitForResponse, int modifiers);
 
     /**
      * Puts <code>value</code> to the cache with specified <code>key</code> for
@@ -95,7 +96,16 @@ public interface GigaMap<K, V> extends Map<K, V> {
      * @return previous value associated with specified key, or <tt>null</tt>
      *         if there was no mapping for key.
      */
-    V put(K key, V value, long timeToLive);
+    Object put(Object key, Object value, long timeToLive);
+
+
+    /**
+     * Copies all of the mappings from the specified map to the cache.
+     *
+     * @param t A map of key and values to be copy into the cache
+     */
+    void putAll(Map t, long timeToLive);
+
 
     /**
      * Removes the mapping for this <code>key</code> from this cache.
@@ -106,7 +116,7 @@ public interface GigaMap<K, V> extends Map<K, V> {
      * @param waitForResponse time to wait for response
      * @return The removed object
      */
-    V remove(Object key, long waitForResponse);
+    Object remove(Object key, long waitForResponse);
 
     /**
      * The clear method will remove all objects from
