@@ -346,7 +346,7 @@
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="simple-map">
+    <xsd:element name="map">
         <xsd:annotation>
             <xsd:documentation source="com.j_spaces.map.IMap"></xsd:documentation>
             <xsd:appinfo>
@@ -358,42 +358,28 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence>
+                        <xsd:element name="local-cache-support" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="versioned" type="xsd:boolean" use="optional"/>
+                                <xsd:attribute name="eviction-strategy" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="update-mode">
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="PULL"/>
+                                            <xsd:enumeration value="PUSH"/>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="use-multicast" type="xsd:boolean" use="optional"/>
+                                <xsd:attribute name="put-first" type="xsd:boolean" use="optional"/>
+                                <xsd:attribute name="size-limit" type="xsd:nonNegativeInteger" use="optional"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
                     <xsd:attribute name="space" type="spaceRefType" use="required"/>
                     <xsd:attribute name="clustered" type="xsd:boolean"/>
                     <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional"/>
-                </xsd:extension>
-            </xsd:complexContent>
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:element name="local-cache-map">
-        <xsd:annotation>
-            <xsd:documentation source="com.j_spaces.map.IMap"></xsd:documentation>
-            <xsd:appinfo>
-                <tool:annotation>
-                    <tool:exports type="com.j_spaces.map.IMap"/>
-                </tool:annotation>
-            </xsd:appinfo>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:complexContent>
-                <xsd:extension base="beans:identifiedType">
-                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
-                    <xsd:attribute name="clustered" type="xsd:boolean"/>
-                    <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional"/>
-                    <xsd:attribute name="versioned" type="xsd:boolean" use="optional"/>
-                    <xsd:attribute name="eviction-strategy" type="xsd:string" use="optional"/>
-                    <xsd:attribute name="update-mode">
-                        <xsd:simpleType>
-                            <xsd:restriction base="xsd:string">
-                                <xsd:enumeration value="PULL"/>
-                                <xsd:enumeration value="PUSH"/>
-                            </xsd:restriction>
-                        </xsd:simpleType>
-                    </xsd:attribute>
-                    <xsd:attribute name="use-multicast" type="xsd:boolean" use="optional"/>
-                    <xsd:attribute name="put-first" type="xsd:boolean" use="optional"/>
-                    <xsd:attribute name="size-limit" type="xsd:nonNegativeInteger" use="optional"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

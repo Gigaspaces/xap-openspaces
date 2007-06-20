@@ -14,7 +14,7 @@
 
     <os-core:space id="space" url="/./map" />
 
-    <os-core:simple-map id="map" space="space" compression="1" />
+    <os-core:map id="map" space="space" compression="1" />
 
     <os-core:giga-map id="gigaMap" map="map" />
 

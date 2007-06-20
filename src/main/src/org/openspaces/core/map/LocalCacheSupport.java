@@ -1,43 +1,19 @@
-/*
- * Copyright 2006-2007 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.openspaces.core.map;
 
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.cache.map.MapCache;
 import com.j_spaces.javax.cache.EvictionStrategy;
-import com.j_spaces.map.IMap;
 import com.j_spaces.map.eviction.NoneEvictionStrategy;
 
-import java.util.Properties;
-
 /**
- * Local cache map factory creates a map implementation on top of the Space with a local cache.
- *
  * @author kimchy
  */
-public class LocalCacheMapFactoryBean extends AbstractMapFactoryBean {
+public class LocalCacheSupport {
 
     private static final String LOCAL_CACHE_UPDATE_MODE_PUSH = "push";
 
     private static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
 
     private int localCacheUpdateMode = SpaceURL.UPDATE_MODE_PULL;
-
-    private int compression = 0;
 
     private boolean versioned = false;
 
@@ -49,15 +25,6 @@ public class LocalCacheMapFactoryBean extends AbstractMapFactoryBean {
 
     private int sizeLimit = 100000;
 
-    private Properties properties = new Properties();
-
-    /**
-     * Sets the compression level. Default to <code>0</code>.
-     */
-    public void setCompression(int compression) {
-        this.compression = compression;
-    }
-
     /**
      * Controls if this local cache will be versioned or not. Note, when settings this to
      * <code>true</code>, make sure that the actual space is versioned as well.
@@ -67,10 +34,28 @@ public class LocalCacheMapFactoryBean extends AbstractMapFactoryBean {
     }
 
     /**
+     * Controls if this local cache will be versioned or not. Note, when settings this to
+     * <code>true</code>, make sure that the actual space is versioned as well.
+     */
+    public boolean isVersioned() {
+        return versioned;
+    }
+
+    /**
      * Sets the eviction strategy for the local cache.
      */
     public void setEvictionStrategy(EvictionStrategy evictionStrategy) {
         this.evictionStrategy = evictionStrategy;
+    }
+
+    /**
+     * Sets the eviction strategy for the local cache.
+     */
+    public EvictionStrategy getEvictionStrategy() {
+        if (evictionStrategy == null) {
+            return new NoneEvictionStrategy();
+        }
+        return evictionStrategy;
     }
 
     /**
@@ -87,6 +72,10 @@ public class LocalCacheMapFactoryBean extends AbstractMapFactoryBean {
      */
     public void setUpdateMode(int localCacheUpdateMode) {
         this.localCacheUpdateMode = localCacheUpdateMode;
+    }
+
+    public int getLocalCacheUpdateMode() {
+        return localCacheUpdateMode;
     }
 
     /**
@@ -112,8 +101,16 @@ public class LocalCacheMapFactoryBean extends AbstractMapFactoryBean {
         this.useMulticast = useMulticast;
     }
 
+    public boolean isUseMulticast() {
+        return useMulticast;
+    }
+
     public void setPutFirst(boolean putFirst) {
         this.putFirst = putFirst;
+    }
+
+    public boolean isPutFirst() {
+        return putFirst;
     }
 
     /**
@@ -123,24 +120,7 @@ public class LocalCacheMapFactoryBean extends AbstractMapFactoryBean {
         this.sizeLimit = sizeLimit;
     }
 
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
-    protected IMap createMap() throws Exception {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Creating local cache map over Space [" + getSpace() + "] with compression");
-        }
-        if (evictionStrategy == null) {
-            evictionStrategy = new NoneEvictionStrategy();
-        }
-
-        // TODO Once we have the lookup URL we need to use it instead of the "connected space" url
-        SpaceURL spaceUrl = (SpaceURL) getSpace().getURL().clone();
-        spaceUrl.putAll(properties);
-        spaceUrl.getCustomProperties().putAll(properties);
-
-        return new MapCache(getSpace(), versioned, localCacheUpdateMode, evictionStrategy, useMulticast, putFirst,
-                sizeLimit, compression, spaceUrl.getURL());
+    public int getSizeLimit() {
+        return sizeLimit;
     }
 }

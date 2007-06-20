@@ -17,7 +17,10 @@
 package org.openspaces.core.map;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.cache.ISpaceLocalCache;
+import com.j_spaces.core.client.cache.map.MapCache;
+import com.j_spaces.map.GSMapImpl;
 import com.j_spaces.map.IMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +42,7 @@ import org.springframework.util.Assert;
  *
  * @author kimchy
  */
-public abstract class AbstractMapFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
+public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -50,6 +53,10 @@ public abstract class AbstractMapFactoryBean implements InitializingBean, Factor
     private String beanName;
 
     private IMap map;
+
+    private int compression = 0;
+
+    private LocalCacheSupport localCacheSupport;
 
     /**
      * Sets the Space the Map will be built on top.
@@ -74,6 +81,21 @@ public abstract class AbstractMapFactoryBean implements InitializingBean, Factor
      */
     public void setClustered(Boolean clustered) {
         this.clustered = clustered;
+    }
+
+    /**
+     * Sets the compression level. Defaults to <code>0</code>.
+     */
+    public void setCompression(int compression) {
+        this.compression = compression;
+    }
+
+    /**
+     * If set, will use local cache with this map. The settings hold different aspects
+     * of configuration for the local cache.
+     */
+    public void setLocalCacheSupport(LocalCacheSupport localCacheSupport) {
+        this.localCacheSupport = localCacheSupport;
     }
 
     /**
@@ -106,10 +128,25 @@ public abstract class AbstractMapFactoryBean implements InitializingBean, Factor
         map = createMap();
     }
 
-    /**
-     * Sub classes will override this method in order to create the {@link com.j_spaces.map.IMap} implementation.
-     */
-    protected abstract IMap createMap() throws Exception;
+    protected IMap createMap() throws Exception {
+        if (localCacheSupport == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Creating simple map over Space [" + getSpace() + "] with compression [" + compression + "]");
+            }
+            return new GSMapImpl(getSpace(), compression);
+        }
+
+        // TODO Once we have the lookup URL we need to use it instead of the "connected space" url
+        SpaceURL spaceUrl = (SpaceURL) getSpace().getURL().clone();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating local cache map over Space [" + getSpace() + "] with compression [" + compression + "]");
+        }
+        return new MapCache(getSpace(), localCacheSupport.isVersioned(), localCacheSupport.getLocalCacheUpdateMode(),
+                localCacheSupport.getEvictionStrategy(), localCacheSupport.isUseMulticast(), localCacheSupport.isPutFirst(),
+                localCacheSupport.getSizeLimit(), compression, spaceUrl.getURL());
+
+    }
 
     public Object getObject() throws Exception {
         return map;

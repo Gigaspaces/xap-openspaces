@@ -31,7 +31,7 @@ import org.w3c.dom.NamedNodeMap;
  * 
  * @author kimchy
  */
-public class DistributedTxManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class LookupJiniTxManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     public static final String TX_MANAGER_NAME = "tx-manager-name";
 

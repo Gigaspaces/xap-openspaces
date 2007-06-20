@@ -33,7 +33,7 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("local-view", new LocalViewSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("giga-space", new GigaSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("local-tx-manager", new LocalTxManagerBeanDefinitionParser());
-        registerBeanDefinitionParser("distributed-tx-manager", new DistributedTxManagerBeanDefinitionParser());
+        registerBeanDefinitionParser("lookup-tx-manager", new LookupJiniTxManagerBeanDefinitionParser());
         try {
             registerBeanDefinitionParser("giga-space-context", new GigaSpaceContextBeanDefinitionParser());
             registerBeanDefinitionParser("giga-space-late-context", new GigaSpaceLateContextBeanDefinitionParser());
@@ -45,8 +45,8 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("annotation-adapter-filter", new AnnotationFilterBeanDefinitionParser());
         registerBeanDefinitionParser("method-adapter-filter", new MethodFilterBeanDefinitionParser());
 
-        registerBeanDefinitionParser("simple-map", new SimpleMapBeanDefinitionParser());
-        registerBeanDefinitionParser("local-cache-map", new LocalCacheMapBeanDefinitionParser());
+        registerBeanDefinitionParser("map", new MapBeanDefinitionParser());
+        registerBeanDefinitionParser("local-cache-support", new MapLocalCacheSettingsBeanDefinitionParser());
         registerBeanDefinitionParser("giga-map", new GigaMapBeanDefinitionParser());
     }
 }

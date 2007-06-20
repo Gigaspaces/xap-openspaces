@@ -16,7 +16,7 @@
 
 package org.openspaces.core.config;
 
-import org.openspaces.core.map.LocalCacheMapFactoryBean;
+import org.openspaces.core.map.LocalCacheSupport;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -26,30 +26,23 @@ import org.w3c.dom.Element;
 /**
  * @author kimchy
  */
-public class LocalCacheMapBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
-
-    public static final String SPACE = "space";
+public class MapLocalCacheSettingsBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     public static final String EVICTION_STRATEGY = "eviction-strategy";
 
     public static final String UPDATE_MODE = "update-mode";
 
     protected Class getBeanClass(Element element) {
-        return LocalCacheMapFactoryBean.class;
+        return LocalCacheSupport.class;
     }
 
     protected boolean isEligibleAttribute(String attributeName) {
-        return super.isEligibleAttribute(attributeName) && !SPACE.equals(attributeName)
+        return super.isEligibleAttribute(attributeName)
                 && !EVICTION_STRATEGY.equals(attributeName) && !UPDATE_MODE.equals(attributeName);
     }
 
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-
-        String space = element.getAttribute(SPACE);
-        if (StringUtils.hasLength(space)) {
-            builder.addPropertyReference("space", space);
-        }
 
         String evictionStrategy = element.getAttribute(EVICTION_STRATEGY);
         if (StringUtils.hasLength(evictionStrategy)) {

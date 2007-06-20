@@ -18,8 +18,10 @@
         <property name="batchSize" value="1000"/>
     </bean>
 
-    <os-core:local-cache-map id="map" space="space" compression="1" eviction-strategy="evictionStrategy"
-                             put-first="false" size-limit="1000" update-mode="PULL" versioned="true"/>
+    <os-core:map id="map" space="space" compression="1">
+        <os-core:local-cache-support eviction-strategy="evictionStrategy"
+                             put-first="false" size-limit="1000" update-mode="PULL" versioned="true" />
+    </os-core:map>
 
     <os-core:giga-map id="gigaMap" map="map" />
     
