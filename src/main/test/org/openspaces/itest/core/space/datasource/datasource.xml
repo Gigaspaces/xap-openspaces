@@ -14,7 +14,7 @@
 
     <bean id="ds" class="org.openspaces.itest.core.space.datasource.MockManagedDataSource" />
 
-    <os-core:space id="space" url="/./dataSourceSpace" data-source="ds" />
+    <os-core:space id="space" url="/./dataSourceSpace" external-data-source="ds" />
 
     <os-core:giga-space id="gigaSpace" space="space" />
 

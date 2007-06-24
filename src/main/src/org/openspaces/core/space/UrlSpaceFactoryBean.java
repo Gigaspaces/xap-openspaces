@@ -86,7 +86,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private FilterProvider[] filterProviders;
 
-    private ManagedDataSource dataSource;
+    private ManagedDataSource externalDataSource;
 
 
     private Properties beanLevelProperties;
@@ -233,8 +233,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     /**
      * A data source 
      */
-    public void setDataSource(ManagedDataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setExternalDataSource(ManagedDataSource externalDataSource) {
+        this.externalDataSource = externalDataSource;
     }
 
     /**
@@ -323,12 +323,12 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             props.put(Constants.Filter.FILTER_PROVIDERS, filterProviders);
         }
 
-        if (dataSource != null) {
-            props.put(Constants.DataAdapter.DATA_SOURCE, dataSource);
+        if (externalDataSource != null) {
+            props.put(Constants.DataAdapter.DATA_SOURCE, externalDataSource);
             props.put(Constants.StorageAdapter.FULL_STORAGE_STORAGE_ADAPTER_CLASS_PROP, DataAdapter.class.getName());
             props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
             if (logger.isDebugEnabled()) {
-                logger.debug("Data Source [" + dataSource + "] provided, enabling data source");
+                logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
             }
         }
 

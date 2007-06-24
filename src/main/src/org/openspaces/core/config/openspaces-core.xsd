@@ -165,7 +165,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="data-source" type="xsd:string">
+                    <xsd:attribute name="external-data-source" type="xsd:string">
                         <xsd:annotation>
 
                         </xsd:annotation>

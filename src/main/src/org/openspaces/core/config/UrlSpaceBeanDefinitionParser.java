@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
-    public static final String DATA_SOURCE = "data-source";
+    public static final String DATA_SOURCE = "external-data-source";
 
     public static final String PARAMETERS = "parameters";
 
@@ -55,7 +55,7 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
         String dataSource = element.getAttribute(DATA_SOURCE);
         if (StringUtils.hasLength(dataSource)) {
-            builder.addPropertyReference("dataSource", dataSource);
+            builder.addPropertyReference("externalDataSource", dataSource);
         }
 
         Element parametersEle = DomUtils.getChildElementByTagName(element, PARAMETERS);
