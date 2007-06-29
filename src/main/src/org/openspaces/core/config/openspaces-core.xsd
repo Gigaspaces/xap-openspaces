@@ -93,6 +93,7 @@
                         <xsd:element ref="space-filter" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element ref="filter-provider" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
@@ -188,6 +189,12 @@
                     </xsd:sequence>
                 </xsd:extension>
             </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="filter-provider">
+        <xsd:complexType>
+            <xsd:attribute name="ref" use="required" />
         </xsd:complexType>
     </xsd:element>
 

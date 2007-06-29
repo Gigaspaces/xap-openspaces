@@ -18,7 +18,6 @@ package org.openspaces.core.space.filter;
 
 import com.j_spaces.core.filters.FilterProvider;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -32,7 +31,7 @@ import org.springframework.util.Assert;
  *
  * @author kimchy
  */
-public abstract class AbstractFilterProviderFactoryBean implements FactoryBean, InitializingBean, BeanNameAware {
+public abstract class AbstractFilterProviderFactoryBean implements InitializingBean, BeanNameAware, FilterProviderFactory {
 
     private Object filter;
 
@@ -139,22 +138,7 @@ public abstract class AbstractFilterProviderFactoryBean implements FactoryBean, 
      */
     protected abstract FilterProvider doGetFilterProvider() throws IllegalArgumentException;
 
-    public Object getObject() throws Exception {
+    public FilterProvider getFilterProvider() {
         return this.filterProvider;
     }
-
-    /**
-     * Returns the {@link com.j_spaces.core.filters.FilterProvider} class as a type.
-     */
-    public Class getObjectType() {
-        return FilterProvider.class;
-    }
-
-    /**
-     * Returns <code>true</code>.
-     */
-    public boolean isSingleton() {
-        return true;
-    }
-
 }

@@ -28,6 +28,7 @@ import com.j_spaces.sadapter.datasource.DataAdapter;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
+import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
@@ -84,7 +85,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private Boolean fifo;
 
-    private FilterProvider[] filterProviders;
+    private FilterProviderFactory[] filterProviders;
 
     private ManagedDataSource externalDataSource;
 
@@ -223,10 +224,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * Inject a list of {@link com.j_spaces.core.filters.FilterProvider}s providing the ability to
+     * Inject a list of filter provider factories providing the ability to
      * inject actual Space filters.
      */
-    public void setFilterProviders(FilterProvider[] filterProviders) {
+    public void setFilterProviders(FilterProviderFactory[] filterProviders) {
         this.filterProviders = filterProviders;
     }
 
@@ -320,7 +321,11 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
 
         if (filterProviders != null && filterProviders.length > 0) {
-            props.put(Constants.Filter.FILTER_PROVIDERS, filterProviders);
+            FilterProvider[] spaceFilterProvider = new FilterProvider[filterProviders.length];
+            for (int i = 0; i < filterProviders.length; i++) {
+                spaceFilterProvider[i] = filterProviders[i].getFilterProvider();
+            }
+            props.put(Constants.Filter.FILTER_PROVIDERS, spaceFilterProvider);
         }
 
         if (externalDataSource != null) {

@@ -17,6 +17,7 @@
 package org.openspaces.core.config;
 
 import org.openspaces.core.space.UrlSpaceFactoryBean;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -29,7 +30,7 @@ import java.util.List;
 
 /**
  * A bean definition builder for {@link UrlSpaceFactoryBean}.
- * 
+ *
  * @author kimchy
  */
 public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
@@ -61,22 +62,22 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         Element parametersEle = DomUtils.getChildElementByTagName(element, PARAMETERS);
         if (parametersEle != null) {
             Object parameters = parserContext.getDelegate().parsePropertyValue(parametersEle,
-                builder.getRawBeanDefinition(), "parameters");
+                    builder.getRawBeanDefinition(), "parameters");
             builder.addPropertyValue("parameters", parameters);
         }
         Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
         if (propertiesEle != null) {
             Object properties = parserContext.getDelegate().parsePropertyValue(propertiesEle,
-                builder.getRawBeanDefinition(), "properties");
+                    builder.getRawBeanDefinition(), "properties");
             builder.addPropertyValue("properties", properties);
         }
         Element urlPropertiesEle = DomUtils.getChildElementByTagName(element, URL_PROPERTIES);
         if (urlPropertiesEle != null) {
             Object properties = parserContext.getDelegate().parsePropertyValue(urlPropertiesEle,
-                builder.getRawBeanDefinition(), "urlProperties");
+                    builder.getRawBeanDefinition(), "urlProperties");
             builder.addPropertyValue("urlProperties", properties);
         }
-        
+
         List<Element> spaceFilterElements = DomUtils.getChildElementsByTagName(element, "space-filter");
         ManagedList list = new ManagedList();
         for (Element ele : spaceFilterElements) {
@@ -89,6 +90,12 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         spaceFilterElements = DomUtils.getChildElementsByTagName(element, "method-adapter-filter");
         for (Element ele : spaceFilterElements) {
             list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition(), null));
+        }
+        spaceFilterElements = DomUtils.getChildElementsByTagName(element, "filter-provider");
+        for (Element ele : spaceFilterElements) {
+            String refName = ele.getAttribute("ref");
+            RuntimeBeanReference ref = new RuntimeBeanReference(refName, false);
+            list.add(ref);
         }
         builder.addPropertyValue("filterProviders", list);
     }
