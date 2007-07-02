@@ -136,8 +136,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
             return new GSMapImpl(getSpace(), compression);
         }
 
-        // TODO Once we have the lookup URL we need to use it instead of the "connected space" url
-        SpaceURL spaceUrl = (SpaceURL) getSpace().getURL().clone();
+        SpaceURL spaceUrl = (SpaceURL) getSpace().getFinderURL().clone();
 
         if (logger.isDebugEnabled()) {
             logger.debug("Creating local cache map over Space [" + getSpace() + "] with compression [" + compression + "]");

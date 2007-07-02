@@ -18,7 +18,6 @@ package org.openspaces.core.util;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.JSpaceProxy;
-import com.j_spaces.core.client.JSpaceProxyUtil;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.cluster.JSpaceClusteredProxy;
 import org.springframework.dao.DataAccessException;
@@ -51,8 +50,8 @@ public abstract class SpaceUtils {
     }
 
     public static boolean isRemoteProtocol(IJSpace space) {
-        // TODO currently, isMarshall makes sense, need to find a nicer solution
-        return JSpaceProxyUtil.isMarshalled(space);
+        String protocol = space.getFinderURL().getProtocol();
+        return protocol.equals(SpaceURL.JINI_PROTOCOL) || protocol.equals(SpaceURL.RMI_PROTOCOL);
     }
 
     public static String spaceUrlProperty(String propertyName) {

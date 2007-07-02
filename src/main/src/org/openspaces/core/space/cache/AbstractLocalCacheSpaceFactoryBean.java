@@ -98,8 +98,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
             props.putAll(properties);
         }
 
-        // TODO Once we have the lookup URL we need to use it instead of the "connected space" url
-        SpaceURL spaceUrl = (SpaceURL) space.getURL().clone();
+        SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
         spaceUrl.putAll(props);
         spaceUrl.getCustomProperties().putAll(props);
         try {
