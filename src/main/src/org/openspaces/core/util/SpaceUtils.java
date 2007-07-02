@@ -35,15 +35,13 @@ public abstract class SpaceUtils {
      * will return an acutal cluster member proxy (i.e. not cluster aware). If the proxy does not
      * point to a clusered space, will return the same space.
      *
-     * @param space    The space to get the cluster member space from.
-     * @param embedded If <code>true</code> and embedded (collocated) proxy is returned. Otherwise, a
-     *                 regular proxy (which contains a remote reference) is returned.
+     * @param space The space to get the cluster member space from.
      * @return A cluster member of the specified space
      * @throws DataAccessException
      */
-    public static IJSpace getClusterMemberSpace(IJSpace space, boolean embedded) throws DataAccessException {
+    public static IJSpace getClusterMemberSpace(IJSpace space) throws DataAccessException {
         try {
-            return space.getContainer().getSpace(space.getName(), embedded);
+            return space.getContainer().getSpace(space.getName());
         } catch (Exception e) {
             throw new DataAccessResourceFailureException("Failed to find space under name [" + space.getName() + "]", e);
         }
@@ -66,7 +64,7 @@ public abstract class SpaceUtils {
             return space1.equals(space2);
         }
         if ((space1 instanceof JSpaceClusteredProxy) || (space2 instanceof JSpaceClusteredProxy)) {
-            return getClusterMemberSpace(space1, true).equals(getClusterMemberSpace(space2, true));
+            return getClusterMemberSpace(space1).equals(getClusterMemberSpace(space2));
         }
         return false;
     }

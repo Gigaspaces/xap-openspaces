@@ -264,7 +264,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             }
         }
         if (!clustered) {
-            space = SpaceUtils.getClusterMemberSpace(space, true);
+            space = SpaceUtils.getClusterMemberSpace(space);
         }
         if (exTranslator == null) {
             exTranslator = new DefaultExceptionTranslator();

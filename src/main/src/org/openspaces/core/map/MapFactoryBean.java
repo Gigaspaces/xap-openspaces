@@ -123,7 +123,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
             }
         }
         if (!clustered) {
-            space = SpaceUtils.getClusterMemberSpace(space, true);
+            space = SpaceUtils.getClusterMemberSpace(space);
         }
         map = createMap();
     }

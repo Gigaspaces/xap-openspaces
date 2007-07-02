@@ -106,7 +106,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         if (isRegisterForSpaceModeNotifications()) {
             primaryBackupListener = new PrimaryBackupListener();
             try {
-                IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
+                IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
                         .exportObject(primaryBackupListener);
                 currentSpaceMode = ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).addSpaceModeListener(remoteListener);
@@ -128,7 +128,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     public void destroy() throws Exception {
         if (isRegisterForSpaceModeNotifications()) {
             // unregister the sapce mode listener
-            IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space, true);
+            IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
             try {
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
                         .exportObject(primaryBackupListener);
