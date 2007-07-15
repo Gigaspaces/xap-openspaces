@@ -24,13 +24,13 @@ import org.openspaces.core.transaction.TransactionProvider;
 import java.util.Map;
 
 /**
- * Provides a simpler inteface of {@link com.j_spaces.map.IMap} and {@link com.j_spaces.javax.cache.Cache} implemenation.
+ * Provides a simpler interface of {@link com.j_spaces.map.IMap} and {@link com.j_spaces.javax.cache.Cache} implementation.
  *
  * <p>Though this interface has a single implementation it is still important to work against the
  * interface as it allows for simpler testing and mocking.
  *
  * <p>Transaction management is implicit and works in a declarative manner. Operations do not accept a
- * transaction object, and will automatically use the {@link TransactionProvider} in order to aquire
+ * transaction object, and will automatically use the {@link TransactionProvider} in order to acquire
  * the current running transaction. If there is no current running transaction the operation will be
  * executed without a transaction.
  *
@@ -43,10 +43,10 @@ public interface GigaMap extends Map, Cache {
      * different space operations.
      *
      * <p>Allows to execute map operations that are not exposed by this interface, as well as using
-     * it as a parmater to other low level GigaSpace components.
+     * it as a parameter to other low level GigaSpace components.
      *
      * <p>If a transaction object is required for low level operations (as low level operations do not
-     * have declarative transaction ex) the {@link #getTxProvider()} should be used to aquire the
+     * have declarative transaction ex) the {@link #getTxProvider()} should be used to acquire the
      * current running transaction.
      */
     IMap getMap();

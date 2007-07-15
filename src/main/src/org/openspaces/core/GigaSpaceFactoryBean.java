@@ -43,7 +43,7 @@ import org.springframework.util.Assert;
  * {@link org.openspaces.core.exception.ExceptionTranslator ExceptionTranslator}.
  *
  * <p>The factory requires an {@link com.j_spaces.core.IJSpace IJSpace} which can be either
- * directly aquired or build using one of the several space factory beans provided in
+ * directly acquired or build using one of the several space factory beans provided in
  * <code>org.openspaces.core.space</code>.
  *
  * <p>The factory accepts an optional {@link org.openspaces.core.transaction.TransactionProvider TransactionProvider}
@@ -62,7 +62,7 @@ import org.springframework.util.Assert;
  * which defaults to {@link org.openspaces.core.exception.DefaultExceptionTranslator DefaultExceptionTranslator}.
  *
  * <p>A clustered flag allows to control if this GigaSpace instance will work against a clustered view of
- * the space or directly against a clustered memeber. This flag has no affect when not working in a
+ * the space or directly against a clustered member. This flag has no affect when not working in a
  * clustered mode (partitioned or primary/backup). By default if this flag is not set it will be set
  * automatically by this factory. It will be set to <code>true</code> if the space is an embedded one AND
  * the space is not a local cache proxy. It will be set to <code>false</code> otherwise (i.e. the space
@@ -75,7 +75,7 @@ import org.springframework.util.Assert;
  * the same operations without the relevant parameters.
  *
  * <p>The factory also allows to set the default isolation level for read operations that will
- * be perfomed by {@link org.openspaces.core.GigaSpace} API. The isolation level can be set
+ * be performed by {@link org.openspaces.core.GigaSpace} API. The isolation level can be set
  * either using {@link #setDefaultIsolationLevel(int)} or {@link #setDefaultIsolationLevelName(String)}.
  * Note, this setting will apply when not working under Spring declarative transactions or when using
  * Spring declarative transaction with the default isolation level
@@ -127,7 +127,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     /**
      * <p>Sets the space that will be used by the created {@link org.openspaces.core.GigaSpace}.
-     * This is a required paramter to the factory.
+     * This is a required parameter to the factory.
      *
      * @param space The space used
      */
@@ -137,7 +137,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     /**
      * <p>Sets the transaction provider that will be used by the created {@link org.openspaces.core.GigaSpace}.
-     * This is an optional paramter and defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}.
+     * This is an optional parameter and defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}.
      *
      * @param txProvider The transaction provider to use
      */
@@ -162,8 +162,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      * the space is not a local cache proxy. It will be set to <code>false</code> otherwise (i.e. the space
      * is not an embedded space OR the space is a local cache proxy).
      *
-     * @param clustered If the {@link org.openspaces.core.GigaSpace} is going to work with a clsutered view of the
-     *                  space or directly with a cluster memeber
+     * @param clustered If the {@link org.openspaces.core.GigaSpace} is going to work with a clustered view of the
+     *                  space or directly with a cluster member
      */
     public void setClustered(boolean clustered) {
         this.clustered = clustered;
@@ -188,7 +188,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     }
 
     /**
-     * <p>Sets the default write lease for {@link org.openspaces.core.GigaSpace#write(Object)} operaiton.
+     * <p>Sets the default write lease for {@link org.openspaces.core.GigaSpace#write(Object)} operation.
      * Default to {@link net.jini.core.lease.Lease#FOREVER}.
      */
     public void setDefaultWriteLease(long defaultWriteLease) {
@@ -242,7 +242,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     /**
      * Constructs the {@link org.openspaces.core.GigaSpace} instance using the
      * {@link org.openspaces.core.DefaultGigaSpace} implementation. Uses the clustered flag to
-     * get a cluster member directly (if set to <code>false</code>) and applies the differt
+     * get a cluster member directly (if set to <code>false</code>) and applies the different
      * defaults).
      */
     public void afterPropertiesSet() throws Exception {
@@ -250,7 +250,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         IJSpace space = this.space;
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
-            // not want to get the actual memeber (the cluster flag was set on the local cache already)
+            // not want to get the actual member (the cluster flag was set on the local cache already)
             if (space instanceof ISpaceLocalCache) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");
@@ -274,7 +274,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             if (transactionManager != null) {
                 transactionalContext = transactionManager.getTransactionalContext();
             }
-            // no transaciton context is set (probably since there is no transactionManager), use the space as the transaciton context
+            // no transaction context is set (probably since there is no transactionManager), use the space as the transaction context
             if (transactionalContext == null) {
                 transactionalContext = space;
             }

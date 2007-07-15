@@ -20,7 +20,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.UncategorizedDataAccessException;
 
 /**
- * A GigaSpace based data accees exception that could not be translated to one of Spring
+ * A GigaSpace based data access exception that could not be translated to one of Spring
  * {@link DataAccessException} subclasses or one of our own subclasses.
  * 
  * @author kimchy

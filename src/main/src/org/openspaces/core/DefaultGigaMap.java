@@ -73,7 +73,7 @@ public class DefaultGigaMap implements GigaMap {
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         // set the default read take modifiers according to the default isolation level
-        // NOTE: by default, Map implemenation use REPEATABLE_READ
+        // NOTE: by default, Map implementation use REPEATABLE_READ
         switch (defaultIsolationLevel) {
             case TransactionDefinition.ISOLATION_DEFAULT:
                 this.defaultIsolationLevel = ReadModifiers.REPEATABLE_READ;

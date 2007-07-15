@@ -33,7 +33,7 @@ import org.springframework.transaction.TransactionDefinition;
  * {@link org.openspaces.core.transaction.TransactionProvider} and
  * {@link org.openspaces.core.exception.ExceptionTranslator}.
  *
- * <p>Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions aquired using
+ * <p>Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions acquired using
  * {@link org.openspaces.core.transaction.TransactionProvider}. Any exceptions thrown during the
  * operations are translated using {@link org.openspaces.core.exception.ExceptionTranslator}.
  *

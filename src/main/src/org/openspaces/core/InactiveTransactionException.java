@@ -19,7 +19,7 @@ package org.openspaces.core;
 import net.jini.core.transaction.TransactionException;
 
 /**
- * Thrown when an operation is perfomed on an inactive transaction.
+ * Thrown when an operation is performed on an inactive transaction.
  *
  * @author kimchy
  */

@@ -25,7 +25,7 @@ import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 
 /**
- * Provides a simpler inteface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
+ * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
  * utilizing GigaSpaces extended and simplified programming model.
  *
  * <p>Most operations revolve around the use of Objects allowing to use GigaSpaces support for POJOs.
@@ -36,17 +36,17 @@ import org.springframework.dao.DataAccessException;
  * interface as it allows for simpler testing and mocking.
  *
  * <p>Transaction management is implicit and works in a declarative manner. Operations do not accept a
- * transaction object, and will automatically use the {@link TransactionProvider} in order to aquire
+ * transaction object, and will automatically use the {@link TransactionProvider} in order to acquire
  * the current running transaction. If there is no current running transaction the operation will be
  * executed without a transaction.
  *
- * <p>{@link IJSpace} can be aquired using {@link #getSpace()} and in conjuction with
+ * <p>{@link IJSpace} can be acquired using {@link #getSpace()} and in conjunction with
  * {@link #getTxProvider()} allows to work directly with {@link IJSpace} for low level API
- * execution or other low level GigaSpaces components requireing direct access to
+ * execution or other low level GigaSpaces components requiring direct access to
  * {@link IJSpace}.
  *
  * <p>Operations throw a {@link org.springframework.dao.DataAccessException} allowing for simplified
- * development model as it is a runtime exception. The cause of the exception can be aquired from
+ * development model as it is a runtime exception. The cause of the exception can be acquired from
  * the GigaSpace exception.
  *
  * @author kimchy
@@ -64,10 +64,10 @@ public interface GigaSpace {
      * different space operations.
      *
      * <p>Allows to execute space operations that are not exposed by this interface, as well as using
-     * it as a parmater to other low level GigaSpace components.
+     * it as a parameter to other low level GigaSpace components.
      *
      * <p>If a transaction object is required for low level operations (as low level operations do not
-     * have declarative transaction ex) the {@link #getTxProvider()} should be used to aquire the
+     * have declarative transaction ex) the {@link #getTxProvider()} should be used to acquire the
      * current running transaction.
      */
     IJSpace getSpace();
@@ -144,9 +144,9 @@ public interface GigaSpace {
      * Count any matching entry from the space. If a running within a transaction
      * will count all the entries visible under the transaction.
      *
-     * <p>Allows to specify modifieres using {@link com.j_spaces.core.client.ReadModifiers}
+     * <p>Allows to specify modifiers using {@link com.j_spaces.core.client.ReadModifiers}
      * which allows to programmatically control the isolation level this count operation
-     * will be perfomed under.
+     * will be performed under.
      *
      * @param template  The template used for matching. Matching is done against the
      *                  template with <code>null</code> fields being wildcards

@@ -73,7 +73,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
 
     /**
      * <p>Sets the map that will be used by the created {@link GigaMap}.
-     * This is a required paramter to the factory.
+     * This is a required parameter to the factory.
      *
      * @param map The map used
      */
@@ -83,7 +83,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
 
     /**
      * <p>Sets the transaction provider that will be used by the created {@link GigaMap}.
-     * This is an optional paramter and defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}.
+     * This is an optional parameter and defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider}.
      *
      * @param txProvider The transaction provider to use
      */
@@ -163,7 +163,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
             if (transactionManager != null) {
                 transactionalContext = transactionManager.getTransactionalContext();
             }
-            // no transaciton context is set (probably since there is no transactionManager), use the space as the transaciton context
+            // no transaction context is set (probably since there is no transactionManager), use the space as the transaction context
             if (transactionalContext == null) {
                 transactionalContext = map.getMasterSpace();
             }
@@ -187,7 +187,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
     }
 
     /**
-     * Returns <code>true</code> as this is a singleton.x
+     * Returns <code>true</code> as this is a singleton.
      */
     public boolean isSingleton() {
         return true;

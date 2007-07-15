@@ -20,7 +20,7 @@ import net.jini.core.transaction.TransactionException;
 import org.springframework.dao.DataAccessException;
 
 /**
- * An exception occured during a space operation that has to do with transactional
+ * An exception occurred during a space operation that has to do with transactional
  * semantics. Wraps {@link net.jini.core.transaction.TransactionException}.
  *
  * @author kimchy
