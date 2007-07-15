@@ -43,7 +43,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
 
     /**
      * Sets an array of filters/views that define what portion of the data from the master space
-     * wiil be streamed to this local view.
+     * will be streamed to this local view.
      */
     public void setLocalViews(List<View<?>> localViews) {
         this.localViews = localViews;

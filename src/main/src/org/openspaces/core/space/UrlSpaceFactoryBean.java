@@ -95,8 +95,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private ClusterInfo clusterInfo;
 
     /**
-     * Creates a new url space factory bean. The url parameres is requires so the
-     * {@link #setUrl(String)} must be called before the bean is initalized.
+     * Creates a new url space factory bean. The url parameters is requires so the
+     * {@link #setUrl(String)} must be called before the bean is initialized.
      */
     public UrlSpaceFactoryBean() {
 
@@ -124,7 +124,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * Sets the url the {@link IJSpace} will be created with. Note this url does not take affect
-     * after the bean has been initalized.
+     * after the bean has been initialized.
      *
      * @param url The url to create the {@link IJSpace} with.
      */
@@ -133,12 +133,12 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * Sets the parameters the {@link IJSpace} will be created with. Note this paramerters does not
-     * take affect after the bean has been initalized.
+     * Sets the parameters the {@link IJSpace} will be created with. Note this parameters does not
+     * take affect after the bean has been initialized.
      *
      * <p>
      * Note, this should not be confused with {@link #setUrlProperties(java.util.Properties)}. The
-     * parameters here are the ones refered to as custom properties and allows for example to
+     * parameters here are the ones referred to as custom properties and allows for example to
      * control the xpath injection to space schema.
      *
      * @param parameters The parameters to create the {@link com.j_spaces.core.IJSpace} with.
@@ -200,7 +200,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * When <code>false</code>, optimistic lock is disabled. Default to the Space deault value.
+     * When <code>false</code>, optimistic lock is disabled. Default to the Space default value.
      */
     public void setVersioned(boolean versioned) {
         this.versioned = versioned;
@@ -239,7 +239,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * Externally mananed override properties using open spaces extended config support. Should not
+     * Externally managed override properties using open spaces extended config support. Should not
      * be set directly but allowed for different Spring context container to set it.
      */
     public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
@@ -248,7 +248,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * Injected thanks to this bean implementing {@link ClusterInfoAware}. If set will use the
-     * cluster information in order to configure the url basde on it.
+     * cluster information in order to configure the url based on it.
      */
     public void setClusterInfo(ClusterInfo clusterInfo) {
         this.clusterInfo = clusterInfo;

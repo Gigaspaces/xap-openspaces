@@ -38,7 +38,7 @@ import java.util.Properties;
  * is the local cache proxy on top of the master space.
  *
  * <p>
- * Allows to set additional proprties that further configure the local cache using
+ * Allows to set additional properties that further configure the local cache using
  * {@link #setProperties(Properties)}. Properties that control the nature of the local cache are
  * obtained using {@link #createCacheProeprties()} callback.
  *
@@ -118,7 +118,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     }
 
     /**
-     * Subclasses should implement this mehtod to return the properties relevant for the local
+     * Subclasses should implement this method to return the properties relevant for the local
      * concrete local cache implementation.
      */
     protected abstract Properties createCacheProeprties();

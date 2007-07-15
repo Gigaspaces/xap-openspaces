@@ -67,7 +67,7 @@ public class BeanLevelProperties implements Serializable {
     }
 
     /**
-     * Sets properites that will be associated with the given bean name.
+     * Sets properties that will be associated with the given bean name.
      *
      * @param beanName            The bean name to bind the properties to
      * @param nameBasedProperties The properties associated with the bean name

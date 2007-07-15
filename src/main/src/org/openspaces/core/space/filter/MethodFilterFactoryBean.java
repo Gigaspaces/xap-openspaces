@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * <p>The operation callback methods can different arguments. Please see
  * {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} for all
- * the different possibilites.
+ * the different possibilities.
  *
  * <p>For a Pojo adapter that uses annotation please see {@link AnnotationFilterFactoryBean}.
  *
@@ -156,7 +156,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
     }
 
     /**
-     * Returns the filter lifcycle method set with {@link #setFilterInit(String)}.
+     * Returns the filter lifecycle method set with {@link #setFilterInit(String)}.
      */
     protected Method doGetInitMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
@@ -171,7 +171,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
     }
 
     /**
-     * Returns the filter lifcycle method set with {@link #setFilterClose(String)}.
+     * Returns the filter lifecycle method set with {@link #setFilterClose(String)}.
      */
     protected Method doGetCloseMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
@@ -187,7 +187,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     /**
      * Method name for filter lifecycle init callback. Can either have no arguments or a single
-     * argument thata accepts {@link com.j_spaces.core.IJSpace}.
+     * argument that accepts {@link com.j_spaces.core.IJSpace}.
      */
     public void setFilterInit(String filterInit) {
         this.filterInit = filterInit;

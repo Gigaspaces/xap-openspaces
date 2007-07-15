@@ -20,7 +20,7 @@ import net.jini.core.transaction.Transaction;
 
 /**
  * A transaction provider is used to support declarative transactions. It is usually used with a
- * {@link org.openspaces.core.GigaSpace} implementation to declarativly provide on going
+ * {@link org.openspaces.core.GigaSpace} implementation to declaratively provide on going
  * transactions to JavaSpace APIs.
  * 
  * <p>

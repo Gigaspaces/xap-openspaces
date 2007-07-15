@@ -27,7 +27,7 @@ import org.springframework.dao.DataAccessException;
 public interface ExceptionTranslator {
 
     /**
-     * Translates a low level exception into a {@link DataAccessException} rutime exception.
+     * Translates a low level exception into a {@link DataAccessException} runtime exception.
      *
      * @param e The low level exception to translate
      * @return The translated exception

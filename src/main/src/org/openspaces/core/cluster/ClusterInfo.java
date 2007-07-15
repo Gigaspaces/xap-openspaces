@@ -17,12 +17,12 @@
 package org.openspaces.core.cluster;
 
 /**
- * Holds cluster related information. Beans within the Spring context (or procesing unit context)
+ * Holds cluster related information. Beans within the Spring context (or processing unit context)
  * can use this bean (by implementing {@link ClusterInfoAware}) in order to be informed of their
  * specific cluster instance deployment.
  * 
  * <p>
- * Note, the cluster information is obtained externally from the applicaiton context which means
+ * Note, the cluster information is obtained externally from the application context which means
  * that this feature need to be supported by specific containers (and is not supported by plain
  * Spring application context). This means that beans that implement {@link ClusterInfoAware} should
  * take into account the fact that the cluster info provided might be null.
@@ -32,7 +32,7 @@ package org.openspaces.core.cluster;
  * class using Spring and providing it as a parameter to {@link ClusterInfoBeanPostProcessor} which
  * is also configured within Spring application context. Note, if the same application context will
  * later be deployed into a container that provides cluster information, extra caution need to be
- * taken to resolve clashes. The best solution would be to define the cluster info within a differnt
+ * taken to resolve clashes. The best solution would be to define the cluster info within a different
  * Spring xml context, and excluding it when deploying the full context to a cluster info aware
  * container.
  * 

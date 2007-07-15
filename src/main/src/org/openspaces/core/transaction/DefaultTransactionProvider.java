@@ -22,10 +22,10 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
- * Defaut transaction provider works in conjuction with
+ * Defaut transaction provider works in conjunction with
  * {@link org.openspaces.core.transaction.manager.JiniPlatformTransactionManager JiniPlatformTransactionManager}
  * and one of its derived classes. Uses Spring support for transactional resource binding (using
- * therad local) in order to get the current transaction. If no transaction is active, will return
+ * thread local) in order to get the current transaction. If no transaction is active, will return
  * <code>null</code> (which means the operation will be executed under no transaction).
  * 
  * <p>
@@ -54,7 +54,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
     }
 
     /**
-     * Returns the current running transaction basde on the constructor provided transactional
+     * Returns the current running transaction based on the constructor provided transactional
      * context (Note that the passed transactional context is not used).
      * 
      * <p>

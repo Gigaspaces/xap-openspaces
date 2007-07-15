@@ -54,9 +54,9 @@ import java.rmi.RemoteException;
  * <p>Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
  * {@link TransactionSynchronizationManager#bindResource(Object,Object)}. The transactional context
  * is optional and defaults to the Jini {@link TransactionManager} instance. Note, this can be
- * overriden by sub classes.
+ * overridden by sub classes.
  * 
- * <p>By default the transaciton timeout will be <code>FOREVER</code>. The deafult timeout on the
+ * <p>By default the transaction timeout will be <code>FOREVER</code>. The default timeout on the
  * transaction manager level can be set using {@link #setDefaultTimeout(Long)}. If the timeout is
  * explicitly set using Spring support for transactions (for example using
  * {@link org.springframework.transaction.TransactionDefinition}) this value will be used.

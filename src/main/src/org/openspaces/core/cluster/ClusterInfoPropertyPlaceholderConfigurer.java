@@ -31,7 +31,7 @@ import java.util.Properties;
 
 /**
  * Provides the {@link org.openspaces.core.cluster.ClusterInfo ClusterInfo} parameters as injected
- * proprties that can be used within Spring application context. The following is a list of the
+ * properties that can be used within Spring application context. The following is a list of the
  * properties:
  * <ul>
  * <li>${clusterInfo.numberOfInstances} : Maps to {@link ClusterInfo#getNumberOfInstances()}</li>

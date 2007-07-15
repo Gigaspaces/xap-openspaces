@@ -21,7 +21,7 @@ import com.j_spaces.core.filters.ISpaceFilter;
 
 /**
  * A {@link com.j_spaces.core.filters.FilterProvider FilterProvider} factory that accepts
- * a concrete {@link com.j_spaces.core.filters.ISpaceFilter ISpaceFilter} implemenation
+ * a concrete {@link com.j_spaces.core.filters.ISpaceFilter ISpaceFilter} implementation
  * in addition to all the operation codes it will listen to.
  *
  * @author kimchy

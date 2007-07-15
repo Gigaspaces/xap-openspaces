@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * A callback method when the filter is initialized. Can either have no arguments or a single
- * argument thata accepts {@link com.j_spaces.core.IJSpace}.
+ * argument that accepts {@link com.j_spaces.core.IJSpace}.
  *
  * @author kimchy
  * @see org.openspaces.core.space.filter.AnnotationFilterFactoryBean

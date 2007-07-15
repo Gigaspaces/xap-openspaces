@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A {@link com.j_spaces.core.filters.FilterProvider FilterProvider} factory that accepts
- * a Pojo filter with annotation markers as to which filter operarion to listen to. The
+ * a Pojo filter with annotation markers as to which filter operation to listen to. The
  * available annotations are the different annotations found within this package with
  * either the <code>Before</code> prefix or the <code>After</code> prefix (for example:
  * {@link BeforeWrite} and {@link AfterWrite}). Filter lifecycle methods can be marked
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * <p>The annotated operation callback methods can different arguments. Please see
  * {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} for all
- * the different possibilites.
+ * the different possibilities.
  *
  * <p>For a Pojo adapter that does not use annotations please see {@link MethodFilterFactoryBean}.
  *
@@ -114,7 +114,7 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
     }
 
     /**
-     * Returns the filter lifcycle method anntated with {@link OnFilterInit}.
+     * Returns the filter lifecycle method annotated with {@link OnFilterInit}.
      */
     protected Method doGetInitMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
@@ -129,7 +129,7 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
     }
 
     /**
-     * Returns the filter lifcycle method anntated with {@link OnFilterClose}.
+     * Returns the filter lifecycle method annotated with {@link OnFilterClose}.
      */
     protected Method doGetCloseMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();

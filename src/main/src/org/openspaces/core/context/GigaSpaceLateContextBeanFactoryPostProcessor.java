@@ -190,7 +190,7 @@ public class GigaSpaceLateContextBeanFactoryPostProcessor implements BeanFactory
                 return setter.getParameterTypes()[0];
             } else {
                 throw new IllegalArgumentException("Unknown AccessibleObject type " + this.member.getClass()
-                        + "; Can only inject settermethods or fields");
+                        + "; Can only inject setter methods or fields");
             }
         }
 

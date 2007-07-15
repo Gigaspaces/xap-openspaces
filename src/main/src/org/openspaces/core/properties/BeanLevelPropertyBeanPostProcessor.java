@@ -34,10 +34,10 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
     private BeanLevelProperties beanLevelProperties;
 
     /**
-     * Constructs a new bean level bean post processor based on the provided bean level proeprties.
+     * Constructs a new bean level bean post processor based on the provided bean level properties.
      * 
      * @param beanLevelProperties
-     *            The bean level properites to be used for injection
+     *            The bean level properties to be used for injection
      */
     public BeanLevelPropertyBeanPostProcessor(BeanLevelProperties beanLevelProperties) {
         this.beanLevelProperties = beanLevelProperties;

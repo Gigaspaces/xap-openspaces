@@ -20,7 +20,7 @@ import com.j_spaces.core.IJSpace;
 import org.springframework.dao.DataAccessException;
 
 /**
- * A direct space factory bean, initalized with an existing {@link IJSpace} and provides it as the
+ * A direct space factory bean, initialized with an existing {@link IJSpace} and provides it as the
  * space.
  *
  * <p>Though mostly not relevant for xml based configuration, this might be relevant when using

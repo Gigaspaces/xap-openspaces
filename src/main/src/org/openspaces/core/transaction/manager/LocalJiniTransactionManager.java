@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
  * 
  * <p>The local transaction manager also allows for most transaction isolation levels excluding
  * <code>SERIALIZABLE</code>. This is automatically applied when using this transaction manager
- * in conjuction with {@link org.openspaces.core.GigaSpace} API.
+ * in conjunction with {@link org.openspaces.core.GigaSpace} API.
  * 
  * @author kimchy
  * @see com.j_spaces.core.client.LocalTransactionManager

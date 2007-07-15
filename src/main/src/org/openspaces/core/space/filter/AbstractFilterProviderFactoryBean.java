@@ -23,11 +23,11 @@ import org.springframework.util.Assert;
 
 /**
  * <p>A base factory for {@link com.j_spaces.core.filters.FilterProvider} allowing to construct a
- * filter provider that can be used to provide pre intialized {@link com.j_spaces.core.filters.ISpaceFilter}
+ * filter provider that can be used to provide pre initialized {@link com.j_spaces.core.filters.ISpaceFilter}
  * implementation including its different aspects to an embedded space.
  *
- * <p>Subclasses should implement {@link #doGetFilterProvider()} initalizing the filter provider. All its
- * different aspects will be initalized by this factory.
+ * <p>Subclasses should implement {@link #doGetFilterProvider()} initializing the filter provider. All its
+ * different aspects will be initialized by this factory.
  *
  * @author kimchy
  */
@@ -52,7 +52,7 @@ public abstract class AbstractFilterProviderFactoryBean implements InitializingB
 
     /**
      * Sets the filter that will be used. Note, it is not an {@link com.j_spaces.core.filters.ISpaceFilter ISpaceFilter}
-     * implemenation since this object filter can be a delegate that does not require the filter to implement
+     * implementation since this object filter can be a delegate that does not require the filter to implement
      * the space filter interface..
      */
     public void setFilter(Object filter) {
@@ -115,7 +115,7 @@ public abstract class AbstractFilterProviderFactoryBean implements InitializingB
      * <p>Constructs the filter provider and applies its different aspects. Delegates to
      * {@link #doGetFilterProvider()} for the actual filter provider creation.
      *
-     * <p>Note, subclasses will need to intialize the filter provider with the relevant
+     * <p>Note, subclasses will need to initialize the filter provider with the relevant
      * operation codes it will listen on.
      */
     public void afterPropertiesSet() throws Exception {
@@ -133,7 +133,7 @@ public abstract class AbstractFilterProviderFactoryBean implements InitializingB
 
     /**
      * Sub classes should implement this method in order to create the actual filter provider. Note,
-     * the created filter provider will have to be intialized with at least one operation code is
+     * the created filter provider will have to be initialized with at least one operation code is
      * will listen on.
      */
     protected abstract FilterProvider doGetFilterProvider() throws IllegalArgumentException;

@@ -31,10 +31,10 @@ import java.util.Properties;
 
 /**
  * An extension on top of Spring {@link PropertyPlaceholderConfigurer} that works with
- * {@link BeanLevelProperties} in order to inject bean level propeties.
+ * {@link BeanLevelProperties} in order to inject bean level properties.
  * 
  * <p>
- * ${..} notations are used to lookup bean level properties with the properites obtained based on
+ * ${..} notations are used to lookup bean level properties with the properties obtained based on
  * the bean name using {@link BeanLevelProperties#getMergedBeanProperties(String)}.
  * 
  * @author kimchy

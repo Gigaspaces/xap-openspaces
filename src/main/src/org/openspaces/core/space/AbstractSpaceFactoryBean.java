@@ -50,9 +50,9 @@ import java.rmi.RemoteException;
  * account.
  *
  * <p>The space mode event will be raised regardless of the space "type" that is used. For embedded
- * spaces, an actual space mode event listener will be regsitered with the actual cluster member (if
+ * spaces, an actual space mode event listener will be registered with the actual cluster member (if
  * not in cluster mode, the actual space). For remote space lookups (jini/rmi), no listener will be
- * regsitered and Space mode events will still be raised during context refresh with a
+ * registered and Space mode events will still be raised during context refresh with a
  * <code>PRIMARY</code> mode in order to allow beans to be written regardless of how the space is
  * looked up.
  *
@@ -114,7 +114,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
                     logger.debug("Space [" + clusterMemberSpace + "] mode is [" + currentSpaceMode + "]");
                 }
             } catch (RemoteException e) {
-                throw new CannotCreateSpaceException("Failed to regsiter space mode listener with space [" + space
+                throw new CannotCreateSpaceException("Failed to register space mode listener with space [" + space
                         + "]", e);
             }
         } else {
@@ -123,11 +123,11 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Destroys the space and unregisters the intenral space mode listener (if registered).
+     * Destroys the space and unregisters the internal space mode listener (if registered).
      */
     public void destroy() throws Exception {
         if (isRegisterForSpaceModeNotifications()) {
-            // unregister the sapce mode listener
+            // unregister the space mode listener
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
             try {
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
@@ -166,7 +166,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
-     * Spring factory bean returning the {@link IJSpace} created during the bean initializtion
+     * Spring factory bean returning the {@link IJSpace} created during the bean initialization
      * ({@link #afterPropertiesSet()}).
      *
      * @return The {@link IJSpace} implementation

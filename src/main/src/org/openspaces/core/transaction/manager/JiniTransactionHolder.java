@@ -46,7 +46,7 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
 
     /**
      * Returns <code>true</code> if there is an existing transaction held by this bean,
-     * <code>false</code> if no tranasction is in progress.
+     * <code>false</code> if no transaction is in progress.
      */
     public boolean hasTransaction() {
         return (txCreated != null && txCreated.transaction != null);

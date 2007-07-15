@@ -38,7 +38,7 @@ import java.rmi.RemoteException;
  * jini.org customized in a Spring specific way. The search will be executed using the provided
  * ServiceTemplate or, if it is null, one will be created using the serviceClass and serviceName. If
  * the lookup operation times out (30 seconds by default), a null service will be returned. For most
- * cases the serviceClass and serviceNames are enought and hide the jini details from the client.
+ * cases the serviceClass and serviceNames are enough and hide the jini details from the client.
  * 
  * <p>
  * The factoryBean can be configured to do a lookup each time before returning the object type by

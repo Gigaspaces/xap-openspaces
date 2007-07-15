@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
  * it.
  *
  * <p>Supports the cluster flag controlling if the map will work with a clustered view of the space
- * or directly with a cluster memeber. By default it will work directly with a cluster member if
+ * or directly with a cluster member. By default it will work directly with a cluster member if
  * the space was loaded in embedded mode (as if clustered flag was set to <code>true</code>), otherwise
  * it will work with a clustered view.
  *
@@ -76,8 +76,8 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
      * the space is not a local cache proxy. It will be set to <code>false</code> otherwise (i.e. the space
      * is not an embedded space OR the space is a local cache proxy).
      *
-     * @param clustered If the {@link com.j_spaces.map.IMap} is going to work with a clsutered view of the
-     *                  space or directly with a cluster memeber
+     * @param clustered If the {@link com.j_spaces.map.IMap} is going to work with a clustered view of the
+     *                  space or directly with a cluster member
      */
     public void setClustered(Boolean clustered) {
         this.clustered = clustered;
@@ -109,7 +109,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
         Assert.notNull(space, "space property must be set");
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
-            // not want to get the actual memeber (the cluster flag was set on the local cache already)
+            // not want to get the actual member (the cluster flag was set on the local cache already)
             if (space instanceof ISpaceLocalCache) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");

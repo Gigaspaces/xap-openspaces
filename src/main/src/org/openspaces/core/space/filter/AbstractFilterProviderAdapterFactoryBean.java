@@ -28,7 +28,7 @@ import java.util.Map;
  * methods to another class. The delegate invocation is done using {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate}.
  *
  * <p>Subclasses should implement three methods. The first, {@link #doGetInvokerLookup()} provides a
- * map of operaion per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}.
+ * map of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}.
  * The other two provide filter lifecycle methods {@link #doGetInitMethod()} and {@link #doGetCloseMethod()}.
  *
  * @author kimchy
@@ -39,7 +39,7 @@ public abstract class AbstractFilterProviderAdapterFactoryBean extends AbstractF
     /**
      * <p>Constructs a new {@link com.j_spaces.core.filters.FilterProvider FilterProvider} using
      * {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate} as the <code>ISpaceFilter</code>
-     * implemenation.
+     * implementation.
      *
      * <p>Subclasses should provide the main Map of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}
      * which is used to initialize the {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate}.
@@ -79,7 +79,7 @@ public abstract class AbstractFilterProviderAdapterFactoryBean extends AbstractF
                     "operation [" + operationCode + "] has method [" + invoker.getProcessMethod().getName() + "] and method [" +
                     method.getName() + "]");
         }
-        // TODO add paramter validation
+        // TODO add parameter validation
         invokerLookup.put(operationCode, new FilterOperationDelegateInvoker(operationCode, method));
     }
 

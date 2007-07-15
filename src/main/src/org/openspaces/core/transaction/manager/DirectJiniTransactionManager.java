@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
 /**
  * Springs transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
  * using directly injected Jini {@link TransactionManager}. This transaction manager is mostly used
- * with applications that obtain the Jini transaction maanger by other means than the ones provided
+ * with applications that obtain the Jini transaction manager by other means than the ones provided
  * by {@link LocalJiniTransactionManager} and {@link LookupJiniTransactionManager}.
  * 
  * @author kimchy

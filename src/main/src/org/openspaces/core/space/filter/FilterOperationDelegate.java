@@ -55,7 +55,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
     private IJSpace space;
 
     /**
-     * Constructs a new filter operation delegate. Providing the delgate to perform the invocation on and a map
+     * Constructs a new filter operation delegate. Providing the delegate to perform the invocation on and a map
      * of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}.
      */
     public FilterOperationDelegate(Object delegate, Map<Integer, FilterOperationDelegateInvoker> invokerLookup) {

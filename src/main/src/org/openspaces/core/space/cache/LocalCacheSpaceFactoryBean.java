@@ -65,7 +65,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     }
 
     /**
-     * Allows to set the local cahce update mode using a descriptive name instead of integer
+     * Allows to set the local cache update mode using a descriptive name instead of integer
      * constants using {@link #setUpdateMode(int) localCacheUpdateMode}. Accepts either
      * <code>push</code> or <code>pull</code>.
      * 
@@ -78,7 +78,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
             setUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
         } else {
             throw new IllegalArgumentException("Wrong localCacheUpdateModeName [" + localCacheUpdateModeName + "], "
-                    + "shoudl be either '" + LOCAL_CACHE_UPDATE_MODE_PULL + "' or '" + LOCAL_CACHE_UPDATE_MODE_PUSH
+                    + "should be either '" + LOCAL_CACHE_UPDATE_MODE_PULL + "' or '" + LOCAL_CACHE_UPDATE_MODE_PUSH
                     + "'");
         }
     }
