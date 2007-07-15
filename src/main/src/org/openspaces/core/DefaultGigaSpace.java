@@ -341,7 +341,13 @@ public class DefaultGigaSpace implements GigaSpace {
     @SuppressWarnings("unchecked")
     public <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException {
         try {
-            return space.updateMultiple(entries, getCurrentTransaction(), leases);
+            Object[] retVals = space.updateMultiple(entries, getCurrentTransaction(), leases);
+            for (int i = 0; i < retVals.length; i++) {
+                if (retVals[i] instanceof Exception) {
+                    retVals[i] = exTranslator.translate((Exception) retVals[i]);
+                }
+            }
+            return retVals;
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -350,7 +356,13 @@ public class DefaultGigaSpace implements GigaSpace {
     @SuppressWarnings("unchecked")
     public <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException {
         try {
-            return space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
+            Object[] retVals = space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
+            for (int i = 0; i < retVals.length; i++) {
+                if (retVals[i] instanceof Exception) {
+                    retVals[i] = exTranslator.translate((Exception) retVals[i]);
+                }
+            }
+            return retVals;
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
