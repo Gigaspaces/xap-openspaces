@@ -33,7 +33,7 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("local-view", new LocalViewSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("giga-space", new GigaSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("local-tx-manager", new LocalTxManagerBeanDefinitionParser());
-        registerBeanDefinitionParser("lookup-tx-manager", new LookupJiniTxManagerBeanDefinitionParser());
+        registerBeanDefinitionParser("jini-tx-manager", new LookupJiniTxManagerBeanDefinitionParser());
         try {
             registerBeanDefinitionParser("giga-space-context", new GigaSpaceContextBeanDefinitionParser());
             registerBeanDefinitionParser("giga-space-late-context", new GigaSpaceLateContextBeanDefinitionParser());

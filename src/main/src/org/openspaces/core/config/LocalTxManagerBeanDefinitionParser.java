@@ -28,12 +28,14 @@ import org.w3c.dom.NamedNodeMap;
 
 /**
  * A bean definition builder for {@link LocalJiniTransactionManager}.
- * 
+ *
  * @author kimchy
  */
 public class LocalTxManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-    public static final String GIGA_SPACE = "giga-space";
+    public static final String SPACE = "space";
+
+    public static final String CLUSTERED = "clustered";
 
     protected Class<LocalJiniTransactionManager> getBeanClass(Element element) {
         return LocalJiniTransactionManager.class;
@@ -49,8 +51,12 @@ public class LocalTxManagerBeanDefinitionParser extends AbstractSingleBeanDefini
                 continue;
             }
             String propertyName = extractPropertyName(name);
-            if (GIGA_SPACE.equals(name)) {
+            if (SPACE.equals(name)) {
                 builder.addPropertyReference(propertyName, attribute.getValue());
+                continue;
+            }
+            if (CLUSTERED.equals(name)) {
+                builder.addPropertyValue(propertyName, attribute.getValue());
                 continue;
             }
 

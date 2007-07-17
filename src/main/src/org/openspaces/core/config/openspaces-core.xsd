@@ -443,13 +443,14 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseTxManagerType">
-                    <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="required"/>
+                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="lookup-tx-manager">
+    <xsd:element name="jini-tx-manager">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LookupJiniTransactionManager">
             </xsd:documentation>

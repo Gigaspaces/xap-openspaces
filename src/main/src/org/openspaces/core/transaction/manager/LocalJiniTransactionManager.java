@@ -18,8 +18,10 @@ package org.openspaces.core.transaction.manager;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.LocalTransactionManager;
+import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.core.util.SpaceUtils;
 import org.springframework.aop.framework.Advised;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
@@ -28,14 +30,14 @@ import org.springframework.util.Assert;
 /**
  * Springs transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
  * using GigaSpaces {@link LocalJiniTransactionManager}.
- * 
+ *
  * <p>Local transaction manager is high performance single space transaction manager and should be used
  * in most if not all space related operations.
- * 
+ *
  * <p>The local transaction manager also allows for most transaction isolation levels excluding
  * <code>SERIALIZABLE</code>. This is automatically applied when using this transaction manager
  * in conjunction with {@link org.openspaces.core.GigaSpace} API.
- * 
+ *
  * @author kimchy
  * @see com.j_spaces.core.client.LocalTransactionManager
  */
@@ -43,28 +45,49 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
 
     private static final long serialVersionUID = -2672383547433358975L;
 
-    private GigaSpace gigaSpace;
+    private IJSpace space;
 
-    /**
-     * Sets the the {@link LocalTransactionManager} will work with. This is a required property.
-     */
-    public void setGigaSpace(GigaSpace gigaSpace) {
-        this.gigaSpace = gigaSpace;
+    private Boolean clustered;
+
+    public void setSpace(IJSpace space) {
+        this.space = space;
+    }
+
+    public void setClustered(Boolean clustered) {
+        this.clustered = clustered;
     }
 
     /**
      * Returns a new {@link LocalTransactionManager} using the provided
-     * {@link #setGigaSpace(org.openspaces.core.GigaSpace)}.
-     * 
+     * {@link #setSpace(com.j_spaces.core.IJSpace)}.
+     *
      * <p>
      * The transactional context is automatically set to be the {@link IJSpace} associated with the
      * provided {@link GigaSpace}. This allows for zero conf when working with this local
      * transaction manager and {@link GigaSpace}.
      */
     public TransactionManager doCreateTransactionManager() throws Exception {
-        Assert.notNull(gigaSpace, "gigaSpace property must be set");
+        Assert.notNull(space, "space property must be set");
 
-        IJSpace space = gigaSpace.getSpace();
+        IJSpace space = this.space;
+        if (clustered == null) {
+            // in case the space is a local cache space, set the clustered flag to true since we do
+            // not want to get the actual member (the cluster flag was set on the local cache already)
+            if (space instanceof ISpaceLocalCache) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space");
+                }
+                clustered = true;
+            } else {
+                clustered = SpaceUtils.isRemoteProtocol(space);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Clustered flag automatically set to [" + clustered + "]");
+                }
+            }
+        }
+        if (!clustered) {
+            space = SpaceUtils.getClusterMemberSpace(space);
+        }
 
         // use the space as the transactional context (and not the transaction manager) in case of
         // Local transactions
