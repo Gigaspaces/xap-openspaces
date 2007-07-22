@@ -216,8 +216,14 @@ public class GigaSpaceLateContextBeanFactoryPostProcessor implements BeanFactory
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         String[] beanNames = beanFactory.getBeanDefinitionNames();
         for (String beanName : beanNames) {
+            if (!beanFactory.isSingleton(beanName)) {
+                continue;
+            }
+            List<AnnotatedMember> metadata = findClassMetadata(beanFactory.getType(beanName));
+            if (metadata.isEmpty()) {
+                continue;
+            }
             Object bean = beanFactory.getBean(beanName);
-            List<AnnotatedMember> metadata = findClassMetadata(bean.getClass());
             for (AnnotatedMember member : metadata) {
                 member.inject(bean);
             }
