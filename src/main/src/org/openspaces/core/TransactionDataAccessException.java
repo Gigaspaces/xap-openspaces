@@ -38,4 +38,8 @@ public class TransactionDataAccessException extends DataAccessException {
     public TransactionDataAccessException(TransactionException e) {
         super(e.getMessage(), e);
     }
+
+    public TransactionDataAccessException(org.springframework.transaction.TransactionException e) {
+        super(e.getMessage(), e);
+    }
 }

@@ -293,11 +293,7 @@ public class DefaultGigaMap implements GigaMap {
     // Support methods
 
     public Transaction getCurrentTransaction() {
-        Transaction.Created txCreated = txProvider.getCurrentTransaction(this);
-        if (txCreated == null) {
-            return null;
-        }
-        return txCreated.transaction;
+        return txProvider.getCurrentTransaction(this, map.getMasterSpace());
     }
 
     /**

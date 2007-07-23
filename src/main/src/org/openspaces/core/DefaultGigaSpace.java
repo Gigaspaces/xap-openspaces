@@ -371,11 +371,7 @@ public class DefaultGigaSpace implements GigaSpace {
     // Support methods
 
     public Transaction getCurrentTransaction() {
-        Transaction.Created txCreated = txProvider.getCurrentTransaction(this);
-        if (txCreated == null) {
-            return null;
-        }
-        return txCreated.transaction;
+        return txProvider.getCurrentTransaction(this, space);
     }
 
     /**

@@ -16,10 +16,22 @@
 
 package org.openspaces.core.transaction;
 
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.ISpaceProxy;
+import com.j_spaces.core.client.LocalTransactionManager;
+import com.j_spaces.core.client.XAResourceImpl;
 import net.jini.core.transaction.Transaction;
+import org.openspaces.core.TransactionDataAccessException;
 import org.openspaces.core.transaction.manager.JiniTransactionHolder;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.transaction.xa.XAResource;
+import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Defaut transaction provider works in conjunction with
@@ -27,11 +39,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * and one of its derived classes. Uses Spring support for transactional resource binding (using
  * thread local) in order to get the current transaction. If no transaction is active, will return
  * <code>null</code> (which means the operation will be executed under no transaction).
- * 
+ *
  * <p>
  * As a transaction context it uses the one passed to its constructor, and not the runtime
- * transactional context provided to {@link #getCurrentTransaction(Object)}.
- * 
+ * transactional context provided to {@link #getCurrentTransaction(Object,com.j_spaces.core.IJSpace)}
+ *
  * @author kimchy
  * @see org.openspaces.core.transaction.manager.AbstractJiniTransactionManager
  * @see org.openspaces.core.GigaSpaceFactoryBean
@@ -42,44 +54,96 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
     private Object actualTransactionalContext;
 
+    private PlatformTransactionManager transactionManager;
+
+    private boolean isJta = false;
+
     /**
      * Creates a new transaction provider. Will use the provided transactional context in order to
      * fetch the current running transaction.
-     * 
-     * @param actualTransactionalContext
-     *            The transactional context to fetch the transaction by
+     *
+     * @param actualTransactionalContext The transactional context to fetch the transaction by
      */
-    public DefaultTransactionProvider(Object actualTransactionalContext) {
+    public DefaultTransactionProvider(Object actualTransactionalContext, PlatformTransactionManager transactionManager) {
         this.actualTransactionalContext = actualTransactionalContext;
+        this.transactionManager = transactionManager;
+        if (transactionManager != null) {
+            this.isJta = transactionManager instanceof JtaTransactionManager;
+        }
     }
 
     /**
      * Returns the current running transaction based on the constructor provided transactional
      * context (Note that the passed transactional context is not used).
-     * 
+     *
      * <p>
      * Uses Spring support for transactional resource registration in order to fetch the current
      * running transaction (or the {@link JiniTransactionHolder}. An example of Spring platform
      * transaction managers that register it are ones derived form
      * {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager}.
-     * 
+     *
      * <p>
      * If no transaction is found bound the the transactional context (provided in the constructor),
      * <code>null</code> is returned. This means that operations will execute without a
      * transaction.
-     * 
-     * @param transactionalContext
-     *            Not Used. The transactional context used is the one provided in the constructor.
+     *
+     * @param transactionalContext Not Used. The transactional context used is the one provided in the constructor.
      * @return The current running transaction or <code>null</code> if no transaction is running
      */
-    public Transaction.Created getCurrentTransaction(Object transactionalContext) {
+    public Transaction getCurrentTransaction(Object transactionalContext, IJSpace space) {
+
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            return null;
+        }
+
+        if (isJta) {
+            List<TransactionSynchronization> txSynchronizations = TransactionSynchronizationManager.getSynchronizations();
+            for (TransactionSynchronization txSynchronization : txSynchronizations) {
+                if (txSynchronization instanceof SpaceAndTransactionSync) {
+                    SpaceAndTransactionSync spaceSync = (SpaceAndTransactionSync) txSynchronization;
+                    if (spaceSync.getSpace().equals(space)) {
+                        // we already registered this space on this JTA transaction, simply return the transaction
+                        return spaceSync.getTransaction();
+                    }
+                }
+            }
+
+            // regsiter and enlist a new XA resource with the transaction manager
+            JtaTransactionManager jtaTransactionManager = (JtaTransactionManager) transactionManager;
+            LocalTransactionManager localTxManager;
+            try {
+                localTxManager = (LocalTransactionManager) LocalTransactionManager.getInstance(space);
+            } catch (RemoteException e) {
+                throw new TransactionDataAccessException("Failed to get local transaction manager for space [" + space + "]", e);
+            }
+            XAResource xaResourceSpace = new XAResourceImpl(localTxManager, space);
+
+            // enlist the Space xa resource with the current JTA transaction
+            // we rely on the fact that this call will start the XA transaction
+            try {
+                jtaTransactionManager.getTransactionManager().getTransaction().enlistResource(xaResourceSpace);
+            } catch (Exception e) {
+                throw new TransactionDataAccessException("Failed to enlist xa resource [" + xaResourceSpace + "] with space [" + space + "]", e);
+            }
+
+            // get the context transaction from the Space and nullify it. We will handle
+            // the declarative transaction nature using Spring sync
+            Transaction transaction = ((ISpaceProxy) space).getContextTransaction();
+            ((ISpaceProxy) space).setContextTansaction(null);
+
+            // register a marker sync object that acts as a placeholder for both the Space and the transaction
+            TransactionSynchronizationManager.registerSynchronization(new SpaceAndTransactionSync(space, transaction));
+
+            return transaction;
+        }
+
         if (actualTransactionalContext == null) {
             return null;
         }
 
         JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
         if (txObject != null && txObject.hasTransaction()) {
-            return txObject.getTxCreated();
+            return txObject.getTxCreated().transaction;
         }
         return null;
     }
@@ -88,11 +152,52 @@ public class DefaultTransactionProvider implements TransactionProvider {
         if (actualTransactionalContext == null) {
             return TransactionDefinition.ISOLATION_DEFAULT;
         }
-
-        JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
-        if (txObject != null && txObject.hasTransaction()) {
-            return txObject.getIsolationLevel();
+        Integer currentIsoaltionLevel = TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
+        if (currentIsoaltionLevel != null) {
+            return currentIsoaltionLevel;
         }
         return TransactionDefinition.ISOLATION_DEFAULT;
+    }
+
+    /**
+     * A Spring synctonization that acts as a placeholder for the Space associtaed with the current
+     * Spring transaction.
+     */
+    private class SpaceAndTransactionSync implements TransactionSynchronization {
+
+        private IJSpace space;
+
+        private Transaction transaction;
+
+        public SpaceAndTransactionSync(IJSpace space, Transaction transaction) {
+            this.space = space;
+            this.transaction = transaction;
+        }
+
+        public IJSpace getSpace() {
+            return space;
+        }
+
+        public Transaction getTransaction() {
+            return transaction;
+        }
+
+        public void suspend() {
+        }
+
+        public void resume() {
+        }
+
+        public void beforeCommit(boolean readOnly) {
+        }
+
+        public void beforeCompletion() {
+        }
+
+        public void afterCommit() {
+        }
+
+        public void afterCompletion(int status) {
+        }
     }
 }

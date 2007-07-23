@@ -30,6 +30,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Constants;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
@@ -57,7 +58,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
 
     private ExceptionTranslator exTranslator;
 
-    private JiniPlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
 
     private long defaultWaitForResponse = JavaSpace.NO_WAIT;
 
@@ -145,7 +146,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
      * <p>Set the transaction manager to enable transactional operations. Can be <code>null</code>
      * if transactional support is not required or the default space is used as a transactional context.
      */
-    public void setTransactionManager(JiniPlatformTransactionManager transactionManager) {
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -160,14 +161,14 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
         }
         if (txProvider == null) {
             Object transactionalContext = null;
-            if (transactionManager != null) {
-                transactionalContext = transactionManager.getTransactionalContext();
+            if (transactionManager != null && transactionManager instanceof JiniPlatformTransactionManager) {
+                transactionalContext = ((JiniPlatformTransactionManager) transactionManager).getTransactionalContext();
             }
             // no transaction context is set (probably since there is no transactionManager), use the space as the transaction context
             if (transactionalContext == null) {
                 transactionalContext = map.getMasterSpace();
             }
-            txProvider = new DefaultTransactionProvider(transactionalContext);
+            txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
         }
         gigaMap = new DefaultGigaMap(map, txProvider, exTranslator, defaultIsolationLevel);
         gigaMap.setDefaultTimeToLive(defaultTimeToLive);

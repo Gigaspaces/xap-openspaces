@@ -32,6 +32,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Constants;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
@@ -49,7 +50,7 @@ import org.springframework.util.Assert;
  * <p>The factory accepts an optional {@link org.openspaces.core.transaction.TransactionProvider TransactionProvider}
  * which defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider DefaultTransactionProvider}.
  * The transactional context used is based on
- * {@link #setTransactionManager(org.openspaces.core.transaction.manager.JiniPlatformTransactionManager)},
+ * {@link #setTransactionManager(org.springframework.transaction.PlatformTransactionManager)} 
  * and if no transaction manager is provided, will use the space as the context.
  *
  * <p>When using {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager} there is no need
@@ -108,7 +109,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     private ExceptionTranslator exTranslator;
 
-    private JiniPlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
 
     private Boolean clustered;
 
@@ -231,7 +232,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      * <p>Set the transaction manager to enable transactional operations. Can be <code>null</code>
      * if transactional support is not required or the default space is used as a transactional context.
      */
-    public void setTransactionManager(JiniPlatformTransactionManager transactionManager) {
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -271,14 +272,14 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         }
         if (txProvider == null) {
             Object transactionalContext = null;
-            if (transactionManager != null) {
-                transactionalContext = transactionManager.getTransactionalContext();
+            if (transactionManager != null && transactionManager instanceof JiniPlatformTransactionManager) {
+                transactionalContext = ((JiniPlatformTransactionManager) transactionManager).getTransactionalContext();
             }
             // no transaction context is set (probably since there is no transactionManager), use the space as the transaction context
             if (transactionalContext == null) {
                 transactionalContext = space;
             }
-            txProvider = new DefaultTransactionProvider(transactionalContext);
+            txProvider =  new DefaultTransactionProvider(transactionalContext, transactionManager);
         }
         gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);

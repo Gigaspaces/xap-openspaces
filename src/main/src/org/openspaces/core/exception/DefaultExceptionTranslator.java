@@ -54,6 +54,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return null;
         }
 
+        if (e instanceof org.springframework.transaction.TransactionException) {
+            return new TransactionDataAccessException((org.springframework.transaction.TransactionException) e);
+        }
+
         if (e instanceof CacheException) {
             if (e instanceof CacheTimeoutException) {
                 throw new SpaceTimeoutException(e.getMessage(), e);
