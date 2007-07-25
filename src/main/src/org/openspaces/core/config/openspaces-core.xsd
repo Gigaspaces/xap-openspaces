@@ -93,7 +93,17 @@
                         <xsd:element ref="space-filter" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="filter-provider" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="filter-provider" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="replication-filter-provider" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element ref="space-replication-filter" minOccurs="0" maxOccurs="1"/>
                     </xsd:sequence>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
@@ -176,6 +186,19 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="space-replication-filter">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="baseReplicationFilterProviderType">
+                    <xsd:sequence>
+                        <xsd:element name="input-filter" type="replicationFilterType" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="output-filter" type="replicationFilterType" minOccurs="0" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
     <xsd:element name="space-filter">
         <xsd:complexType>
             <xsd:complexContent>
@@ -189,12 +212,6 @@
                     </xsd:sequence>
                 </xsd:extension>
             </xsd:complexContent>
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:element name="filter-provider">
-        <xsd:complexType>
-            <xsd:attribute name="ref" use="required" />
         </xsd:complexType>
     </xsd:element>
 
@@ -552,6 +569,26 @@
         </xsd:attribute>
     </xsd:complexType>
 
+    <xsd:complexType name="baseReplicationFilterProviderType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="active-when-backup" type="xsd:boolean"/>
+                <xsd:attribute name="shutdown-space-on-init-failure" type="xsd:boolean"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="replicationFilterType">
+        <xsd:group ref="beans:collectionElements"/>
+        <xsd:attribute name="ref" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[
+    A short-cut alternative to a nested "<ref bean='...'/>".
+                ]]></xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
     <xsd:complexType name="baseFilterProviderType">
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
@@ -562,7 +599,7 @@
                 <xsd:attribute name="active-when-backup" type="xsd:boolean"/>
                 <xsd:attribute name="enabled" type="xsd:boolean"/>
                 <xsd:attribute name="security-filter" type="xsd:boolean"/>
-                <xsd:attribute name="shutdown-space-on-init-failure"/>
+                <xsd:attribute name="shutdown-space-on-init-failure" type="xsd:boolean"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

@@ -98,5 +98,17 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
             list.add(ref);
         }
         builder.addPropertyValue("filterProviders", list);
+
+        Element replicationFilterProviderEle = DomUtils.getChildElementByTagName(element, "replication-filter-provider");
+        if (replicationFilterProviderEle != null) {
+            String refName = replicationFilterProviderEle.getAttribute("ref");
+            RuntimeBeanReference ref = new RuntimeBeanReference(refName, false);
+            builder.addPropertyValue("replicationFilterProvider", ref);
+        }
+
+        Element spaceReplicationFilterEle = DomUtils.getChildElementByTagName(element, "space-replication-filter");
+        if (spaceReplicationFilterEle != null) {
+            builder.addPropertyValue("replicationFilterProvider", parserContext.getDelegate().parsePropertySubElement(spaceReplicationFilterEle, builder.getRawBeanDefinition(), null));
+        }
     }
 }
