@@ -76,6 +76,18 @@ public class LocalCacheSupport {
         this.localCacheUpdateMode = localCacheUpdateMode;
     }
 
+    /**
+     * If set to {@link SpaceURL#UPDATE_MODE_PULL} (<code>1</code>) each update triggers an
+     * invalidation event at every cache instance. The invalidate event marks the object in the
+     * local cache instances as invalid. Therefore, an attempt to read this object triggers a reload
+     * process in the master space. This configuration is useful in cases where objects are updated
+     * frequently, but the updated value is required by the application less frequently.
+     *
+     * <p>If set to {@link SpaceURL#UPDATE_MODE_PUSH} (<code>2</code>) the master pushes the
+     * updates to the local cache, which holds a reference to the same updated object.
+     *
+     * @see #setUpdateMode(int)
+     */
     public int getLocalCacheUpdateMode() {
         return localCacheUpdateMode;
     }
@@ -99,18 +111,34 @@ public class LocalCacheSupport {
         }
     }
 
+    /**
+     * Local cache updates can be sent via unicast or multicast. When using multicast, make sure MulticastNotifyWorker
+     * as part of the space schema configuration is enabled. Default to <code>false</code>.
+     */
     public void setUseMulticast(boolean useMulticast) {
         this.useMulticast = useMulticast;
     }
 
+    /**
+     * Local cache updates can be sent via unicast or multicast. When using multicast, make sure MulticastNotifyWorker
+     * as part of the space schema configuration is enabled. Default to <code>false</code>.
+     */
     public boolean isUseMulticast() {
         return useMulticast;
     }
 
+    /**
+     * When performing a put operation, you may perform the put operation both into the local cache and the master
+     * space. This will speed up subsequent get operations. Default to <code>true</code>.
+     */
     public void setPutFirst(boolean putFirst) {
         this.putFirst = putFirst;
     }
 
+    /**
+     * When performing a put operation, you may perform the put operation both into the local cache and the master
+     * space. This will speed up subsequent get operations. Default to <code>true</code>.
+     */
     public boolean isPutFirst() {
         return putFirst;
     }
@@ -122,6 +150,9 @@ public class LocalCacheSupport {
         this.sizeLimit = sizeLimit;
     }
 
+    /**
+     * Sets the size limit of the local cache. Default to <code>100000</code>.
+     */
     public int getSizeLimit() {
         return sizeLimit;
     }
