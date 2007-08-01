@@ -127,6 +127,10 @@ public class DefaultGigaSpace implements GigaSpace {
         return this.txProvider;
     }
 
+    public ExceptionTranslator getExceptionTranslator() {
+        return this.exTranslator;
+    }
+
     public void clean() throws DataAccessException {
         try {
             space.clean();
@@ -366,6 +370,10 @@ public class DefaultGigaSpace implements GigaSpace {
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
+    }
+
+    public IteratorBuilder iterator() {
+        return new IteratorBuilder(this);
     }
 
     // Support methods

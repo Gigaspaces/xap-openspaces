@@ -21,6 +21,7 @@ import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
+import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 
@@ -83,6 +84,11 @@ public interface GigaSpace {
      * Returns the current running transaction. Can be <code>null</code> if no transaction is in progress.
      */
     Transaction getCurrentTransaction();
+
+    /**
+     * Returns the exception translator associated with this GigaSpace instnace.
+     */
+    ExceptionTranslator getExceptionTranslator();
 
     /**
      * Gets the isolation level from the current running transaction (enabling the usage of Spring
@@ -761,4 +767,10 @@ public interface GigaSpace {
      * @throws DataAccessException
      */
     <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
+
+    /**
+     * Returns an iterator builder allowing to configure and create a {@link com.j_spaces.core.client.GSIterator}
+     * over the Space.
+     */
+    IteratorBuilder iterator();
 }
