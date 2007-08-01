@@ -12,7 +12,10 @@
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
 
-    <os-core:space id="space" url="/./map"/>
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+
+    <os-core:space id="space" url="/./map" lookup-groups="${user.name}" />
 
     <bean id="evictionStrategy" class="com.j_spaces.map.eviction.FIFOEvictionStrategy">
         <property name="batchSize" value="1000"/>

@@ -9,12 +9,14 @@
        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
 
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
 
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.replication.SimpleReplicationFilter"/>
 
-    <os-core:space id="space1" url="/./replicationFilter?cluster_schema=sync_replicated&amp;total_members=2&amp;id=1">
+    <os-core:space id="space1" url="/./replicationFilter?cluster_schema=sync_replicated&amp;total_members=2&amp;id=1" lookup-groups="${user.name}">
         <os-core:space-replication-filter>
             <os-core:input-filter ref="simpleFilter" />
             <os-core:output-filter ref="simpleFilter" />
@@ -29,6 +31,7 @@
                 <property name="outputFilter" ref="simpleFilter"/>
             </bean>
         </property>
+        <property name="lookupGroups" value="${user.name}" />
     </bean>
 
     <os-core:giga-space id="gigaSpace1" space="space1"/>

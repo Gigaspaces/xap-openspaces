@@ -25,6 +25,7 @@ import org.openspaces.core.context.GigaSpaceLateContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author kimchy
@@ -37,16 +38,16 @@ public class SimpleReplicationFilter implements IReplicationFilter {
     @GigaSpaceLateContext(name = "gigaSpace2")
     GigaSpace gigaSpace2;
 
-    boolean initCalled;
+    AtomicInteger initCalled = new AtomicInteger();
 
-    boolean closeCalled;
+    AtomicInteger closeCalled = new AtomicInteger();
 
     boolean processCalled;
 
     List<ProcessEntry> processEntries = new ArrayList<ProcessEntry>();
 
     public void init(IJSpace space, String paramUrl, ReplicationPolicy replicationPolicy) {
-        initCalled = true;
+        initCalled.incrementAndGet();
     }
 
     public void process(int direction, IReplicationFilterEntry replicationFilterEntry, String remoteSpaceMemberName) {
@@ -58,7 +59,7 @@ public class SimpleReplicationFilter implements IReplicationFilter {
     }
 
     public void close() {
-        closeCalled = true;
+        closeCalled.incrementAndGet();
     }
 
     public class ProcessEntry {

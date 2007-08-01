@@ -90,7 +90,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
      * @param transactionalContext Not Used. The transactional context used is the one provided in the constructor.
      * @return The current running transaction or <code>null</code> if no transaction is running
      */
-    public Transaction getCurrentTransaction(Object transactionalContext, IJSpace space) {
+    public Transaction.Created getCurrentTransaction(Object transactionalContext, IJSpace space) {
 
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
             return null;
@@ -128,7 +128,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
             // get the context transaction from the Space and nullify it. We will handle
             // the declarative transaction nature using Spring sync
-            Transaction transaction = ((ISpaceProxy) space).getContextTransaction();
+            Transaction.Created transaction = ((ISpaceProxy) space).getContextTransaction();
             ((ISpaceProxy) space).setContextTansaction(null);
 
             // register a marker sync object that acts as a placeholder for both the Space and the transaction
@@ -143,7 +143,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
         JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
         if (txObject != null && txObject.hasTransaction()) {
-            return txObject.getTxCreated().transaction;
+            return txObject.getTxCreated();
         }
         return null;
     }
@@ -167,9 +167,9 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
         private IJSpace space;
 
-        private Transaction transaction;
+        private Transaction.Created transaction;
 
-        public SpaceAndTransactionSync(IJSpace space, Transaction transaction) {
+        public SpaceAndTransactionSync(IJSpace space, Transaction.Created transaction) {
             this.space = space;
             this.transaction = transaction;
         }
@@ -178,7 +178,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
             return space;
         }
 
-        public Transaction getTransaction() {
+        public Transaction.Created getTransaction() {
             return transaction;
         }
 

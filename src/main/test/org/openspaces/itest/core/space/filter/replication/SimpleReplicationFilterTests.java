@@ -43,10 +43,10 @@ public class SimpleReplicationFilterTests extends AbstractDependencyInjectionSpr
     public void testFilter() {
         assertNotNull(simpleFilter.gigaSpace1);
         assertNotNull(simpleFilter.gigaSpace2);
-        assertTrue(simpleFilter.initCalled);
+        assertEquals(2, simpleFilter.initCalled.intValue());
         assertEquals(0, simpleFilter.processEntries.size());
 
-        gigaSpace1.write(new Object());
+        gigaSpace2.write(new Object());
         assertEquals(2, simpleFilter.processEntries.size());
         assertEquals(IReplicationFilter.FILTER_DIRECTION_OUTPUT, simpleFilter.processEntries.get(0).direction);
         assertEquals(IReplicationFilter.FILTER_DIRECTION_INPUT, simpleFilter.processEntries.get(1).direction);

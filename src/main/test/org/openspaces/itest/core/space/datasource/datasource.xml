@@ -9,12 +9,15 @@
        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
 
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
 
     <bean id="ds" class="org.openspaces.itest.core.space.datasource.MockManagedDataSource" />
 
-    <os-core:space id="space" url="/./dataSourceSpace" external-data-source="ds" />
+    <os-core:space id="space" url="/./dataSourceSpace" external-data-source="ds" lookup-groups="${user.name}" />
 
     <os-core:giga-space id="gigaSpace" space="space" />
 

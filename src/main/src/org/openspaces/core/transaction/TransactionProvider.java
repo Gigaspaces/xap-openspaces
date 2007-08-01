@@ -48,7 +48,7 @@ public interface TransactionProvider {
      * @return The transaction object to be used with {@link com.j_spaces.core.IJSpace} operations.
      *         Can be <code>null</code>.
      */
-    Transaction getCurrentTransaction(Object transactionalContext, IJSpace space);
+    Transaction.Created getCurrentTransaction(Object transactionalContext, IJSpace space);
 
     /**
      * Returns the currently running transaction isolation level (mapping to Spring
