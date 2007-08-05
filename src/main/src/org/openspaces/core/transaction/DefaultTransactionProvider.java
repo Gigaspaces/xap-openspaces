@@ -40,6 +40,9 @@ import java.util.List;
  * thread local) in order to get the current transaction. If no transaction is active, will return
  * <code>null</code> (which means the operation will be executed under no transaction).
  *
+ * <p>Also supports for Spring JTA transaction by automatically creating and binding GigaSpaces
+ * support for XA.
+ *
  * <p>
  * As a transaction context it uses the one passed to its constructor, and not the runtime
  * transactional context provided to {@link #getCurrentTransaction(Object,com.j_spaces.core.IJSpace)}
