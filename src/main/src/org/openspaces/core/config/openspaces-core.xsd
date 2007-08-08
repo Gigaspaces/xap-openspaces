@@ -490,6 +490,15 @@
     <xsd:complexType name="baseTxManagerType">
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="renew" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:attribute name="round-trip-time" type="xsd:long" />
+                            <xsd:attribute name="duration" type="xsd:long" />
+                            <xsd:attribute name="pool-size" type="xsd:nonNegativeInteger" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
                 <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger"/>
                 <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger"/>
                 <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger"/>

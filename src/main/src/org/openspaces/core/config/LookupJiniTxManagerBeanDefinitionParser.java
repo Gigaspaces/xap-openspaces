@@ -18,7 +18,6 @@ package org.openspaces.core.config;
 
 import org.openspaces.core.transaction.manager.LookupJiniTransactionManager;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -31,7 +30,7 @@ import org.w3c.dom.NamedNodeMap;
  * 
  * @author kimchy
  */
-public class LookupJiniTxManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class LookupJiniTxManagerBeanDefinitionParser extends AbstractJiniTxManagerBeanDefinitionParser {
 
     public static final String TX_MANAGER_NAME = "tx-manager-name";
 
@@ -39,8 +38,8 @@ public class LookupJiniTxManagerBeanDefinitionParser extends AbstractSingleBeanD
         return LookupJiniTransactionManager.class;
     }
 
-    // TODO allow for transactional context to be set as well
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        super.doParse(element, builder);
         NamedNodeMap attributes = element.getAttributes();
         for (int x = 0; x < attributes.getLength(); x++) {
             Attr attribute = (Attr) attributes.item(x);

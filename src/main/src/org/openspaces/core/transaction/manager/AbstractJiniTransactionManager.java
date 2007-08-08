@@ -16,10 +16,13 @@
 
 package org.openspaces.core.transaction.manager;
 
+import net.jini.config.Configuration;
+import net.jini.config.ConfigurationException;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.LeaseException;
+import net.jini.core.lease.UnknownLeaseException;
 import net.jini.core.transaction.CannotAbortException;
 import net.jini.core.transaction.CannotCommitException;
 import net.jini.core.transaction.TimeoutExpiredException;
@@ -28,11 +31,12 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.UnknownTransactionException;
 import net.jini.core.transaction.server.NestableTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
+import net.jini.lease.LeaseRenewalManager;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.InvalidIsolationLevelException;
-import org.springframework.transaction.InvalidTimeoutException;
 import org.springframework.transaction.NestedTransactionNotSupportedException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -50,24 +54,23 @@ import java.rmi.RemoteException;
  * Base class for Jini implementation of Springs {@link PlatformTransactionManager}. Uses Jini
  * {@link TransactionManager} in order to manage transactions with sub classes responsible for
  * providing it using {@link #doCreateTransactionManager()}.
- * 
+ *
  * <p>Jini transactions are bounded under the {@link #setTransactionalContext(Object)} using Springs
  * {@link TransactionSynchronizationManager#bindResource(Object,Object)}. The transactional context
  * is optional and defaults to the Jini {@link TransactionManager} instance. Note, this can be
  * overridden by sub classes.
- * 
+ *
  * <p>By default the transaction timeout will be <code>FOREVER</code>. The default timeout on the
  * transaction manager level can be set using {@link #setDefaultTimeout(Long)}. If the timeout is
  * explicitly set using Spring support for transactions (for example using
  * {@link org.springframework.transaction.TransactionDefinition}) this value will be used.
- * 
+ *
  * @author kimchy
  * @see org.openspaces.core.transaction.DefaultTransactionProvider
  * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
  */
-// TODO Need to support relative transaction timeout
 public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements
-        JiniPlatformTransactionManager, InitializingBean {
+        JiniPlatformTransactionManager, InitializingBean, BeanNameAware {
 
     // TransactionManager used for creating the actual transaction
     private transient TransactionManager transactionManager;
@@ -81,6 +84,16 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     private Long commitTimeout;
 
     private Long rollbackTimeout;
+
+    private TransactionLeaseRenewalConfig leaseRenewalConfig;
+
+    private LeaseRenewalManager[] leaseRenewalManagers;
+
+    private String beanName;
+
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
 
     public Object getTransactionalContext() {
         return transactionalContext;
@@ -116,6 +129,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         this.rollbackTimeout = rollbackTimeout;
     }
 
+    public void setLeaseRenewalConfig(TransactionLeaseRenewalConfig leaseRenewalConfig) {
+        this.leaseRenewalConfig = leaseRenewalConfig;
+    }
+
     /**
      * Implemented by sub classes to provide a Jini {@link TransactionManager}.
      */
@@ -130,6 +147,13 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         if ((transactionManager instanceof NestableTransactionManager)) {
             setNestedTransactionAllowed(true);
         }
+        if (leaseRenewalConfig != null) {
+            leaseRenewalManagers = new LeaseRenewalManager[leaseRenewalConfig.getPoolSize()];
+            for (int i = 0; i < leaseRenewalConfig.getPoolSize(); i++) {
+                leaseRenewalManagers[i] = new LeaseRenewalManager(new RenewalConfiguration(leaseRenewalConfig.getRenewRTT()));
+            }
+            logger.debug(logMessage("Creatred transaction manager with lease renewal pool [" + leaseRenewalConfig.getPoolSize() + "] and RTT [" + leaseRenewalConfig.getRenewRTT() + "]"));
+        }
     }
 
     protected Object doGetTransaction() throws TransactionException {
@@ -142,8 +166,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         if (TransactionSynchronizationManager.hasResource(transactionalContext)) {
             JiniTransactionHolder jiniHolder = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(transactionalContext);
             if (logger.isDebugEnabled()) {
-                logger.debug("Found thread-bound tx data [" + jiniHolder + "] for Jini resource ["
-                        + transactionalContext + "]");
+                logger.debug(logMessage("Found thread-bound tx data [" + jiniHolder + "] for Jini resource ["
+                        + transactionalContext + "]"));
             }
             txObject.setJiniHolder(jiniHolder, false);
         }
@@ -154,7 +178,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         if (logger.isDebugEnabled())
-            logger.debug("Beginning transaction [" + txObject + "]");
+            logger.debug(logMessage("Beginning transaction [" + txObject + "]"));
         try {
             doJiniBegin(txObject, definition);
         } catch (UnsupportedOperationException ex) {
@@ -169,9 +193,6 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
         try {
             if (txObject.getJiniHolder() == null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Creating new transaction for [" + transactionalContext + "]");
-                }
                 long timeout = Lease.FOREVER;
                 if (defaultTimeout != null) {
                     timeout = defaultTimeout;
@@ -179,8 +200,24 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                     timeout = definition.getTimeout() * 1000;
                 }
-                Transaction.Created txCreated = TransactionFactory.create(transactionManager, timeout);
-                JiniTransactionHolder jiniHolder = new JiniTransactionHolder(txCreated, definition.getIsolationLevel());
+                if (logger.isDebugEnabled()) {
+                    logger.debug(logMessage("Creating new transaction for [" + transactionalContext + "] with timeout [" + timeout + "]"));
+                }
+                Transaction.Created txCreated;
+                LeaseRenewalManager leaseRenewalManager = null;
+                if (leaseRenewalConfig != null) {
+                    // if we are working under a lease renewal manager, create a transaction with the duration
+                    // and create a lease renewal manager that will renew the lease each duration till the
+                    // configured timeout
+                    txCreated = TransactionFactory.create(transactionManager, leaseRenewalConfig.getRenewDuration());
+                    leaseRenewalManager = leaseRenewalManagers[Math.abs(txCreated.hashCode()) % leaseRenewalConfig.getPoolSize()];
+                    leaseRenewalManager.renewFor(txCreated.lease, timeout,
+                            leaseRenewalConfig.getRenewDuration(), leaseRenewalConfig.getLeaseListener());
+                } else {
+                    txCreated = TransactionFactory.create(transactionManager, timeout);
+                }
+
+                JiniTransactionHolder jiniHolder = new JiniTransactionHolder(txCreated, definition.getIsolationLevel(), leaseRenewalManager);
                 jiniHolder.setTimeoutInSeconds(definition.getTimeout());
                 txObject.setJiniHolder(jiniHolder, true);
             }
@@ -188,8 +225,6 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             txObject.getJiniHolder().setSynchronizedWithTransaction(true);
 
             applyIsolationLevel(txObject, definition.getIsolationLevel());
-            // check for timeout just in case
-            // applyTimeout(txObject, definition.getTimeout());
 
             // Bind the session holder to the thread.
             if (txObject.isNewJiniHolder()) {
@@ -210,17 +245,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
     }
 
-    protected void applyTimeout(JiniTransactionObject txObject, int timeout) throws InvalidTimeoutException {
-        // TODO: maybe use a LeaseRenewalManager
-        if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
-            throw new InvalidTimeoutException("TransactionManager does not ex custom timeouts", timeout);
-        }
-    }
-
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (logger.isDebugEnabled())
-            logger.debug("Committing Jini transaction [" + txObject.toString() + "]");
+            logger.debug(logMessage("Committing Jini transaction [" + txObject.toString() + "]"));
         try {
             if (commitTimeout == null) {
                 txObject.getTransaction().commit();
@@ -246,7 +274,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (logger.isDebugEnabled())
-            logger.debug("Rolling back Jini transaction" + txObject.toString());
+            logger.debug(logMessage("Rolling back Jini transaction [" + txObject + "]"));
         try {
             if (rollbackTimeout == null) {
                 txObject.getTransaction().abort();
@@ -269,9 +297,18 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         // Remove the session holder from the thread.
         if (txObject.isNewJiniHolder()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Removing per-thread Jini transaction for [" + getTransactionalContext() + "]");
+                logger.debug(logMessage("Removing per-thread Jini transaction for [" + getTransactionalContext() + "]"));
             }
             TransactionSynchronizationManager.unbindResource(getTransactionalContext());
+
+            // remove the lease from the lease renewal mananer
+            if (txObject.getJiniHolder().hasLeaseRenewalManager()) {
+                try {
+                    txObject.getJiniHolder().getLeaseRenewalManager().remove(txObject.getJiniHolder().getTxCreated().lease);
+                } catch (UnknownLeaseException e) {
+                    logger.debug(logMessage("Got an unknowkn lease exception for [" + txObject + "]"), e);
+                }
+            }
         }
         txObject.getJiniHolder().clear();
     }
@@ -279,7 +316,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doSetRollbackOnly(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (status.isDebug()) {
-            logger.debug("Setting Jini transaction on txContext [" + getTransactionalContext() + "] rollback-only");
+            logger.debug(logMessage("Setting Jini transaction on txContext [" + getTransactionalContext() + "] rollback-only"));
         }
         txObject.setRollbackOnly();
     }
@@ -333,7 +370,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     /**
      * Jini Transaction object. Used as transaction object by GigaSpaceTransactionManager.
-     * 
+     *
      * TODO: can SmartTransactionObject be implemented?
      */
     static class JiniTransactionObject {
@@ -378,4 +415,37 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     }
 
+    private static final class RenewalConfiguration implements Configuration {
+
+        private Long _configRTT;
+
+        public RenewalConfiguration(long renewRTT) {
+            _configRTT = renewRTT;
+        }
+
+        public Object getEntry(String component, String name, Class type) throws ConfigurationException {
+            return getEntry(component, name, type, -1l, null);
+        }
+
+        public Object getEntry(String component, String name, Class type,
+                               Object defaultValue) throws ConfigurationException {
+            return getEntry(component, name, type, defaultValue, null);
+        }
+
+        public Object getEntry(String component, String name, Class type,
+                               Object defaultValue, Object data) throws ConfigurationException {
+
+            if (!component.equals("net.jini.lease.LeaseRenewalManager"))
+                return defaultValue;
+            if (name.equals("roundTripTime"))
+                return _configRTT;   // renewalRTT
+            if (name.equals("renewBatchTimeWindow"))
+                return 2l;     // renewBatchTimeWindow
+            return defaultValue;
+        }
+    }
+
+    protected String logMessage(String message) {
+        return "[" + beanName + "] " + message;
+    }
 }

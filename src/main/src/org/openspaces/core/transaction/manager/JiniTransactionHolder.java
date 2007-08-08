@@ -17,11 +17,12 @@
 package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.Transaction;
+import net.jini.lease.LeaseRenewalManager;
 import org.springframework.transaction.support.ResourceHolderSupport;
 
 /**
  * A Jini transaction holder responsible for holding the current running transaction.
- * 
+ *
  * @author kimchy
  * @see AbstractJiniTransactionManager
  */
@@ -31,17 +32,19 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
 
     private int isolationLevel;
 
+    private LeaseRenewalManager leaseRenewalManager;
+
     /**
      * Constructs a new jini transaction holder.
-     * 
-     * @param txCreated
-     *            The Jini transaction created object
-     * @param isolationLevel
-     *            The isolation level that transaction is executed under
+     *
+     * @param txCreated           The Jini transaction created object
+     * @param isolationLevel      The isolation level that transaction is executed under
+     * @param leaseRenewalManager The lease renewal manager for the transaction (can be <code>null</code>)
      */
-    public JiniTransactionHolder(Transaction.Created txCreated, int isolationLevel) {
+    public JiniTransactionHolder(Transaction.Created txCreated, int isolationLevel, LeaseRenewalManager leaseRenewalManager) {
         this.txCreated = txCreated;
         this.isolationLevel = isolationLevel;
+        this.leaseRenewalManager = leaseRenewalManager;
     }
 
     /**
@@ -65,5 +68,25 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
      */
     public int getIsolationLevel() {
         return this.isolationLevel;
+    }
+
+    /**
+     * Returns <code>true</code> if there is a lease renewal manager associated with this transaction
+     */
+    public boolean hasLeaseRenewalManager() {
+        return leaseRenewalManager != null;
+    }
+
+    /**
+     * Returns the lease renewal manager associated with this transaction, can be <code>null</code>.
+     */
+    public LeaseRenewalManager getLeaseRenewalManager() {
+        return leaseRenewalManager;
+    }
+
+    public void clear() {
+        super.clear();
+        this.leaseRenewalManager = null;
+        this.txCreated = null;
     }
 }
