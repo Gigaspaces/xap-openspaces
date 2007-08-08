@@ -19,6 +19,7 @@ package org.openspaces.core.space;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,6 +76,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     private Boolean registerForSpaceMode;
 
+    private SecurityConfig securityConfig;
+
     /**
      * Sets if the space should register for primary backup (mode) notifications. Default behaviour (if the flag was not set)
      * will register to primary backup notification if the space was found using an embedded
@@ -83,6 +86,13 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      */
     public void setRegisterForSpaceModeNotifications(boolean registerForSpaceMode) {
         this.registerForSpaceMode = registerForSpaceMode;
+    }
+
+    /**
+     * Sets security confiugration for the Space. If not set, no security will be used.
+     */
+    public void setSecurityConfig(SecurityConfig securityConfig) {
+        this.securityConfig = securityConfig;
     }
 
     /**
@@ -102,6 +112,13 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      */
     public void afterPropertiesSet() throws DataAccessException {
         this.space = doCreateSpace();
+        // apply security configuration if set
+        if (securityConfig != null) {
+            SecurityContext securityContext = new SecurityContext(securityConfig.getUsername(), securityConfig.getPassword());
+            securityContext.setEncrypted(securityConfig.isEncrypted());
+            securityContext.setPermissions(securityConfig.getPermissions());
+        }
+
         // register the space mode listener with the space
         if (isRegisterForSpaceModeNotifications()) {
             primaryBackupListener = new PrimaryBackupListener();

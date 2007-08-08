@@ -25,7 +25,15 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
-                    <xsd:sequence>
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="security" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="username" type="xsd:string" />
+                                <xsd:attribute name="password" type="xsd:string" />
+                                <xsd:attribute name="encrypted" type="xsd:boolean" />
+                                <xsd:attribute name="permissions" type="xsd:string" />
+                            </xsd:complexType>
+                        </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
@@ -104,7 +112,7 @@
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element ref="space-replication-filter" minOccurs="0" maxOccurs="1"/>
-                    </xsd:sequence>
+                    </xsd:choice>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
                             <xsd:documentation>

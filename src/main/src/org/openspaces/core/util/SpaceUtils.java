@@ -17,6 +17,7 @@
 package org.openspaces.core.util;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.JSpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.cluster.JSpaceClusteredProxy;
@@ -41,7 +42,7 @@ public abstract class SpaceUtils {
      */
     public static IJSpace getClusterMemberSpace(IJSpace space) throws DataAccessException {
         try {
-            return space.getContainer().getSpace(space.getName());
+            return ((ISpaceProxy) space).getSpace(space.getName());
         } catch (Exception e) {
             throw new DataAccessResourceFailureException("Failed to find space under name [" + space.getName() + "]", e);
         }

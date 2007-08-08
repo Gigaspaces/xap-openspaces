@@ -16,6 +16,7 @@
 
 package org.openspaces.core.config;
 
+import org.openspaces.core.space.SecurityConfig;
 import org.openspaces.core.space.UrlSpaceFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -109,6 +110,28 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         Element spaceReplicationFilterEle = DomUtils.getChildElementByTagName(element, "space-replication-filter");
         if (spaceReplicationFilterEle != null) {
             builder.addPropertyValue("replicationFilterProvider", parserContext.getDelegate().parsePropertySubElement(spaceReplicationFilterEle, builder.getRawBeanDefinition(), null));
+        }
+
+        Element securityEle = DomUtils.getChildElementByTagName(element, "security");
+        if (securityEle != null) {
+            SecurityConfig securityConfig = new SecurityConfig();
+            String username = securityEle.getAttribute("username");
+            if (StringUtils.hasText(username)) {
+                securityConfig.setUsername(username);
+            }
+            String password = securityEle.getAttribute("password");
+            if (StringUtils.hasText(password)) {
+                securityConfig.setPassword(password);
+            }
+            String encrypted = securityEle.getAttribute("encrypted");
+            if (StringUtils.hasText(encrypted)) {
+                securityConfig.setEncrypted(Boolean.valueOf(encrypted));
+            }
+            String permissions = securityEle.getAttribute("permissions");
+            if (StringUtils.hasText(permissions)) {
+                securityConfig.setPermissions(permissions);
+            }
+            builder.addPropertyValue("securityConfig", securityConfig);
         }
     }
 }
