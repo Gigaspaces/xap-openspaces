@@ -117,6 +117,11 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             SecurityContext securityContext = new SecurityContext(securityConfig.getUsername(), securityConfig.getPassword());
             securityContext.setEncrypted(securityConfig.isEncrypted());
             securityContext.setPermissions(securityConfig.getPermissions());
+            try {
+                space.setSecurityContext(securityContext);
+            } catch (RemoteException e) {
+                throw new CannotCreateSpaceException("Failed to set security context", e);
+            }
         }
 
         // register the space mode listener with the space
