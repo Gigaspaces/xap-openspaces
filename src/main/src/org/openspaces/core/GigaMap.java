@@ -24,7 +24,8 @@ import org.openspaces.core.transaction.TransactionProvider;
 import java.util.Map;
 
 /**
- * Provides a simpler interface of {@link com.j_spaces.map.IMap} and {@link com.j_spaces.javax.cache.Cache} implementation.
+ * Provides a simpler interface on top of {@link com.j_spaces.map.IMap} and
+ * {@link com.j_spaces.javax.cache.Cache} implementation.
  *
  * <p>Though this interface has a single implementation it is still important to work against the
  * interface as it allows for simpler testing and mocking.
