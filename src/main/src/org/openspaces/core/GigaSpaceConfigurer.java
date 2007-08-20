@@ -1,0 +1,126 @@
+/*
+ * Copyright 2006-2007 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.openspaces.core;
+
+import com.j_spaces.core.IJSpace;
+import org.openspaces.core.exception.ExceptionTranslator;
+import org.openspaces.core.transaction.TransactionProvider;
+import org.springframework.transaction.PlatformTransactionManager;
+
+/**
+ * A simple programmatic configurer for {@link org.openspaces.core.GigaSpace} instnace wrapping
+ * the {@link org.openspaces.core.GigaSpaceFactoryBean}.
+ *
+ * <p>Usage example:
+ * <pre>
+ * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
+ *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
+ * IJSpace space = urlSpaceConfigurer.createSpace();
+ *
+ * GigaSpace gigaSpace = new GigaSpaceConfigurer(space).defaultTakeTimeout(1000).gigaSpace();
+ * ...
+ * urlSpaceConfigurer.destroySpace(); // optional
+ * </pre>
+ *
+ * @author kimchy
+ */
+public class GigaSpaceConfigurer {
+
+    private GigaSpaceFactoryBean gigaSpaceFactoryBean;
+
+    private GigaSpace gigaSpace;
+
+    public GigaSpaceConfigurer(IJSpace space) {
+        gigaSpaceFactoryBean = new GigaSpaceFactoryBean();
+        gigaSpaceFactoryBean.setSpace(space);
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setTxProvider(org.openspaces.core.transaction.TransactionProvider)
+     */
+    public GigaSpaceConfigurer txProvider(TransactionProvider txProvider) {
+        gigaSpaceFactoryBean.setTxProvider(txProvider);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setExTranslator(org.openspaces.core.exception.ExceptionTranslator)
+     */
+    public GigaSpaceConfigurer exTranslator(ExceptionTranslator exTranslator) {
+        gigaSpaceFactoryBean.setExTranslator(exTranslator);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setClustered(boolean)
+     */
+    public GigaSpaceConfigurer clustered(boolean clustered) {
+        gigaSpaceFactoryBean.setClustered(clustered);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultReadTimeout(long)
+     */
+    public GigaSpaceConfigurer defaultReadTimeout(long defaultReadTimeout) {
+        gigaSpaceFactoryBean.setDefaultReadTimeout(defaultReadTimeout);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultTakeTimeout(long)
+     */
+    public GigaSpaceConfigurer defaultTakeTimeout(long defaultTakeTimeout) {
+        gigaSpaceFactoryBean.setDefaultTakeTimeout(defaultTakeTimeout);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultWriteLease(long)
+     */
+    public GigaSpaceConfigurer defaultWriteLease(long defaultWriteLease) {
+        gigaSpaceFactoryBean.setDefaultWriteLease(defaultWriteLease);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultIsolationLevel(int)
+     */
+    public GigaSpaceConfigurer defaultIsolationLevel(int defaultIsolationLevel) {
+        gigaSpaceFactoryBean.setDefaultIsolationLevel(defaultIsolationLevel);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setTransactionManager(org.springframework.transaction.PlatformTransactionManager)
+     */
+    public GigaSpaceConfigurer transactionManager(PlatformTransactionManager transactionManager) {
+        gigaSpaceFactoryBean.setTransactionManager(transactionManager);
+        return this;
+    }
+
+    /**
+     * Creates a new {@link org.openspaces.core.GigaSpace} instance if non already created.
+     */
+    public GigaSpace gigaSpace() {
+        if (gigaSpace == null) {
+            gigaSpaceFactoryBean.afterPropertiesSet();
+            gigaSpace = (GigaSpace) gigaSpaceFactoryBean.getObject();
+        }
+        return gigaSpace;
+    }
+}

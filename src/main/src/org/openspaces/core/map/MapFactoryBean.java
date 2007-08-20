@@ -24,11 +24,14 @@ import com.j_spaces.map.GSMapImpl;
 import com.j_spaces.map.IMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openspaces.core.space.CannotCreateSpaceException;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import java.rmi.RemoteException;
 
 /**
  * Base class for different {@link com.j_spaces.map.IMap} factories. Uses the referenced space
@@ -105,7 +108,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
         this.beanName = beanName;
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Assert.notNull(space, "space property must be set");
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
@@ -128,7 +131,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
         map = createMap();
     }
 
-    protected IMap createMap() throws Exception {
+    protected IMap createMap() {
         if (localCacheSupport == null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Creating simple map over Space [" + getSpace() + "] with compression [" + compression + "]");
@@ -141,13 +144,17 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
         if (logger.isDebugEnabled()) {
             logger.debug("Creating local cache map over Space [" + getSpace() + "] with compression [" + compression + "]");
         }
-        return new MapCache(getSpace(), localCacheSupport.isVersioned(), localCacheSupport.getLocalCacheUpdateMode(),
-                localCacheSupport.getEvictionStrategy(), localCacheSupport.isUseMulticast(), localCacheSupport.isPutFirst(),
-                localCacheSupport.getSizeLimit(), compression, spaceUrl.getURL());
+        try {
+            return new MapCache(getSpace(), localCacheSupport.isVersioned(), localCacheSupport.getLocalCacheUpdateMode(),
+                    localCacheSupport.getEvictionStrategy(), localCacheSupport.isUseMulticast(), localCacheSupport.isPutFirst(),
+                    localCacheSupport.getSizeLimit(), compression, spaceUrl.getURL());
+        } catch (RemoteException e) {
+            throw new CannotCreateSpaceException("Failed to creat map using space [" + getSpace() + "]", e);
+        }
 
     }
 
-    public Object getObject() throws Exception {
+    public Object getObject() {
         return map;
     }
 

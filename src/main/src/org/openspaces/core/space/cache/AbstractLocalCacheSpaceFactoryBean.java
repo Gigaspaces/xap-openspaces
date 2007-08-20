@@ -89,7 +89,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      *
      * @see com.j_spaces.core.client.SpaceFinder#find(com.j_spaces.core.client.SpaceURL,com.j_spaces.core.IJSpace,com.sun.jini.start.LifeCycle)
      */
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Assert.notNull(space, "space property must be set");
         IJSpace actualSpace = space;
         Properties props = createCacheProeprties();
@@ -111,7 +111,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     /**
      * Closes the local cache space
      */
-    public void destroy() throws Exception {
+    public void destroy() {
         if (localCacheSpace instanceof ISpaceLocalCache) {
             ((ISpaceLocalCache) localCacheSpace).close();
         }
@@ -127,7 +127,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * Returns an {@link com.j_spaces.core.IJSpace IJSpace} that is the local cache wrapping the
      * master proxy set using {@link #setSpace(com.j_spaces.core.IJSpace)}.
      */
-    public Object getObject() throws Exception {
+    public Object getObject() {
         return this.localCacheSpace;
     }
 

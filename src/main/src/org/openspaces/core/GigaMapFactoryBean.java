@@ -154,7 +154,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
         this.beanName = beanName;
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Assert.notNull(this.map, "map property is required");
         if (exTranslator == null) {
             exTranslator = new DefaultExceptionTranslator();
@@ -179,7 +179,7 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
      * Return {@link GigaMap} implementation constructed in
      * the {@link #afterPropertiesSet()} phase.
      */
-    public Object getObject() throws Exception {
+    public Object getObject() {
         return this.gigaMap;
     }
 

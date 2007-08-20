@@ -11,9 +11,9 @@ import com.j_spaces.map.eviction.NoneEvictionStrategy;
  */
 public class LocalCacheSupport {
 
-    private static final String LOCAL_CACHE_UPDATE_MODE_PUSH = "push";
+    public static final String LOCAL_CACHE_UPDATE_MODE_PUSH = "push";
 
-    private static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
+    public static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
 
     private int localCacheUpdateMode = SpaceURL.UPDATE_MODE_PULL;
 

@@ -41,9 +41,9 @@ import java.util.Properties;
  */
 public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
 
-    private static final String LOCAL_CACHE_UPDATE_MODE_PUSH = "push";
+    public static final String LOCAL_CACHE_UPDATE_MODE_PUSH = "push";
 
-    private static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
+    public static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
 
     private int localCacheUpdateMode = SpaceURL.UPDATE_MODE_PULL;
 

@@ -20,13 +20,13 @@ package org.openspaces.core.cluster;
  * Holds cluster related information. Beans within the Spring context (or processing unit context)
  * can use this bean (by implementing {@link ClusterInfoAware}) in order to be informed of their
  * specific cluster instance deployment.
- * 
+ *
  * <p>
  * Note, the cluster information is obtained externally from the application context which means
  * that this feature need to be supported by specific containers (and is not supported by plain
  * Spring application context). This means that beans that implement {@link ClusterInfoAware} should
  * take into account the fact that the cluster info provided might be null.
- * 
+ *
  * <p>
  * Naturally, this information can be used by plain Spring application context by constructing this
  * class using Spring and providing it as a parameter to {@link ClusterInfoBeanPostProcessor} which
@@ -35,11 +35,11 @@ package org.openspaces.core.cluster;
  * taken to resolve clashes. The best solution would be to define the cluster info within a different
  * Spring xml context, and excluding it when deploying the full context to a cluster info aware
  * container.
- * 
+ *
  * <p>
  * The absence (<code>null</code> value) of a certain cluster information property means that it
  * was not set.
- * 
+ *
  * @author kimchy
  */
 public class ClusterInfo {
@@ -53,6 +53,30 @@ public class ClusterInfo {
     private Integer numberOfInstances;
 
     private Integer numberOfBackups;
+
+    /**
+     * Constructs a new cluser infor with null values on all the fields
+     */
+    public ClusterInfo() {
+
+    }
+
+    /**
+     * Constructs a new Cluster info
+     *
+     * @param schema            The cluster schema
+     * @param instanceId        The instnaceid
+     * @param backupId          The backupId (can be <code>null</code>)
+     * @param numberOfInstances Number of instances
+     * @param numberOfBackups   Number Of backups (can be <code>null</code>)
+     */
+    public ClusterInfo(String schema, Integer instanceId, Integer backupId, Integer numberOfInstances, Integer numberOfBackups) {
+        this.schema = schema;
+        this.instanceId = instanceId;
+        this.backupId = backupId;
+        this.numberOfInstances = numberOfInstances;
+        this.numberOfBackups = numberOfBackups;
+    }
 
     /**
      * Returns the schema the cluster operates under. Usually maps to a Space cluster schema. Can

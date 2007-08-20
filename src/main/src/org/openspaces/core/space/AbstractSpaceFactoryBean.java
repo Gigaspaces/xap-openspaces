@@ -72,7 +72,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     private SpaceMode currentSpaceMode;
 
-    private PrimaryBackupListener primaryBackupListener;
+    private PrimaryBackupListener appContextPrimaryBackupListener;
+
+    private ISpaceModeListener primaryBackupListener;
 
     private Boolean registerForSpaceMode;
 
@@ -103,6 +105,13 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
 
     /**
+     * Sets a custom primary backup listener
+     */
+    public void setPrimaryBackupListener(ISpaceModeListener primaryBackupListener) {
+        this.primaryBackupListener = primaryBackupListener;
+    }
+
+    /**
      * Initializes the space by calling the {@link #doCreateSpace()}.
      *
      * <p>Registers with the Space an internal space mode listener in order to be able to send Spring
@@ -126,11 +135,11 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
         // register the space mode listener with the space
         if (isRegisterForSpaceModeNotifications()) {
-            primaryBackupListener = new PrimaryBackupListener();
+            appContextPrimaryBackupListener = new PrimaryBackupListener();
             try {
                 IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
-                        .exportObject(primaryBackupListener);
+                        .exportObject(appContextPrimaryBackupListener);
                 currentSpaceMode = ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).addSpaceModeListener(remoteListener);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Space [" + clusterMemberSpace + "] mode is [" + currentSpaceMode + "]");
@@ -153,7 +162,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
             try {
                 ISpaceModeListener remoteListener = (ISpaceModeListener) clusterMemberSpace.getStubHandler()
-                        .exportObject(primaryBackupListener);
+                        .exportObject(appContextPrimaryBackupListener);
                 ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin()).removeSpaceModeListener(remoteListener);
             } catch (RemoteException e) {
                 logger.warn("Failed to unregister space mode listener with space [" + space + "]", e);
@@ -194,7 +203,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * @return The {@link IJSpace} implementation
      * @throws Exception
      */
-    public Object getObject() throws Exception {
+    public Object getObject() {
         return this.space;
     }
 
@@ -244,6 +253,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             if (applicationContext != null) {
                 applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, spaceMode));
             }
+            if (primaryBackupListener != null) {
+                primaryBackupListener.beforeSpaceModeChange(spaceMode);
+            }
         }
 
         public void afterSpaceModeChange(SpaceMode spaceMode) throws RemoteException {
@@ -253,6 +265,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, spaceMode));
+            }
+            if (primaryBackupListener != null) {
+                primaryBackupListener.afterSpaceModeChange(spaceMode);
             }
         }
     }

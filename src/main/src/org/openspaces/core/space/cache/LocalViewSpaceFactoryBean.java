@@ -49,7 +49,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         this.localViews = localViews;
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Assert.notNull(localViews, "localViews must be set");
         Assert.isTrue(localViews.size() > 0, "At least one local view must be defined");
         super.afterPropertiesSet();

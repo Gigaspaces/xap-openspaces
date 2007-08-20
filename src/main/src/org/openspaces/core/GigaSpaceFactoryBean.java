@@ -246,7 +246,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      * get a cluster member directly (if set to <code>false</code>) and applies the different
      * defaults).
      */
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Assert.notNull(this.space, "space property is required");
         IJSpace space = this.space;
         if (clustered == null) {
@@ -291,7 +291,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      * Return {@link org.openspaces.core.GigaSpace} implementation constructed in
      * the {@link #afterPropertiesSet()} phase.
      */
-    public Object getObject() throws Exception {
+    public Object getObject() {
         return this.gigaSpace;
     }
 
