@@ -14,7 +14,7 @@
     <xsd:element name="space">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
-                A space factory bean that creates a space (IJSpace) based on a url.
+                A space factory bean that creates a space (IJSpace) based on a url and additional settings.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -28,10 +28,10 @@
                     <xsd:choice minOccurs="0" maxOccurs="unbounded">
                         <xsd:element name="security" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:attribute name="username" type="xsd:string" />
-                                <xsd:attribute name="password" type="xsd:string" />
-                                <xsd:attribute name="encrypted" type="xsd:boolean" />
-                                <xsd:attribute name="permissions" type="xsd:string" />
+                                <xsd:attribute name="username" type="xsd:string"/>
+                                <xsd:attribute name="password" type="xsd:string"/>
+                                <xsd:attribute name="encrypted" type="xsd:boolean"/>
+                                <xsd:attribute name="permissions" type="xsd:string"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
@@ -98,9 +98,33 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element ref="space-filter" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element ref="space-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.SpaceFilterProviderFactory">
+                                    Allows to inject a "pure" space filter based on SpaceFilterProviderFactory that
+                                    accepts an ISpaceFilter implementation.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
+                                    Allows to inject a an annotation adapter based on AnnotationFilterFactoryBean that
+                                    accepts a pure pojo with annotations marking filter methods.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.MethodFilterFactoryBean">
+                                    Allows to inject a a mathod adapter based on MethodFilterFactoryBean that
+                                    accepts a pure pojo with method marking filter methods.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
                         <xsd:element name="filter-provider" minOccurs="0" maxOccurs="unbounded">
                             <xsd:complexType>
                                 <xsd:attribute name="ref" use="required"/>
@@ -501,9 +525,9 @@
                 <xsd:sequence>
                     <xsd:element name="renew" minOccurs="0">
                         <xsd:complexType>
-                            <xsd:attribute name="round-trip-time" type="xsd:long" />
-                            <xsd:attribute name="duration" type="xsd:long" />
-                            <xsd:attribute name="pool-size" type="xsd:nonNegativeInteger" />
+                            <xsd:attribute name="round-trip-time" type="xsd:long"/>
+                            <xsd:attribute name="duration" type="xsd:long"/>
+                            <xsd:attribute name="pool-size" type="xsd:nonNegativeInteger"/>
                         </xsd:complexType>
                     </xsd:element>
                 </xsd:sequence>
