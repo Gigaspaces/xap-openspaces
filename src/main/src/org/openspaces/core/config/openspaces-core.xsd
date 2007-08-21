@@ -126,16 +126,47 @@
                             </xsd:annotation>
                         </xsd:element>
                         <xsd:element name="filter-provider" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.FilterProviderFactory">
+                                    Allows to inject a general implementation of FilterProviderFactory.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
-                                <xsd:attribute name="ref" use="required"/>
+                                <xsd:attribute name="ref" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Reference to the bean.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="replication-filter-provider" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory">
+                                    Inject an instance of ReplicationFilterProviderFactory allowing to provide a Space
+                                    replication filter.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
-                                <xsd:attribute name="ref" use="required"/>
+                                <xsd:attribute name="ref" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Reference to the bean.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element ref="space-replication-filter" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element ref="space-replication-filter" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation source="org.openspaces.core.space.filter.replication.DefaultReplicationFilterProviderFactory">
+                                    Simplified option for injecting space replication filter without using the factory.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
                     </xsd:choice>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
@@ -147,7 +178,7 @@
                     <xsd:attribute name="schema" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                                The schema name associated with the space
+                                The schema name associated with the space.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -170,7 +201,7 @@
                     <xsd:attribute name="versioned" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:documentation>
-                                When false, optimistic lock is disabled. Default is true.
+                                When false, optimistic locking is disabled. Default is true.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -210,7 +241,9 @@
                     </xsd:attribute>
                     <xsd:attribute name="external-data-source" type="xsd:string">
                         <xsd:annotation>
-
+                            <xsd:documentation source="com.gigaspaces.datasource.ManagedDataSource">
+                                Allows to provide a Space external data source reference. 
+                            </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                 </xsd:extension>
