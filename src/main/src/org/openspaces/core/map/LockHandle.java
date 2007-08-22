@@ -18,6 +18,11 @@ package org.openspaces.core.map;
 
 import net.jini.core.transaction.Transaction;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 /**
  * A lock handle allowing to perform map operations when the key is locked. Intenally
  * holds the transaction representing the lock and it can be accessed to be passed to
@@ -28,7 +33,7 @@ import net.jini.core.transaction.Transaction;
  *
  * @author kimchy
  */
-public class LockHandle {
+public class LockHandle implements Externalizable {
 
     private LockManager lockManager;
 
@@ -64,5 +69,15 @@ public class LockHandle {
      */
     public Object getKey() {
         return key;
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(tx);
+        out.writeObject(key);
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        tx = (Transaction) in.readObject();
+        key = in.readObject();
     }
 }
