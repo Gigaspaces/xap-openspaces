@@ -490,6 +490,8 @@
                     <xsd:attribute name="map" type="xsd:string" use="required"/>
                     <xsd:attribute name="default-time-to-live" type="xsd:nonNegativeInteger"/>
                     <xsd:attribute name="default-wait-for-response" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-lock-time-to-live" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-waiting-for-lock-timeout" type="xsd:nonNegativeInteger"/>
                     <xsd:attribute name="default-isolation" default="DEFAULT">
                         <xsd:simpleType>
                             <xsd:annotation>

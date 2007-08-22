@@ -25,6 +25,8 @@ import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
+import org.openspaces.core.map.LockHandle;
+import org.openspaces.core.map.LockManager;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.TransactionDefinition;
 
@@ -57,7 +59,13 @@ public class DefaultGigaMap implements GigaMap {
 
     private long defaultTimeToLive = Lease.FOREVER;
 
+    private long defaultLockTimeToLive = 60000;
+
+    private long defaultWaitingForLockTimeout = 10000;
+
     private int defaultIsolationLevel;
+
+    private LockManager lockManager;
 
     /**
      * Constructs a new DefaultGigaMap implementation.
@@ -70,6 +78,7 @@ public class DefaultGigaMap implements GigaMap {
     public DefaultGigaMap(IMap map, TransactionProvider txProvider, ExceptionTranslator exTranslator,
                           int defaultIsolationLevel) {
         this.map = map;
+        this.lockManager = new LockManager(map);
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         // set the default read take modifiers according to the default isolation level
@@ -98,6 +107,14 @@ public class DefaultGigaMap implements GigaMap {
 
     public void setDefaultTimeToLive(long defaultTimeToLive) {
         this.defaultTimeToLive = defaultTimeToLive;
+    }
+
+    public void setDefaultLockTimeToLive(long defaultLockTimeToLive) {
+        this.defaultLockTimeToLive = defaultLockTimeToLive;
+    }
+
+    public void setDefaultWaitingForLockTimeout(long defaultWaitingForLockTimeout) {
+        this.defaultWaitingForLockTimeout = defaultWaitingForLockTimeout;
     }
 
     public IMap getMap() {
@@ -168,13 +185,33 @@ public class DefaultGigaMap implements GigaMap {
         }
     }
 
+    public Object put(Object key, Object value, LockHandle lockHandle) {
+        return put(key, value, defaultTimeToLive, lockHandle);
+    }
+
+    public Object put(Object key, Object value, long timeToLive, LockHandle lockHandle) {
+        try {
+            return map.put(key, value, lockHandle.getTransaction(), timeToLive);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public Object remove(Object key) {
         return remove(key, defaultWaitForResponse);
     }
 
-    public Object remove(Object key, long waitForReponse) {
+    public Object remove(Object key, long waitForResponse) {
         try {
-            return map.remove(key, getCurrentTransaction(), waitForReponse);
+            return map.remove(key, getCurrentTransaction(), waitForResponse);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public Object remove(Object key, long waitForResponse, LockHandle lockHandle) {
+        try {
+            return map.remove(key, lockHandle.getTransaction(), waitForResponse);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -298,6 +335,26 @@ public class DefaultGigaMap implements GigaMap {
             return txCreated.transaction;
         }
         return null;
+    }
+
+    public LockHandle lock(Object key) {
+        return lock(key, defaultLockTimeToLive, defaultWaitingForLockTimeout);
+    }
+
+    public LockHandle lock(Object key, long lockTimeToLive, long waitingForLockTimeout) {
+        return lockManager.lock(key, lockTimeToLive, waitingForLockTimeout);
+    }
+
+    public void unlock(Object key) {
+        lockManager.unlock(key);
+    }
+
+    public boolean isLocked(Object key) {
+        return lockManager.islocked(key);
+    }
+
+    public void putAndUnlock(Object key, Object value) {
+        lockManager.putAndUnlock(key, value);
     }
 
     /**

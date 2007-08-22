@@ -64,6 +64,10 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
 
     private long defaultTimeToLive = Lease.FOREVER;
 
+    private long defaultLockTimeToLive = 60000;
+
+    private long defaultWaitingForLockTimeout = 10000;
+
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
 
 
@@ -102,12 +106,33 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
         this.exTranslator = exTranslator;
     }
 
+    /**
+     * Sets (in milliseconds) the default wait timeout when perfoming {@link org.openspaces.core.GigaMap#get(Object)} or
+     * {@link org.openspaces.core.GigaMap#remove(Object)}. Defaults to NO WAIT (0).
+     */
     public void setDefaultWaitForResponse(long defaultWaitForResponse) {
         this.defaultWaitForResponse = defaultWaitForResponse;
     }
 
+    /**
+     * Sets the default time to live (in milliseconds) for new entries. Defaults to FOREVER.
+     */
     public void setDefaultTimeToLive(long defaultTimeToLive) {
         this.defaultTimeToLive = defaultTimeToLive;
+    }
+
+    /**
+     * Sets (in milliseconds) the default time to live for locks. Defaults to 60 seconds.
+     */
+    public void setDefaultLockTimeToLive(long defaultLockTimeToLive) {
+        this.defaultLockTimeToLive = defaultLockTimeToLive;
+    }
+
+    /**
+     * Sets (in milliseconds) the default time to wait for a given lock when locking. Defaults to 10 seconds.
+     */
+    public void setDefaultWaitingForLockTimeout(long defaultWaitingForLockTimeout) {
+        this.defaultWaitingForLockTimeout = defaultWaitingForLockTimeout;
     }
 
     /**

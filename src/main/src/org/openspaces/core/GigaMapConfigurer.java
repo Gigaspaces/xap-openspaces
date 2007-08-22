@@ -83,6 +83,22 @@ public class GigaMapConfigurer {
     }
 
     /**
+     * @see org.openspaces.core.GigaMapFactoryBean#setDefaultLockTimeToLive(long)
+     */
+    public GigaMapConfigurer defaultLockTimeToLive(long defaultLockTimeToLive) {
+        gigaMapFactoryBean.setDefaultLockTimeToLive(defaultLockTimeToLive);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.GigaMapFactoryBean#setDefaultWaitingForLockTimeout(long)
+     */
+    public GigaMapConfigurer defaultWaitingForLockTimeout(long defaultWaitingForLockTimeout) {
+        gigaMapFactoryBean.setDefaultWaitingForLockTimeout(defaultWaitingForLockTimeout);
+        return this;
+    }
+
+    /**
      * @see org.openspaces.core.GigaMapFactoryBean#setDefaultIsolationLevel(int)
      */
     public GigaMapConfigurer defaultIsolationLevel(int defaultIsolationLevel) {
