@@ -18,6 +18,8 @@ package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.jini.JiniServiceFactoryBean;
+import org.springframework.transaction.InvalidIsolationLevelException;
+import org.springframework.transaction.TransactionDefinition;
 
 /**
  * Springs transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
@@ -68,4 +70,11 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         return (TransactionManager) serviceFactory.getObject();
     }
 
+    protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
+            throws InvalidIsolationLevelException {
+        if (isolationLevel == TransactionDefinition.ISOLATION_SERIALIZABLE) {
+            throw new InvalidIsolationLevelException(
+                    "Local TransactionManager does not support serializable isolation level");
+        }
+    }    
 }
