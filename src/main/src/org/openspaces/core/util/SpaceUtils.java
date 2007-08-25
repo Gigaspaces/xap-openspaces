@@ -52,6 +52,10 @@ public abstract class SpaceUtils {
      * Returns <code>true</code> if the Space uses a remote protocol.
      */
     public static boolean isRemoteProtocol(IJSpace space) {
+        if (space.getFinderURL() == null) {
+            // assume this is an embedded Space
+            return false;
+        }
         String protocol = space.getFinderURL().getProtocol();
         return protocol.equals(SpaceURL.JINI_PROTOCOL) || protocol.equals(SpaceURL.RMI_PROTOCOL);
     }
