@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.dao.DataAccessException;
+import org.springframework.util.StringUtils;
 
 import java.rmi.RemoteException;
 
@@ -123,13 +124,15 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         this.space = doCreateSpace();
         // apply security configuration if set
         if (securityConfig != null) {
-            SecurityContext securityContext = new SecurityContext(securityConfig.getUsername(), securityConfig.getPassword());
-            securityContext.setEncrypted(securityConfig.isEncrypted());
-            securityContext.setPermissions(securityConfig.getPermissions());
-            try {
-                space.setSecurityContext(securityContext);
-            } catch (RemoteException e) {
-                throw new CannotCreateSpaceException("Failed to set security context", e);
+            if (StringUtils.hasText(securityConfig.getUsername()) && StringUtils.hasText(securityConfig.getPassword())) {
+                SecurityContext securityContext = new SecurityContext(securityConfig.getUsername(), securityConfig.getPassword());
+                securityContext.setEncrypted(securityConfig.isEncrypted());
+                securityContext.setPermissions(securityConfig.getPermissions());
+                try {
+                    space.setSecurityContext(securityContext);
+                } catch (RemoteException e) {
+                    throw new CannotCreateSpaceException("Failed to set security context", e);
+                }
             }
         }
 
