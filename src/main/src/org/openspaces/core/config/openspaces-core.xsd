@@ -306,14 +306,18 @@
                                 <xsd:attribute name="code" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            The operation code the filter will be registered to. Operation code stands
-                                            for a specfic operation the space will perform, for example, before write.
+                                            The operation code (number) the filter will be registered to. Operation code
+                                            stands for a specfic operation the space will perform, for example, before
+                                            write.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
                                 <xsd:attribute name="code-name" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
+                                            The operation code (name) the filter will be regsitered to. Operation code
+                                            stands for a specific operation the space will perform, for example,
+                                            before-write.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                     <xsd:simpleType>
@@ -348,6 +352,14 @@
     </xsd:element>
 
     <xsd:element name="annotation-adapter-filter">
+        <xsd:annotation>
+            <xsd:documentation source="org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
+                A FilterProvider factory that accepts a Pojo filter with annotation markers as to which filter operation
+                to listen to. The available annotations are the different annotations found within this package with
+                either the Before prefix or the After prefix (for example: BeforeWrite and AfterWrite). Filter lifecycle
+                methods can be marked using OnFilterInit and OnFilterClose annotations.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseFilterProviderType"/>
@@ -356,6 +368,15 @@
     </xsd:element>
 
     <xsd:element name="method-adapter-filter">
+        <xsd:annotation>
+            <xsd:documentation source="org.openspaces.core.space.filter.MethodFilterFactoryBean">
+                A FilterProvider factory that accepts a Pojo filter with different operation callbacks that are marked
+                using this factory. For each available operation there is an attribute that accepts the method name to
+                be invoked if the operation happened. Not setting a callback means that this filter will not listen to
+                the mentioned operation. For example, if the filter has a method called doSomethingBeforeWrite, the
+                attribute before-write will need to be set with name doSomethingBeforeWrite.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseFilterProviderType">
