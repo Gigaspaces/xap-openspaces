@@ -80,7 +80,8 @@
                             <xsd:annotation>
                                 <xsd:documentation>
                                     Sets the parameters the IJSpace will be created with (same as paramters). Note, this
-                                    should not be confused with url-properties. The properties here are the ones refered
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred
                                     to as custom properties and allows for example to control the xpath injection to
                                     space schema.
                                 </xsd:documentation>
@@ -120,7 +121,7 @@
                             <xsd:annotation>
                                 <xsd:documentation
                                         source="java:org.openspaces.core.space.filter.MethodFilterFactoryBean">
-                                    Allows to inject a a mathod adapter based on MethodFilterFactoryBean that
+                                    Allows to inject a a method adapter based on MethodFilterFactoryBean that
                                     accepts a pure pojo with method marking filter methods.
                                 </xsd:documentation>
                             </xsd:annotation>
@@ -162,7 +163,8 @@
                         </xsd:element>
                         <xsd:element ref="space-replication-filter" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
-                                <xsd:documentation source="org.openspaces.core.space.filter.replication.DefaultReplicationFilterProviderFactory">
+                                <xsd:documentation
+                                        source="org.openspaces.core.space.filter.replication.DefaultReplicationFilterProviderFactory">
                                     Simplified option for injecting space replication filter without using the factory.
                                 </xsd:documentation>
                             </xsd:annotation>
@@ -232,17 +234,16 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 Indicates that this space will register for space mode notifications.
-                                Default behaviour (if the flag was not set) will register to primary backup notification
+                                Default behavior (if the flag was not set) will register to primary backup notification
                                 if the space was found using an embedded protocol, and will not register for
-                                notification
-                                if the space was found using rmi or jini protocols.
+                                notification if the space was found using rmi or jini protocols.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="external-data-source" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation source="com.gigaspaces.datasource.ManagedDataSource">
-                                Allows to provide a Space external data source reference. 
+                                Allows to provide a Space external data source reference.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -252,12 +253,31 @@
     </xsd:element>
 
     <xsd:element name="space-replication-filter">
+        <xsd:annotation>
+            <xsd:documentation
+                    source="org.openspaces.core.space.filter.replication.DefaultReplicationFilterProviderFactory">
+                The default replication filter provider factory allowing to configure an input and output filter of
+                IReplicationFilter.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseReplicationFilterProviderType">
                     <xsd:sequence>
-                        <xsd:element name="input-filter" type="replicationFilterType" minOccurs="0" maxOccurs="1"/>
-                        <xsd:element name="output-filter" type="replicationFilterType" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="input-filter" type="replicationFilterType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation source="com.j_spaces.core.cluster.IReplicationFilter">
+                                    The input replication filter.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="output-filter" type="replicationFilterType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation source="com.j_spaces.core.cluster.IReplicationFilter">
+                                    The output replication filter.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
                     </xsd:sequence>
                 </xsd:extension>
             </xsd:complexContent>
@@ -265,13 +285,60 @@
     </xsd:element>
 
     <xsd:element name="space-filter">
+        <xsd:annotation>
+            <xsd:documentation source="org.openspaces.core.space.filter.SpaceFilterProviderFactory">
+                A FilterProvider factory that accepts a concrete ISpaceFilter implementation in addition to all the
+                operation codes it will listen to.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseFilterProviderType">
                     <xsd:sequence>
                         <xsd:element name="operation" minOccurs="1" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The operation code the filter will be registered to. Operation code stands for a
+                                    specfic operation the space will perform, for example, before write.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
-                                <xsd:attribute name="code" type="xsd:nonNegativeInteger" use="required"/>
+                                <xsd:attribute name="code" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The operation code the filter will be registered to. Operation code stands
+                                            for a specfic operation the space will perform, for example, before write.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="code-name" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="before-write"/>
+                                            <xsd:enumeration value="after-write"/>
+                                            <xsd:enumeration value="before-read"/>
+                                            <xsd:enumeration value="before-take"/>
+                                            <xsd:enumeration value="before-notify"/>
+                                            <xsd:enumeration value="before-clean-space"/>
+                                            <xsd:enumeration value="before-update"/>
+                                            <xsd:enumeration value="after-update"/>
+                                            <xsd:enumeration value="before-read-multiple"/>
+                                            <xsd:enumeration value="after-read-multiple"/>
+                                            <xsd:enumeration value="before-take-multiple"/>
+                                            <xsd:enumeration value="after-take-multiple"/>
+                                            <xsd:enumeration value="before-notify-trigger"/>
+                                            <xsd:enumeration value="after-notify-trigger"/>
+                                            <xsd:enumeration value="before-all-notify-trigger"/>
+                                            <xsd:enumeration value="after-all-notify-trigger"/>
+                                            <xsd:enumeration value="before-remove-by-lease"/>
+                                            <xsd:enumeration value="after-remove-by-lease"/>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>

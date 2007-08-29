@@ -15,18 +15,18 @@
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
 
-    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.SimpleFilter" />
+    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.SimpleFilter"/>
 
     <os-core:space id="space" url="/./spaceSimpleFilter" lookup-groups="${user.name}">
         <os-core:space-filter priority="2">
-            <os-core:filter ref="simpleFilter" />
-            <os-core:operation code="0" />
-            <os-core:operation code="1" />
-            <os-core:operation code="2" />
-            <os-core:operation code="3" />
+            <os-core:filter ref="simpleFilter"/>
+            <os-core:operation code-name="before-write"/>
+            <os-core:operation code="1"/>
+            <os-core:operation code="2"/>
+            <os-core:operation code="3"/>
         </os-core:space-filter>
     </os-core:space>
 
-    <os-core:giga-space id="gigaSpace" space="space" />
+    <os-core:giga-space id="gigaSpace" space="space"/>
 
 </beans>

@@ -19,9 +19,11 @@ package org.openspaces.core.config;
 import org.openspaces.core.space.filter.SpaceFilterProviderFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,11 +38,24 @@ public class SpaceFilterBeanDefinitionParser extends AbstractFilterBeanDefinitio
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         List<Element> opeationCodesElements = DomUtils.getChildElementsByTagName(element, "operation");
-        int[] operationCodes = new int[opeationCodesElements.size()];
-        for (int i = 0; i < operationCodes.length; i++) {
+        ArrayList<Integer> operationCodes = new ArrayList<Integer>();
+        ArrayList<String> operationCodesNames = new ArrayList<String>();
+        for (int i = 0; i < opeationCodesElements.size(); i++) {
             String operationCode = opeationCodesElements.get(i).getAttribute("code");
-            operationCodes[i] = Integer.parseInt(operationCode);
+            if (StringUtils.hasText(operationCode)) {
+                operationCodes.add(Integer.valueOf(operationCode));
+            }
+            operationCode = opeationCodesElements.get(i).getAttribute("code-name");
+            if (StringUtils.hasText(operationCode)) {
+                operationCodesNames.add(operationCode);
+            }
         }
-        builder.addPropertyValue("operationCodes", operationCodes);
+        int[] numberOperationCodes = new int[operationCodes.size()];
+        for (int i = 0; i < numberOperationCodes.length; i++) {
+            numberOperationCodes[i] = operationCodes.get(i);
+        }
+        builder.addPropertyValue("operationCodes", numberOperationCodes);
+
+        builder.addPropertyValue("operationCodesNames", operationCodesNames.toArray(new String[operationCodesNames.size()]));
     }
 }

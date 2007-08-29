@@ -16,6 +16,7 @@
 
 package org.openspaces.core.space.filter;
 
+import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.FilterProvider;
 import com.j_spaces.core.filters.ISpaceFilter;
 
@@ -31,7 +32,9 @@ import com.j_spaces.core.filters.ISpaceFilter;
  */
 public class SpaceFilterProviderFactory extends AbstractFilterProviderFactoryBean {
 
-    private int[] operationCodes;
+    private int[] operationCodes = new int[0];
+
+    private String[] operationCodesNames = new String[0];
 
     /**
      * Returns a new filter provider based on the provided
@@ -40,7 +43,19 @@ public class SpaceFilterProviderFactory extends AbstractFilterProviderFactoryBea
      */
     protected FilterProvider doGetFilterProvider() throws IllegalArgumentException {
         FilterProvider filterProvider = new FilterProvider(getBeanName(), (ISpaceFilter) getFilter());
-        filterProvider.setOpCodes(operationCodes);
+
+        int[] actualOperationCodes = new int[operationCodes.length + operationCodesNames.length];
+        System.arraycopy(operationCodes, 0, actualOperationCodes, 0, operationCodes.length);
+        for (int i = 0; i < operationCodesNames.length; i++) {
+            try {
+                actualOperationCodes[operationCodes.length + i] =
+                        FilterOperationCodes.class.getField(operationCodesNames[i].toUpperCase().replace('-', '_')).getInt(null);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("No name found for [" + operationCodesNames[i] + "]");
+            }
+        }
+
+        filterProvider.setOpCodes(actualOperationCodes);
         return filterProvider;
     }
 
@@ -51,6 +66,13 @@ public class SpaceFilterProviderFactory extends AbstractFilterProviderFactoryBea
      */
     public void setOperationCodes(int[] operationCodes) {
         this.operationCodes = operationCodes;
+    }
+
+    /**
+     * Sets the possible names for the given operation code.
+     */
+    public void setOperationCodesNames(String[] operationCodesNames) {
+        this.operationCodesNames = operationCodesNames;
     }
 
     /**
