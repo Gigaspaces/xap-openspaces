@@ -20,6 +20,9 @@ import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.jini.JiniServiceFactoryBean;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionSystemException;
+
+import java.util.Arrays;
 
 /**
  * Springs transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
@@ -40,6 +43,8 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
 
     private Long lookupTimeout;
 
+    private String[] groups;
+
     /**
      * Sets the transaction manager name to perform the lookup by.
      */
@@ -55,6 +60,13 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
     }
 
     /**
+     * Sets the groups that will be used to look up the Jini transaction manager. Default to ALL groups.
+     */
+    public void setGroups(String[] groups) {
+        this.groups = groups;
+    }
+
+    /**
      * Returns a Jini {@link TransactionManager} that is lookup up using
      * {@link JiniServiceFactoryBean}. The lookup can use a specified
      * {@link #setTransactionManagerName(String)} and a {@link #setLookupTimeout(Long)}.
@@ -66,8 +78,20 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         if (lookupTimeout != null) {
             serviceFactory.setTimeout(lookupTimeout);
         }
+        if (groups != null) {
+            serviceFactory.setGroups(groups);
+        }
         serviceFactory.afterPropertiesSet();
-        return (TransactionManager) serviceFactory.getObject();
+        TransactionManager transactionManager = (TransactionManager) serviceFactory.getObject();
+        if (transactionManager == null) {
+            String groups = "ALL";
+            if (this.groups != null) {
+                groups = Arrays.asList(groups).toString();
+            }
+            throw new TransactionSystemException("Failed to find Jini transaction manager using groups [" + groups
+                    + "], timeout [" + lookupTimeout + "] and name [" + transactionManagerName + "]");
+        }
+        return transactionManager;
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
@@ -76,5 +100,5 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
             throw new InvalidIsolationLevelException(
                     "Local TransactionManager does not support serializable isolation level");
         }
-    }    
+    }
 }

@@ -34,6 +34,8 @@ public class LookupJiniTxManagerBeanDefinitionParser extends AbstractJiniTxManag
 
     public static final String TX_MANAGER_NAME = "tx-manager-name";
 
+    public static final String GROUPS = "groups";
+
     protected Class<LookupJiniTransactionManager> getBeanClass(Element element) {
         return LookupJiniTransactionManager.class;
     }
@@ -51,6 +53,13 @@ public class LookupJiniTxManagerBeanDefinitionParser extends AbstractJiniTxManag
             if (TX_MANAGER_NAME.equals(name)) {
                 builder.addPropertyValue("transactionManagerName", attribute.getValue());
                 continue;
+            }
+            if (GROUPS.equals(name)) {
+                String groups = attribute.getValue();
+                if (StringUtils.hasText(groups)) {
+                    String[] groupsArr = StringUtils.tokenizeToStringArray(groups, ",");
+                    builder.addPropertyValue("groups", groupsArr);
+                }
             }
 
             Assert.state(StringUtils.hasText(propertyName),

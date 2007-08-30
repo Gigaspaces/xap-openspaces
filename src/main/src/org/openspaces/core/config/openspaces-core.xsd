@@ -782,6 +782,14 @@
                 <xsd:extension base="baseTxManagerType">
                     <xsd:attribute name="tx-manager-name" type="xsd:string"/>
                     <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="groups" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A comma separated list of the groups that will be used to lookup the Jini transaction
+                                manager. Defaults to ALL groups.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
