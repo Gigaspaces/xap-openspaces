@@ -335,6 +335,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
 
         if (filterProviders != null && filterProviders.length > 0) {
+            if (SpaceUtils.isRemoteProtocol(url)) {
+                throw new IllegalArgumentException("Filters can only be used with an embedded Space");
+            }
             FilterProvider[] spaceFilterProvider = new FilterProvider[filterProviders.length];
             for (int i = 0; i < filterProviders.length; i++) {
                 spaceFilterProvider[i] = filterProviders[i].getFilterProvider();
@@ -343,10 +346,16 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
 
         if (replicationFilterProvider != null) {
+            if (SpaceUtils.isRemoteProtocol(url)) {
+                throw new IllegalArgumentException("Replication filter provider can only be used with an embedded Space");
+            }
             props.put(Constants.ReplicationFilter.REPLICATION_FILTER_PROVIDER, replicationFilterProvider.getFilterProvider());
         }
 
         if (externalDataSource != null) {
+            if (SpaceUtils.isRemoteProtocol(url)) {
+                throw new IllegalArgumentException("External data source can only be used with an embedded Space");
+            }
             props.put(Constants.DataAdapter.DATA_SOURCE, externalDataSource);
             props.put(Constants.StorageAdapter.FULL_STORAGE_STORAGE_ADAPTER_CLASS_PROP, DataAdapter.class.getName());
             props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
@@ -360,8 +369,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             props.putAll(beanLevelProperties);
         }
 
-        // if deploy info is provided, apply it to the space url
-        if (clusterInfo != null) {
+        // if deploy info is provided, apply it to the space url (only if it is an embedde Space).
+        if (clusterInfo != null && !SpaceUtils.isRemoteProtocol(url)) {
             if (clusterInfo.getNumberOfInstances() != null) {
                 String totalMembers = clusterInfo.getNumberOfInstances().toString();
                 if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() != 0) {
