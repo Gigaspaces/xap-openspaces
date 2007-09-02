@@ -599,6 +599,8 @@
     <xsd:element name="giga-space">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.GigaSpaceFactoryBean">
+                GigaSpace interface providing a simplified programming model on top of IJSpace and JavaSpace interfaces.
+                Allows to use declarative transactions and simplified API.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -621,10 +623,40 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="clustered" type="xsd:boolean"/>
-                    <xsd:attribute name="default-read-timeout" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="default-take-timeout" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="default-write-lease" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Cluster flag controlling if this GigaSpace will work with a clustered view of the space
+                                or directly with a cluster member. By default if this flag is not set it will be set
+                                automatically by this factory. It will be set to true if the space is an embedded one
+                                AND the space is not a local cache proxy. It will be set to false otherwise (i.e. the
+                                space is not an embedded space OR the space is a local cache proxy).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="default-read-timeout" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the default read timeout for #read(Object) and #readIfExists(Object) operations.
+                                Default to NO_WAIT.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="default-take-timeout" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the default take timeout for #take(Object) and #takeIfExists(Object)} operations.
+                                Default to NO_WAIT.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="default-write-lease" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the default write lease for write(Object) operation. Default to FOREVER.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="default-isolation" default="DEFAULT">
                         <xsd:simpleType>
                             <xsd:annotation>
@@ -640,7 +672,19 @@
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
-                    <xsd:attribute name="tx-manager" type="txManagerType"/>
+                    <xsd:attribute name="tx-manager" type="txManagerType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the transaction manager this GigaSpace interface will work with when using
+                                declarative transactions.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="org.springframework.transaction.PlatformTransactionManager"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
