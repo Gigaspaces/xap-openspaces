@@ -680,7 +680,8 @@
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
-                                    <tool:expected-type type="org.springframework.transaction.PlatformTransactionManager"/>
+                                    <tool:expected-type
+                                            type="org.springframework.transaction.PlatformTransactionManager"/>
                                 </tool:annotation>
                             </xsd:appinfo>
                         </xsd:annotation>
@@ -692,7 +693,15 @@
 
     <xsd:element name="map">
         <xsd:annotation>
-            <xsd:documentation source="java:com.j_spaces.map.IMap"></xsd:documentation>
+            <xsd:documentation source="java:org.openspaces.core.map.MapFactoryBean">
+                This interface extends java.util.Map interface and provides Map interface to GigaSpaces. The IMap
+                interface can be used in remote , embedded and Master-Local Topology. The Map interface provides three
+                collection views, which allow a map's contents to be viewed as a set of keys, collection of values, or
+                set of key-value mappings.
+
+                You can associate attributes to a key and values (e.g. security tags, special user profiles, etc.), and
+                set time for entries to exist in the cache until eviction.
+            </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
                     <tool:exports type="com.j_spaces.map.IMap"/>
@@ -704,20 +713,97 @@
                 <xsd:extension base="beans:identifiedType">
                     <xsd:sequence>
                         <xsd:element name="local-cache-support" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation source="java:org.openspaces.core.map.LocalCacheSupport">
+                                    When set, the map will a local cache.
+                                </xsd:documentation>
+                            </xsd:annotation>
                             <xsd:complexType>
-                                <xsd:attribute name="versioned" type="xsd:boolean" use="optional"/>
-                                <xsd:attribute name="eviction-strategy" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="versioned" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Controls if this local cache will be versioned or not. Note, when settings
+                                            this to true, make sure that the actual space is versioned as well.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="eviction-strategy" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The eviction strategy for the local cache.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type type="com.j_spaces.javax.cache.EvictionStrategy"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                                 <xsd:attribute name="update-mode">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            If set to UPDATE_MODE_PULL each update triggers an invalidation event at
+                                            every cache instance. The invalidate event marks the object in the local
+                                            cache instances as invalid. Therefore, an attempt to read this object
+                                            triggers a reload process in the master space. This configuration is useful
+                                            in cases where objects are updated frequently, but the updated value is
+                                            required by the application less frequently.
+
+                                            If set to UPDATE_MODE_PUSH the master pushes the updates to the local cache,
+                                            which holds a reference to the same updated object.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
                                     <xsd:simpleType>
                                         <xsd:restriction base="xsd:string">
-                                            <xsd:enumeration value="PULL"/>
-                                            <xsd:enumeration value="PUSH"/>
+                                            <xsd:enumeration value="PULL">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Each update triggers an invalidation event at every cache
+                                                        instance. The invalidate event marks the object in the local
+                                                        cache instances as invalid. Therefore, an attempt to read this
+                                                        object triggers a reload process in the master space. This
+                                                        configuration is useful in cases where objects are updated
+                                                        frequently, but the updated value is required by the application
+                                                        less frequently.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="PUSH">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        The master pushes the updates to the local cache, which holds a
+                                                        reference to the same updated object.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
                                         </xsd:restriction>
                                     </xsd:simpleType>
                                 </xsd:attribute>
-                                <xsd:attribute name="use-multicast" type="xsd:boolean" use="optional"/>
-                                <xsd:attribute name="put-first" type="xsd:boolean" use="optional"/>
-                                <xsd:attribute name="size-limit" type="xsd:nonNegativeInteger" use="optional"/>
+                                <xsd:attribute name="use-multicast" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Local cache updates can be sent via unicast or multicast. When using
+                                            multicast, make sure MulticastNotifyWorker as part of the space schema
+                                            configuration is enabled. Default to false.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="put-first" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When performing a put operation, you may perform the put operation both into
+                                            the local cache and the master space. This will speed up subsequent get
+                                            operations. Default to true.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="size-limit" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the size limit of the local cache. Default to 100000.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>
@@ -733,8 +819,24 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="clustered" type="xsd:boolean"/>
-                    <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional"/>
+                    <xsd:attribute name="clustered" type="xsd:boolean" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Cluster flag controlling if this GigaSpace will work with a clustered view of the space
+                                or directly with a cluster member. By default if this flag is not set it will be set
+                                automatically by this factory. It will be set to true if the space is an embedded one
+                                AND the space is not a local cache proxy. It will be set to false otherwise (i.e. the
+                                space is not an embedded space OR the space is a local cache proxy).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the compression level. Defaults to<code>0</code>.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
