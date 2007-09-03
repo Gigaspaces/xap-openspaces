@@ -28,7 +28,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
 /**
- * Springs transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
+ * Spring transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
  * using GigaSpaces {@link LocalJiniTransactionManager}.
  *
  * <p>Local transaction manager is high performance single space transaction manager and should be used
@@ -49,10 +49,17 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
 
     private Boolean clustered;
 
+    /**
+     * Sets the Space that will be used when working with the local transaction manager.
+     */
     public void setSpace(IJSpace space) {
         this.space = space;
     }
 
+    /**
+     * Sets if this local transaction manager will work on top of a clustered Space, or will work
+     * directly with a cluster memeber.
+     */
     public void setClustered(Boolean clustered) {
         this.clustered = clustered;
     }

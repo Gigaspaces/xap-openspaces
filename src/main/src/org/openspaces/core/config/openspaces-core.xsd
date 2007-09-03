@@ -845,6 +845,8 @@
     <xsd:element name="giga-map">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.GigaMapFactoryBean">
+                GigaMap interface providing a simplified programming model on top of IMap interface. It also extends
+                java.util.Map. It Allows to use declarative transactions and simplified API.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -886,7 +888,20 @@
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
-                    <xsd:attribute name="tx-manager" type="txManagerType"/>
+                    <xsd:attribute name="tx-manager" type="txManagerType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the transaction manager this GigaMap interface will work with when using
+                                declarative transactions.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type
+                                            type="org.springframework.transaction.PlatformTransactionManager"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -896,6 +911,10 @@
     <xsd:element name="local-tx-manager">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LocalJiniTransactionManager">
+                Spring transaction manager using GigaSpaces LocalJiniTransactionManager.
+
+                Local transaction manager is high performance single space transaction manager and should be used in
+                most if not all space related operations.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -906,8 +925,26 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseTxManagerType">
-                    <xsd:attribute name="space" type="spaceRefType" use="required"/>
-                    <xsd:attribute name="clustered" type="xsd:boolean"/>
+                    <xsd:attribute name="space" type="spaceRefType" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.j_spaces.core.IJSpace">
+                                The IJSpace to use when starting the local transaction.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.j_spaces.core.IJSpace"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="clustered" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets if this local transaction manager will work on top of a clustered Space, or will
+                                work directly with a cluster memeber.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -916,6 +953,7 @@
     <xsd:element name="jini-tx-manager">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LookupJiniTransactionManager">
+                Finds a Jini transaction manager that can span transactions over several Spaces.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -926,8 +964,22 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="baseTxManagerType">
-                    <xsd:attribute name="tx-manager-name" type="xsd:string"/>
-                    <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="tx-manager-name" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The transaction manager name the Jini transaction manager is registered under. Optional
+                                and by default searches for all transaction managers (and finds one of them).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The lookup timeout (in millis) to wait in order to find the Jini transaction manager.
+                                Defaults to 30 seconds.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="groups" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
