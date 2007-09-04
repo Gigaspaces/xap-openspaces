@@ -1089,20 +1089,64 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element name="giga-space-context"/>
-    <xsd:element name="giga-space-late-context"/>
+    <xsd:element name="giga-space-context">
+        <xsd:annotation>
+            <xsd:documentation>
+                Allows to use the @GigaSpaceContext annotation in order to inject a GigaSpace instance using annotation.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="giga-space-late-context">
+        <xsd:annotation>
+            <xsd:documentation>
+                Allows to use the @GigaSpaceLateContext annotation in order to inject a GigaSpace instance using
+                annotation when injecting it into beans that depend on a Space.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:element name="context-loader">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.space.mode.SpaceModeContextLoader">
+                A Space mode based Spring context loader allows to load Spring application context if the Space is in
+                PRIMARY mode.
+
+                The space mode context loader allows to assemble beans that only operate when a space is in a PRIMARY
+                mode which basically applies when directly working with cluster members and not a clustered space proxy
+                (since in such cases it will always be PRIMARY).
+
+                The new Spring application context created will have the current context as its parent, allowing to use
+                any beans defined within the current context within the loaded context.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
-                    <xsd:attribute name="location" type="xsd:string" use="required"/>
-                    <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="optional"/>
-                    <xsd:attribute name="active-when-primary" type="xsd:boolean"/>
+                    <xsd:attribute name="location" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The location of the Spring xml context application to be loaded. Can use Spring Resource
+                                abstraction allowing to use the classpath: prefix.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Allows to set the GigaSpace instance that will control (based on its Space mode -
+                                PRIMARY or BACKUP) if the context will be loaded or not. Useful when more than one space
+                                is defined within a Spring context.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="active-when-primary" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Controls if the Spring context will be loaded when the space cluster member moves to
+                                PRIMARY mode. Defaults to true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

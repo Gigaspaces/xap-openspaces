@@ -42,13 +42,14 @@ import org.springframework.core.io.Resource;
  * A Space mode based Spring context loader allows to load Spring application context if the Space
  * is in <code>PRIMARY</code> mode.
  *
- * <p>
- * The space mode context loader allows to assemble beans that only operate when a space is in a
+ * <p>The space mode context loader allows to assemble beans that only operate when a space is in a
  * <code>PRIMARY</code> mode which basically applies when directly working with cluster members
  * and not a clustered space proxy (since in such cases it will always be <code>PRIMARY</code>).
  *
- * <p>
- * The context loader accepts a Spring {@link org.springframework.core.io.Resource} as the location.
+ * <p>The new Spring application context created will have the current context as its parent, allowing
+ * to use any beans defined within the current context within the loaded context.
+ *
+ * <p>The context loader accepts a Spring {@link org.springframework.core.io.Resource} as the location.
  * A flag called {@link #setActiveWhenPrimary(boolean)} which defaults to <code>true</code> allows
  * to control if the context will be loaded only when the cluster member moves to
  * <code>PRIMARY</code> mode.
@@ -82,7 +83,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     }
 
     /**
-     * Allows to set the GigaSpace instance that will control (based on its Space mode)
+     * Allows to set the GigaSpace instance that will control (based on its Space mode - PRIMARY or BACKUP)
      * if the context will be loaded or not. Useful when more than one space is defined
      * within a Spring context.
      */
