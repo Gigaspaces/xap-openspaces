@@ -869,10 +869,36 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-time-to-live" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="default-wait-for-response" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="default-lock-time-to-live" type="xsd:nonNegativeInteger"/>
-                    <xsd:attribute name="default-waiting-for-lock-timeout" type="xsd:nonNegativeInteger"/>
+                    <xsd:attribute name="default-time-to-live" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the default time to live (in milliseconds) for new entries. Defaults to FOREVER.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="default-wait-for-response" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets (in milliseconds) the default wait timeout when perfoming #get(Object) or
+                                #remove(Object). Defaults to NO WAIT (0).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="default-lock-time-to-live" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets (in milliseconds) the default time to live for locks. Defaults to 60 seconds.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="default-waiting-for-lock-timeout" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets (in milliseconds) the default time to wait for a given lock when locking. Defaults
+                                to 10 seconds.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="default-isolation" default="DEFAULT">
                         <xsd:simpleType>
                             <xsd:annotation>
@@ -998,16 +1024,67 @@
             <xsd:extension base="beans:identifiedType">
                 <xsd:sequence>
                     <xsd:element name="renew" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation
+                                    source="java:org.openspaces.core.transaction.manager.TransactionLeaseRenewalConfig">
+                                If set (configured) will cause each transaction to be renewed within its timeout value.
+                                The renew duration can be controlled by attributes on this element.
+                            </xsd:documentation>
+                        </xsd:annotation>
                         <xsd:complexType>
-                            <xsd:attribute name="round-trip-time" type="xsd:long"/>
-                            <xsd:attribute name="duration" type="xsd:long"/>
-                            <xsd:attribute name="pool-size" type="xsd:nonNegativeInteger"/>
+                            <xsd:attribute name="round-trip-time" type="xsd:long">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Controls the expected round trip time to the server. This value is set in
+                                        milliseconds and defaults to 1 second. The value should be lower than the renew
+                                        duration.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                            <xsd:attribute name="duration" type="xsd:long">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Controls how often a transaction will be renewed (which should be lower than the
+                                        transaction timeout). This value is set in milliseconds and defaults to 2
+                                        seconds.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                            <xsd:attribute name="pool-size" type="xsd:nonNegativeInteger">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        The pool size value of lease renewal managers (responsible for renewing
+                                        transactions). Defaults to 1 and under heavy load should be higher.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
                         </xsd:complexType>
                     </xsd:element>
                 </xsd:sequence>
-                <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger"/>
-                <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger"/>
-                <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger"/>
+                <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Sets the default timeout to use if TransactionDefinition#TIMEOUT_DEFAULT is used. Set in
+                            seconds (in order to follow the TransactionDefinition contract). Defaults to FOREVER.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Sets an optional timeout when performing commit in milliseconds. If not set
+                            Transaction#commit() will be called. If set Transaction#commit(long) will be called.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Sets an optional timeout when performing rollback/abort in milliseconds. If not set
+                            Transaction#abort() will be called. If set Transaction#abort(long) will be called.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

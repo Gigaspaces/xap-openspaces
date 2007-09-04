@@ -105,7 +105,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     /**
      * Sets the default timeout to use if {@link TransactionDefinition#TIMEOUT_DEFAULT} is used. Set
-     * in <b>seconds</b> (in order to follow the {@link TransactionDefinition} contract. Defaults
+     * in <b>seconds</b> (in order to follow the {@link TransactionDefinition} contract). Defaults
      * to {@link Lease#FOREVER}.
      */
     public void setDefaultTimeout(Long defaultTimeout) {
@@ -113,7 +113,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     }
 
     /**
-     * Sets an optional timeout when performing commit. If not set {@link Transaction#commit()} will
+     * Sets an optional timeout when performing commit in milliseconds. If not set {@link Transaction#commit()} will
      * be called. If set {@link Transaction#commit(long)} will be called.
      */
     public void setCommitTimeout(Long commitTimeout) {
@@ -121,7 +121,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     }
 
     /**
-     * Sets an optional timeout when performing rollback/abort. If not set
+     * Sets an optional timeout when performing rollback/abort in milliseconds. If not set
      * {@link Transaction#abort()} will be called. If set {@link Transaction#abort(long)} will be
      * called.
      */
@@ -129,6 +129,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         this.rollbackTimeout = rollbackTimeout;
     }
 
+    /**
+     * Sets the transaction lease renewal configuration. Once set, transactions will be renewed
+     * automatically. If not set, no renewals will occur.
+     */
     public void setLeaseRenewalConfig(TransactionLeaseRenewalConfig leaseRenewalConfig) {
         this.leaseRenewalConfig = leaseRenewalConfig;
     }
@@ -195,13 +199,13 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             if (txObject.getJiniHolder() == null) {
                 long timeout = Lease.FOREVER;
                 if (defaultTimeout != null) {
-                    timeout = defaultTimeout;
+                    timeout = defaultTimeout * 1000;
                 }
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                     timeout = definition.getTimeout() * 1000;
                 }
                 if (logger.isDebugEnabled()) {
-                    logger.debug(logMessage("Creating new transaction for [" + transactionalContext + "] with timeout [" + timeout + "]"));
+                    logger.debug(logMessage("Creating new transaction for [" + transactionalContext + "] with timeout [" + timeout + " milliseconds]"));
                 }
                 Transaction.Created txCreated;
                 LeaseRenewalManager leaseRenewalManager = null;
