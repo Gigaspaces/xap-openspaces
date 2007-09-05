@@ -81,9 +81,8 @@
                                 <xsd:documentation>
                                     Sets the parameters the IJSpace will be created with (same as paramters). Note, this
                                     should not be confused with url-properties. The properties here are the ones
-                                    referred
-                                    to as custom properties and allows for example to control the xpath injection to
-                                    space schema.
+                                    referred to as custom properties and allows for example to control the xpath
+                                    injection to space schema.
                                 </xsd:documentation>
                             </xsd:annotation>
                             <xsd:complexType>
