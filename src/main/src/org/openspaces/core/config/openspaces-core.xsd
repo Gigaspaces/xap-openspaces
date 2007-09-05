@@ -1151,13 +1151,33 @@
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:element name="sql-query" type="sqlQueryType"/>
-    <xsd:element name="view-query" type="viewQueryType"/>
-    <xsd:element name="template" type="templateType"/>
+    <xsd:element name="sql-query" type="sqlQueryType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A sql query definition that can be used as a template.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="view-query" type="viewQueryType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A local view query template.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="template" type="templateType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A general template definition using an Object type as the template and injected with specific properties
+                (if needed).
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:complexType name="sqlQueryType">
         <xsd:annotation>
             <xsd:documentation source="java:com.j_spaces.core.client.SQLQuery">
+                A sql query definition that can be used as a template.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -1170,9 +1190,28 @@
                 <xsd:sequence>
                     <xsd:element name="template" type="templateType" minOccurs="0"/>
                 </xsd:sequence>
-                <xsd:attribute name="where" type="xsd:string" use="required"/>
-                <xsd:attribute name="class" type="classType"/>
-                <xsd:attribute name="class-name" type="xsd:string"/>
+                <xsd:attribute name="where" type="xsd:string" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The where clause for the SQL query.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="class" type="classType">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The class type for the SQL query. Optional (translates to Class), and can be set using
+                            class-name as well (using String value).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="class-name" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The class name (as String) for the SQL query.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1180,6 +1219,7 @@
     <xsd:complexType name="viewQueryType">
         <xsd:annotation>
             <xsd:documentation source="java:com.j_spaces.core.client.view.View">
+                A local view query template.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -1207,8 +1247,22 @@
     <xsd:complexType name="baseReplicationFilterProviderType">
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
-                <xsd:attribute name="active-when-backup" type="xsd:boolean"/>
-                <xsd:attribute name="shutdown-space-on-init-failure" type="xsd:boolean"/>
+                <xsd:attribute name="active-when-backup" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Controls if the replication filter will be active for backup Space instances. Defaults to
+                            true.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="shutdown-space-on-init-failure" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Should the Space shutdown if the replication filter instance init method fails. Defaults to
+                            false.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1235,11 +1289,41 @@
                 <xsd:sequence>
                     <xsd:element name="filter" type="filterType" minOccurs="1" maxOccurs="1"/>
                 </xsd:sequence>
-                <xsd:attribute name="priority" type="xsd:nonNegativeInteger"/>
-                <xsd:attribute name="active-when-backup" type="xsd:boolean"/>
-                <xsd:attribute name="enabled" type="xsd:boolean"/>
-                <xsd:attribute name="security-filter" type="xsd:boolean"/>
-                <xsd:attribute name="shutdown-space-on-init-failure" type="xsd:boolean"/>
+                <xsd:attribute name="priority" type="xsd:nonNegativeInteger">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The priority of the given filter. Defaults to 0.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="active-when-backup" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Controls if the filter will be active when a Space instance is backup. Defaults to true.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="enabled" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Controls if the filter is going to be enabled or not. Defauts to true.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="security-filter" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Controls if the filter is a security filter or not. Defaults to false.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="shutdown-space-on-init-failure" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Controls if the Space will shutdown if the filter init method fails. Defaults to false.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
