@@ -171,4 +171,12 @@ public class MapConfigurer {
         }
         return map;
     }
+
+    /**
+     * Creates an {@link com.j_spaces.map.IMap} based on the configuration. Uses
+     * {@link MapFactoryBean#afterPropertiesSet()}.
+     */
+    public IMap map() {
+        return createMap();
+    }
 }
