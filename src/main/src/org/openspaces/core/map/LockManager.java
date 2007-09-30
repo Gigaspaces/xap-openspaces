@@ -127,7 +127,7 @@ public class LockManager {
                 logger.warn("Failed to abort transaction", t);
             }
             lockedUIDHashMap.remove(uid);
-            throw new DataAccessResourceFailureException("Failed to obtain lock for key [" + key + "]");
+            throw new DataAccessResourceFailureException("Failed to obtain lock for key [" + key + "]", t);
         }
 
         //otherwise, map uid->txn
