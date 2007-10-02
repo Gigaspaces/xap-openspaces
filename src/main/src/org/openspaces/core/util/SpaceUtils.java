@@ -42,7 +42,7 @@ public abstract class SpaceUtils {
      */
     public static IJSpace getClusterMemberSpace(IJSpace space) throws DataAccessException {
         try {
-            return ((ISpaceProxy) space).getSpace(space.getName());
+            return ((ISpaceProxy) space).getClusterMember();
         } catch (Exception e) {
             throw new DataAccessResourceFailureException("Failed to find space under name [" + space.getName() + "]", e);
         }
@@ -60,7 +60,8 @@ public abstract class SpaceUtils {
     }
 
     /**
-     * Returns <code>true</code> if the url points at a remote protocol.
+     * Returns <code>true</code> if the url points at a remote protocol. A remote protocol is
+     * either a <code>jini</code> or a <code>rmi</code> protocol.
      */
     public static boolean isRemoteProtocol(SpaceURL spaceUrl) {
         String protocol = spaceUrl.getProtocol();
