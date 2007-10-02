@@ -27,7 +27,7 @@ import org.w3c.dom.NamedNodeMap;
 
 /**
  * A bean definition builder for {@link LookupJiniTransactionManager}.
- * 
+ *
  * @author kimchy
  */
 public class LookupJiniTxManagerBeanDefinitionParser extends AbstractJiniTxManagerBeanDefinitionParser {
@@ -35,6 +35,8 @@ public class LookupJiniTxManagerBeanDefinitionParser extends AbstractJiniTxManag
     public static final String TX_MANAGER_NAME = "tx-manager-name";
 
     public static final String GROUPS = "groups";
+
+    public static final String LOCATORS = "locators";
 
     protected Class<LookupJiniTransactionManager> getBeanClass(Element element) {
         return LookupJiniTransactionManager.class;
@@ -61,9 +63,16 @@ public class LookupJiniTxManagerBeanDefinitionParser extends AbstractJiniTxManag
                     builder.addPropertyValue("groups", groupsArr);
                 }
             }
+            if (LOCATORS.equals(name)) {
+                String locators = attribute.getValue();
+                if (StringUtils.hasText(locators)) {
+                    String[] locatorsArr = StringUtils.tokenizeToStringArray(locators, ",");
+                    builder.addPropertyValue("locators", locatorsArr);
+                }
+            }
 
             Assert.state(StringUtils.hasText(propertyName),
-                "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
+                    "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
             builder.addPropertyValue(propertyName, attribute.getValue());
         }
     }

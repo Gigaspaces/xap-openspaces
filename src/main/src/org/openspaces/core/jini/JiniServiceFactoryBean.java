@@ -16,22 +16,17 @@
 
 package org.openspaces.core.jini;
 
+import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
-import net.jini.core.lookup.ServiceRegistrar;
+import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.discovery.DiscoveryEvent;
-import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
+import net.jini.discovery.LookupDiscoveryManager;
+import net.jini.lookup.ServiceDiscoveryManager;
 import net.jini.lookup.entry.Name;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.core.NestedRuntimeException;
-import org.springframework.remoting.RemoteAccessException;
-import org.springframework.remoting.RemoteLookupFailureException;
-
-import java.io.IOException;
-import java.rmi.RemoteException;
 
 /**
  * JiniServiceFactoryBean for Jini environments. The class is made up from various samples found on
@@ -39,14 +34,14 @@ import java.rmi.RemoteException;
  * ServiceTemplate or, if it is null, one will be created using the serviceClass and serviceName. If
  * the lookup operation times out (30 seconds by default), a null service will be returned. For most
  * cases the serviceClass and serviceNames are enough and hide the jini details from the client.
- * 
+ *
  * <p>
  * The factoryBean can be configured to do a lookup each time before returning the object type by
  * setting the "singleton" property to false.
- * 
+ *
  * <p>
  * Initiallay taken from Spring modules.
- * 
+ *
  * @author kimchy
  */
 public class JiniServiceFactoryBean extends AbstractFactoryBean {
@@ -60,6 +55,9 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     private String serviceName;
 
     private String[] groups = LookupDiscovery.ALL_GROUPS;
+
+    private String[] locators = null;
+
     // 30 secs
     private long timeout = 30 * 1000;
     // used to pass out information from inner classes
@@ -89,62 +87,48 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
         ServiceTemplate templ;
 
         if (template == null) {
-            Class<?>[] types = (serviceClass == null ? null : new Class[] { serviceClass });
-            Entry[] entry = (serviceName == null ? null : new Entry[] { new Name(serviceName) });
+            Class<?>[] types = (serviceClass == null ? null : new Class[]{serviceClass});
+            Entry[] entry = (serviceName == null ? null : new Entry[]{new Name(serviceName)});
 
             templ = new ServiceTemplate(null, types, entry);
         } else {
             templ = template;
         }
 
-        final ServiceTemplate finalTemplate = templ;
-
-        LookupDiscovery lookupDiscovery = null;
-
+        LookupLocator[] lookupLocators = null;
+        if (locators != null) {
+            lookupLocators = new LookupLocator[locators.length];
+            for (int i = 0; i < locators.length; i++) {
+                String locator = locators[i];
+                if (!locator.startsWith("jini://")) {
+                    locator = "jini://" + locator;
+                }
+                lookupLocators[i] = new LookupLocator(locator);
+            }
+        }
+        LookupDiscoveryManager lookupDiscovery = null;
+        ServiceDiscoveryManager serviceDiscovery = null;
         try {
-            lookupDiscovery = new LookupDiscovery(groups);
-
-            // hook listener for finding the service
-            lookupDiscovery.addDiscoveryListener(new DiscoveryListener() {
-                public void discovered(DiscoveryEvent ev) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Received discovery event [" + ev + "]");
-                    }
-                    ServiceRegistrar[] reg = ev.getRegistrars();
-                    // once the proxy if found, bail out
-                    for (int i = 0; i < reg.length && proxy == null; i++) {
-                        findService(finalTemplate, reg[i]);
-                    }
-                }
-
-                public void discarded(DiscoveryEvent ev) {
-                }
-            });
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Awaiting discovery event...");
+            lookupDiscovery = new LookupDiscoveryManager(groups, lookupLocators, null);
+            serviceDiscovery = new ServiceDiscoveryManager(lookupDiscovery, null);
+            ServiceItem returnObject = serviceDiscovery.lookup(templ, null, timeout);
+            if (returnObject != null) {
+                proxy = returnObject.service;
             }
-
-            if (proxy == null) {
-                synchronized (this) {
-                    this.wait(timeout);
-                }
-            }
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Terminating discovery service");
-            }
-
-        } catch (IOException e) {
-            throw new RemoteLookupFailureException("Cannot create lookup discovery", e);
-        } catch (InterruptedException e) {
-            throw new NestedRuntimeException("Lookup interrupted", e) {
-                private static final long serialVersionUID = 5929030888999808345L;
-            };
         } finally {
-            // make sure to close the lookup threads
+            if (serviceDiscovery != null) {
+                try {
+                    serviceDiscovery.terminate();
+                } catch (Exception e) {
+                    logger.warn("Failed to terminate service discovery, ignoring", e);
+                }
+            }
             if (lookupDiscovery != null) {
-                lookupDiscovery.terminate();
+                try {
+                    lookupDiscovery.terminate();
+                } catch (Exception e) {
+                    logger.warn("Failed to terminate lookup discovery, ignoring", e);
+                }
             }
         }
 
@@ -152,46 +136,31 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * Find the service and notify once it is found.
-     */
-    private void findService(ServiceTemplate templ, ServiceRegistrar lus) {
-        try {
-            synchronized (this) {
-
-                proxy = lus.lookup(templ);
-
-                // System.out.println(lus.lookup(new ServiceTemplate(null,
-                // new Class[] { TransactionManager.class }, null)));
-
-                if (proxy != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Discovered proxy [" + proxy.getClass() + "]");
-                    }
-                    this.notify();
-                } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Template [" + templ + "] not found in registrar [" + lus + "]");
-                    }
-                }
-            }
-        } catch (RemoteException re) {
-            throw new RemoteAccessException("can not find service", re);
-        }
-    }
-
-    /**
-     * @return Returns the groups.
+     * Returns the groups.
      */
     public String[] getGroups() {
         return groups;
     }
 
     /**
-     * @param groups
-     *            The groups to set.
+     * The groups to set
      */
     public void setGroups(String[] groups) {
         this.groups = groups;
+    }
+
+    /**
+     * Returns the locators.
+     */
+    public String[] getLocators() {
+        return locators;
+    }
+
+    /**
+     * Sets the locators.
+     */
+    public void setLocators(String[] locators) {
+        this.locators = locators;
     }
 
     /**
@@ -202,8 +171,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * @param serviceClass
-     *            The serviceClass to set.
+     * @param serviceClass The serviceClass to set.
      */
     public void setServiceClass(Class<?> serviceClass) {
         this.serviceClass = serviceClass;
@@ -217,8 +185,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * @param serviceName
-     *            The serviceName to set.
+     * @param serviceName The serviceName to set.
      */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
@@ -232,8 +199,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * @param template
-     *            The template to set.
+     * @param template The template to set.
      */
     public void setTemplate(ServiceTemplate template) {
         this.template = template;
@@ -247,8 +213,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * @param timeout
-     *            The timeout to set.
+     * @param timeout The timeout to set.
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;

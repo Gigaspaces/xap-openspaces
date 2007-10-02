@@ -45,6 +45,8 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
 
     private String[] groups;
 
+    private String[] locators;
+
     /**
      * Sets the transaction manager name to perform the lookup by.
      */
@@ -67,6 +69,13 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
     }
 
     /**
+     * Sets specific locators to find the jini transaction manger.
+     */
+    public void setLocators(String[] locators) {
+        this.locators = locators;
+    }
+
+    /**
      * Returns a Jini {@link TransactionManager} that is lookup up using
      * {@link JiniServiceFactoryBean}. The lookup can use a specified
      * {@link #setTransactionManagerName(String)} and a {@link #setLookupTimeout(Long)}.
@@ -80,6 +89,9 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         }
         if (groups != null) {
             serviceFactory.setGroups(groups);
+        }
+        if (locators != null) {
+            serviceFactory.setLocators(locators);
         }
         serviceFactory.afterPropertiesSet();
         TransactionManager transactionManager = (TransactionManager) serviceFactory.getObject();
