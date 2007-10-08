@@ -275,10 +275,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             if (transactionManager != null && transactionManager instanceof JiniPlatformTransactionManager) {
                 transactionalContext = ((JiniPlatformTransactionManager) transactionManager).getTransactionalContext();
             }
-            // no transaction context is set (probably since there is no transactionManager), use the space as the transaction context
-            if (transactionalContext == null) {
-                transactionalContext = space;
-            }
             txProvider =  new DefaultTransactionProvider(transactionalContext, transactionManager);
         }
         gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);

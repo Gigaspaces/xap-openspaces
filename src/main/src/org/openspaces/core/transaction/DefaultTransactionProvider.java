@@ -95,6 +95,11 @@ public class DefaultTransactionProvider implements TransactionProvider {
      */
     public Transaction.Created getCurrentTransaction(Object transactionalContext, IJSpace space) {
 
+        // try and perform early exit when we should not support declerative transactions for better perfromance
+        if (actualTransactionalContext == null && !isJta) {
+            return null;
+        }
+
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
             return null;
         }
