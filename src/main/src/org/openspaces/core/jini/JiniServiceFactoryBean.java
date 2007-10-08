@@ -67,7 +67,9 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
     private long timeout = 30 * 1000;
     // used to pass out information from inner classes
 
-    private Object actualService;
+    private volatile Object actualService;
+
+    private final Object actualServiceMonitor = new Object();
 
     private boolean smartProxy = true;
 
@@ -99,7 +101,9 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
      * lookups in case of failures.
      */
     protected Object createInstance() throws Exception {
-        actualService = lookupService();
+        synchronized (actualServiceMonitor) {
+            actualService = lookupService();
+        }
         if (!smartProxy) {
             return actualService;
         }
@@ -113,20 +117,29 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
      * try and perform another lookup for the service.
      */
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        int retires = retryCountOnFailure;
+        int retries = retryCountOnFailure;
         while (true) {
             try {
+                if (actualService == null) {
+                    synchronized (actualServiceMonitor) {
+                        if (actualService == null) {
+                            actualService = lookupService();
+                        }
+                    }
+                }
                 return methodInvocation.getMethod().invoke(actualService, methodInvocation.getArguments());
             } catch (InvocationTargetException e) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Failed to execute [" + methodInvocation.getMethod().getName() + "] on [" + actualService + "]", e);
+                }
+                synchronized (actualServiceMonitor) {
+                    actualService = null;
+                }
                 // we have an invocation exception, if we got to the reties
                 // throw it, if not, lookup another service and try it
-                if (--retires == 0) {
+                if (--retries == 0) {
                     throw e.getTargetException();
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to execute [" + methodInvocation.getMethod().getName() + "] on [" + actualService + "], performing another lookup");
-                }
-                actualService = lookupService();
             }
         }
     }
