@@ -24,9 +24,14 @@ import net.jini.discovery.LookupDiscovery;
 import net.jini.discovery.LookupDiscoveryManager;
 import net.jini.lookup.ServiceDiscoveryManager;
 import net.jini.lookup.entry.Name;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * JiniServiceFactoryBean for Jini environments. The class is made up from various samples found on
@@ -35,16 +40,16 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  * the lookup operation times out (30 seconds by default), a null service will be returned. For most
  * cases the serviceClass and serviceNames are enough and hide the jini details from the client.
  *
- * <p>
- * The factoryBean can be configured to do a lookup each time before returning the object type by
+ * <p>The factoryBean can be configured to do a lookup each time before returning the object type by
  * setting the "singleton" property to false.
  *
- * <p>
- * Initiallay taken from Spring modules.
+ * <p>By default, the service factory bean will return a smart proxy that will try and perfrom another
+ * lookup in case of an invocation exception (see {@link #setSmartProxy(boolean)}. The retry count
+ * can be controlled using {@link #setRetryCountOnFailure(int)}.
  *
  * @author kimchy
  */
-public class JiniServiceFactoryBean extends AbstractFactoryBean {
+public class JiniServiceFactoryBean extends AbstractFactoryBean implements MethodInterceptor {
 
     private static final Log logger = LogFactory.getLog(JiniServiceFactoryBean.class);
 
@@ -61,11 +66,16 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     // 30 secs
     private long timeout = 30 * 1000;
     // used to pass out information from inner classes
-    private Object proxy;
+
+    private Object actualService;
+
+    private boolean smartProxy = true;
+
+    private int retryCountOnFailure = 3;
 
     public Class<?> getObjectType() {
         // try to discover the class type if possible to make it work with autowiring
-        if (proxy == null) {
+        if (actualService == null) {
             // no template - look at serviceClass
             if (template == null) {
                 return (serviceClass == null ? null : serviceClass);
@@ -77,15 +87,57 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
                 return template.serviceTypes[0];
             }
         }
-        if (proxy == null) {
+        if (actualService == null) {
             throw new IllegalArgumentException("Failed to identify factory class type");
         }
-        return proxy.getClass();
+        return actualService.getClass();
     }
 
+    /**
+     * Creates an instance of the service. Performs a lookup (using {@link #lookupService()}
+     * and if smart proxy is used, will wrap the returned service with a proxy that performs
+     * lookups in case of failures.
+     */
     protected Object createInstance() throws Exception {
-        ServiceTemplate templ;
+        actualService = lookupService();
+        if (!smartProxy) {
+            return actualService;
+        }
+        ProxyFactory proxyFactory = new ProxyFactory(actualService);
+        proxyFactory.addAdvice(this);
+        return proxyFactory.getProxy();
+    }
 
+    /**
+     * When using smart proxy, wraps the invocation of a service method and in case of failure will
+     * try and perform another lookup for the service.
+     */
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        int retires = retryCountOnFailure;
+        while (true) {
+            try {
+                return methodInvocation.getMethod().invoke(actualService, methodInvocation.getArguments());
+            } catch (InvocationTargetException e) {
+                // we have an invocation exception, if we got to the reties
+                // throw it, if not, lookup another service and try it
+                if (--retires == 0) {
+                    throw e.getTargetException();
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Failed to execute [" + methodInvocation.getMethod().getName() + "] on [" + actualService + "], performing another lookup");
+                }
+                actualService = lookupService();
+            }
+        }
+    }
+
+    /**
+     * A helper method to lookup the service.
+     */
+    protected Object lookupService() throws Exception {
+        Object service = null;
+
+        ServiceTemplate templ;
         if (template == null) {
             Class<?>[] types = (serviceClass == null ? null : new Class[]{serviceClass});
             Entry[] entry = (serviceName == null ? null : new Entry[]{new Name(serviceName)});
@@ -113,7 +165,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
             serviceDiscovery = new ServiceDiscoveryManager(lookupDiscovery, null);
             ServiceItem returnObject = serviceDiscovery.lookup(templ, null, timeout);
             if (returnObject != null) {
-                proxy = returnObject.service;
+                service = returnObject.service;
             }
         } finally {
             if (serviceDiscovery != null) {
@@ -131,8 +183,24 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
                 }
             }
         }
+        return service;
+    }
 
-        return proxy;
+    /**
+     * Sets if this proxy will be a smart proxy. When this value is set to <code>true</code>
+     * the service found will be wrapped with a smart proxy that will detect failuers and try
+     * to lookup the service again in such cases. Defaults to <code>true</code>.
+     */
+    public void setSmartProxy(boolean smartProxy) {
+        this.smartProxy = smartProxy;
+    }
+
+    /**
+     * Sets the number of successive method invocation lookup retry count in case of a
+     * failure. Defaults to 3.
+     */
+    public void setRetryCountOnFailure(int retryCountOnFailure) {
+        this.retryCountOnFailure = retryCountOnFailure;
     }
 
     /**
@@ -206,14 +274,14 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * @return Returns the timeout.
+     * The timeout to wait looking up the service
      */
     public long getTimeout() {
         return timeout;
     }
 
     /**
-     * @param timeout The timeout to set.
+     * The timeout to wait looking up the service
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
