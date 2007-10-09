@@ -43,7 +43,7 @@ import java.lang.reflect.InvocationTargetException;
  * <p>The factoryBean can be configured to do a lookup each time before returning the object type by
  * setting the "singleton" property to false.
  *
- * <p>By default, the service factory bean will return a smart proxy that will try and perfrom another
+ * <p>The service factory can be configurted to return a smart proxy that will try and perfrom another
  * lookup in case of an invocation exception (see {@link #setSmartProxy(boolean)}. The retry count
  * can be controlled using {@link #setRetryCountOnFailure(int)}.
  *
@@ -71,7 +71,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
 
     private final Object actualServiceMonitor = new Object();
 
-    private boolean smartProxy = true;
+    private boolean smartProxy = false;
 
     private int retryCountOnFailure = 3;
 
@@ -202,7 +202,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
     /**
      * Sets if this proxy will be a smart proxy. When this value is set to <code>true</code>
      * the service found will be wrapped with a smart proxy that will detect failuers and try
-     * to lookup the service again in such cases. Defaults to <code>true</code>.
+     * to lookup the service again in such cases. Defaults to <code>false</code>.
      */
     public void setSmartProxy(boolean smartProxy) {
         this.smartProxy = smartProxy;
