@@ -357,6 +357,10 @@ public class DefaultGigaMap implements GigaMap {
         lockManager.putAndUnlock(key, value);
     }
 
+    public long getDefaultTimeToLive() {
+        return this.defaultTimeToLive;
+    }
+
     /**
      * Gets the isolation level from the current running transaction (enabling the usage of Spring
      * declarative isolation level settings). If there is no transaction in progress or the

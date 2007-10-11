@@ -212,4 +212,6 @@ public interface GigaMap extends Map, Cache {
      * @param value The value to put after unlocking the key
      */
     void putAndUnlock(Object key, Object value);
+
+    long getDefaultTimeToLive();
 }
