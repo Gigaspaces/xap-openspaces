@@ -65,7 +65,6 @@ public class LockManager {
     public LockManager(IMap map) {
         this.map = map;
         this.masterSpace = map.getMasterSpace();
-        masterSpace.setOptimisticLocking(false);
         try {
             localTransactionManager = (LocalTransactionManager) LocalTransactionManager.getInstance(masterSpace);
         } catch (RemoteException e) {
@@ -105,7 +104,7 @@ public class LockManager {
 
         ExternalEntry ee = getTemplate(key, uid);
         try {
-            Object retTake = masterSpace.read(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK);
+            Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK);
             releaseEE(ee);
             if (retTake == null) {
                 throw new SpaceTimeoutException("Failed waiting for lock on key [" + key + "]");

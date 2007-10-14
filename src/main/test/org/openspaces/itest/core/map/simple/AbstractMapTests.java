@@ -19,6 +19,10 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         setPopulateProtectedVariables(true);
     }
 
+    protected void onSetUp() throws Exception {
+        gigaMap.clear(true);
+    }
+
     public void testSimpleMapOperations() {
         map.put("1", "value");
 
@@ -35,6 +39,19 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
 
     public void testSimpleLock() {
         gigaMap.put("2", "value");
+        gigaMap.lock("2");
+        assertTrue(gigaMap.isLocked("2"));
+        try {
+            gigaMap.put("2", "value1");
+            fail();
+        } catch (SpaceTimeoutException e) {
+            // all is well, we are locked
+        }
+        gigaMap.unlock("2");
+        gigaMap.put("2", "value2");
+    }
+
+    public void testLockOnNonExistingValue() {
         gigaMap.lock("2");
         assertTrue(gigaMap.isLocked("2"));
         try {
