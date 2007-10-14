@@ -75,6 +75,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
             // all is well, we are locked
         }
         gigaMap.unlock("1");
+        assertEquals("value1", gigaMap.get("1"));
         gigaMap.put("1", "value3");
     }
 

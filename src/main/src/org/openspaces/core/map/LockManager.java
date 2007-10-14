@@ -45,6 +45,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class LockManager {
 
+    /**
+     * A empty lock value written to indicate a lock when there is no value
+     * to lock on (i.e. calling lock on a key where there is no value in the cache).
+     */
+    public static Object EMPTY_LOCK_VALUE = "";
+
     private static Log logger = LogFactory.getLog(LockManager.class);
 
     private IMap map;
@@ -110,7 +116,7 @@ public class LockManager {
                 throw new SpaceTimeoutException("Failed waiting for lock on key [" + key + "]");
             }
         } catch (EntryNotInSpaceException e) {
-            map.put(key, "", tr, Integer.MAX_VALUE);
+            map.put(key, EMPTY_LOCK_VALUE, tr, Integer.MAX_VALUE);
         } catch (SpaceTimeoutException e) {
             try {
                 tr.abort();
@@ -199,7 +205,7 @@ public class LockManager {
         }
 
         try {
-            tr.abort();
+            tr.commit();
         } catch (Exception e) {
             logger.warn("Failed to abort transaction and unlocking the object, ignoring", e);
         } finally {
