@@ -41,6 +41,10 @@ public class LockHandle implements Externalizable {
 
     private Object key;
 
+    public LockHandle() {
+        
+    }
+
     /**
      * Constructs a new Lock Handle
      */
