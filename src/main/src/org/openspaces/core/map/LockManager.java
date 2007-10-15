@@ -51,6 +51,10 @@ public class LockManager {
      */
     public static Object EMPTY_LOCK_VALUE = "";
 
+    public static boolean isEmptyLockValue(Object value) {
+        return (value instanceof String) && ((String) value).length() == 0;
+    }
+
     private static Log logger = LogFactory.getLog(LockManager.class);
 
     private IMap map;
@@ -89,6 +93,9 @@ public class LockManager {
      * Locks the given key for any updates. Retruns a {@link org.openspaces.core.map.LockHandle}
      * that can be used to perform specific updates under the same lock (by using the transaction
      * object stored within it).
+     *
+     * <p>Might create an empty value if there is no value in order to lock on. The empty value can
+     * be checked using {@link #isEmptyLockValue(Object)}.
      *
      * @param key                   The key to lock
      * @param lockTimeToLive        The lock time to live (in milliseconds)
