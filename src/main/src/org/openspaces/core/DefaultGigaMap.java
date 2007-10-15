@@ -361,6 +361,10 @@ public class DefaultGigaMap implements GigaMap {
         return this.defaultTimeToLive;
     }
 
+    public long getDefaultWaitForResponse() {
+        return this.defaultWaitForResponse;
+    }
+
     /**
      * Gets the isolation level from the current running transaction (enabling the usage of Spring
      * declarative isolation level settings). If there is no transaction in progress or the

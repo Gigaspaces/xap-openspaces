@@ -213,5 +213,13 @@ public interface GigaMap extends Map, Cache {
      */
     void putAndUnlock(Object key, Object value);
 
+    /**
+     * Returns the default time to live of entries in the map.
+     */
     long getDefaultTimeToLive();
+
+    /**
+     * Returns the default wait for reponse value for entries in the map.
+     */
+    long getDefaultWaitForResponse();
 }
