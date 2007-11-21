@@ -59,7 +59,7 @@ import org.springframework.core.io.Resource;
 public class SpaceModeContextLoader implements ApplicationContextAware, InitializingBean, DisposableBean,
         ApplicationListener, BeanLevelPropertiesAware, ClusterInfoAware {
 
-    private static final Log logger = LogFactory.getLog(SpaceModeContextLoader.class);
+    protected final Log logger = LogFactory.getLog(getClass());
 
     private Resource location;
 
@@ -177,7 +177,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      * Loads the application context and adding specific bean factory and bean post processors.
      * Won't load an application context if one is already defined.
      */
-    private void loadApplicationContext() throws Exception {
+    protected void loadApplicationContext() throws Exception {
         if (applicationContext != null) {
             return;
         }
@@ -205,7 +205,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     /**
      * Closes the application context. Won't close that application context if one is not defined.
      */
-    private void closeApplicationContext() {
+    protected void closeApplicationContext() {
         if (applicationContext != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Closing application context [" + location + "]");

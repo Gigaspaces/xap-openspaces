@@ -31,7 +31,7 @@ public class ContextLoaderBeanDefinitionParser extends AbstractSimpleBeanDefinit
 
     private static final String GIGA_SPACE = "giga-space";
 
-    protected Class<SpaceModeContextLoader> getBeanClass(Element element) {
+    protected Class getBeanClass(Element element) {
         return SpaceModeContextLoader.class;
     }
 

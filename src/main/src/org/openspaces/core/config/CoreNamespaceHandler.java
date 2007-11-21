@@ -41,6 +41,7 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
             // do nothing, working under 1.4
         }
         registerBeanDefinitionParser("context-loader", new ContextLoaderBeanDefinitionParser());
+        registerBeanDefinitionParser("refreshable-context-loader", new RefreshableContextLoaderBeanDefinitionParser());
 
         registerBeanDefinitionParser("space-filter", new SpaceFilterBeanDefinitionParser());
         registerBeanDefinitionParser("annotation-adapter-filter", new AnnotationFilterBeanDefinitionParser());
