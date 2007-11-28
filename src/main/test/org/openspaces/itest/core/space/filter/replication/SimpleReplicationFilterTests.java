@@ -46,7 +46,9 @@ public class SimpleReplicationFilterTests extends AbstractDependencyInjectionSpr
         assertEquals(2, simpleFilter.initCalled.intValue());
         assertEquals(0, simpleFilter.processEntries.size());
 
-        gigaSpace2.write(new Object());
+        Message message = new Message();
+        message.setMessage("test");
+        gigaSpace2.write(message);
         assertEquals(2, simpleFilter.processEntries.size());
         assertEquals(IReplicationFilter.FILTER_DIRECTION_OUTPUT, simpleFilter.processEntries.get(0).direction);
         assertEquals(IReplicationFilter.FILTER_DIRECTION_INPUT, simpleFilter.processEntries.get(1).direction);
