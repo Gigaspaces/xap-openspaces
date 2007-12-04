@@ -18,9 +18,7 @@ package org.openspaces.core.util;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.ISpaceProxy;
-import com.j_spaces.core.client.JSpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.cluster.JSpaceClusteredProxy;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
@@ -80,13 +78,15 @@ public abstract class SpaceUtils {
     }
 
     public static boolean isSameSpace(IJSpace space1, IJSpace space2) throws DataAccessException {
-        if ((space1 instanceof JSpaceProxy) && (space2 instanceof JSpaceProxy)) {
+        ISpaceProxy space1Proxy = (ISpaceProxy) space1;
+        ISpaceProxy space2Proxy = (ISpaceProxy) space2;
+        if (!space1Proxy.isClustered() && !space2Proxy.isClustered()) {
             return space1.equals(space2);
         }
-        if ((space1 instanceof JSpaceClusteredProxy) && (space2 instanceof JSpaceClusteredProxy)) {
+        if (space1Proxy.isClustered() && space2Proxy.isClustered()) {
             return space1.equals(space2);
         }
-        if ((space1 instanceof JSpaceClusteredProxy) || (space2 instanceof JSpaceClusteredProxy)) {
+        if (space1Proxy.isClustered() || space2Proxy.isClustered()) {
             return getClusterMemberSpace(space1).equals(getClusterMemberSpace(space2));
         }
         return false;
