@@ -19,6 +19,9 @@ package org.openspaces.core;
 import org.springframework.dao.DataAccessException;
 
 /**
+ * Indicates an interrupted exception that is thrown from the Space. For example
+ * when interrupting a Space while performing a blocking operation.
+ *
  * @author kimchy
  */
 public class SpaceInterruptedException extends DataAccessException {
