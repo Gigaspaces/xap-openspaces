@@ -35,5 +35,11 @@ public class SpaceMemoryShortageException extends DataAccessException {
         this.e = e;
     }
 
-    // TODO Expose getSpaceName
+    public MemoryShortageException getMemoryShortageException() {
+        return e;
+    }
+
+    public String getSpaceName() {
+        return e.getSpaceName();
+    }
 }

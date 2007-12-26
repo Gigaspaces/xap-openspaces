@@ -21,7 +21,7 @@ import org.springframework.dao.DataAccessException;
 import java.rmi.RemoteException;
 
 /**
- * Wraps {@link java.rmi.RemoteException}.
+ * Wraps {@link java.rmi.RemoteException} that is thrown from the Space.
  *
  * @author kimchy
  */
