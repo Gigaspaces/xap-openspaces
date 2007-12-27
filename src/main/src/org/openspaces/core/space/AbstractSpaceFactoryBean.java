@@ -23,6 +23,7 @@ import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
 import org.openspaces.core.util.SpaceUtils;
@@ -63,7 +64,7 @@ import java.rmi.RemoteException;
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean,
-        ApplicationContextAware, ApplicationListener {
+        ApplicationContextAware, ApplicationListener, MemberAliveIndicator {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -78,6 +79,8 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     private ISpaceModeListener primaryBackupListener;
 
     private Boolean registerForSpaceMode;
+
+    private Boolean enableMemberAliveIndicator;
 
     private SecurityConfig securityConfig;
 
@@ -110,6 +113,15 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      */
     public void setPrimaryBackupListener(ISpaceModeListener primaryBackupListener) {
         this.primaryBackupListener = primaryBackupListener;
+    }
+
+    /**
+     * Should this Space bean control if the cluster member is alive or not. Defaults to
+     * <code>true</code> if the Space started is an embedded Space, and <code>false</code>
+     * if the it is connected to a remote Space.
+     */
+    public void setEnableMemberAliveIndicator(Boolean enableMemberAliveIndicator) {
+        this.enableMemberAliveIndicator = enableMemberAliveIndicator;
     }
 
     /**
@@ -153,6 +165,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             }
         } else {
             currentSpaceMode = SpaceMode.PRIMARY;
+        }
+
+        if (enableMemberAliveIndicator == null) {
+            enableMemberAliveIndicator = !SpaceUtils.isRemoteProtocol(space);
         }
     }
 
@@ -222,6 +238,31 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * Returns <code>true</code> since this factory is a singleton.
      */
     public boolean isSingleton() {
+        return true;
+    }
+
+    /**
+     * Returns the {@link #setEnableMemberAliveIndicator(Boolean)} flag.
+     */
+    public boolean isMemberAliveEnabled() {
+        return enableMemberAliveIndicator;
+    }
+
+    /**
+     * Returns if this space is alive or not by pinging the Space.
+     */
+    public boolean isAlive() {
+        try {
+            IJSpace spaceToPing;
+            if (!SpaceUtils.isRemoteProtocol(space)) {
+                spaceToPing = SpaceUtils.getClusterMemberSpace(space);
+            } else {
+                spaceToPing = space;
+            }
+            spaceToPing.ping();
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 

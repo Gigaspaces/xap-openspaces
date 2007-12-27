@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.openspaces.pu.container.servicegrid;
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+package org.openspaces.core.cluster;
 
 /**
+ * A marker interface allowing beans to indicate the liveliness of a cluster member.
+ *
  * @author kimchy
  */
-public interface PUServiceBean extends Remote {
+public interface MemberAliveIndicator {
 
     /**
      * Should this member be checked to see if it is alive or not.
      */
-    boolean isMemberAliveEnabled() throws RemoteException;
-
+    boolean isMemberAliveEnabled();
+    
     /**
      * Return <code>true</code> if the member is alive or not.
      */
-    boolean isAlive() throws RemoteException;
+    boolean isAlive();
 }

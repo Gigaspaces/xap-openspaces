@@ -263,6 +263,20 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="enable-member-alive-indicator" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Should this Space bean control if the cluster member is alive or not. Defaults to true
+                                if the Space started is an embedded Space, and false if the it is connected to a remote
+                                Space.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.datasource.ManagedDataSource"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
