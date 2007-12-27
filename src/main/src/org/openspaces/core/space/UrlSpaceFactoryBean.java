@@ -76,6 +76,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private String lookupGroups;
 
+    private String lookupLocators;
+
     private Integer lookupTimeout;
 
     private Boolean versioned;
@@ -192,6 +194,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      */
     public void setLookupGroups(String lookupGroups) {
         this.lookupGroups = lookupGroups;
+    }
+
+    /**
+     * The Jini Lookup locators for the Space. In the form of: <code>host1:port1,host2:port2</code>.
+     */
+    public void setLookupLocators(String lookupLocators) {
+        this.lookupLocators = lookupLocators;
     }
 
     /**
@@ -315,6 +324,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         if (lookupGroups != null) {
             props.put(SpaceUtils.spaceUrlProperty(SpaceURL.GROUPS), lookupGroups);
+        }
+
+        if (lookupLocators != null) {
+            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.LOCATORS), lookupLocators);
         }
 
         if (lookupTimeout != null) {

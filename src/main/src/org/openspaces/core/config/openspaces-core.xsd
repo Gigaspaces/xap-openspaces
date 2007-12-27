@@ -203,6 +203,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="lookup-locators" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jini Lookup locators for the Space. In the form of: host1:port1,host2:port2.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger">
                         <xsd:annotation>
                             <xsd:documentation>
