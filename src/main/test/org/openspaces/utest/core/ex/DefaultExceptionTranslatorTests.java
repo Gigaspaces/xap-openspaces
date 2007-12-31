@@ -116,7 +116,7 @@ public class DefaultExceptionTranslatorTests extends TestCase {
     }
 
     public void testMemoryShortageException() {
-        DataAccessException dae = exTranslator.translate(new MemoryShortageException("test"));
+        DataAccessException dae = exTranslator.translate(new MemoryShortageException("test1", "test2", "test3", 1, 2));
         assertEquals(SpaceMemoryShortageException.class, dae.getClass());
     }
 
