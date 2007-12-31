@@ -30,7 +30,7 @@
                             <xsd:complexType>
                                 <xsd:attribute name="username" type="xsd:string"/>
                                 <xsd:attribute name="password" type="xsd:string"/>
-                                <xsd:attribute name="encrypted" type="xsd:boolean"/>
+                                <xsd:attribute name="encrypted" type="xsd:string"/>
                                 <xsd:attribute name="permissions" type="xsd:string"/>
                             </xsd:complexType>
                         </xsd:element>
