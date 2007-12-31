@@ -49,6 +49,10 @@ public abstract class AbstractSpaceModeChangeEvent extends ApplicationEvent {
         return (IJSpace) getSource();
     }
 
+    public SpaceMode getSpaceMode() {
+        return this.spaceMode;
+    }
+
     /**
      * The space mode is <code>NONE</code>, in other words - unknown.
      */
