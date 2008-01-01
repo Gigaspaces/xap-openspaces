@@ -112,6 +112,14 @@ public class UrlSpaceConfigurer {
     }
 
     /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupLocators(String)
+     */
+    public UrlSpaceConfigurer lookupLocators(String lookupLocators) {
+        urlSpaceFactoryBean.setLookupLocators(lookupLocators);
+        return this;
+    }
+
+    /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupTimeout(Integer)
      */
     public UrlSpaceConfigurer lookupTimeout(int lookupTimeout) {
