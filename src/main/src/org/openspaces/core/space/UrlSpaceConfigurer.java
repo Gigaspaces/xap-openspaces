@@ -22,6 +22,7 @@ import com.j_spaces.core.IJSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,10 +113,26 @@ public class UrlSpaceConfigurer {
     }
 
     /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupGroups(String)
+     */
+    public UrlSpaceConfigurer lookupGroups(String ... lookupGroups) {
+        urlSpaceFactoryBean.setLookupGroups(StringUtils.arrayToCommaDelimitedString(lookupGroups));
+        return this;
+    }
+
+    /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupLocators(String)
      */
     public UrlSpaceConfigurer lookupLocators(String lookupLocators) {
         urlSpaceFactoryBean.setLookupLocators(lookupLocators);
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupLocators(String)
+     */
+    public UrlSpaceConfigurer lookupLocators(String ... lookupLocators) {
+        urlSpaceFactoryBean.setLookupLocators(StringUtils.arrayToCommaDelimitedString(lookupLocators));
         return this;
     }
 
