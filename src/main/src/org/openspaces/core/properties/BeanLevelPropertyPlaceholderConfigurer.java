@@ -40,16 +40,25 @@ import java.util.Properties;
  * @author kimchy
  */
 public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware,
-        BeanFactoryAware {
+        BeanFactoryAware, BeanLevelPropertiesAware {
 
     private BeanLevelProperties beanLevelProperties;
 
     public BeanLevelPropertyPlaceholderConfigurer(BeanLevelProperties beanLevelProperties) {
+        init(beanLevelProperties);
+    }
+
+    public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
+        init(beanLevelProperties);
+    }
+
+    private void init(BeanLevelProperties beanLevelProperties) {
         this.beanLevelProperties = beanLevelProperties;
         setIgnoreUnresolvablePlaceholders(true);
         setSystemPropertiesMode(SYSTEM_PROPERTIES_MODE_NEVER);
         setOrder(2);
     }
+
 
     private String beanName;
 

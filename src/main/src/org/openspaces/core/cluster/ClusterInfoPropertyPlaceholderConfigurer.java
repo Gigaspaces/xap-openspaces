@@ -46,7 +46,7 @@ import java.util.Properties;
  * @author kimchy
  */
 public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware,
-        BeanFactoryAware {
+        BeanFactoryAware, ClusterInfoAware {
 
     public static final String NUMBER_OF_INSTANCES_PROP = "clusterInfo.numberOfInstances";
     public static final String NUMBER_OF_BACKUPS_PROP = "clusterInfo.numberOfBackups";
@@ -56,7 +56,18 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
 
     private Properties properties;
 
+    public ClusterInfoPropertyPlaceholderConfigurer() {
+    }
+
     public ClusterInfoPropertyPlaceholderConfigurer(ClusterInfo clusterInfo) {
+        init(clusterInfo);
+    }
+
+    public void setClusterInfo(ClusterInfo clusterInfo) {
+        init(clusterInfo);
+    }
+
+    private void init(ClusterInfo clusterInfo) {
         properties = new Properties();
         if (clusterInfo != null) {
             properties.setProperty(NUMBER_OF_INSTANCES_PROP, toPropertyValue(clusterInfo.getNumberOfInstances()));
@@ -75,6 +86,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
         setSystemPropertiesMode(SYSTEM_PROPERTIES_MODE_NEVER);
         setOrder(2);
     }
+
 
     private String beanName;
 
