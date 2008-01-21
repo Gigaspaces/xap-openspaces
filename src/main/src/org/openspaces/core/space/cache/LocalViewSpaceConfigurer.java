@@ -35,7 +35,7 @@ import java.util.Properties;
  * IJSpace space = urlSpaceConfigurer.space();
  *
  * LocalViewSpaceConfigurer localViewConfigurer = new LocalViewSpaceConfigurer(space)
- *           .addView(new View(Message.class, "processed = true"));
+ *           .addView(new View(SimpleMessage.class, "processed = true"));
  * IJSpace localView = localViewConfigurer.localView();
  * ...
  * localViewConfigurer.destroy();

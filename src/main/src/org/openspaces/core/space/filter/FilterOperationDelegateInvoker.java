@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
  * <li>A single parameter. The parameter can either be an {@link com.j_spaces.core.filters.entry.ISpaceFilterEntry}
  * or the actual template object wrapped by the entry. Note, if using actual types, this delegate will filter out
  * all the types that are not assignable to it. For example: <code>test(ISpaceFilterEntry entry)</li> or
- * <code>test(Message message)</code>.
+ * <code>test(SimpleMessage message)</code>.
  * <li>Two parameters. The first one maps to the previous option, the second one is the operation code.</li>
  * <li>Three parameters. The first two maps to the previous option, the third one is a {@link com.j_spaces.core.SpaceContext}.
  * </ul>
@@ -49,7 +49,7 @@ import java.lang.reflect.Method;
  * <li>A single parameter. The parameter can either be an {@link com.j_spaces.core.filters.entry.ISpaceFilterEntry}
  * or the actual template object wrapped by the entry. Note, if using actual types, this delegate will filter out
  * all the types that are not assignable to it. For example: <code>test(ISpaceFilterEntry entry)</li> or
- * <code>test(Message message)</code>.
+ * <code>test(SimpleMessage message)</code>.
  * <li>Two parameters. The first one maps to the previous option, the second is the same as the first one since
  * multiple entries always have two entries (mainly for update operations).</li>
  * <li>Three parameters. The first two maps to the previous option, the third one is the operation code.</li>
