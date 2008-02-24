@@ -42,7 +42,7 @@ package org.openspaces.core.cluster;
  *
  * @author kimchy
  */
-public class ClusterInfo {
+public class ClusterInfo implements Cloneable {
 
     private String schema;
 
@@ -162,6 +162,16 @@ public class ClusterInfo {
      */
     public void setNumberOfBackups(Integer numberOfBackups) {
         this.numberOfBackups = numberOfBackups;
+    }
+
+    public ClusterInfo copy() {
+        ClusterInfo clusterInfo = new ClusterInfo();
+        clusterInfo.setBackupId(getBackupId());
+        clusterInfo.setInstanceId(getInstanceId());
+        clusterInfo.setNumberOfBackups(getNumberOfBackups());
+        clusterInfo.setNumberOfInstances(getNumberOfInstances());
+        clusterInfo.setSchema(getSchema());
+        return clusterInfo;
     }
 
     public String toString() {
