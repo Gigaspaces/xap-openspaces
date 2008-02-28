@@ -73,7 +73,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
 
     private ClusterInfo clusterInfo;
 
-    private ResourceApplicationContext applicationContext;
+    private volatile ResourceApplicationContext applicationContext;
 
     /**
      * The location of the Spring xml context application to be loaded.
@@ -197,7 +197,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
         try {
             applicationContext.refresh();
         } catch (Exception e) {
-            closeApplicationContext();
+            applicationContext = null;
             throw e;
         }
     }
