@@ -66,7 +66,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     private String beforeUpdate;
 
-    private String afteruUpdate;
+    private String afterUpdate;
 
     private String beforeReadMultiple;
 
@@ -117,7 +117,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeUpdate)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_UPDATE);
                 }
-                if (ObjectUtils.nullSafeEquals(method.getName(), afteruUpdate)) {
+                if (ObjectUtils.nullSafeEquals(method.getName(), afterUpdate)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_UPDATE);
                 }
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeReadMultiple)) {
@@ -268,8 +268,8 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
      *
      * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_UPDATE
      */
-    public void setAfteruUpdate(String afteruUpdate) {
-        this.afteruUpdate = afteruUpdate;
+    public void setAfterUpdate(String afterUpdate) {
+        this.afterUpdate = afterUpdate;
     }
 
     /**
