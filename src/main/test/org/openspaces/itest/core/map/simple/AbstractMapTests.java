@@ -95,3 +95,4 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         gigaMap.unlock("1");
     }
 }
+                        
