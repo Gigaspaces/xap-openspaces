@@ -27,7 +27,7 @@ import java.util.Properties;
  *
  * <p>An example of using it:
  * <pre>
- * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
+ * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("cache")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
  * IJSpace space = urlSpaceConfigurer.space();
  *
