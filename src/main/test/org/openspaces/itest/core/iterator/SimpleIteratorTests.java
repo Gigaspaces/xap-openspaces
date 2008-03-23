@@ -13,7 +13,7 @@ import org.openspaces.core.space.UrlSpaceConfigurer;
 public class SimpleIteratorTests extends TestCase {
 
     public void testSimpleIterator() {
-        UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space");
+        UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").lookupGroups(System.getProperty("user.name"));
         GigaSpace gigaSpace = new GigaSpaceConfigurer(urlSpaceConfigurer.space()).gigaSpace();
 
         for (int i = 0; i < 50; i++) {
