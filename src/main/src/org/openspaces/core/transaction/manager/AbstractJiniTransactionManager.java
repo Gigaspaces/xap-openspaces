@@ -72,6 +72,11 @@ import java.rmi.RemoteException;
 public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements
         JiniPlatformTransactionManager, InitializingBean, BeanNameAware {
 
+    static final long DEFAULT_TX_TIMEOUT = 60L;
+    static final long DEFAULT_TX_COMMIT_TIMEOUT = Lease.FOREVER;
+    static final long DEFAULT_TX_ROLLBACK_TIMEOUT = Lease.FOREVER;
+
+
     // TransactionManager used for creating the actual transaction
     private transient TransactionManager transactionManager;
 
@@ -79,17 +84,19 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     // to take part in the transaction
     private Object transactionalContext;
 
+    //default tx timeout, initialized to 60 seconds
     private Long defaultTimeout;
 
-    private Long commitTimeout;
+    private Long commitTimeout = DEFAULT_TX_COMMIT_TIMEOUT;
 
-    private Long rollbackTimeout;
+    private Long rollbackTimeout = DEFAULT_TX_ROLLBACK_TIMEOUT;
 
     private TransactionLeaseRenewalConfig leaseRenewalConfig;
 
     private LeaseRenewalManager[] leaseRenewalManagers;
 
     private String beanName;
+
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
@@ -106,24 +113,23 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     /**
      * Sets the default timeout to use if {@link TransactionDefinition#TIMEOUT_DEFAULT} is used. Set
      * in <b>seconds</b> (in order to follow the {@link TransactionDefinition} contract). Defaults
-     * to {@link Lease#FOREVER}.
+     * to 60 seconds.
      */
     public void setDefaultTimeout(Long defaultTimeout) {
         this.defaultTimeout = defaultTimeout;
     }
 
     /**
-     * Sets an optional timeout when performing commit in milliseconds. If not set {@link Transaction#commit()} will
-     * be called. If set {@link Transaction#commit(long)} will be called.
+     * Sets an optional timeout when performing commit in milliseconds.
+     * Defaults to {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager#DEFAULT_TX_TIMEOUT}.
      */
     public void setCommitTimeout(Long commitTimeout) {
         this.commitTimeout = commitTimeout;
     }
 
     /**
-     * Sets an optional timeout when performing rollback/abort in milliseconds. If not set
-     * {@link Transaction#abort()} will be called. If set {@link Transaction#abort(long)} will be
-     * called.
+     * Sets an optional timeout when performing rollback/abort in milliseconds.
+     * Defaults to {@link Lease#FOREVER}.
      */
     public void setRollbackTimeout(Long rollbackTimeout) {
         this.rollbackTimeout = rollbackTimeout;
@@ -197,7 +203,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
         try {
             if (txObject.getJiniHolder() == null) {
-                long timeout = Lease.FOREVER;
+                long timeout = DEFAULT_TX_TIMEOUT;
                 if (defaultTimeout != null) {
                     timeout = defaultTimeout * 1000;
                 }
