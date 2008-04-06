@@ -63,11 +63,12 @@ public class LockManager {
 
     private IJSpace masterSpace = null;
 
-    private BlockingQueue<ExternalEntry> externalEntryPool;
+    private BlockingQueue<Envelope> externalEntryPool;
 
     private LocalTransactionManager localTransactionManager;
 
     private Transaction dummyTxn;
+
 
     /**
      * Creates a new Lock Manager based on the {@link com.j_spaces.map.IMap}.
@@ -81,9 +82,9 @@ public class LockManager {
             throw new CannotCreateTransactionException("Failed to obtain transaction lock manager", e);
         }
 
-        externalEntryPool = new ArrayBlockingQueue<ExternalEntry>(1000);
+        externalEntryPool = new ArrayBlockingQueue<Envelope>(1000);
         for (int i = 0; i < 1000; i++) {
-            externalEntryPool.add(new ExternalEntry(Envelope.ENVELOPE_CLASS_NAME, null, null, null));
+            externalEntryPool.add(new Envelope());
         }
 
         dummyTxn = getTransaction(Long.MAX_VALUE);
@@ -115,7 +116,7 @@ public class LockManager {
             }
         }
 
-        ExternalEntry ee = getTemplate(key, uid);
+        Envelope ee = getTemplate(key, uid);
         try {
             Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK);
             releaseEE(ee);
@@ -220,7 +221,7 @@ public class LockManager {
         }
     }
 
-    private void releaseEE(ExternalEntry ee) {
+    private void releaseEE(Envelope ee) {
         if (ee != null) {
             if (!externalEntryPool.offer(ee))
                 throw new RuntimeException("release of ExternalEntry resource failed.");
@@ -241,18 +242,16 @@ public class LockManager {
         return ClientUIDHandler.createUIDFromName(key.toString(), Envelope.ENVELOPE_CLASS_NAME);
     }
 
-    private ExternalEntry getTemplate(Object key, String uid) {
-        ExternalEntry ee;
+    private Envelope getTemplate(Object key, String uid) {
+        Envelope ee;
         try {
             ee = externalEntryPool.take();
         } catch (InterruptedException e) {
             throw new DataAccessResourceFailureException("Failed to take resource from pool", e);
         }
-
+        ee.setValue(key);
+        ee.setUID(uid);
         // to support load balancing
-        ee.m_FieldsValues = new Object[1];
-        ee.m_FieldsValues[Envelope.KEY] = key;
-        ee.m_UID = uid;
         return ee;
     }
 
