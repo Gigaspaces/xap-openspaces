@@ -72,7 +72,7 @@ import java.rmi.RemoteException;
 public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements
         JiniPlatformTransactionManager, InitializingBean, BeanNameAware {
 
-    static final long DEFAULT_TX_TIMEOUT = 60L;
+    static final long DEFAULT_TX_TIMEOUT = 60000L;
     static final long DEFAULT_TX_COMMIT_TIMEOUT = Lease.FOREVER;
     static final long DEFAULT_TX_ROLLBACK_TIMEOUT = Lease.FOREVER;
 
