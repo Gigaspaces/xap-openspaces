@@ -99,6 +99,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new ObjectConversionException((ConversionException) e);
         }
 
+        if (e instanceof com.j_spaces.core.multiple.write.WriteMultipleOperationPartialFailException) {
+            return new WriteMultipleOperationPartialFailException((com.j_spaces.core.multiple.write.WriteMultipleOperationPartialFailException)e);
+        }
+
         // UnusableEntryException and its subclasses
         if (e instanceof EntryVersionConflictException) {
             return new SpaceOptimisticLockingFailureException((EntryVersionConflictException) e);
