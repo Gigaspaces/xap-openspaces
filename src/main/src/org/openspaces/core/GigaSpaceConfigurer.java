@@ -16,7 +16,6 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.client.IPojoSpace;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.TransactionProvider;
@@ -44,14 +43,6 @@ public class GigaSpaceConfigurer {
     private GigaSpaceFactoryBean gigaSpaceFactoryBean;
 
     private GigaSpace gigaSpace;
-
-    /**
-     * Constructs a new configurer based on the Space.
-     */
-    public GigaSpaceConfigurer(IPojoSpace space) {
-        gigaSpaceFactoryBean = new GigaSpaceFactoryBean();
-        gigaSpaceFactoryBean.setSpace((IJSpace) space);
-    }
 
     /**
      * Constructs a new configurer based on the Space.
