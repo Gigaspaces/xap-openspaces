@@ -27,7 +27,7 @@ import org.springframework.dao.DataRetrievalFailureException;
  * @see com.j_spaces.core.multiple.write.WriteMultipleOperationPartialFailException
  * @see com.j_spaces.core.multiple.write.IResult
  *
- * @author uri 
+ * @author Uri Cohen
  */
 public class WriteMultipleOperationPartialFailException extends DataRetrievalFailureException {
     private final IResult[] results;
