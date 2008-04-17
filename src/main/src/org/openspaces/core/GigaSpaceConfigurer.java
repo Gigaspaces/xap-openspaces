@@ -29,7 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IPojoSpace space = urlSpaceConfigurer.createSpace();
+ * IJSpace space = urlSpaceConfigurer.space();
  *
  * GigaSpace gigaSpace = new GigaSpaceConfigurer(space).defaultTakeTimeout(1000).gigaSpace();
  * ...
