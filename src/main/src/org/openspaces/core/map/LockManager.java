@@ -67,7 +67,6 @@ public class LockManager {
 
     private LocalTransactionManager localTransactionManager;
 
-    private Transaction dummyTxn;
 
 
     /**
@@ -87,7 +86,6 @@ public class LockManager {
             externalEntryPool.add(new Envelope());
         }
 
-        dummyTxn = getTransaction(Long.MAX_VALUE);
     }
 
     /**
