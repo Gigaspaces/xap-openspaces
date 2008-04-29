@@ -235,13 +235,27 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public Object[] readMultiple(Object template, int maxEntries) throws DataAccessException {
+    public <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
     }
 
-    public Object[] readMultiple(Object template, int maxEntries, int modifiers) throws DataAccessException {
+    @SuppressWarnings("unchecked")
+    public <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException {
         try {
-            return space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+            return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> T[] readMultiple(Query<T> template, int maxEntries) throws DataAccessException {
+        return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] readMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException {
+        try {
+            return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -299,9 +313,19 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public Object[] takeMultiple(Object template, int maxEntries) throws DataAccessException {
+    @SuppressWarnings("unchecked")
+    public <T> T[] takeMultiple(T template, int maxEntries) throws DataAccessException {
         try {
-            return space.takeMultiple(template, getCurrentTransaction(), maxEntries);
+            return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] takeMultiple(Query<T> template, int maxEntries) throws DataAccessException {
+        try {
+            return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

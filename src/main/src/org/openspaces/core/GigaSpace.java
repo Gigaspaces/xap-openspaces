@@ -430,7 +430,23 @@ public interface GigaSpace {
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
      *
-     * <p><b>Note:</b> Each matching entry has to be explicitly cast.
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @return A copy of the entries read from the space.
+     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException;
+
+    /**
+     * Read any matching entries from the space. Matching is done as in
+     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * array with matches bound by <code>maxEntries</code>. Returns an
+     * empty array if no match was found.
      *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
@@ -442,15 +458,13 @@ public interface GigaSpace {
      * @return A copy of the entries read from the space.
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    Object[] readMultiple(Object template, int maxEntries) throws DataAccessException;
+    <T> T[] readMultiple(Query<T> template, int maxEntries) throws DataAccessException;
 
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
-     *
-     * <p><b>Note:</b> Each matching entry has to be explicitly cast.
      *
      * <p>Overloads {@link #readMultiple(Object,int)} by adding a
      * <code>modifiers</code> parameter. Equivalent when called with the default
@@ -468,7 +482,31 @@ public interface GigaSpace {
      * @return A copy of the entries read from the space.
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    Object[] readMultiple(Object template, int maxEntries, int modifiers) throws DataAccessException;
+    <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
+
+    /**
+     * Read any matching entries from the space. Matching is done as in
+     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * array with matches bound by <code>maxEntries</code>. Returns an
+     * empty array if no match was found.
+     *
+     * <p>Overloads {@link #readMultiple(Object,int)} by adding a
+     * <code>modifiers</code> parameter. Equivalent when called with the default
+     * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
+     * are used to define the behavior of a read operation.
+     *
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A copy of the entries read from the space.
+     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] readMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -619,7 +657,24 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    Object[] takeMultiple(Object template, int maxEntries) throws DataAccessException;
+    <T> T[] takeMultiple(T template, int maxEntries) throws DataAccessException;
+
+    /**
+     * Takes (removes) all the entries matching the specified template from this
+     * space.
+     *
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @return Removed matched entries from the space
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] takeMultiple(Query<T> template, int maxEntries) throws DataAccessException;
 
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.
