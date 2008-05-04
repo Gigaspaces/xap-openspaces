@@ -19,7 +19,6 @@ package org.openspaces.core.map;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.ClientUIDHandler;
 import com.j_spaces.core.client.EntryNotInSpaceException;
-import com.j_spaces.core.client.ExternalEntry;
 import com.j_spaces.core.client.LocalTransactionManager;
 import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.map.Envelope;
@@ -63,10 +62,9 @@ public class LockManager {
 
     private IJSpace masterSpace = null;
 
-    private BlockingQueue<Envelope> externalEntryPool;
+    private BlockingQueue<Envelope> templatePool;
 
     private LocalTransactionManager localTransactionManager;
-
 
 
     /**
@@ -81,9 +79,9 @@ public class LockManager {
             throw new CannotCreateTransactionException("Failed to obtain transaction lock manager", e);
         }
 
-        externalEntryPool = new ArrayBlockingQueue<Envelope>(1000);
+        templatePool = new ArrayBlockingQueue<Envelope>(1000);
         for (int i = 0; i < 1000; i++) {
-            externalEntryPool.add(new Envelope());
+            templatePool.add(new Envelope());
         }
 
     }
@@ -117,7 +115,6 @@ public class LockManager {
         Envelope ee = getTemplate(key, uid);
         try {
             Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK);
-            releaseEE(ee);
             if (retTake == null) {
                 throw new SpaceTimeoutException("Failed waiting for lock on key [" + key + "]");
             }
@@ -139,6 +136,8 @@ public class LockManager {
             }
             lockedUIDHashMap.remove(uid);
             throw new DataAccessResourceFailureException("Failed to obtain lock for key [" + key + "]", t);
+        } finally {
+            releaseTemplate(ee);
         }
 
         //otherwise, map uid->txn
@@ -185,7 +184,7 @@ public class LockManager {
             return true;
         }
         // now check globally
-        ExternalEntry ee = getTemplate(key, uid);
+        Envelope ee = getTemplate(key, uid);
         try {
             Object lockEntry = masterSpace.read(ee, null, 0, ReadModifiers.DIRTY_READ);
             if (lockEntry == null) {
@@ -193,6 +192,8 @@ public class LockManager {
             }
         } catch (Exception e) {
             return false;
+        } finally {
+            releaseTemplate(ee);
         }
         return true;
     }
@@ -219,13 +220,6 @@ public class LockManager {
         }
     }
 
-    private void releaseEE(Envelope ee) {
-        if (ee != null) {
-            if (!externalEntryPool.offer(ee))
-                throw new RuntimeException("release of ExternalEntry resource failed.");
-        }
-    }
-
     private Transaction getTransaction(long timeout) throws CannotCreateTransactionException {
         Transaction.Created tCreated;
         try {
@@ -243,14 +237,21 @@ public class LockManager {
     private Envelope getTemplate(Object key, String uid) {
         Envelope ee;
         try {
-            ee = externalEntryPool.take();
+            ee = templatePool.take();
         } catch (InterruptedException e) {
             throw new DataAccessResourceFailureException("Failed to take resource from pool", e);
         }
-        ee.setValue(key);
+        ee.setKey(key);
         ee.setUID(uid);
         // to support load balancing
         return ee;
+    }
+
+    private void releaseTemplate(Envelope ee) {
+        if (ee != null) {
+            if (!templatePool.offer(ee))
+                throw new RuntimeException("release of Envelope template resource failed.");
+        }
     }
 
 }
