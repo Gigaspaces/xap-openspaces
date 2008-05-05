@@ -114,7 +114,7 @@ public class LockManager {
 
         Envelope ee = getTemplate(key, uid);
         try {
-            Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK);
+            Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK | ReadModifiers.MATCH_BY_ID);
             if (retTake == null) {
                 throw new SpaceTimeoutException("Failed waiting for lock on key [" + key + "]");
             }
@@ -186,7 +186,7 @@ public class LockManager {
         // now check globally
         Envelope ee = getTemplate(key, uid);
         try {
-            Object lockEntry = masterSpace.read(ee, null, 0, ReadModifiers.DIRTY_READ);
+            Object lockEntry = masterSpace.read(ee, null, 0, ReadModifiers.DIRTY_READ | ReadModifiers.MATCH_BY_ID);
             if (lockEntry == null) {
                 return false;
             }
