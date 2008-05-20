@@ -54,7 +54,7 @@ public interface GigaMap extends Map, Cache {
     IMap getMap();
 
     /**
-     * Returns the transaction provider allowing to access the current running transaction. Allows
+     * Returns the transaction provider allowing accessing the current running transaction. Allows
      * to execute low level {@link IMap} operations that requires explicit
      * transaction object.
      */
@@ -179,14 +179,14 @@ public interface GigaMap extends Map, Cache {
     LockHandle lock(Object key);
 
     /**
-     * Locks the given key for any updates. Retruns a {@link org.openspaces.core.map.LockHandle}
+     * Locks the given key for any updates. Returns a {@link org.openspaces.core.map.LockHandle}
      * that can be used to perform specific updates under the same lock (by using the transaction
      * object stored within it).
      *
      * @param key                   The key to lock
      * @param lockTimeToLive        The lock time to live (in milliseconds)
      * @param waitingForLockTimeout The time to wait for an already locked lock
-     * @return LockHandle that can be used to perfrom operations under the given lock
+     * @return LockHandle that can be used to perform operations under the given lock
      */
     LockHandle lock(Object key, long lockTimeToLive, long waitingForLockTimeout);
 
@@ -219,7 +219,7 @@ public interface GigaMap extends Map, Cache {
     long getDefaultTimeToLive();
 
     /**
-     * Returns the default wait for reponse value for entries in the map.
+     * Returns the default wait for response value for entries in the map.
      */
     long getDefaultWaitForResponse();
 }

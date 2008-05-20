@@ -119,7 +119,7 @@ public interface GigaSpace {
      * <p>If the clear operation conducted without transaction (null as value) it will clear all entries that
      * are not under transaction. Therefore entries under transaction would not be removed from the space.
      *
-     * <p>The clear operation supports inheritance, therefor template class matching objects
+     * <p>The clear operation supports inheritance, therefore template class matching objects
      * and its sub classes matching objects are part of the candidates population
      * to be removed from the space. You can in fact clean all space objects (that are not under
      * transaction) by calling: <code>gigaSpace.clear(null)</code>.
@@ -158,7 +158,7 @@ public interface GigaSpace {
      *                  template with <code>null</code> fields being wildcards
      *                  ("match anything") other fields being values ("match
      *                  exactly on the serialized form").
-     * @param modifiers modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return The number of matching entries
      * @throws DataAccessException
      */
