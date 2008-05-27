@@ -112,7 +112,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
             throws InvalidIsolationLevelException {
         if (isolationLevel == TransactionDefinition.ISOLATION_SERIALIZABLE) {
             throw new InvalidIsolationLevelException(
-                    "Local TransactionManager does not support serializable isolation level");
+                    "Lookup Jini TransactionManager does not support serializable isolation level");
         }
     }
 }
