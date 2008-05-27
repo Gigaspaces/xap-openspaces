@@ -48,7 +48,9 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
     private String[] locators;
 
     /**
-     * Sets the transaction manager name to perform the lookup by.
+     * Sets the transaction manager name to perform the lookup by. Note, this is
+     * not the transaction manager bean name, but an optional mahalo transaction
+     * manager name under which it was started. Usually this is set to <code>null</code>.
      */
     public void setTransactionManagerName(String transactionManagerName) {
         this.transactionManagerName = transactionManagerName;
@@ -98,10 +100,10 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         if (transactionManager == null) {
             String groups = "ALL";
             if (this.groups != null) {
-                groups = Arrays.asList(groups).toString();
+                groups = Arrays.asList(this.groups).toString();
             }
             throw new TransactionSystemException("Failed to find Jini transaction manager using groups [" + groups
-                    + "], timeout [" + lookupTimeout + "] and name [" + transactionManagerName + "]");
+                    + "], locators [" + Arrays.toString(locators) + "] timeout [" + lookupTimeout + "] and name [" + transactionManagerName + "]");
         }
         return transactionManager;
     }
