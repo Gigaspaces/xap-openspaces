@@ -384,7 +384,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
 
         // if deploy info is provided, apply it to the space url (only if it is an embedde Space).
-        if (clusterInfo != null && !SpaceUtils.isRemoteProtocol(url)) {
+        if (shouldApplyClusterInfo()) {
             if (clusterInfo.getNumberOfInstances() != null) {
                 String totalMembers = clusterInfo.getNumberOfInstances().toString();
                 if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() != 0) {
@@ -415,5 +415,22 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         } catch (MalformedURLException e) {
             throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
         }
+    }
+
+    /**
+     * Should cluster info be applies to the space url.
+     */
+    private boolean shouldApplyClusterInfo() {
+        if (SpaceUtils.isRemoteProtocol(url)) {
+            return false;
+        }
+        if (clusterInfo == null) {
+            return false;
+        }
+        // only apply if we have a specific cluster schema
+        if (url.indexOf("cluster_schema") != -1 || StringUtils.hasText(clusterInfo.getSchema())) {
+            return true;
+        }
+        return false;
     }
 }
