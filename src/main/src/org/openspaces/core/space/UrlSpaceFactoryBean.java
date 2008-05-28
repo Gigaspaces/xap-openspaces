@@ -33,6 +33,7 @@ import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFac
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.util.Map;
@@ -397,7 +398,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             if (clusterInfo.getBackupId() != null) {
                 props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_BACKUP_ID), clusterInfo.getBackupId().toString());
             }
-            if (clusterInfo.getSchema() != null) {
+            if (StringUtils.hasText(clusterInfo.getSchema())) {
                 props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_SCHEMA), clusterInfo.getSchema());
             }
         }
