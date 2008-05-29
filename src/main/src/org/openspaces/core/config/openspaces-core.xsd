@@ -996,6 +996,28 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="distributed-tx-manager">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.transaction.manager.DistributedJiniTransactionManager">
+                Spring transaction manager using GigaSpaces MahaloJiniTransactionManager.
+
+                Starts an embedded mahalo (a distributed transaction manager) that can be used to perform distributed
+                operations (on more than one resource). Note, this transaction manager is not registered for lookup.
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="org.openspaces.core.transaction.manager.DistributedJiniTransactionManager"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="baseTxManagerType">
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
     <xsd:element name="jini-tx-manager">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LookupJiniTransactionManager">
