@@ -167,6 +167,16 @@ public class DefaultTransactionProvider implements TransactionProvider {
         return TransactionDefinition.ISOLATION_DEFAULT;
     }
 
+    public boolean isEnabled() {
+        if (actualTransactionalContext != null) {
+            return true;
+        }
+        if (isJta) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * A Spring synctonization that acts as a placeholder for the Space associtaed with the current
      * Spring transaction.

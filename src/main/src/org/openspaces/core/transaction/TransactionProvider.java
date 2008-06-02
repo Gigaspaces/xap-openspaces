@@ -61,4 +61,9 @@ public interface TransactionProvider {
      *         {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}.
      */
     int getCurrentTransactionIsolationLevel(Object transactionalContext);
+
+    /**
+     * Returns <code>true</code> if this transaction provider is enabled or not.
+     */
+    boolean isEnabled();
 }
