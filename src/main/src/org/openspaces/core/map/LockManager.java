@@ -231,7 +231,7 @@ public class LockManager {
     }
 
     private String getUID(Object key) {
-        return ClientUIDHandler.createUIDFromName(key.toString(), Envelope.ENVELOPE_CLASS_NAME);
+        return ClientUIDHandler.createUIDFromName(key, Envelope.ENVELOPE_CLASS_NAME);
     }
 
     private Envelope getTemplate(Object key, String uid) {
