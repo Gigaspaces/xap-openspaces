@@ -26,7 +26,8 @@ public class WorkerAdapterTests extends AbstractDependencyInjectionSpringContext
 
     public void testCorrectCalls() throws Exception {
         assertTrue(worker1.isInitCalled());
-        assertTrue(worker2.isInitCalled());
+        
+        assertFalse(worker2.isInitCalled());
 
         assertTrue(worker1.isRunCalled());
         assertFalse(worker2.isRunCalled());

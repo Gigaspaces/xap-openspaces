@@ -17,6 +17,8 @@
 package org.openspaces.core.space.support;
 
 import com.j_spaces.worker.IWorker;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
@@ -38,6 +40,8 @@ import org.springframework.util.Assert;
  */
 public class WorkerAdapter implements InitializingBean, DisposableBean, ApplicationListener {
 
+    private static Log logger = LogFactory.getLog(WorkerAdapter.class); 
+
     private IWorker worker;
 
     private Thread thread;
@@ -48,7 +52,7 @@ public class WorkerAdapter implements InitializingBean, DisposableBean, Applicat
 
     private GigaSpace gigaSpace;
 
-    private boolean activeWhenPrimary = true;
+    private boolean activeWhenBackup = false;
 
     public WorkerAdapter() {
     }
@@ -84,18 +88,17 @@ public class WorkerAdapter implements InitializingBean, DisposableBean, Applicat
     }
 
     /**
-     * Should the worker be active only when the Space is in primary mode. Defaults to <code>true</code>. Setting
-     * this to <code>false</code> means that the worker will start regardless of the space state.
+     * Should the worker be active only when the Space is in primary mode. Defaults to <code>false</code>. Setting
+     * this to <code>true</code> means that the worker will start regardless of the space state.
      */
-    public void setActiveWhenPrimary(boolean activeWhenPrimary) {
-        this.activeWhenPrimary = activeWhenPrimary;
+    public void setActiveWhenBackup(boolean activeWhenBackup) {
+        this.activeWhenBackup = activeWhenBackup;
     }
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(worker, "worker is required");
         Assert.notNull(worker, "gigaSpace is required");
-        worker.init(gigaSpace.getSpace(), workerName, argument);
-        if (!activeWhenPrimary) {
+        if (activeWhenBackup) {
             startWorker();
         }
     }
@@ -105,12 +108,16 @@ public class WorkerAdapter implements InitializingBean, DisposableBean, Applicat
     }
 
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        if (activeWhenPrimary) {
+        if (!activeWhenBackup) {
             if (applicationEvent instanceof AfterSpaceModeChangeEvent) {
                 AfterSpaceModeChangeEvent spEvent = (AfterSpaceModeChangeEvent) applicationEvent;
                 if (spEvent.isPrimary()) {
                     if (SpaceUtils.isSameSpace(spEvent.getSpace(), gigaSpace.getSpace())) {
-                        startWorker();
+                        try {
+                            startWorker();
+                        } catch (Exception e) {
+                            logger.error("Failed to start worker [" + workerName + "]", e);
+                        }
                     }
                 }
             } else if (applicationEvent instanceof BeforeSpaceModeChangeEvent) {
@@ -124,8 +131,9 @@ public class WorkerAdapter implements InitializingBean, DisposableBean, Applicat
         }
     }
 
-    private void startWorker() {
+    private void startWorker() throws Exception {
         if (thread == null) {
+            worker.init(gigaSpace.getSpace(), workerName, argument);
             thread = new Thread(worker);
             thread.setName(workerName + gigaSpace.getSpace().getName());
             thread.start();
