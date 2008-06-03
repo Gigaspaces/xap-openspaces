@@ -31,6 +31,9 @@ import org.springframework.util.Assert;
  * An adapter class that can run legacy {@link com.j_spaces.worker.IWorker} implementations
  * as beans providing the same behavior when configured within a Space.
  *
+ * <p>Note, the adapter aims to simplify the migration from "worker" based applications to
+ * the new processing unit architecture. 
+ *
  * @author kimchy
  */
 public class WorkerAdapter implements InitializingBean, DisposableBean, ApplicationListener {
