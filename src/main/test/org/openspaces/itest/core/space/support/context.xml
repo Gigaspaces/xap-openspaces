@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+
+    <bean id="space1" class="org.openspaces.core.space.UrlSpaceFactoryBean">
+        <property name="url" value="/./workerSpace?cluster_schema=primary_backup&amp;total_members=1,1&amp;id=1"/>
+        <property name="lookupGroups" value="${user.name}"/>
+    </bean>
+
+    <bean id="gigaSpace1" class="org.openspaces.core.GigaSpaceFactoryBean">
+        <property name="space" ref="space1"/>
+    </bean>
+
+    <bean id="space2" class="org.openspaces.core.space.UrlSpaceFactoryBean">
+        <property name="url" value="/./workerSpace?cluster_schema=primary_backup&amp;total_members=1,1&amp;id=1&amp;backup_id=1"/>
+        <property name="lookupGroups" value="${user.name}"/>
+    </bean>
+
+    <bean id="gigaSpace2" class="org.openspaces.core.GigaSpaceFactoryBean">
+        <property name="space" ref="space2"/>
+    </bean>
+
+    <bean id="worker1" class="org.openspaces.itest.core.space.support.MyWorker" />
+
+    <bean id="workerAdapter1" class="org.openspaces.core.space.support.WorkerAdapter">
+        <property name="gigaSpace" ref="gigaSpace1" />
+        <property name="worker" ref="worker1" />
+    </bean>
+
+    <bean id="worker2" class="org.openspaces.itest.core.space.support.MyWorker" />
+
+    <bean id="workerAdapter2" class="org.openspaces.core.space.support.WorkerAdapter">
+        <property name="gigaSpace" ref="gigaSpace2" />
+        <property name="worker" ref="worker2" />
+    </bean>
+</beans>

@@ -136,8 +136,6 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      * listens for {@link AfterSpaceModeChangeEvent} and load an application context if received.
      */
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        // TODO maybe match on the space itself, and verify that we are not being notified of the
-        // wrong space
         if (activeWhenPrimary) {
             if (applicationEvent instanceof AfterSpaceModeChangeEvent) {
                 AfterSpaceModeChangeEvent spEvent = (AfterSpaceModeChangeEvent) applicationEvent;
