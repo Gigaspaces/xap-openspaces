@@ -22,6 +22,7 @@ import com.j_spaces.core.client.CacheException;
 import com.j_spaces.core.client.CacheTimeoutException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
+import com.j_spaces.core.client.sql.SQLQueryException;
 import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
@@ -101,6 +102,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
 
         if (e instanceof com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException) {
             return new WriteMultiplePartialFailureException((com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException)e, this);
+        }
+
+        if (e instanceof SQLQueryException) {
+            return new BadSqlQueryException((SQLQueryException) e);
         }
 
         // UnusableEntryException and its subclasses
