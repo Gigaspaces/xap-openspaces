@@ -54,6 +54,32 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
     public static final String BACKUP_ID_PROP = "clusterInfo.backupId";
     public static final String SCHEMA_PROP = "clusterInfo.schema";
 
+    public static Properties createProperties(ClusterInfo clusterInfo) {
+        Properties properties = new Properties();
+        if (clusterInfo != null) {
+            properties.setProperty(NUMBER_OF_INSTANCES_PROP, toPropertyValue(clusterInfo.getNumberOfInstances()));
+            properties.setProperty(NUMBER_OF_BACKUPS_PROP, toPropertyValue(clusterInfo.getNumberOfBackups()));
+            properties.setProperty(INSTANCE_ID_PROP, toPropertyValue(clusterInfo.getInstanceId()));
+            properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo.getBackupId()));
+            properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
+        } else {
+            properties.setProperty(NUMBER_OF_INSTANCES_PROP, "");
+            properties.setProperty(NUMBER_OF_BACKUPS_PROP, "");
+            properties.setProperty(INSTANCE_ID_PROP, "");
+            properties.setProperty(BACKUP_ID_PROP, "");
+            properties.setProperty(SCHEMA_PROP, "");
+        }
+        return properties;
+    }
+
+    private static String toPropertyValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toString();
+    }
+
+    
     private Properties properties;
 
     public ClusterInfoPropertyPlaceholderConfigurer() {
@@ -68,20 +94,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
     }
 
     private void init(ClusterInfo clusterInfo) {
-        properties = new Properties();
-        if (clusterInfo != null) {
-            properties.setProperty(NUMBER_OF_INSTANCES_PROP, toPropertyValue(clusterInfo.getNumberOfInstances()));
-            properties.setProperty(NUMBER_OF_BACKUPS_PROP, toPropertyValue(clusterInfo.getNumberOfBackups()));
-            properties.setProperty(INSTANCE_ID_PROP, toPropertyValue(clusterInfo.getInstanceId()));
-            properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo.getBackupId()));
-            properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
-        } else {
-            properties.setProperty(NUMBER_OF_INSTANCES_PROP, "");
-            properties.setProperty(NUMBER_OF_BACKUPS_PROP, "");
-            properties.setProperty(INSTANCE_ID_PROP, "");
-            properties.setProperty(BACKUP_ID_PROP, "");
-            properties.setProperty(SCHEMA_PROP, "");
-        }
+        properties = createProperties(clusterInfo);
         setIgnoreUnresolvablePlaceholders(true);
         setSystemPropertiesMode(SYSTEM_PROPERTIES_MODE_NEVER);
         setOrder(2);
@@ -117,13 +130,6 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
                 }
             }
         }
-    }
-
-    private String toPropertyValue(Object value) {
-        if (value == null) {
-            return "";
-        }
-        return value.toString();
     }
 
     /**

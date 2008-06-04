@@ -16,6 +16,9 @@
 
 package org.openspaces.core.properties;
 
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -32,17 +35,19 @@ import java.util.Properties;
 /**
  * An extension on top of Spring {@link PropertyPlaceholderConfigurer} that works with
  * {@link BeanLevelProperties} in order to inject bean level properties.
- * 
+ *
  * <p>
  * ${..} notations are used to lookup bean level properties with the properties obtained based on
  * the bean name using {@link BeanLevelProperties#getMergedBeanProperties(String)}.
- * 
+ *
  * @author kimchy
  */
 public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements BeanNameAware,
-        BeanFactoryAware, BeanLevelPropertiesAware {
+        BeanFactoryAware, BeanLevelPropertiesAware, ClusterInfoAware {
 
     private BeanLevelProperties beanLevelProperties;
+
+    private ClusterInfo clusterInfo;
 
     public BeanLevelPropertyPlaceholderConfigurer(BeanLevelProperties beanLevelProperties) {
         init(beanLevelProperties);
@@ -50,6 +55,10 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
 
     public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
         init(beanLevelProperties);
+    }
+
+    public void setClusterInfo(ClusterInfo clusterInfo) {
+        this.clusterInfo = clusterInfo;
     }
 
     private void init(BeanLevelProperties beanLevelProperties) {
@@ -80,8 +89,11 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
             // Check that we're not parsing our own bean definition,
             // to avoid failing on unresolvable placeholders in properties file locations.
             if (!(beanName1.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-                BeanDefinitionVisitor visitor = new PlaceholderResolvingBeanDefinitionVisitor(
-                        beanLevelProperties.getMergedBeanProperties(beanName1));
+                Properties beanLevelProps = beanLevelProperties.getMergedBeanProperties(beanName1);
+                // add cluster info properties as well
+                beanLevelProps.putAll(ClusterInfoPropertyPlaceholderConfigurer.createProperties(clusterInfo));
+
+                BeanDefinitionVisitor visitor = new PlaceholderResolvingBeanDefinitionVisitor(beanLevelProps);
                 BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanName1);
                 try {
                     visitor.visitBeanDefinition(bd);
