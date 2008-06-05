@@ -175,8 +175,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         // set the jini holder is one is found
         if (TransactionSynchronizationManager.hasResource(transactionalContext)) {
             JiniTransactionHolder jiniHolder = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(transactionalContext);
-            if (logger.isDebugEnabled()) {
-                logger.debug(logMessage("Found thread-bound tx data [" + jiniHolder + "] for Jini resource ["
+            if (logger.isTraceEnabled()) {
+                logger.trace(logMessage("Found thread-bound tx data [" + jiniHolder + "] for Jini resource ["
                         + transactionalContext + "]"));
             }
             txObject.setJiniHolder(jiniHolder, false);
@@ -187,8 +187,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
-        if (logger.isDebugEnabled())
-            logger.debug(logMessage("Beginning transaction [" + txObject + "]"));
+        if (logger.isTraceEnabled())
+            logger.trace(logMessage("Beginning transaction [" + txObject + "]"));
         try {
             doJiniBegin(txObject, definition);
         } catch (UnsupportedOperationException ex) {
@@ -210,8 +210,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                     timeout = definition.getTimeout() * 1000;
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug(logMessage("Creating new transaction for [" + transactionalContext + "] with timeout [" + timeout + " milliseconds]"));
+                if (logger.isTraceEnabled()) {
+                    logger.trace(logMessage("Creating new transaction for [" + transactionalContext + "] with timeout [" + timeout + " milliseconds]"));
                 }
                 Transaction.Created txCreated;
                 LeaseRenewalManager leaseRenewalManager = null;
@@ -257,8 +257,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
-        if (logger.isDebugEnabled())
-            logger.debug(logMessage("Committing Jini transaction [" + txObject.toString() + "]"));
+        if (logger.isTraceEnabled())
+            logger.trace(logMessage("Committing Jini transaction [" + txObject.toString() + "]"));
         try {
             if (commitTimeout == null) {
                 txObject.getTransaction().commit();
@@ -283,8 +283,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
-        if (logger.isDebugEnabled())
-            logger.debug(logMessage("Rolling back Jini transaction [" + txObject + "]"));
+        if (logger.isTraceEnabled())
+            logger.trace(logMessage("Rolling back Jini transaction [" + txObject + "]"));
         try {
             if (rollbackTimeout == null) {
                 txObject.getTransaction().abort();
@@ -306,8 +306,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         // Remove the session holder from the thread.
         if (txObject.isNewJiniHolder()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(logMessage("Removing per-thread Jini transaction for [" + getTransactionalContext() + "]"));
+            if (logger.isTraceEnabled()) {
+                logger.trace(logMessage("Removing per-thread Jini transaction for [" + getTransactionalContext() + "]"));
             }
             TransactionSynchronizationManager.unbindResource(getTransactionalContext());
 
@@ -326,7 +326,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doSetRollbackOnly(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (status.isDebug()) {
-            logger.debug(logMessage("Setting Jini transaction on txContext [" + getTransactionalContext() + "] rollback-only"));
+            logger.trace(logMessage("Setting Jini transaction on txContext [" + getTransactionalContext() + "] rollback-only"));
         }
         txObject.setRollbackOnly();
     }
