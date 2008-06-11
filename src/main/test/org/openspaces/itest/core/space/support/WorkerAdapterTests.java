@@ -29,6 +29,9 @@ public class WorkerAdapterTests extends AbstractDependencyInjectionSpringContext
         
         assertFalse(worker2.isInitCalled());
 
+        // sleep to wait for the thread to start
+        Thread.sleep(500);
+        
         assertTrue(worker1.isRunCalled());
         assertFalse(worker2.isRunCalled());
     }
