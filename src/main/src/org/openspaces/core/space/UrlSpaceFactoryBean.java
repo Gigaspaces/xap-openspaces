@@ -36,6 +36,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -253,7 +254,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * A data source 
+     * A data source
      */
     public void setExternalDataSource(ManagedDataSource externalDataSource) {
         this.externalDataSource = externalDataSource;
@@ -276,18 +277,18 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * Creates the space by calling {@link #doGetSpaceUrl()} and then using the returned
+     * Creates the space by calling {@link #doGetSpaceUrls()} and then using the returned
      * {@link SpaceURL} a space is found using {@link SpaceFinder#find(SpaceURL)}.
      */
     protected IJSpace doCreateSpace() throws DataAccessException {
-        SpaceURL spaceURL = doGetSpaceUrl();
+        SpaceURL[] spaceURLs = doGetSpaceUrls();
         try {
-            return (IJSpace) SpaceFinder.find(spaceURL);
+            return (IJSpace) SpaceFinder.find(spaceURLs);
         } catch (FinderException e) {
-            if (SpaceUtils.isRemoteProtocol(spaceURL)) {
-                throw new CannotFindSpaceException("Failed to find space with url [" + spaceURL + "]", e);
+            if (SpaceUtils.isRemoteProtocol(spaceURLs[0])) {
+                throw new CannotFindSpaceException("Failed to find space with url " + Arrays.toString(spaceURLs) + "", e);
             }
-            throw new CannotCreateSpaceException("Failed to create space with url [" + spaceURL + "]", e);
+            throw new CannotCreateSpaceException("Failed to create space with url " + Arrays.toString(spaceURLs) + "", e);
         }
     }
 
@@ -301,120 +302,130 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)} by automatically translating
      * the cluster information into relevant Space url properties.
      */
-    protected SpaceURL doGetSpaceUrl() throws DataAccessException {
+    protected SpaceURL[] doGetSpaceUrls() throws DataAccessException {
         Assert.notNull(url, "url property is required");
-        Properties props = new Properties();
-        // copy over the parameters
-        if (parameters != null) {
-            props.putAll(parameters);
-        }
-        if (properties != null) {
-            props.putAll(properties);
-        }
 
-        // copy over the space properties
-        if (urlProperties != null) {
-            for (Map.Entry<Object, Object> entry : urlProperties.entrySet()) {
-                props.put(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + entry.getKey(), entry.getValue());
+        String[] urls = StringUtils.tokenizeToStringArray(url, ";");
+        SpaceURL[] spacesUrls = new SpaceURL[urls.length];
+
+
+        for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
+            String url = urls[urlIndex];
+            
+            Properties props = new Properties();
+            // copy over the parameters
+            if (parameters != null) {
+                props.putAll(parameters);
             }
-        }
-
-        if (schema != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.SCHEMA_NAME), schema);
-        }
-
-        if (lookupGroups != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.GROUPS), lookupGroups);
-        }
-
-        if (lookupLocators != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.LOCATORS), lookupLocators);
-        }
-
-        if (lookupTimeout != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.TIMEOUT), lookupTimeout.toString());
-        }
-
-        if (fifo != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.FIFO_MODE), Boolean.toString(fifo));
-        }
-        if (versioned != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.VERSIONED), Boolean.toString(versioned));
-        }
-        if (noWriteLease != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
-        }
-        if (mirror != null) {
-            props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
-        }
-
-        if (filterProviders != null && filterProviders.length > 0) {
-            if (SpaceUtils.isRemoteProtocol(url)) {
-                throw new IllegalArgumentException("Filters can only be used with an embedded Space");
+            if (properties != null) {
+                props.putAll(properties);
             }
-            FilterProvider[] spaceFilterProvider = new FilterProvider[filterProviders.length];
-            for (int i = 0; i < filterProviders.length; i++) {
-                spaceFilterProvider[i] = filterProviders[i].getFilterProvider();
-            }
-            props.put(Constants.Filter.FILTER_PROVIDERS, spaceFilterProvider);
-        }
 
-        if (replicationFilterProvider != null) {
-            if (SpaceUtils.isRemoteProtocol(url)) {
-                throw new IllegalArgumentException("Replication filter provider can only be used with an embedded Space");
-            }
-            props.put(Constants.ReplicationFilter.REPLICATION_FILTER_PROVIDER, replicationFilterProvider.getFilterProvider());
-        }
-
-        if (externalDataSource != null) {
-            if (SpaceUtils.isRemoteProtocol(url)) {
-                throw new IllegalArgumentException("External data source can only be used with an embedded Space");
-            }
-            props.put(Constants.DataAdapter.DATA_SOURCE, externalDataSource);
-            props.put(Constants.StorageAdapter.FULL_STORAGE_STORAGE_ADAPTER_CLASS_PROP, DataAdapter.class.getName());
-            props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
-            if (logger.isDebugEnabled()) {
-                logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
-            }
-        }
-
-        // copy over the external config overrides
-        if (beanLevelProperties != null) {
-            props.putAll(beanLevelProperties);
-        }
-
-        // if deploy info is provided, apply it to the space url (only if it is an embedde Space).
-        if (shouldApplyClusterInfo()) {
-            if (clusterInfo.getNumberOfInstances() != null) {
-                String totalMembers = clusterInfo.getNumberOfInstances().toString();
-                if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() != 0) {
-                    totalMembers += "," + clusterInfo.getNumberOfBackups();
+            // copy over the space properties
+            if (urlProperties != null) {
+                for (Map.Entry<Object, Object> entry : urlProperties.entrySet()) {
+                    props.put(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + entry.getKey(), entry.getValue());
                 }
-                props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_TOTAL_MEMBERS), totalMembers);
             }
-            if (clusterInfo.getInstanceId() != null) {
-                props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_MEMBER_ID), clusterInfo.getInstanceId().toString());
+
+            if (schema != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.SCHEMA_NAME), schema);
             }
-            if (clusterInfo.getBackupId() != null) {
-                props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_BACKUP_ID), clusterInfo.getBackupId().toString());
+
+            if (lookupGroups != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.GROUPS), lookupGroups);
             }
-            if (StringUtils.hasText(clusterInfo.getSchema())) {
-                props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_SCHEMA), clusterInfo.getSchema());
+
+            if (lookupLocators != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.LOCATORS), lookupLocators);
+            }
+
+            if (lookupTimeout != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.TIMEOUT), lookupTimeout.toString());
+            }
+
+            if (fifo != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.FIFO_MODE), Boolean.toString(fifo));
+            }
+            if (versioned != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.VERSIONED), Boolean.toString(versioned));
+            }
+            if (noWriteLease != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
+            }
+            if (mirror != null) {
+                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
+            }
+
+            if (filterProviders != null && filterProviders.length > 0) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("Filters can only be used with an embedded Space");
+                }
+                FilterProvider[] spaceFilterProvider = new FilterProvider[filterProviders.length];
+                for (int i = 0; i < filterProviders.length; i++) {
+                    spaceFilterProvider[i] = filterProviders[i].getFilterProvider();
+                }
+                props.put(Constants.Filter.FILTER_PROVIDERS, spaceFilterProvider);
+            }
+
+            if (replicationFilterProvider != null) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("Replication filter provider can only be used with an embedded Space");
+                }
+                props.put(Constants.ReplicationFilter.REPLICATION_FILTER_PROVIDER, replicationFilterProvider.getFilterProvider());
+            }
+
+            if (externalDataSource != null) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("External data source can only be used with an embedded Space");
+                }
+                props.put(Constants.DataAdapter.DATA_SOURCE, externalDataSource);
+                props.put(Constants.StorageAdapter.FULL_STORAGE_STORAGE_ADAPTER_CLASS_PROP, DataAdapter.class.getName());
+                props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
+                }
+            }
+
+            // copy over the external config overrides
+            if (beanLevelProperties != null) {
+                props.putAll(beanLevelProperties);
+            }
+
+            // if deploy info is provided, apply it to the space url (only if it is an embedde Space).
+            if (shouldApplyClusterInfo()) {
+                if (clusterInfo.getNumberOfInstances() != null) {
+                    String totalMembers = clusterInfo.getNumberOfInstances().toString();
+                    if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() != 0) {
+                        totalMembers += "," + clusterInfo.getNumberOfBackups();
+                    }
+                    props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_TOTAL_MEMBERS), totalMembers);
+                }
+                if (clusterInfo.getInstanceId() != null) {
+                    props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_MEMBER_ID), clusterInfo.getInstanceId().toString());
+                }
+                if (clusterInfo.getBackupId() != null) {
+                    props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_BACKUP_ID), clusterInfo.getBackupId().toString());
+                }
+                if (StringUtils.hasText(clusterInfo.getSchema())) {
+                    props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_SCHEMA), clusterInfo.getSchema());
+                }
+            }
+
+            // no need for a shutdown hook in the space as well
+            props.setProperty(Constants.Container.CONTAINER_SHUTDOWN_HOOK_PROP, "false");
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
+            }
+
+            try {
+                 spacesUrls[urlIndex] = SpaceURLParser.parseURL(url, props);
+            } catch (MalformedURLException e) {
+                throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
             }
         }
-
-        // no need for a shutdown hook in the space as well
-        props.setProperty(Constants.Container.CONTAINER_SHUTDOWN_HOOK_PROP, "false");
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
-        }
-
-        try {
-            return SpaceURLParser.parseURL(url, props);
-        } catch (MalformedURLException e) {
-            throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
-        }
+        return spacesUrls;
     }
 
     /**
