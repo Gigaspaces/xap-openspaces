@@ -36,7 +36,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.util.MethodInvoker;
 
 /**
  * A Space mode based Spring context loader allows to load Spring application context if the Space
@@ -156,7 +159,9 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
                         }
                     }
                 }
+                publishEvent(applicationEvent);
             } else if (applicationEvent instanceof BeforeSpaceModeChangeEvent) {
+                publishEvent(applicationEvent);
                 BeforeSpaceModeChangeEvent spEvent = (BeforeSpaceModeChangeEvent) applicationEvent;
                 if (!spEvent.isPrimary()) {
                     if (gigaSpace != null) {
@@ -167,6 +172,10 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
                         closeApplicationContext();
                     }
                 }
+            }
+        } else {
+            if (applicationEvent instanceof AbstractSpaceModeChangeEvent) {
+                publishEvent(applicationEvent);
             }
         }
     }
@@ -214,5 +223,30 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
                 applicationContext = null;
             }
         }
+    }
+
+    /**
+     * A hack to only send the application event on the child application context we are loading, without
+     * propogating it to the parent application context (when using {@link ApplicationContext#publishEvent(org.springframework.context.ApplicationEvent)}
+     * which will create a recursive event calling.
+     */
+    protected void publishEvent(ApplicationEvent applicationEvent) {
+        if (applicationContext == null) {
+            return;
+        }
+        ApplicationEventMulticaster eventMulticaster;
+        try {
+            MethodInvoker methodInvoker = new MethodInvoker();
+            methodInvoker.setTargetClass(AbstractApplicationContext.class);
+            methodInvoker.setTargetMethod("getApplicationEventMulticaster");
+            methodInvoker.setTargetObject(applicationContext);
+            methodInvoker.setArguments(null);
+            methodInvoker.prepare();
+            eventMulticaster = (ApplicationEventMulticaster) methodInvoker.invoke();
+        } catch (Exception e) {
+            logger.warn("Failed to get application event multicaster to publish event to child application context", e);
+            return;
+        }
+        eventMulticaster.multicastEvent(applicationEvent);
     }
 }

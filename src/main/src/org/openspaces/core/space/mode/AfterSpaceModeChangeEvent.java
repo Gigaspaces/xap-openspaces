@@ -21,7 +21,7 @@ import com.j_spaces.core.IJSpace;
 
 /**
  * A Space mode event that is raised after the space mode was changed to the space mode reflected in
- * this event.
+ * this event. Note, this event might be called sevearl times with the same space mode.
  * 
  * @author kimchy
  */
@@ -39,5 +39,9 @@ public class AfterSpaceModeChangeEvent extends AbstractSpaceModeChangeEvent {
      */
     public AfterSpaceModeChangeEvent(IJSpace space, SpaceMode spaceMode) {
         super(space, spaceMode);
+    }
+
+    public String toString() {
+        return "AfterSpaceModeChangeEvent[" + getSpaceMode() + "], Space [" + getSpace() + "]";
     }
 }
