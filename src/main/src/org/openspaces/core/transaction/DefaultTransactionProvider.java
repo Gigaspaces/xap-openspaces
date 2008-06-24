@@ -29,6 +29,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -125,6 +126,14 @@ public class DefaultTransactionProvider implements TransactionProvider {
                 throw new TransactionDataAccessException("Failed to get local transaction manager for space [" + space + "]", e);
             }
             XAResource xaResourceSpace = new XAResourceImpl(localTxManager, space);
+            // set the default timoeut to be the one specified on the JTA transaction manager
+            if (jtaTransactionManager.getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
+                try {
+                    xaResourceSpace.setTransactionTimeout(jtaTransactionManager.getDefaultTimeout() * 1000);
+                } catch (XAException e) {
+                    throw new TransactionDataAccessException("Faield to set defautl timeout of [" + (jtaTransactionManager.getDefaultTimeout() * 1000) + "] on xa resource", e);
+                }
+            }
 
             // enlist the Space xa resource with the current JTA transaction
             // we rely on the fact that this call will start the XA transaction
