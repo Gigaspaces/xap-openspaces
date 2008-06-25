@@ -54,6 +54,8 @@ public class ClusterInfo implements Cloneable {
 
     private Integer numberOfBackups;
 
+    private String name;
+
     /**
      * Constructs a new cluser infor with null values on all the fields
      */
@@ -164,6 +166,14 @@ public class ClusterInfo implements Cloneable {
         this.numberOfBackups = numberOfBackups;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public ClusterInfo copy() {
         ClusterInfo clusterInfo = new ClusterInfo();
         clusterInfo.setBackupId(getBackupId());
@@ -171,11 +181,13 @@ public class ClusterInfo implements Cloneable {
         clusterInfo.setNumberOfBackups(getNumberOfBackups());
         clusterInfo.setNumberOfInstances(getNumberOfInstances());
         clusterInfo.setSchema(getSchema());
+        clusterInfo.setName(getName());
         return clusterInfo;
     }
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
+        sb.append("name[").append(name).append("] ");
         sb.append("schema[").append(schema).append("] ");
         sb.append("numberOfInstances[").append(numberOfInstances).append("] ");
         sb.append("numberOfBackups[").append(numberOfBackups).append("] ");
