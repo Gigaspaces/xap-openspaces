@@ -39,6 +39,9 @@ import java.util.Properties;
  * <li>${clusterInfo.instanceId} : Maps to {@link ClusterInfo#getInstanceId()}</li>
  * <li>${clusterInfo.backupId} : Maps to {@link ClusterInfo#getBackupId()}</li>
  * <li>${clusterInfo.schema} : Maps to {@link ClusterInfo#getSchema()}</li>
+ * <li>${clusterInfo.runningNumber} : Maps to {@link ClusterInfo#getRunningNumer()}</li>
+ * <li>${clusterInfo.suffix} : Maps to {@link ClusterInfo#getSuffix()}</li>
+ * <li>${clusterInfo.name} : Maps to {@link ClusterInfo#getName()}</li>
  * </ul>
  *
  * <p>If the cluster info parameter is not set (has <code>null</code> value) an empty string will be used.
@@ -55,6 +58,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
     public static final String SCHEMA_PROP = "clusterInfo.schema";
     public static final String RUNNING_NUMBER_PROP = "clusterInfo.runningNumber";
     public static final String SUFFIX_PROP = "clusterInfo.suffix";
+    public static final String NAME_PROP = "clusterInfo.name";
 
     public static Properties createProperties(ClusterInfo clusterInfo) {
         Properties properties = new Properties();
@@ -66,6 +70,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
             properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
             properties.setProperty(RUNNING_NUMBER_PROP, toPropertyValue(clusterInfo.getRunningNumer()));
             properties.setProperty(SUFFIX_PROP, toPropertyValue(clusterInfo.getSuffix()));
+            properties.setProperty(NAME_PROP, toPropertyValue(clusterInfo.getName()));
         } else {
             properties.setProperty(NUMBER_OF_INSTANCES_PROP, "");
             properties.setProperty(NUMBER_OF_BACKUPS_PROP, "");
@@ -74,6 +79,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
             properties.setProperty(SCHEMA_PROP, "");
             properties.setProperty(RUNNING_NUMBER_PROP, "");
             properties.setProperty(SUFFIX_PROP, "");
+            properties.setProperty(NAME_PROP, "");
         }
         return properties;
     }
@@ -85,7 +91,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
         return value.toString();
     }
 
-    
+
     private Properties properties;
 
     public ClusterInfoPropertyPlaceholderConfigurer() {
