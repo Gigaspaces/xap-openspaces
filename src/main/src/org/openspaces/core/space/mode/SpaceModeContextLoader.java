@@ -194,7 +194,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
         applicationContext = new ResourceApplicationContext(new Resource[]{location}, parentApplicationContext);
         // add config information if provided
         if (beanLevelProperties != null) {
-            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties));
+            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, clusterInfo));
             applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
         }
         if (clusterInfo != null) {

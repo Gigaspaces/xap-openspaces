@@ -185,8 +185,8 @@ public class ClusterInfo implements Cloneable {
      * 2. NumberOfInstances=2, numberOfBackups=0, instanceId=2: 1.
      * 3. NumberOfInstances=2, numberOfBackups=1, instanceId=1, backupId=0: 0.
      * 4. NumberOfInstances=2, numberOfBackups=1, instanceId=1, backupId=1: 1.
-     * 4. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=0: 2.
-     * 5. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=1: 3.
+     * 5. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=0: 2.
+     * 6. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=1: 3.
      */
     public int getRunningNumer() {
         if (getNumberOfInstances() == null || getNumberOfInstances() == 0) {
