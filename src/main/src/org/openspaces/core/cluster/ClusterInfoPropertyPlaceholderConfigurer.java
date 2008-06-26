@@ -53,6 +53,8 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
     public static final String INSTANCE_ID_PROP = "clusterInfo.instanceId";
     public static final String BACKUP_ID_PROP = "clusterInfo.backupId";
     public static final String SCHEMA_PROP = "clusterInfo.schema";
+    public static final String RUNNING_NUMBER_PROP = "clusterInfo.runningNumber";
+    public static final String SUFFIX_PROP = "clusterInfo.suffix";
 
     public static Properties createProperties(ClusterInfo clusterInfo) {
         Properties properties = new Properties();
@@ -62,12 +64,16 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
             properties.setProperty(INSTANCE_ID_PROP, toPropertyValue(clusterInfo.getInstanceId()));
             properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo.getBackupId()));
             properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
+            properties.setProperty(RUNNING_NUMBER_PROP, toPropertyValue(clusterInfo.getRunningNumer()));
+            properties.setProperty(SUFFIX_PROP, toPropertyValue(clusterInfo.getSuffix()));
         } else {
             properties.setProperty(NUMBER_OF_INSTANCES_PROP, "");
             properties.setProperty(NUMBER_OF_BACKUPS_PROP, "");
             properties.setProperty(INSTANCE_ID_PROP, "");
             properties.setProperty(BACKUP_ID_PROP, "");
             properties.setProperty(SCHEMA_PROP, "");
+            properties.setProperty(RUNNING_NUMBER_PROP, "");
+            properties.setProperty(SUFFIX_PROP, "");
         }
         return properties;
     }

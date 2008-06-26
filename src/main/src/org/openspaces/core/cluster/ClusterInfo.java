@@ -166,12 +166,54 @@ public class ClusterInfo implements Cloneable {
         this.numberOfBackups = numberOfBackups;
     }
 
+    /**
+     * Returns the logical name of the cluster.
+     */
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Returns a "running" number represnted by the cluster info.
+     * Some examples:
+     *
+     * 1. NumberOfInstances=2, numberOfBackups=0, instanceId=1: 0.
+     * 2. NumberOfInstances=2, numberOfBackups=0, instanceId=2: 1.
+     * 3. NumberOfInstances=2, numberOfBackups=1, instanceId=1, backupId=0: 0.
+     * 4. NumberOfInstances=2, numberOfBackups=1, instanceId=1, backupId=1: 1.
+     * 4. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=0: 2.
+     * 5. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=1: 3.
+     */
+    public int getRunningNumer() {
+        if (getNumberOfInstances() == null || getNumberOfInstances() == 0) {
+            return 0;
+        }
+        if (getInstanceId() == null || getInstanceId() == 0) {
+            return 0;
+        }
+        if (getNumberOfBackups() == null || getNumberOfBackups() == 0) {
+            return getInstanceId() - 1;
+        }
+        return ((getInstanceId() - 1) * getNumberOfBackups()) + (getBackupId() == null ? 0 : getBackupId());
+    }
+
+    /**
+     * Returns a String suffix that can be used to descriminate instances. Uses [instanceId]_[backupId] if there
+     * is a backupId. If there is none, uses [instanceId].
+     */
+    public String getSuffix() {
+        StringBuilder retVal = new StringBuilder();
+        if (getInstanceId() != null) {
+            retVal.append(getInstanceId().toString());
+        }
+        if (getBackupId() != null) {
+            retVal.append("_").append(getBackupId().toString());
+        }
+        return retVal.toString();
     }
 
     public ClusterInfo copy() {
