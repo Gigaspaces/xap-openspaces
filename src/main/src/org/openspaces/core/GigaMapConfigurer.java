@@ -29,8 +29,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IJSpace space = urlSpaceConfigurer.createSpace();
- * IMap map = new MapConfigurer(space).localCachePutFirst(true).createMap();
+ * IJSpace space = urlSpaceConfigurer.space();
+ * IMap map = new MapConfigurer(space).localCachePutFirst(true).map();
  *
  * GigaMap gigaMap = new GigaMapConfigurer(map).gigaMap();
  * ...
