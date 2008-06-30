@@ -57,7 +57,7 @@ public class ClusterInfo implements Cloneable {
     private String name;
 
     /**
-     * Constructs a new cluser infor with null values on all the fields
+     * Constructs a new cluster info with null values on all the fields
      */
     public ClusterInfo() {
 
@@ -178,7 +178,7 @@ public class ClusterInfo implements Cloneable {
     }
 
     /**
-     * Returns a "running" number represnted by the cluster info.
+     * Returns a "running" number represented by the cluster info.
      * Some examples:
      *
      * 1. NumberOfInstances=2, numberOfBackups=0, instanceId=1: 0.
@@ -202,14 +202,14 @@ public class ClusterInfo implements Cloneable {
     }
 
     /**
-     * Returns a "runing" number: {@link #getRunningNumber()} + 1.
+     * Returns a "running" number: {@link #getRunningNumber()} + 1.
      */
     public int getRunningNumberOffset1() {
         return getRunningNumber() + 1;
     }
 
     /**
-     * Returns a String suffix that can be used to descriminate instances. Uses [instanceId]_[backupId] if there
+     * Returns a String suffix that can be used to discriminate instances. Uses [instanceId]_[backupId] if there
      * is a backupId. If there is none, uses [instanceId].
      */
     public String getSuffix() {

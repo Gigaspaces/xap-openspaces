@@ -29,7 +29,7 @@ import com.j_spaces.map.IMap;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IJSpace space = urlSpaceConfigurer.createSpace();
+ * IJSpace space = urlSpaceConfigurer.space();
  *
  * IMap map = new MapConfigurer(space).localCachePutFirst(true).createMap();
  * ...
@@ -73,7 +73,7 @@ public class MapConfigurer {
     }
 
     /**
-     * If no local cache proeprties are set, will mark this map to use local cache.
+     * If no local cache properties are set, will mark this map to use local cache.
      */
     public void useLocalCache() {
         if (localCacheSupport == null) {

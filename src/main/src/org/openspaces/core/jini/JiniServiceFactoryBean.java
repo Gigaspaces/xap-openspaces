@@ -43,7 +43,7 @@ import java.lang.reflect.InvocationTargetException;
  * <p>The factoryBean can be configured to do a lookup each time before returning the object type by
  * setting the "singleton" property to false.
  *
- * <p>The service factory can be configurted to return a smart proxy that will try and perfrom another
+ * <p>The service factory can be configured to return a smart proxy that will try and perform another
  * lookup in case of an invocation exception (see {@link #setSmartProxy(boolean)}. The retry count
  * can be controlled using {@link #setRetryCountOnFailure(int)}.
  *

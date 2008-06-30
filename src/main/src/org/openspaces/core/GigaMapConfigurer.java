@@ -22,7 +22,7 @@ import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * A simple programmatic configurer for {@link org.openspaces.core.GigaMap} instnace wrapping
+ * A simple programmatic configurer for {@link org.openspaces.core.GigaMap} instance wrapping
  * the {@link GigaMapFactoryBean}.
  *
  * <p>Usage example:

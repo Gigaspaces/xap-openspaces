@@ -24,7 +24,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
- * A lock handle allowing to perform map operations when the key is locked. Intenally
+ * A lock handle allowing to perform map operations when the key is locked. Internally
  * holds the transaction representing the lock and it can be accessed to be passed to
  * any operation that needs to be performed under the same lock.
  *

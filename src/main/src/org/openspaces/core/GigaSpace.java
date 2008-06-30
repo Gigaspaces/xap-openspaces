@@ -86,7 +86,7 @@ public interface GigaSpace {
     Transaction getCurrentTransaction();
 
     /**
-     * Returns the exception translator associated with this GigaSpace instnace.
+     * Returns the exception translator associated with this GigaSpace instance.
      */
     ExceptionTranslator getExceptionTranslator();
 
