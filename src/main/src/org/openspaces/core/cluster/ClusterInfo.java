@@ -188,7 +188,7 @@ public class ClusterInfo implements Cloneable {
      * 5. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=0: 2.
      * 6. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=1: 3.
      */
-    public int getRunningNumer() {
+    public int getRunningNumber() {
         if (getNumberOfInstances() == null || getNumberOfInstances() == 0) {
             return 0;
         }
@@ -199,6 +199,13 @@ public class ClusterInfo implements Cloneable {
             return getInstanceId() - 1;
         }
         return ((getInstanceId() - 1) * getNumberOfBackups()) + (getBackupId() == null ? 0 : getBackupId());
+    }
+
+    /**
+     * Returns a "runing" number: {@link #getRunningNumber()} + 1.
+     */
+    public int getRunningNumberOffset1() {
+        return getRunningNumber() + 1;
     }
 
     /**
