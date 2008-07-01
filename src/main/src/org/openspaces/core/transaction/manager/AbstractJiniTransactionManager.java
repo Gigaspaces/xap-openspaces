@@ -45,6 +45,7 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
+import org.springframework.transaction.support.SmartTransactionObject;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
@@ -380,10 +381,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     /**
      * Jini Transaction object. Used as transaction object by GigaSpaceTransactionManager.
-     *
-     * TODO: can SmartTransactionObject be implemented?
      */
-    static class JiniTransactionObject {
+    static class JiniTransactionObject implements SmartTransactionObject {
 
         private JiniTransactionHolder jiniHolder;
 
