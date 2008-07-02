@@ -70,7 +70,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
             properties.setProperty(BACKUP_ID_PROP, toPropertyValue(clusterInfo.getBackupId()));
             properties.setProperty(SCHEMA_PROP, toPropertyValue(clusterInfo.getSchema()));
             properties.setProperty(RUNNING_NUMBER_PROP, toPropertyValue(clusterInfo.getRunningNumber()));
-            properties.setProperty(RUNNING_NUMBER_PROP, toPropertyValue(clusterInfo.getRunningNumberOffset1()));
+            properties.setProperty(RUNNING_NUMBER_OFFEST_1_PROP, toPropertyValue(clusterInfo.getRunningNumberOffset1()));
             properties.setProperty(SUFFIX_PROP, toPropertyValue(clusterInfo.getSuffix()));
             properties.setProperty(NAME_PROP, toPropertyValue(clusterInfo.getName()));
         } else {
