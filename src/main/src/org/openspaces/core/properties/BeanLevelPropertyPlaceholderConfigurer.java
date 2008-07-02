@@ -49,6 +49,10 @@ public class BeanLevelPropertyPlaceholderConfigurer extends PropertyPlaceholderC
 
     private ClusterInfo clusterInfo;
 
+    public BeanLevelPropertyPlaceholderConfigurer(BeanLevelProperties beanLevelProperties) {
+        init(beanLevelProperties);
+    }
+
     public BeanLevelPropertyPlaceholderConfigurer(BeanLevelProperties beanLevelProperties, ClusterInfo clusterInfo) {
         init(beanLevelProperties);
         this.clusterInfo = clusterInfo;
