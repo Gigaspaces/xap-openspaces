@@ -26,6 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
+import org.openspaces.core.space.mode.SpaceAfterBackupListener;
+import org.openspaces.core.space.mode.SpaceAfterPrimaryListener;
+import org.openspaces.core.space.mode.SpaceBeforeBackupListener;
+import org.openspaces.core.space.mode.SpaceBeforePrimaryListener;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -40,6 +44,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.util.StringUtils;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
@@ -211,10 +217,19 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             if (applicationContext != null) {
                 applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, currentSpaceMode));
                 applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, currentSpaceMode));
+                
+                if (currentSpaceMode == SpaceMode.BACKUP) {
+                    fireSpaceBeforeBackupEvent();
+                    fireSpaceAfterBackupEvent();
+                }
+                else if (currentSpaceMode == SpaceMode.PRIMARY) {
+                    fireSpaceBeforePrimaryEvent();
+                    fireSpaceAfterPrimaryEvent();
+                }
             }
         }
     }
-
+    
     /**
      * Spring factory bean returning the {@link IJSpace} created during the bean initialization
      * ({@link #afterPropertiesSet()}).
@@ -286,6 +301,58 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         }
         return !SpaceUtils.isRemoteProtocol(space);
     }
+    
+    /**
+     * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode.BACKUP} to all beans in the application context
+     * that implement the {@link SpaceBeforeBackupListener} interface.
+     */
+    protected void fireSpaceBeforeBackupEvent() {
+        if (applicationContext != null) {
+            Map<String, SpaceBeforeBackupListener> beans = applicationContext.getBeansOfType(SpaceBeforeBackupListener.class);
+            for (SpaceBeforeBackupListener listener : beans.values()) {
+                listener.onBeforeBackup(new BeforeSpaceModeChangeEvent(space, SpaceMode.BACKUP));
+            }
+        }
+    }
+    
+    /**
+     * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode.BACKUP} to all beans in the application context
+     * that implement the {@link SpaceAfterBackupListener} interface.
+     */
+    protected void fireSpaceAfterBackupEvent() {
+        if (applicationContext != null) {
+            Map<String, SpaceAfterBackupListener> beans = applicationContext.getBeansOfType(SpaceAfterBackupListener.class);
+            for (SpaceAfterBackupListener listener : beans.values()) {
+                listener.onAfterBackup(new AfterSpaceModeChangeEvent(space, SpaceMode.BACKUP));
+            }
+        }
+     }
+    
+    /**
+     * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode.PRIMARY} to all beans in the application context
+     * that implement the {@link SpaceBeforePrimaryListener} interface.
+     */
+    protected void fireSpaceBeforePrimaryEvent() {
+        if (applicationContext != null) {
+            Map<String, SpaceBeforePrimaryListener> beans = applicationContext.getBeansOfType(SpaceBeforePrimaryListener.class);
+            for (SpaceBeforePrimaryListener listener : beans.values()) {
+                listener.onBeforePrimary(new BeforeSpaceModeChangeEvent(space, SpaceMode.PRIMARY));
+            }
+        }
+    }
+    
+    /**
+     * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode.PRIMARY} to all beans in the application context
+     * that implement the {@link SpaceAfterPrimaryListener} interface.
+     */
+    protected void fireSpaceAfterPrimaryEvent() {
+        if (applicationContext != null) {
+            Map<String, SpaceAfterPrimaryListener> beans = applicationContext.getBeansOfType(SpaceAfterPrimaryListener.class);
+            for (SpaceAfterPrimaryListener listener : beans.values()) {
+                listener.onAfterPrimary(new AfterSpaceModeChangeEvent(space, SpaceMode.PRIMARY));
+            }
+        }
+    }
 
     private class PrimaryBackupListener implements ISpaceModeListener {
 
@@ -296,6 +363,13 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, spaceMode));
+                
+                if (spaceMode == SpaceMode.BACKUP) {
+                    fireSpaceBeforeBackupEvent();
+                }
+                else if (spaceMode == SpaceMode.PRIMARY) {
+                    fireSpaceBeforePrimaryEvent();
+                }
             }
             if (primaryBackupListener != null) {
                 primaryBackupListener.beforeSpaceModeChange(spaceMode);
@@ -309,6 +383,13 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, spaceMode));
+                
+                if (spaceMode == SpaceMode.BACKUP) {
+                    fireSpaceAfterBackupEvent();
+                }
+                else if (spaceMode == SpaceMode.PRIMARY) {
+                    fireSpaceAfterPrimaryEvent();
+                }
             }
             if (primaryBackupListener != null) {
                 primaryBackupListener.afterSpaceModeChange(spaceMode);
