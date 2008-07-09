@@ -131,7 +131,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
                 try {
                     xaResourceSpace.setTransactionTimeout(jtaTransactionManager.getDefaultTimeout() * 1000);
                 } catch (XAException e) {
-                    throw new TransactionDataAccessException("Failed to set defautl timeout of [" + (jtaTransactionManager.getDefaultTimeout() * 1000) + "] on xa resource", e);
+                    throw new TransactionDataAccessException("Failed to set default timeout of [" + (jtaTransactionManager.getDefaultTimeout() * 1000) + "] on xa resource", e);
                 }
             }
 
