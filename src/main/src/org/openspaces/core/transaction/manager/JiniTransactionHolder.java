@@ -34,6 +34,10 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
 
     private LeaseRenewalManager leaseRenewalManager;
 
+    private boolean disableRollback = false;
+
+    private boolean disableCommit = false;
+
     /**
      * Constructs a new jini transaction holder.
      *
@@ -45,6 +49,22 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
         this.txCreated = txCreated;
         this.isolationLevel = isolationLevel;
         this.leaseRenewalManager = leaseRenewalManager;
+    }
+
+    public boolean isDisableRollback() {
+        return disableRollback;
+    }
+
+    public void setDisableRollback(boolean disableRollback) {
+        this.disableRollback = disableRollback;
+    }
+
+    public boolean isDisableCommit() {
+        return disableCommit;
+    }
+
+    public void setDisableCommit(boolean disableCommit) {
+        this.disableCommit = disableCommit;
     }
 
     /**

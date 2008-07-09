@@ -22,6 +22,7 @@ import com.j_spaces.core.client.LocalTransactionManager;
 import com.j_spaces.core.client.XAResourceImpl;
 import net.jini.core.transaction.Transaction;
 import org.openspaces.core.TransactionDataAccessException;
+import org.openspaces.core.transaction.manager.ExistingJiniTransactionManager;
 import org.openspaces.core.transaction.manager.JiniTransactionHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -101,6 +102,11 @@ public class DefaultTransactionProvider implements TransactionProvider {
             return null;
         }
 
+        JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(ExistingJiniTransactionManager.CONTEXT);
+        if (txObject != null && txObject.hasTransaction()) {
+            return txObject.getTxCreated();
+        }
+        
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
             return null;
         }
@@ -158,7 +164,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
             return null;
         }
 
-        JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
+        txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
         if (txObject != null && txObject.hasTransaction()) {
             return txObject.getTxCreated();
         }

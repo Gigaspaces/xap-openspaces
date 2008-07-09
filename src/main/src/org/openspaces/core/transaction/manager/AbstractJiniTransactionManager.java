@@ -174,8 +174,11 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         // txObject.setJiniHolder(transactionalContext);
 
         // set the jini holder is one is found
-        if (TransactionSynchronizationManager.hasResource(transactionalContext)) {
-            JiniTransactionHolder jiniHolder = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(transactionalContext);
+        JiniTransactionHolder jiniHolder = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(transactionalContext);
+        if (jiniHolder == null) {
+            jiniHolder = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(ExistingJiniTransactionManager.CONTEXT);
+        }
+        if (jiniHolder != null) {
             if (logger.isTraceEnabled()) {
                 logger.trace(logMessage("Found thread-bound tx data [" + jiniHolder + "] for Jini resource ["
                         + transactionalContext + "]"));
@@ -258,6 +261,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
+        if (txObject.getJiniHolder().isDisableCommit()) {
+            logger.trace(logMessage("Disabling commit on Jini transaction [" + txObject.toString() + "]"));
+            return;
+        }
         if (logger.isTraceEnabled())
             logger.trace(logMessage("Committing Jini transaction [" + txObject.toString() + "]"));
         try {
@@ -284,6 +291,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
+        if (txObject.getJiniHolder().isDisableRollback()) {
+            logger.trace(logMessage("Disabling rollback on Jini transaction [" + txObject.toString() + "]"));
+            return;
+        }
         if (logger.isTraceEnabled())
             logger.trace(logMessage("Rolling back Jini transaction [" + txObject + "]"));
         try {
