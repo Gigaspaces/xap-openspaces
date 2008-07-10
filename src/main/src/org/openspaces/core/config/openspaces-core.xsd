@@ -10,6 +10,14 @@
 
     <xsd:import namespace="http://www.springframework.org/schema/beans"/>
     <xsd:import namespace="http://www.springframework.org/schema/tool"/>
+    
+    <xsd:element name="annotation-support">
+        <xsd:annotation>
+            <xsd:documentation>
+                Allows to use different annotation based injection and configuration.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:element name="space">
         <xsd:annotation>

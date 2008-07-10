@@ -16,6 +16,7 @@
 
 package org.openspaces.core.config;
 
+import org.openspaces.core.config.AnnotationSupportBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -53,5 +54,6 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("map", new MapBeanDefinitionParser());
         registerBeanDefinitionParser("local-cache-support", new MapLocalCacheSettingsBeanDefinitionParser());
         registerBeanDefinitionParser("giga-map", new GigaMapBeanDefinitionParser());
+        registerBeanDefinitionParser("annotation-support", new AnnotationSupportBeanDefinitionParser());
     }
 }
