@@ -168,7 +168,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                     ref.set(method);
                 }
             }
-        });
+        }, new UniqueMethodFilter());
         return ref.get();
     }
 
@@ -183,7 +183,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                     ref.set(method);
                 }
             }
-        });
+        }, new UniqueMethodFilter());
         return ref.get();
     }
 
