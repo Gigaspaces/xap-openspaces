@@ -22,7 +22,9 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -151,7 +153,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                     addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_REMOVE);
                 }
             }
-        });
+        }, new UniqueMethodFilter());
         return invokerLookup;
     }
 
@@ -364,5 +366,18 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
      */
     public void setAfterRemoveByLease(String afterRemoveByLease) {
         this.afterRemoveByLease = afterRemoveByLease;
+    }
+
+    private class UniqueMethodFilter implements ReflectionUtils.MethodFilter {
+
+        private Set<String> processedMethods = new HashSet<String>();
+
+        public boolean matches(Method method) {
+            if (processedMethods.contains(method.getName())) {
+                return false;
+            }
+            processedMethods.add(method.getName());
+            return true;
+        }
     }
 }
