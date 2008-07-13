@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.PostBackup;
@@ -47,6 +49,9 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
      * Maps the annotation to the list of beans' methods to invoke. 
      */
     protected Hashtable<Class<?>, HashSet<RegistryEntry>> registry = new Hashtable<Class<?>, HashSet<RegistryEntry>>();
+    
+    
+    private static Log logger = LogFactory.getLog(ModeAnnotationRegistry.class);
     
     /**
      * Registers the bean as a listener for a space mode event specified by the annotation. When a event
@@ -148,12 +153,12 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
                     } else {
                         registryEntry.method.invoke(registryEntry.object, event);
                     }
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    logger.error("Target invocation method threw an exception. Bean: " + 
+                            registryEntry.object + ", Method: " + registryEntry.method, e);
+                } catch (Exception e) {
+                    logger.error("Failed to invoke target invocation method. Bean: " + 
+                            registryEntry.object + ", Method: " + registryEntry.method, e);
                 }
             }
         }
