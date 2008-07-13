@@ -16,15 +16,15 @@
 
 package org.openspaces.core.space.mode;
 
+import com.gigaspaces.cluster.activeelection.SpaceMode;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.gigaspaces.cluster.activeelection.SpaceMode;
-
 /**
- * Allows a bean's method to be invoked after a space changes its mode to {@link SpaceMode.PRIMARY}.
+ * Allows a bean's method to be invoked after a space changes its mode to {@link SpaceMode#PRIMARY}.
  * The target invocation method may have no parameters or a single parameter of type {@link AfterSpaceModeChangeEvent}.
  * 
  * @author shaiw

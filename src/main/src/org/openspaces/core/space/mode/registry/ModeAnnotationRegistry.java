@@ -1,24 +1,14 @@
 package org.openspaces.core.space.mode.registry;
 
+import com.gigaspaces.cluster.activeelection.SpaceMode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openspaces.core.space.mode.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Hashtable;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.PostBackup;
-import org.openspaces.core.space.mode.PostPrimary;
-import org.openspaces.core.space.mode.PreBackup;
-import org.openspaces.core.space.mode.PrePrimary;
-import org.openspaces.core.space.mode.SpaceAfterBackupListener;
-import org.openspaces.core.space.mode.SpaceAfterPrimaryListener;
-import org.openspaces.core.space.mode.SpaceBeforeBackupListener;
-import org.openspaces.core.space.mode.SpaceBeforePrimaryListener;
-
-import com.gigaspaces.cluster.activeelection.SpaceMode;
 
 /**
  * Receives space mode change events and routs them to beans that use annotations to register as listeners on
@@ -115,28 +105,28 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
     }
     
     /**
-     * Invoked before a space changes its mode to {@link SpaceMode.PRIMARY}.
+     * Invoked before a space changes its mode to {@link SpaceMode#PRIMARY}.
      */
     public void onBeforePrimary(BeforeSpaceModeChangeEvent event) {
         fireEvent(registry.get(PrePrimary.class), event);
     }
 
     /**
-     * Invoked after a space changes its mode to {@link SpaceMode.PRIMARY}.
+     * Invoked after a space changes its mode to {@link SpaceMode#PRIMARY}.
      */
     public void onAfterPrimary(AfterSpaceModeChangeEvent event) {
         fireEvent(registry.get(PostPrimary.class), event);
     }
 
     /**
-     * Invoked before a space changes its mode to {@link SpaceMode.BACKUP}.
+     * Invoked before a space changes its mode to {@link SpaceMode#BACKUP}.
      */
     public void onBeforeBackup(BeforeSpaceModeChangeEvent event) {
         fireEvent(registry.get(PreBackup.class), event);
     }
 
     /**
-     * Invoked after a space changes its mode to {@link SpaceMode.BACKUP}.
+     * Invoked after a space changes its mode to {@link SpaceMode#BACKUP}.
      */
     public void onAfterBackup(AfterSpaceModeChangeEvent event) {
         fireEvent(registry.get(PostBackup.class), event);
@@ -152,7 +142,7 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
             for (RegistryEntry registryEntry : entries) {
                 try {
                     if (registryEntry.method.getParameterTypes().length == 0) {
-                        registryEntry.method.invoke(registryEntry.object, null);
+                        registryEntry.method.invoke(registryEntry.object);
                     } else {
                         registryEntry.method.invoke(registryEntry.object, event);
                     }
