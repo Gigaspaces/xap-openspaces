@@ -36,16 +36,6 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
                                                SpaceAfterBackupListener {
 
     /**
-     * Holds the valid parameter types of a target listener method. 
-     */
-    protected static final HashSet<Class<?>> validTypes = new HashSet<Class<?>>(); 
-        
-    static {
-        validTypes.add(BeforeSpaceModeChangeEvent.class);
-        validTypes.add(AfterSpaceModeChangeEvent.class);
-    }
-    
-    /**
      * Maps the annotation to the list of beans' methods to invoke. 
      */
     protected Hashtable<Class<?>, HashSet<RegistryEntry>> registry = new Hashtable<Class<?>, HashSet<RegistryEntry>>();
@@ -54,13 +44,14 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
     private static Log logger = LogFactory.getLog(ModeAnnotationRegistry.class);
     
     /**
-     * Registers the bean as a listener for a space mode event specified by the annotation. When a event
+     * Registers the bean as a listener for a space mode event specified by the annotation. When an event
      * fires the specified bean method will be invoked.
      * 
-     * The method may have no parameters of a single parameter of type {@link BeforeSpaceModeChangeEvent}
-     * or {@link AfterSpaceModeChangeEvent}.
+     * If the annotation is {@link PreBackup} or {@link PrePrimary} the target invocation method may have no parameters
+     * or a single parameter of type {@link BeforeSpaceModeChangeEvent}. If the annotation is {@link PostBackup} or {@link PostPrimary}
+     * the target invocation method may have no parameters or a single parameter of type {@link AfterSpaceModeChangeEvent}.
      *  
-     * @param annotation The space mode annotation used to register the bean.
+     * @param annotation The space mode annotation that specifies the event the bean is registered to.
      * @param object The bean instance.
      * @param method The bean's method to invoke when the event fires.
      * @throws IllegalArgumentException When the specified method has more than one parameter, or when the
@@ -69,22 +60,35 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
      */
     public void registerAnnotation(Class<?> annotation, Object object, Method method) throws IllegalArgumentException {
         
+        // check that the parameters are non-null.
         if (annotation == null || object == null || method == null) {
-            return;
+            throw new IllegalArgumentException("Illegal null argument in parameter: " +
+                    annotation == null ? "annotation" : object == null ? "object" : "method");
         }
         
-        // check that the specified method has no more than 1 parameter; when it
-        // has 1 parameter, checks that it is of the mode change event type.
+        // check that the specified method has no more than one parameter
         Class<?>[] types = method.getParameterTypes();
         if (types.length > 1) {
             throw new IllegalArgumentException("The specified method has more than one parameter. A valid" +
-            		" method may have no parameters or a single parameter of the types: " + validTypes);
+                    " method may have no parameters or a single parameter of type " + BeforeSpaceModeChangeEvent.class.getName() +
+                    " or " + AfterSpaceModeChangeEvent.class.getName());
         }
-        else if (types.length == 1) {
-            if (!validTypes.contains(types[0])) {
-                throw new IllegalArgumentException("The specified method's parameter is of an illegal type. " +
-               		"A valid method may have no parameters or a single parameter of the types: " + validTypes);
+        
+        // checks that the annotation is legal and that the method parameter is valid for the annotation type.
+        if (annotation.equals(PreBackup.class) || annotation.equals(PrePrimary.class)) {
+            if (types.length == 1 && !types[0].equals(BeforeSpaceModeChangeEvent.class)) {
+                throw new IllegalArgumentException("Illegal target invocation method parameter type: " + types[0].getName() +
+                        ". A valid target invocation method for annotation " + annotation.getSimpleName() + " may have no parameters" +
+                        		" or a single parameter of type " + BeforeSpaceModeChangeEvent.class.getName());
             }
+        } else if (annotation.equals(PostBackup.class) || annotation.equals(PostPrimary.class)) {
+            if (types.length == 1 && !types[0].equals(AfterSpaceModeChangeEvent.class)) {
+                throw new IllegalArgumentException("Illegal target invocation method parameter type: " + types[0].getName() +
+                        ". A valid target invocation method for annotation " + annotation.getSimpleName() + " may have no parameters" +
+                                " or a single parameter of type " + AfterSpaceModeChangeEvent.class.getName());
+            }
+        } else {
+            throw new IllegalArgumentException("The specified annotation is not a space mode annotation: " + annotation);
         }
         
         // check that the supplied method belongs to the passed object
@@ -95,7 +99,6 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
             throw new IllegalArgumentException("Failed to validate method: " + method, e);
         }
         if (!objMethod.equals(method)) {
-            // 
             throw new IllegalArgumentException("The specified bean is not the one declaring the" +
             		" specified method. Bean: " + object + ", Method: " + method);
         }

@@ -25,6 +25,7 @@ import com.gigaspaces.cluster.activeelection.SpaceMode;
 
 /**
  * Allows a bean's method to be invoked before a space changes its mode to {@link SpaceMode.BACKUP}.
+ * The target invocation method may have no parameters or a single parameter of type {@link BeforeSpaceModeChangeEvent}.
  * 
  * @author shaiw
  */
