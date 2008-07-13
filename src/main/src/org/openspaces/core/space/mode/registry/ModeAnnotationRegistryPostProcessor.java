@@ -18,6 +18,10 @@ package org.openspaces.core.space.mode.registry;
 
 import java.lang.reflect.Method;
 
+import org.openspaces.core.space.mode.PostBackup;
+import org.openspaces.core.space.mode.PostPrimary;
+import org.openspaces.core.space.mode.PreBackup;
+import org.openspaces.core.space.mode.PrePrimary;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -25,7 +29,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * 
+ * Scans the bean's methods for the annotations {@link PreBackup}, {@link PostBackup}, {@link PrePrimary}
+ * and {@link PostPrimary} and registers them in the {@link ModeAnnotationRegistry}.
  *
  * @author shaiw
  */

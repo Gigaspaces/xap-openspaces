@@ -20,10 +20,10 @@ import java.util.HashMap;
 
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.registry.PostBackup;
-import org.openspaces.core.space.mode.registry.PostPrimary;
-import org.openspaces.core.space.mode.registry.PreBackup;
-import org.openspaces.core.space.mode.registry.PrePrimary;
+import org.openspaces.core.space.mode.PostBackup;
+import org.openspaces.core.space.mode.PostPrimary;
+import org.openspaces.core.space.mode.PreBackup;
+import org.openspaces.core.space.mode.PrePrimary;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 

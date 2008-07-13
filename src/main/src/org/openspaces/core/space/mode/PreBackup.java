@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.openspaces.core.space.mode.registry;
+package org.openspaces.core.space.mode;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.gigaspaces.cluster.activeelection.SpaceMode;
 
+/**
+ * Allows a bean's method to be invoked before a space changes its mode to {@link SpaceMode.BACKUP}.
+ * 
+ * @author shaiw
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PostPrimary {
+public @interface PreBackup {
     
 }

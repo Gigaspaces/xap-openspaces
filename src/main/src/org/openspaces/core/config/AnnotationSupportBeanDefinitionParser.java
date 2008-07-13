@@ -25,6 +25,11 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+/**
+ * Registers the {@link ModeAnnotationRegistry} and {@link ModeAnnotationRegistryPostProcessor}.
+ *  
+ * @author shaiw
+ */
 public class AnnotationSupportBeanDefinitionParser implements BeanDefinitionParser {
 
     public BeanDefinition parse(Element element, ParserContext parserContext) {
