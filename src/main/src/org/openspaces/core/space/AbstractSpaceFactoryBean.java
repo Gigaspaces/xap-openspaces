@@ -21,6 +21,7 @@ import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.MemberAliveIndicator;
@@ -193,6 +194,9 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
             }
         }
         try {
+            if (space instanceof ISpaceLocalCache) {
+                ((ISpaceLocalCache) space).close();
+            }
             if (!SpaceUtils.isRemoteProtocol(space)) {
                 // shutdown the space if we are in embedded mode
                 space.getContainer().shutdown();
