@@ -238,7 +238,6 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      * ({@link #afterPropertiesSet()}).
      *
      * @return The {@link IJSpace} implementation
-     * @throws Exception
      */
     public Object getObject() {
         return this.space;
@@ -306,7 +305,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
     
     /**
-     * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode.BACKUP} to all beans in the application context
+     * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode#BACKUP} to all beans in the application context
      * that implement the {@link SpaceBeforeBackupListener} interface.
      */
     protected void fireSpaceBeforeBackupEvent() {
@@ -319,7 +318,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
     
     /**
-     * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode.BACKUP} to all beans in the application context
+     * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode#BACKUP} to all beans in the application context
      * that implement the {@link SpaceAfterBackupListener} interface.
      */
     protected void fireSpaceAfterBackupEvent() {
@@ -332,7 +331,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
      }
     
     /**
-     * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode.PRIMARY} to all beans in the application context
+     * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode#PRIMARY} to all beans in the application context
      * that implement the {@link SpaceBeforePrimaryListener} interface.
      */
     protected void fireSpaceBeforePrimaryEvent() {
@@ -345,7 +344,7 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
     }
     
     /**
-     * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode.PRIMARY} to all beans in the application context
+     * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode#PRIMARY} to all beans in the application context
      * that implement the {@link SpaceAfterPrimaryListener} interface.
      */
     protected void fireSpaceAfterPrimaryEvent() {
