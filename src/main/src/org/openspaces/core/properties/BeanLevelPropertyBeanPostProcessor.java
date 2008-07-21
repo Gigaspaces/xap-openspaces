@@ -16,13 +16,22 @@
 
 package org.openspaces.core.properties;
 
+import java.lang.reflect.Field;
+import java.util.Properties;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * A Spring {@link BeanPostProcessor} that process beans that implement
  * {@link BeanLevelPropertiesAware} or {@link BeanLevelMergedPropertiesAware} based on the provided
  * {@link BeanLevelProperties}.
+ * 
+ * In addition, beans that contain a field that has the annotation {@link BeanLevelPropertiesContext}
+ * will be injected with the {@link BeanLevelProperties}. Beans that contain a field that has the 
+ * annotation {@link BeanLevelMergedPropertiesContext} will be injected with the merged {@link Properties}
+ * based on the provided beanName.
  * 
  * @author kimchy
  * @see BeanLevelProperties
@@ -44,9 +53,11 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
     }
 
     /**
-     * Post process a given bean. If the bean implements {@link BeanLevelPropertiesAware} the
-     * provided {@link BeanLevelProperties} will be injected to it. If the bean implements
-     * {@link BeanLevelMergedPropertiesAware} then the merged properties based on the provided
+     * Post process a given bean. If the bean implements {@link BeanLevelPropertiesAware} of if it
+     * contains a field that has the annotation {@link BeanLevelPropertiesContext} the provided 
+     * {@link BeanLevelProperties} will be injected to it. If the bean implements
+     * {@link BeanLevelMergedPropertiesAware} of if it contains a field that has the annotation
+     * {@link BeanLevelMergedPropertiesContext} then the merged properties based on the provided
      * beanName will be injected (using {@link BeanLevelProperties#getMergedBeanProperties(String)}).
      * 
      * @param bean
@@ -56,13 +67,41 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
      * @return The bean unmodified
      * @throws BeansException
      */
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
         if (bean instanceof BeanLevelMergedPropertiesAware) {
             ((BeanLevelMergedPropertiesAware) bean).setMergedBeanLevelProperties(beanLevelProperties.getMergedBeanProperties(beanName));
         }
         if (bean instanceof BeanLevelPropertiesAware) {
             ((BeanLevelPropertiesAware) bean).setBeanLevelProperties(beanLevelProperties);
         }
+        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
+            public void doWith(Field field) {
+                if (field.isAnnotationPresent(BeanLevelMergedPropertiesContext.class)) {
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
+                    }
+                    try {
+                        field.set(bean, beanLevelProperties.getMergedBeanProperties(beanName));
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Failed to inject Properties (Bean-Level Merged Properties)", e);
+                    }
+                }
+            }
+        });
+        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
+            public void doWith(Field field) {
+                if (field.isAnnotationPresent(BeanLevelPropertiesContext.class)) {
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
+                    }
+                    try {
+                        field.set(bean, beanLevelProperties);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Failed to inject BeanLevelProperties", e);
+                    }
+                }
+            }
+        });
         return bean;
     }
 
