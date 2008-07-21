@@ -16,12 +16,16 @@
 
 package org.openspaces.core.cluster;
 
+import java.lang.reflect.Field;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * A Spring {@link BeanPostProcessor} that takes a {@link ClusterInfo} and injects it to all the
- * beans that implements {@link ClusterInfoAware} interface.
+ * beans that implements {@link ClusterInfoAware} interface and to those that contain a field that
+ * has the annotation {@link ClusterInfoContext}}.
  * 
  * @author kimchy
  */
@@ -38,13 +42,29 @@ public class ClusterInfoBeanPostProcessor implements BeanPostProcessor {
         this.clusterInfo = clusterInfo;
     }
 
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
         if (bean instanceof ClusterInfoAware) {
             ((ClusterInfoAware) bean).setClusterInfo(clusterInfo);
-        }
+        } 
+        
+        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
+            public void doWith(Field field) {
+                if (field.isAnnotationPresent(ClusterInfoContext.class)) {
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
+                    }
+                    try {
+                        field.set(bean, clusterInfo);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Failed to inject ClusterInfo", e);
+                    }
+                }
+            }
+        });
+
         return bean;
     }
-
+    
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
     }
