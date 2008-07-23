@@ -23,6 +23,7 @@ import com.j_spaces.core.client.CacheTimeoutException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
 import com.j_spaces.core.client.sql.SQLQueryException;
+import com.j_spaces.core.exception.ClosedResourceException;
 import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
@@ -96,12 +97,16 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new RemoteDataAccessException(remoteException);
         }
 
+        if (e instanceof ClosedResourceException) {
+            return new SpaceClosedException((ClosedResourceException) e);
+        }
+
         if (e instanceof ConversionException) {
             return new ObjectConversionException((ConversionException) e);
         }
 
         if (e instanceof com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException) {
-            return new WriteMultiplePartialFailureException((com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException)e, this);
+            return new WriteMultiplePartialFailureException((com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException) e, this);
         }
 
         if (e instanceof SQLQueryException) {
