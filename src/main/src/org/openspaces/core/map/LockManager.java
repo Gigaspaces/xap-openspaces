@@ -35,6 +35,7 @@ import java.rmi.RemoteException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The lock manager is built on top of {@link IMap} and supports the ability to lock and unlock
@@ -237,7 +238,10 @@ public class LockManager {
     private Envelope getTemplate(Object key, String uid) {
         Envelope ee;
         try {
-            ee = templatePool.take();
+            ee = templatePool.poll(100, TimeUnit.MILLISECONDS);
+            if (ee == null) {
+                ee = new Envelope();
+            }
         } catch (InterruptedException e) {
             throw new DataAccessResourceFailureException("Failed to take resource from pool", e);
         }
@@ -249,8 +253,7 @@ public class LockManager {
 
     private void releaseTemplate(Envelope ee) {
         if (ee != null) {
-            if (!templatePool.offer(ee))
-                throw new RuntimeException("release of Envelope template resource failed.");
+            templatePool.offer(ee);
         }
     }
 
