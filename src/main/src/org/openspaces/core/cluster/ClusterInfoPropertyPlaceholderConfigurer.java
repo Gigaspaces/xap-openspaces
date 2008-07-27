@@ -57,7 +57,7 @@ public class ClusterInfoPropertyPlaceholderConfigurer extends PropertyPlaceholde
     public static final String BACKUP_ID_PROP = "clusterInfo.backupId";
     public static final String SCHEMA_PROP = "clusterInfo.schema";
     public static final String RUNNING_NUMBER_PROP = "clusterInfo.runningNumber";
-    public static final String RUNNING_NUMBER_OFFEST_1_PROP = "clusterInfo.runningNumberOffest1";
+    public static final String RUNNING_NUMBER_OFFEST_1_PROP = "clusterInfo.runningNumberOffset1";
     public static final String SUFFIX_PROP = "clusterInfo.suffix";
     public static final String NAME_PROP = "clusterInfo.name";
 
