@@ -16,6 +16,7 @@
 
 package org.openspaces.core;
 
+import com.j_spaces.core.exception.internal.ProxyInternalSpaceException;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -28,6 +29,11 @@ public class InternalSpaceException extends DataAccessException {
     private net.jini.space.InternalSpaceException e;
 
     public InternalSpaceException(net.jini.space.InternalSpaceException e) {
+        super(e.getMessage(), e);
+        this.e = e;
+    }
+
+    public InternalSpaceException(ProxyInternalSpaceException e) {
         super(e.getMessage(), e);
         this.e = e;
     }
