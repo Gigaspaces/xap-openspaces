@@ -41,7 +41,7 @@ public class InternalDistributedSpaceTaskWrapper<T, R> extends InternalSpaceTask
     }
 
     @SuppressWarnings("unchecked")
-    public R reduce(List<AsyncResult<T>> asyncResults) {
+    public R reduce(List<AsyncResult<T>> asyncResults) throws Exception {
         return (R) ((DistributedTask) getTask()).reduce(asyncResults);
     }
 
