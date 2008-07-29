@@ -106,7 +106,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
         if (txObject != null && txObject.hasTransaction()) {
             return txObject.getTxCreated();
         }
-        
+
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
             return null;
         }
@@ -167,6 +167,35 @@ public class DefaultTransactionProvider implements TransactionProvider {
         txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
         if (txObject != null && txObject.hasTransaction()) {
             return txObject.getTxCreated();
+        }
+        return null;
+    }
+
+    public PlatformTransactionManager getTransactionManager() {
+        return this.transactionManager;
+    }
+
+    public JiniTransactionHolder getHolder() {
+        if (isJta) {
+            return null;
+        }
+        // try and perform early exit when we should not support declerative transactions for better perfromance
+        if (actualTransactionalContext == null) {
+            return null;
+        }
+
+        JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(ExistingJiniTransactionManager.CONTEXT);
+        if (txObject != null && txObject.hasTransaction()) {
+            return txObject;
+        }
+
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            return null;
+        }
+
+        txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(actualTransactionalContext);
+        if (txObject != null && txObject.hasTransaction()) {
+            return txObject;
         }
         return null;
     }

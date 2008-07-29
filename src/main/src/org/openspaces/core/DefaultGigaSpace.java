@@ -35,6 +35,7 @@ import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 import org.openspaces.core.executor.internal.InternalDistributedSpaceTaskWrapper;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.transaction.TransactionProvider;
+import org.openspaces.core.transaction.internal.TransactionalAsyncFuture;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
@@ -421,7 +422,12 @@ public class DefaultGigaSpace implements GigaSpace {
             throw new IllegalArgumentException("Task [" + task + "] can not be executed without routing information");
         }
         try {
-            return space.execute(new InternalSpaceTaskWrapper<T>(task, routing), getCurrentTransaction());
+            Transaction tx = getCurrentTransaction();
+            AsyncFuture<T> future = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx);
+            if (tx != null) {
+                future = new TransactionalAsyncFuture<T>(future, this);
+            }
+            return future;
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -429,9 +435,13 @@ public class DefaultGigaSpace implements GigaSpace {
 
     public <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing) {
         AsyncFuture<T>[] futures = new AsyncFuture[routing.length];
+        Transaction tx = getCurrentTransaction();
         for (int i = 0; i < routing.length; i++) {
             try {
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing[i]), getCurrentTransaction());
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing[i]), tx);
+                if (tx != null) {
+                    futures[i] = new  TransactionalAsyncFuture<T>(futures[i], this);
+                }
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
@@ -445,7 +455,12 @@ public class DefaultGigaSpace implements GigaSpace {
 
     public <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
         try {
-            return space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction());
+            Transaction tx = getCurrentTransaction();
+            AsyncFuture<R> future = space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction());
+            if (tx != null) {
+                future = new TransactionalAsyncFuture<R>(future, this);
+            }
+            return future;
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

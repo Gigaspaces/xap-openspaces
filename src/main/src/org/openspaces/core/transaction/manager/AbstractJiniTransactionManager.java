@@ -265,6 +265,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             logger.trace(logMessage("Disabling commit on Jini transaction [" + txObject.toString() + "]"));
             return;
         }
+        if (txObject.getJiniHolder().decRef() > 0) {
+            logger.trace(logMessage("Disabling commit on Jini transaction reference count is higher [" + txObject.toString() + "]"));
+            return;
+        }
         if (logger.isTraceEnabled())
             logger.trace(logMessage("Committing Jini transaction [" + txObject.toString() + "]"));
         try {
@@ -311,6 +315,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             throw convertJiniException(e);
         } catch (TimeoutExpiredException e) {
             throw convertJiniException(e);
+        } finally {
+            // disable commit / rollback so other commits/rollbacks will not take affect
+            txObject.getJiniHolder().setDisableCommit(true);
+            txObject.getJiniHolder().setDisableRollback(true);
         }
     }
 
@@ -393,7 +401,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     /**
      * Jini Transaction object. Used as transaction object by GigaSpaceTransactionManager.
      */
-    static class JiniTransactionObject implements SmartTransactionObject {
+    public static class JiniTransactionObject implements SmartTransactionObject {
 
         private JiniTransactionHolder jiniHolder;
 

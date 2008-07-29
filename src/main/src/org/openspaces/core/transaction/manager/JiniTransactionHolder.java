@@ -20,6 +20,8 @@ import net.jini.core.transaction.Transaction;
 import net.jini.lease.LeaseRenewalManager;
 import org.springframework.transaction.support.ResourceHolderSupport;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * A Jini transaction holder responsible for holding the current running transaction.
  *
@@ -38,6 +40,8 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
 
     private boolean disableCommit = false;
 
+    private AtomicInteger referenceCount = new AtomicInteger();
+
     /**
      * Constructs a new jini transaction holder.
      *
@@ -49,6 +53,15 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
         this.txCreated = txCreated;
         this.isolationLevel = isolationLevel;
         this.leaseRenewalManager = leaseRenewalManager;
+        this.referenceCount.incrementAndGet();
+    }
+
+    public int incRef() {
+        return referenceCount.incrementAndGet();
+    }
+
+    public int decRef() {
+        return referenceCount.decrementAndGet();
     }
 
     public boolean isDisableRollback() {
@@ -83,6 +96,16 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
     }
 
     /**
+     * Returns the Jini transaction object. Can be <code>null</code>.
+     */
+    public Transaction getTransaction() {
+        if (hasTransaction()) {
+            return txCreated.transaction;
+        }
+        return null;
+    }
+
+    /**
      * Returns the current transaction isolation level. Maps to Spring
      * {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()} values.
      */
@@ -104,9 +127,9 @@ public class JiniTransactionHolder extends ResourceHolderSupport {
         return leaseRenewalManager;
     }
 
-    public void clear() {
-        super.clear();
-        this.leaseRenewalManager = null;
-        this.txCreated = null;
-    }
+//    public void clear() {
+//        super.clear();
+//        this.leaseRenewalManager = null;
+//        this.txCreated = null;
+//    }
 }
