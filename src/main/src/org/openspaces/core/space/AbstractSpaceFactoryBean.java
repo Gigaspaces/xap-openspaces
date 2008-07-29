@@ -114,6 +114,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         this.applicationContext = applicationContext;
     }
 
+    protected ApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
+
     /**
      * Sets a custom primary backup listener
      */

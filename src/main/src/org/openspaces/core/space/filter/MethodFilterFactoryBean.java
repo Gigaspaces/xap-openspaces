@@ -90,6 +90,8 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     private String afterRemoveByLease;
 
+    private String beforeExecute;
+
     /**
      * Creates an operation code to filter invoker map based on the {@link #getFilter()}
      * delegate and the callbacks set on this factory.
@@ -151,6 +153,9 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                 }
                 if (ObjectUtils.nullSafeEquals(method.getName(), afterRemoveByLease)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_REMOVE);
+                }
+                if (ObjectUtils.nullSafeEquals(method.getName(), beforeExecute)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_EXECUTE);
                 }
             }
         }, new UniqueMethodFilter());
@@ -366,6 +371,15 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
      */
     public void setAfterRemoveByLease(String afterRemoveByLease) {
         this.afterRemoveByLease = afterRemoveByLease;
+    }
+
+    /**
+     * Filter callback before execute operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_EXECUTE_TRIGGER
+     */
+    public void setBeforeExecute(String beforeExecute) {
+        this.beforeExecute = beforeExecute;
     }
 
     private class UniqueMethodFilter implements ReflectionUtils.MethodFilter {

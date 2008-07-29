@@ -16,12 +16,16 @@
 
 package org.openspaces.core;
 
+import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncResultsReducer;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
+import org.openspaces.core.executor.DistributedTask;
+import org.openspaces.core.executor.Task;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 
@@ -828,4 +832,116 @@ public interface GigaSpace {
      * over the Space.
      */
     IteratorBuilder iterator();
+
+    /**
+     * Executes a task on a specific space node. The space node it will
+     * execute on should be controlled by having a method that return the routing value
+     * annotated with {@link com.gigaspaces.annotation.pojo.SpaceRouting}.
+     *
+     * <p>In order to control the routing externally, use {@link #execute(org.openspaces.core.executor.Task, Object)}.
+     *
+     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
+     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
+     * this variables are defined as <b>transient</b>.
+     *
+     * @param task The task to execute
+     * @return a Future representing pending completion of the task,
+     *         and whose <code>get()</code> method will return the task value upon comletion.
+     */
+    <T> AsyncFuture<T> execute(Task<T> task);
+
+    /**
+     * Executes a task on a specific space node. The space node it will
+     * execute on should is controlled by the routing value provided as a second paramter.
+     *
+     * <p>In order to control the using the Task itself, use {@link #execute(org.openspaces.core.executor.Task)}.
+     *
+     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
+     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
+     * this variables are defined as <b>transient</b>.
+     *
+     * @param task    The task to execute
+     * @param routing The routing value that will control on which node the task will be executed on
+     * @return a Future representing pending completion of the task,
+     *         and whose <code>get()</code> method will return the task value upon comletion.
+     */
+    <T> AsyncFuture<T> execute(Task<T> task, Object routing);
+
+    /**
+     * Executes a task on all the nodes that correspond to the list of routing values. The task is executed
+     * on each space node with all the results reduced by the
+     * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
+     *
+     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * results received so far.
+     *
+     * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
+     * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
+     *
+     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
+     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
+     * this variables are defined as <b>transient</b>.
+     *
+     * @param task    The task to execute
+     * @param routing A list of routing values, each resulting in an execution of the task on the space node
+     *                it corresponds to
+     * @return a Future representing pending completion of the task,
+     *         and whose <code>get()</code> method will return the task value upon comletion.
+     */
+    <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing);
+
+    /**
+     * Executes the task on all the primary space nodes within the cluster (broadcast). The task is executed
+     * on each space node with all the results reduced by the
+     * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
+     *
+     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * results received so far.
+     *
+     * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
+     * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
+     *
+     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
+     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
+     * this variables are defined as <b>transient</b>.
+     *
+     * @param task The task to execute
+     * @return a Future representing pending completion of the task,
+     *         and whose <code>get()</code> method will return the task value upon comletion.
+     */
+    <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task);
+
+    /**
+     * Constructs an executor builder allowing to accumlate different tasks required to be executed
+     * into a single execute mechanism with all the results reduced by the reducer provided.
+     *
+     * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * results received so far.
+     *
+     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
+     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
+     * this variables are defined as <b>transient</b>.
+     * 
+     * @param reducer The reducer to reduce the results of all the different tasks added.
+     * @return The executor builer.
+     */
+    <T, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer);
 }

@@ -19,23 +19,32 @@ package org.openspaces.core.space;
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.client.FinderException;
 import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.SpaceURLParser;
+import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.FilterProvider;
+import com.j_spaces.core.filters.ISpaceFilter;
+import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import com.j_spaces.sadapter.datasource.DataAdapter;
+import net.jini.core.entry.UnusableEntryException;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
 import org.openspaces.core.util.SpaceUtils;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -95,6 +104,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private ReplicationFilterProviderFactory replicationFilterProvider;
 
     private ManagedDataSource externalDataSource;
+
+    private boolean enableExecutorInjection = true;
 
 
     private Properties beanLevelProperties;
@@ -311,7 +322,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
             String url = urls[urlIndex];
-            
+
             Properties props = new Properties();
             // copy over the parameters
             if (parameters != null) {
@@ -355,6 +366,17 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
             if (mirror != null) {
                 props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
+            }
+
+            if (enableExecutorInjection && getApplicationContext() != null) {
+                if (filterProviders == null) {
+                    filterProviders = new FilterProviderFactory[]{new ExecutorFilterProviderFactory()};
+                } else {
+                    ArrayList<FilterProviderFactory> tmpProviders = new ArrayList<FilterProviderFactory>(filterProviders.length + 1);
+                    tmpProviders.addAll(Arrays.asList(filterProviders));
+                    tmpProviders.add(new ExecutorFilterProviderFactory());
+                    filterProviders = tmpProviders.toArray(new FilterProviderFactory[tmpProviders.size()]);
+                }
             }
 
             if (filterProviders != null && filterProviders.length > 0) {
@@ -420,7 +442,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
 
             try {
-                 spacesUrls[urlIndex] = SpaceURLParser.parseURL(url, props);
+                spacesUrls[urlIndex] = SpaceURLParser.parseURL(url, props);
             } catch (MalformedURLException e) {
                 throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
             }
@@ -443,5 +465,52 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             return true;
         }
         return false;
+    }
+
+    private class ExecutorFilterProviderFactory implements FilterProviderFactory {
+
+        public FilterProvider getFilterProvider() {
+            FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
+            filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
+            return filterProvider;
+        }
+    }
+
+    private class ExecutorSpaceFilter implements ISpaceFilter {
+
+        private IJSpace space;
+
+        public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
+            this.space = space;
+        }
+
+        public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
+            if (operationCode != FilterOperationCodes.BEFORE_EXECUTE) {
+                return;
+            }
+            ApplicationContext applicationContext = getApplicationContext();
+            if (applicationContext == null) {
+                return;
+            }
+            AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+            try {
+                Object task = entry.getObject(space);
+                if (task instanceof InternalSpaceTaskWrapper) {
+                    task = ((InternalSpaceTaskWrapper) task).getTask();
+                }
+                beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+                beanFactory.initializeBean(task, task.getClass().getName());
+            } catch (UnusableEntryException e) {
+                // won't happen
+            }
+        }
+
+        public void process(SpaceContext context, ISpaceFilterEntry[] entries, int operationCode) throws RuntimeException {
+
+        }
+
+        public void close() throws RuntimeException {
+
+        }
     }
 }

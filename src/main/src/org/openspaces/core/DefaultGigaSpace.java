@@ -16,14 +16,24 @@
 
 package org.openspaces.core;
 
+import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncResultsModerator;
+import com.gigaspaces.async.AsyncResultsReducer;
+import com.gigaspaces.async.FutureFactory;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.ReadModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
+import org.openspaces.core.executor.DistributedTask;
+import org.openspaces.core.executor.Task;
+import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
+import org.openspaces.core.executor.internal.InternalDistributedSpaceTaskWrapper;
+import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
@@ -44,7 +54,7 @@ import org.springframework.transaction.TransactionDefinition;
  */
 public class DefaultGigaSpace implements GigaSpace {
 
-    private IJSpace space;
+    private ISpaceProxy space;
 
     private TransactionProvider txProvider;
 
@@ -59,6 +69,8 @@ public class DefaultGigaSpace implements GigaSpace {
 
     private int defaultIsolationLevel;
 
+    private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
+
     /**
      * Constructs a new DefaultGigaSpace implementation.
      *
@@ -72,7 +84,7 @@ public class DefaultGigaSpace implements GigaSpace {
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
                             int defaultIsolationLevel) {
-        this.space = space;
+        this.space = (ISpaceProxy) space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         // set the default read take modifiers according to the default isolation level
@@ -398,6 +410,49 @@ public class DefaultGigaSpace implements GigaSpace {
 
     public IteratorBuilder iterator() {
         return new IteratorBuilder(this);
+    }
+
+    public <T> AsyncFuture<T> execute(Task<T> task) {
+        return execute(task, executorMetaDataProvider.findRouting(task));
+    }
+
+    public <T> AsyncFuture<T> execute(Task<T> task, Object routing) {
+        if (routing == null) {
+            throw new IllegalArgumentException("Task [" + task + "] can not be executed without routing information");
+        }
+        try {
+            return space.execute(new InternalSpaceTaskWrapper<T>(task, routing), getCurrentTransaction());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing) {
+        AsyncFuture<T>[] futures = new AsyncFuture[routing.length];
+        for (int i = 0; i < routing.length; i++) {
+            try {
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing[i]), getCurrentTransaction());
+            } catch (Exception e) {
+                throw exTranslator.translate(e);
+            }
+        }
+        if (task instanceof AsyncResultsModerator) {
+            return FutureFactory.create(futures, task, (AsyncResultsModerator<T>) task);
+        } else {
+            return FutureFactory.create(futures, task);
+        }
+    }
+
+    public <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
+        try {
+            return space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer) {
+        return new ExecutorBuilder<T, R>(this, reducer);
     }
 
     // Support methods
