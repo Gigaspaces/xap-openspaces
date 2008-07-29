@@ -38,6 +38,9 @@ public class TransactionalAsyncFuture<T> implements AsyncFuture<T> {
         if (holder == null || transactionManager == null) {
             future.setListener(listener);
         } else {
+            // here, we create a dummy transaction status (with its new transction set to true, so the commit/roolback
+            // process will be perfomed). We also increase the ref count of the transcation, so only the last one will
+            // be performed
             AbstractJiniTransactionManager.JiniTransactionObject jiniTransactionObject = new AbstractJiniTransactionManager.JiniTransactionObject();
             jiniTransactionObject.setJiniHolder(holder, false);
             TransactionStatus txStatus = new DefaultTransactionStatus(jiniTransactionObject, true, false, false, false, null);
