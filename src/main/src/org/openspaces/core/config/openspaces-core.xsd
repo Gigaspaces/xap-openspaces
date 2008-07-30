@@ -701,6 +701,31 @@
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
+                    <xsd:attribute name="async-min-threads" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The minimum numebr of threads in the async invocations (operations that return
+                                AsyncFuture) will optionally use. Defaults to 0.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="async-max-threads" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The maximum numebr of threads in the async invocations (operations that return
+                                AsyncFuture) will optionally use. Defaults to 10.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="async-keep-alive-time" type="xsd:nonNegativeInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When the async number of threads is greater than the min, this is the maximum time that
+                                excess idle threads will wait for new tasks before terminating (in seconds).
+                                Defaults to 60 which is 1 minute.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="tx-manager" type="txManagerType">
                         <xsd:annotation>
                             <xsd:documentation>

@@ -261,11 +261,11 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     /**
      * When the async number of threads is greater than the min,
      * this is the maximum time that excess idle threads will wait
-     * for new tasks before terminating (in <b>milliseconds</b>). Defaults to
-     * <code>60 * 1000</code> which is 1 minute.
+     * for new tasks before terminating (in <b>seconds</b>). Defaults to
+     * <code>60</code> which is 1 minute.
      */
     public void setAsyncKeepAliveTime(int asyncKeepAliveTime) {
-        this.asyncKeepAliveTime = asyncKeepAliveTime;
+        this.asyncKeepAliveTime = asyncKeepAliveTime * 1000;
     }
 
     public void setBeanName(String beanName) {
@@ -308,6 +308,9 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
                 transactionalContext = ((JiniPlatformTransactionManager) transactionManager).getTransactionalContext();
             }
             txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
+        }
+        if (asyncMinThreads > asyncMaxThreads) {
+            asyncMaxThreads = asyncMinThreads;
         }
         gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel, asyncMinThreads,
                 asyncMaxThreads, asyncKeepAliveTime, beanName == null ? "" : beanName);
