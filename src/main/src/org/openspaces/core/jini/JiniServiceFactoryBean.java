@@ -100,6 +100,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
      * and if smart proxy is used, will wrap the returned service with a proxy that performs
      * lookups in case of failures.
      */
+    @Override
     protected Object createInstance() throws Exception {
         synchronized (actualServiceMonitor) {
             actualService = lookupService();
