@@ -34,6 +34,7 @@ import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.executor.support.DelegatingTask;
+import org.openspaces.core.executor.support.ProcessObjectsProvider;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
@@ -502,6 +503,19 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 while (true) {
                     beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                     beanFactory.initializeBean(task, task.getClass().getName());
+
+                    if (task instanceof ProcessObjectsProvider) {
+                        Object[] objects = ((ProcessObjectsProvider) task).getObjectsToProcess();
+                        if (objects != null) {
+                            for (Object obj : objects) {
+                                if (obj != null) {
+                                    beanFactory.autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+                                    beanFactory.initializeBean(obj, obj.getClass().getName());
+                                }
+                            }
+                        }
+                    }
+
                     if (task instanceof DelegatingTask) {
                         task = ((DelegatingTask) task).getDelegatedTask();
                     } else {
