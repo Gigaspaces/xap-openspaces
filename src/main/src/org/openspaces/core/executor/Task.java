@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * @author kimchy
  */
-public interface Task<T> extends Serializable {
+public interface Task<T extends Serializable> extends Serializable {
 
     /**
      * Computes a result, or throws an exception if unable to do so.

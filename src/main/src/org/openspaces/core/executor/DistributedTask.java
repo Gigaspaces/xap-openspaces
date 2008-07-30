@@ -18,6 +18,8 @@ package org.openspaces.core.executor;
 
 import com.gigaspaces.async.AsyncResultsReducer;
 
+import java.io.Serializable;
+
 /**
  * A distributed task is a {@link org.openspaces.core.executor.Task} that is executed on
  * sevearl space nodes, requiring to {@link #reduce(java.util.List)} the list of
@@ -25,5 +27,5 @@ import com.gigaspaces.async.AsyncResultsReducer;
  *
  * @author kimchy
  */
-public interface DistributedTask<T, R> extends Task<T>, AsyncResultsReducer<T, R> {
+public interface DistributedTask<T extends Serializable, R> extends Task<T>, AsyncResultsReducer<T, R> {
 }

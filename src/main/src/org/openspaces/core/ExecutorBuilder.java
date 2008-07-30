@@ -23,6 +23,7 @@ import com.gigaspaces.async.FutureFactory;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  * @author kimchy
  * @see org.openspaces.core.GigaSpace#executorBuilder(com.gigaspaces.async.AsyncResultsReducer)
  */
-public class ExecutorBuilder<T, R> {
+public class ExecutorBuilder<T extends Serializable, R> {
 
     private ArrayList<Holder> holders = new ArrayList<Holder>();
 
@@ -142,7 +143,7 @@ public class ExecutorBuilder<T, R> {
         }
     }
 
-    private class Holder<T> {
+    private class Holder<T extends Serializable> {
         Task<T> task;
         Object routing;
 

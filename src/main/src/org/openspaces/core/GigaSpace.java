@@ -29,6 +29,8 @@ import org.openspaces.core.executor.Task;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 
+import java.io.Serializable;
+
 /**
  * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
  * utilizing GigaSpaces extended and simplified programming model.
@@ -851,7 +853,7 @@ public interface GigaSpace {
      * @return a Future representing pending completion of the task,
      *         and whose <code>get()</code> method will return the task value upon completion.
      */
-    <T> AsyncFuture<T> execute(Task<T> task);
+    <T extends Serializable> AsyncFuture<T> execute(Task<T> task);
 
     /**
      * Executes a task on a specific space node. The space node it will
@@ -871,7 +873,7 @@ public interface GigaSpace {
      * @return a Future representing pending completion of the task,
      *         and whose <code>get()</code> method will return the task value upon completion.
      */
-    <T> AsyncFuture<T> execute(Task<T> task, Object routing);
+    <T extends Serializable> AsyncFuture<T> execute(Task<T> task, Object routing);
 
     /**
      * Executes a task on all the nodes that correspond to the list of routing values. The task is executed
@@ -898,7 +900,7 @@ public interface GigaSpace {
      * @return a Future representing pending completion of the task,
      *         and whose <code>get()</code> method will return the task value upon completion.
      */
-    <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing);
+    <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing);
 
     /**
      * Executes the task on all the primary space nodes within the cluster (broadcast). The task is executed
@@ -923,7 +925,7 @@ public interface GigaSpace {
      * @return a Future representing pending completion of the task,
      *         and whose <code>get()</code> method will return the task value upon completion.
      */
-    <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task);
+    <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task);
 
     /**
      * Constructs an executor builder allowing to accumlate different tasks required to be executed
@@ -943,5 +945,5 @@ public interface GigaSpace {
      * @param reducer The reducer to reduce the results of all the different tasks added.
      * @return The executor builer.
      */
-    <T, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer);
+    <T extends Serializable, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer);
 }

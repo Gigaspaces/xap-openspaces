@@ -18,19 +18,20 @@ package org.openspaces.core.executor.internal;
 
 import com.gigaspaces.async.AsyncResult;
 import com.gigaspaces.async.AsyncResultFilter;
+import com.gigaspaces.async.AsyncResultFilterEvent;
 import com.gigaspaces.executor.DistributedSpaceTask;
 import org.openspaces.core.executor.DistributedTask;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author kimchy
  */
-public class InternalDistributedSpaceTaskWrapper<T, R> extends InternalSpaceTaskWrapper<T>
+public class InternalDistributedSpaceTaskWrapper<T extends Serializable, R> extends InternalSpaceTaskWrapper<T>
         implements DistributedSpaceTask<T, R>, AsyncResultFilter<T> {
 
     public InternalDistributedSpaceTaskWrapper() {
@@ -45,9 +46,9 @@ public class InternalDistributedSpaceTaskWrapper<T, R> extends InternalSpaceTask
         return (R) ((DistributedTask) getTask()).reduce(asyncResults);
     }
 
-    public Decision onResult(AsyncResult<T> currentResult, Collection<AsyncResult<T>> receivedResults, int totalExpectedResults) {
+    public Decision onResult(AsyncResultFilterEvent<T> event) {
         if (getTask() instanceof AsyncResultFilter) {
-            return ((AsyncResultFilter) getTask()).onResult(currentResult, receivedResults, totalExpectedResults);
+            return ((AsyncResultFilter) getTask()).onResult(event);
         }
         return Decision.CONTINUE;
     }

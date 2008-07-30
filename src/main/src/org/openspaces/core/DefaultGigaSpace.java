@@ -39,6 +39,8 @@ import org.openspaces.core.transaction.internal.TransactionalAsyncFuture;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
+import java.io.Serializable;
+
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
  * {@link org.openspaces.core.transaction.TransactionProvider} and
@@ -413,11 +415,11 @@ public class DefaultGigaSpace implements GigaSpace {
         return new IteratorBuilder(this);
     }
 
-    public <T> AsyncFuture<T> execute(Task<T> task) {
+    public <T extends Serializable> AsyncFuture<T> execute(Task<T> task) {
         return execute(task, executorMetaDataProvider.findRouting(task));
     }
 
-    public <T> AsyncFuture<T> execute(Task<T> task, Object routing) {
+    public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, Object routing) {
         if (routing == null) {
             throw new IllegalArgumentException("Task [" + task + "] can not be executed without routing information");
         }
@@ -433,14 +435,14 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing) {
+    public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing) {
         AsyncFuture<T>[] futures = new AsyncFuture[routing.length];
         Transaction tx = getCurrentTransaction();
         for (int i = 0; i < routing.length; i++) {
             try {
                 futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing[i]), tx);
                 if (tx != null) {
-                    futures[i] = new  TransactionalAsyncFuture<T>(futures[i], this);
+                    futures[i] = new TransactionalAsyncFuture<T>(futures[i], this);
                 }
             } catch (Exception e) {
                 throw exTranslator.translate(e);
@@ -453,7 +455,7 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
+    public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
         try {
             Transaction tx = getCurrentTransaction();
             AsyncFuture<R> future = space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction());
@@ -466,7 +468,7 @@ public class DefaultGigaSpace implements GigaSpace {
         }
     }
 
-    public <T, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer) {
+    public <T extends Serializable, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer) {
         return new ExecutorBuilder<T, R>(this, reducer);
     }
 
@@ -501,6 +503,7 @@ public class DefaultGigaSpace implements GigaSpace {
             throw new IllegalArgumentException("GigaSpaces does not support isolation level [" + isolationLevel + "]");
         }
     }
+
     @Override
     public String toString() {
         return space.toString();

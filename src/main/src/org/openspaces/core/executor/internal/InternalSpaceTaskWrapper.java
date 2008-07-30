@@ -27,11 +27,12 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 
 /**
  * @author kimchy
  */
-public class InternalSpaceTaskWrapper<T> implements SpaceTask<T>, Externalizable {
+public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTask<T>, Externalizable {
 
     private Task<T> task;
 
