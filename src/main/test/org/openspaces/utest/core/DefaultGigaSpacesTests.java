@@ -18,6 +18,7 @@ package org.openspaces.utest.core;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.ReadModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
@@ -44,13 +45,13 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
     private Mock mockExTranslator;
 
     protected void setUp() throws Exception {
-        mockIJSpace = mock(IJSpace.class);
+        mockIJSpace = mock(ISpaceProxy.class);
         mockTxProvider = mock(TransactionProvider.class);
         mockExTranslator = mock(ExceptionTranslator.class);
 
         mockIJSpace.expects(once()).method("getReadModifiers").will(returnValue(0));
         gs = new DefaultGigaSpace((IJSpace) mockIJSpace.proxy(), (TransactionProvider) mockTxProvider.proxy(),
-                (ExceptionTranslator) mockExTranslator.proxy(), TransactionDefinition.ISOLATION_DEFAULT);
+                (ExceptionTranslator) mockExTranslator.proxy(), TransactionDefinition.ISOLATION_DEFAULT, 0, 10, 1000, "test");
     }
 
     public void testReadOperation() {

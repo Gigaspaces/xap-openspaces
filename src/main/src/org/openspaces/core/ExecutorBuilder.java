@@ -22,6 +22,7 @@ import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
+import org.openspaces.core.internal.InternalGigaSpace;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
 
     private ArrayList<Holder> holders = new ArrayList<Holder>();
 
-    private GigaSpace gigaSpace;
+    private InternalGigaSpace gigaSpace;
 
     private AsyncResultsReducer<T, R> reducer;
 
@@ -52,7 +53,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
      * results received so far.
      */
     ExecutorBuilder(GigaSpace gigaSpace, AsyncResultsReducer<T, R> reducer) {
-        this.gigaSpace = gigaSpace;
+        this.gigaSpace = (InternalGigaSpace) gigaSpace;
         this.reducer = reducer;
     }
 
@@ -136,11 +137,13 @@ public class ExecutorBuilder<T extends Serializable, R> {
                 }
             }
         }
+        AsyncFuture<R> result;
         if (reducer instanceof AsyncResultFilter) {
-            return FutureFactory.create(futures, reducer, (AsyncResultFilter<T>) reducer);
+            result = FutureFactory.create(futures, reducer, (AsyncResultFilter<T>) reducer);
         } else {
-            return FutureFactory.create(futures, reducer);
+            result = FutureFactory.create(futures, reducer);
         }
+        return gigaSpace.wrapFuture(result, gigaSpace.getCurrentTransaction());
     }
 
     private class Holder<T extends Serializable> {

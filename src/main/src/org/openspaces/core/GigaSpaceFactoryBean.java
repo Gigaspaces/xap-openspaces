@@ -50,7 +50,7 @@ import org.springframework.util.Assert;
  * <p>The factory accepts an optional {@link org.openspaces.core.transaction.TransactionProvider TransactionProvider}
  * which defaults to {@link org.openspaces.core.transaction.DefaultTransactionProvider DefaultTransactionProvider}.
  * The transactional context used is based on
- * {@link #setTransactionManager(org.springframework.transaction.PlatformTransactionManager)} 
+ * {@link #setTransactionManager(org.springframework.transaction.PlatformTransactionManager)}
  * and if no transaction manager is provided, will use the space as the context.
  *
  * <p>When using {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager} there is no need
@@ -120,6 +120,12 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     private long defaultWriteLease = Lease.FOREVER;
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
+
+    private int asyncMinThreads = 0;
+
+    private int asyncMaxThreads = 10;
+
+    private int asyncKeepAliveTime = 60 * 1000;
 
 
     private String beanName;
@@ -236,6 +242,32 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         this.transactionManager = transactionManager;
     }
 
+    /**
+     * Sets the minimum numebr of threads in the async invocations (operations that return
+     * {@link com.gigaspaces.async.AsyncResult} will use. Defaults to <code>0</code>.
+     */
+    public void setAsyncMinThreads(int asyncMinThreads) {
+        this.asyncMinThreads = asyncMinThreads;
+    }
+
+    /**
+     * Sets the maximum numebr of threads in the async invocations (operations that return
+     * {@link com.gigaspaces.async.AsyncResult} will use. Defaults to <code>10</code>.
+     */
+    public void setAsyncMaxThreads(int asyncMaxThreads) {
+        this.asyncMaxThreads = asyncMaxThreads;
+    }
+
+    /**
+     * When the async number of threads is greater than the min,
+     * this is the maximum time that excess idle threads will wait
+     * for new tasks before terminating (in <b>milliseconds</b>). Defaults to
+     * <code>60 * 1000</code> which is 1 minute.
+     */
+    public void setAsyncKeepAliveTime(int asyncKeepAliveTime) {
+        this.asyncKeepAliveTime = asyncKeepAliveTime;
+    }
+
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
@@ -275,9 +307,10 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             if (transactionManager != null && transactionManager instanceof JiniPlatformTransactionManager) {
                 transactionalContext = ((JiniPlatformTransactionManager) transactionManager).getTransactionalContext();
             }
-            txProvider =  new DefaultTransactionProvider(transactionalContext, transactionManager);
+            txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
         }
-        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);
+        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel, asyncMinThreads,
+                asyncMaxThreads, asyncKeepAliveTime, beanName == null ? "" : beanName);
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);

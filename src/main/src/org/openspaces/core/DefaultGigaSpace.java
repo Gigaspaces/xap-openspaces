@@ -25,21 +25,25 @@ import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.ReadModifiers;
+import com.j_spaces.kernel.threadpool.DynamicExecutors;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
+import org.openspaces.core.executor.internal.ExecutorAsyncFuture;
 import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 import org.openspaces.core.executor.internal.InternalDistributedSpaceTaskWrapper;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
+import org.openspaces.core.internal.InternalGigaSpace;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.internal.TransactionalAsyncFuture;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
 import java.io.Serializable;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
@@ -55,7 +59,7 @@ import java.io.Serializable;
  *
  * @author kimchy
  */
-public class DefaultGigaSpace implements GigaSpace {
+public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     private ISpaceProxy space;
 
@@ -74,6 +78,8 @@ public class DefaultGigaSpace implements GigaSpace {
 
     private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
+    private ExecutorService asyncExecutorService;
+
     /**
      * Constructs a new DefaultGigaSpace implementation.
      *
@@ -86,7 +92,8 @@ public class DefaultGigaSpace implements GigaSpace {
      *                              levels values.
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
-                            int defaultIsolationLevel) {
+                            int defaultIsolationLevel, int asyncMinThreads, int asyncMaxThreads, int asyncKeepAliveTime,
+                            String asyncThreadNamePrefix) {
         this.space = (ISpaceProxy) space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
@@ -107,6 +114,8 @@ public class DefaultGigaSpace implements GigaSpace {
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
+        this.asyncExecutorService = DynamicExecutors.newScalingThreadPool(asyncMinThreads, asyncMaxThreads, asyncKeepAliveTime,
+                DynamicExecutors.daemonThreadFactory("gigaspace-" + asyncThreadNamePrefix));
     }
 
     /**
@@ -144,6 +153,10 @@ public class DefaultGigaSpace implements GigaSpace {
 
     public ExceptionTranslator getExceptionTranslator() {
         return this.exTranslator;
+    }
+
+    public ExecutorService getAsyncExecutorService() {
+        return asyncExecutorService;
     }
 
     public void clean() throws DataAccessException {
@@ -425,11 +438,7 @@ public class DefaultGigaSpace implements GigaSpace {
         }
         try {
             Transaction tx = getCurrentTransaction();
-            AsyncFuture<T> future = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx);
-            if (tx != null) {
-                future = new TransactionalAsyncFuture<T>(future, this);
-            }
-            return future;
+            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -441,28 +450,23 @@ public class DefaultGigaSpace implements GigaSpace {
         for (int i = 0; i < routing.length; i++) {
             try {
                 futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing[i]), tx);
-                if (tx != null) {
-                    futures[i] = new TransactionalAsyncFuture<T>(futures[i], this);
-                }
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
         }
+        AsyncFuture<R> result;
         if (task instanceof AsyncResultFilter) {
-            return FutureFactory.create(futures, task, (AsyncResultFilter<T>) task);
+            result = FutureFactory.create(futures, task, (AsyncResultFilter<T>) task);
         } else {
-            return FutureFactory.create(futures, task);
+            result = FutureFactory.create(futures, task);
         }
+        return wrapFuture(result, tx);
     }
 
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
         try {
             Transaction tx = getCurrentTransaction();
-            AsyncFuture<R> future = space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction());
-            if (tx != null) {
-                future = new TransactionalAsyncFuture<R>(future, this);
-            }
-            return future;
+            return wrapFuture(space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction()), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -507,5 +511,12 @@ public class DefaultGigaSpace implements GigaSpace {
     @Override
     public String toString() {
         return space.toString();
+    }
+
+    public <T> AsyncFuture<T> wrapFuture(AsyncFuture<T> future, Transaction tx) {
+        if (tx != null) {
+            future = new TransactionalAsyncFuture<T>(future, this);
+        }
+        return new ExecutorAsyncFuture<T>(future, this);
     }
 }
