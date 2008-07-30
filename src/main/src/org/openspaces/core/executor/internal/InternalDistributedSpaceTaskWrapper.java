@@ -17,7 +17,7 @@
 package org.openspaces.core.executor.internal;
 
 import com.gigaspaces.async.AsyncResult;
-import com.gigaspaces.async.AsyncResultsModerator;
+import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.executor.DistributedSpaceTask;
 import org.openspaces.core.executor.DistributedTask;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * @author kimchy
  */
 public class InternalDistributedSpaceTaskWrapper<T, R> extends InternalSpaceTaskWrapper<T>
-        implements DistributedSpaceTask<T, R>, AsyncResultsModerator<T> {
+        implements DistributedSpaceTask<T, R>, AsyncResultFilter<T> {
 
     public InternalDistributedSpaceTaskWrapper() {
     }
@@ -45,9 +45,9 @@ public class InternalDistributedSpaceTaskWrapper<T, R> extends InternalSpaceTask
         return (R) ((DistributedTask) getTask()).reduce(asyncResults);
     }
 
-    public Decision moderate(AsyncResult<T> currentResult, Collection<AsyncResult<T>> receivedResults, int totalExpextedResults) {
-        if (getTask() instanceof AsyncResultsModerator) {
-            return ((AsyncResultsModerator) getTask()).moderate(currentResult, receivedResults, totalExpextedResults);
+    public Decision onResult(AsyncResult<T> currentResult, Collection<AsyncResult<T>> receivedResults, int totalExpectedResults) {
+        if (getTask() instanceof AsyncResultFilter) {
+            return ((AsyncResultFilter) getTask()).onResult(currentResult, receivedResults, totalExpectedResults);
         }
         return Decision.CONTINUE;
     }

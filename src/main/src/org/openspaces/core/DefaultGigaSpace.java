@@ -17,7 +17,7 @@
 package org.openspaces.core;
 
 import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.async.AsyncResultsModerator;
+import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
 import com.j_spaces.core.IJSpace;
@@ -446,8 +446,8 @@ public class DefaultGigaSpace implements GigaSpace {
                 throw exTranslator.translate(e);
             }
         }
-        if (task instanceof AsyncResultsModerator) {
-            return FutureFactory.create(futures, task, (AsyncResultsModerator<T>) task);
+        if (task instanceof AsyncResultFilter) {
+            return FutureFactory.create(futures, task, (AsyncResultFilter<T>) task);
         } else {
             return FutureFactory.create(futures, task);
         }

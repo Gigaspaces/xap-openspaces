@@ -17,7 +17,7 @@
 package org.openspaces.core;
 
 import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.async.AsyncResultsModerator;
+import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
 import org.openspaces.core.executor.DistributedTask;
@@ -46,7 +46,7 @@ public class ExecutorBuilder<T, R> {
      * Constructs a new executor builder, with the {@link org.openspaces.core.GigaSpace} they will execute
      * with, and a reducer to reduce all the different tasks results.
      *
-     * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
      * if tasks should continue to accumelate or it should break and execute the reduce operation on the
      * results received so far.
      */
@@ -108,8 +108,8 @@ public class ExecutorBuilder<T, R> {
      * allowing to retrieve the reduced operation of all the tasks.
      *
      * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
-     * during the reduce operation. The moderator (assuming the redicer provided implements {@link AsyncResultsModerator
-     * }) can be used as a mechanism to listen for results as they arrive.
+     * during the reduce operation. The moderator (assuming the redicer provided implements
+     * {@link com.gigaspaces.async.AsyncResultFilter}) can be used as a mechanism to listen for results as they arrive.
      *
      * @return a Future representing pending completion of the task,
      *         and whose <code>get()</code> method will return the task value upon comletion.
@@ -135,8 +135,8 @@ public class ExecutorBuilder<T, R> {
                 }
             }
         }
-        if (reducer instanceof AsyncResultsModerator) {
-            return FutureFactory.create(futures, reducer, (AsyncResultsModerator<T>) reducer);
+        if (reducer instanceof AsyncResultFilter) {
+            return FutureFactory.create(futures, reducer, (AsyncResultFilter<T>) reducer);
         } else {
             return FutureFactory.create(futures, reducer);
         }
