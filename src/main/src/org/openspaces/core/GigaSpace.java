@@ -849,7 +849,7 @@ public interface GigaSpace {
      *
      * @param task The task to execute
      * @return a Future representing pending completion of the task,
-     *         and whose <code>get()</code> method will return the task value upon comletion.
+     *         and whose <code>get()</code> method will return the task value upon completion.
      */
     <T> AsyncFuture<T> execute(Task<T> task);
 
@@ -869,7 +869,7 @@ public interface GigaSpace {
      * @param task    The task to execute
      * @param routing The routing value that will control on which node the task will be executed on
      * @return a Future representing pending completion of the task,
-     *         and whose <code>get()</code> method will return the task value upon comletion.
+     *         and whose <code>get()</code> method will return the task value upon completion.
      */
     <T> AsyncFuture<T> execute(Task<T> task, Object routing);
 
@@ -896,7 +896,7 @@ public interface GigaSpace {
      * @param routing A list of routing values, each resulting in an execution of the task on the space node
      *                it corresponds to
      * @return a Future representing pending completion of the task,
-     *         and whose <code>get()</code> method will return the task value upon comletion.
+     *         and whose <code>get()</code> method will return the task value upon completion.
      */
     <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing);
 
@@ -921,7 +921,7 @@ public interface GigaSpace {
      *
      * @param task The task to execute
      * @return a Future representing pending completion of the task,
-     *         and whose <code>get()</code> method will return the task value upon comletion.
+     *         and whose <code>get()</code> method will return the task value upon completion.
      */
     <T, R> AsyncFuture<R> execute(DistributedTask<T, R> task);
 
