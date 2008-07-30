@@ -33,6 +33,7 @@ import net.jini.core.entry.UnusableEntryException;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
+import org.openspaces.core.executor.support.DelegatingTask;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
@@ -498,8 +499,15 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 if (task instanceof InternalSpaceTaskWrapper) {
                     task = ((InternalSpaceTaskWrapper) task).getTask();
                 }
-                beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-                beanFactory.initializeBean(task, task.getClass().getName());
+                while (true) {
+                    beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+                    beanFactory.initializeBean(task, task.getClass().getName());
+                    if (task instanceof DelegatingTask) {
+                        task = ((DelegatingTask) task).getDelegatedTask();
+                    } else {
+                        break;
+                    }
+                }
             } catch (UnusableEntryException e) {
                 // won't happen
             }
