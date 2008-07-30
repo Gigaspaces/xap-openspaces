@@ -17,9 +17,14 @@
 package org.openspaces.core.executor;
 
 /**
+ * Controls the {@link Task} routing.
+ *
  * @author kimchy
  */
 public interface TaskRoutingProvider {
 
+    /**
+     * Returns the routing of the task.
+     */
     Object getRouting();
 }

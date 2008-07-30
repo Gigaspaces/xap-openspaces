@@ -878,7 +878,7 @@ public interface GigaSpace {
      * on each space node with all the results reduced by the
      * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
      *
-     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
      * if tasks should continue to accumelate or it should break and execute the reduce operation on the
      * results received so far.
      *
@@ -905,7 +905,7 @@ public interface GigaSpace {
      * on each space node with all the results reduced by the
      * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
      *
-     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
      * if tasks should continue to accumelate or it should break and execute the reduce operation on the
      * results received so far.
      *
@@ -929,7 +929,7 @@ public interface GigaSpace {
      * Constructs an executor builder allowing to accumlate different tasks required to be executed
      * into a single execute mechanism with all the results reduced by the reducer provided.
      *
-     * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultsModerator} that can control
+     * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
      * if tasks should continue to accumelate or it should break and execute the reduce operation on the
      * results received so far.
      *
