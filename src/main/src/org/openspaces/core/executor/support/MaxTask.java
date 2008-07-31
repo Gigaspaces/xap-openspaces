@@ -23,7 +23,7 @@ import org.openspaces.core.executor.Task;
 import java.util.List;
 
 /**
- * A sum distrubted task that accepts a {@link org.openspaces.core.executor.Task} to delegate
+ * A max distrubted task that accepts a {@link org.openspaces.core.executor.Task} to delegate
  * the actual execution to and implements the {@link #reduce(java.util.List)} operation.
  *
  * <p>By defualt, throws an exception if one of the execution fails. {@link #ignoreExceptions()}
@@ -33,13 +33,13 @@ import java.util.List;
  * <p>Can accept an optioanl {@link com.gigaspaces.async.AsyncResultFilter}.
  *
  * @author kimchy
- * @see org.openspaces.core.executor.support.SumIntegerReducer
+ * @see MaxReducer
  */
-public class SumIntegerTask extends AbstractDelegatingDistributedTask<Integer, Long> {
+public class MaxTask<T extends Number> extends AbstractDelegatingDistributedTask<T, T> {
 
-    private transient SumIntegerReducer reducer;
+    private transient MaxReducer<T> reducer;
 
-    protected SumIntegerTask() {
+    protected MaxTask() {
         super();
     }
 
@@ -49,9 +49,9 @@ public class SumIntegerTask extends AbstractDelegatingDistributedTask<Integer, L
      *
      * @param task The task to delegate the execution to.
      */
-    public SumIntegerTask(Task<Integer> task) {
+    public MaxTask(Class<T> reduceType, Task<T> task) {
         super(task);
-        this.reducer = new SumIntegerReducer();
+        this.reducer = new MaxReducer<T>(reduceType);
     }
 
     /**
@@ -61,24 +61,24 @@ public class SumIntegerTask extends AbstractDelegatingDistributedTask<Integer, L
      * @param task   The task to delegate the execution to.
      * @param filter A result filter to be called for each result
      */
-    public SumIntegerTask(Task<Integer> task, AsyncResultFilter<Integer> filter) {
+    public MaxTask(Class<T> reduceType, Task<T> task, AsyncResultFilter<T> filter) {
         super(task, filter);
-        this.reducer = new SumIntegerReducer();
+        this.reducer = new MaxReducer<T>(reduceType);
     }
 
     /**
      * Sests the {@link #reduce(java.util.List)} to ignore failed invocations.
      */
-    public SumIntegerTask ignoreExceptions() {
+    public MaxTask ignoreExceptions() {
         this.reducer.ignoreExceptions();
         return this;
     }
 
     /**
      * Performs the actual sum operation by delegating to its internal
-     * {@link org.openspaces.core.executor.support.SumIntegerReducer}.
+     * {@link SumReducer}.
      */
-    public Long reduce(List<AsyncResult<Integer>> results) throws Exception {
+    public T reduce(List<AsyncResult<T>> results) throws Exception {
         return reducer.reduce(results);
     }
 }

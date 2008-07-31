@@ -33,13 +33,13 @@ import java.util.List;
  * <p>Can accept an optioanl {@link com.gigaspaces.async.AsyncResultFilter}.
  *
  * @author kimchy
- * @see SumFloatReducer
+ * @see SumReducer
  */
-public class SumFloatTask extends AbstractDelegatingDistributedTask<Float, Double> {
+public class AvgTask<T extends Number, R extends Number> extends AbstractDelegatingDistributedTask<T, R> {
 
-    private transient SumFloatReducer reducer;
+    private transient AvgReducer<T, R> reducer;
 
-    protected SumFloatTask() {
+    protected AvgTask() {
         super();
     }
 
@@ -49,9 +49,9 @@ public class SumFloatTask extends AbstractDelegatingDistributedTask<Float, Doubl
      *
      * @param task The task to delegate the execution to.
      */
-    public SumFloatTask(Task<Float> task) {
+    public AvgTask(Class<R> reduceType, Task<T> task) {
         super(task);
-        this.reducer = new SumFloatReducer();
+        this.reducer = new AvgReducer<T, R>(reduceType);
     }
 
     /**
@@ -61,24 +61,24 @@ public class SumFloatTask extends AbstractDelegatingDistributedTask<Float, Doubl
      * @param task   The task to delegate the execution to.
      * @param filter A result filter to be called for each result
      */
-    public SumFloatTask(Task<Float> task, AsyncResultFilter<Float> filter) {
+    public AvgTask(Class<R> reduceType, Task<T> task, AsyncResultFilter<T> filter) {
         super(task, filter);
-        this.reducer = new SumFloatReducer();
+        this.reducer = new AvgReducer<T, R>(reduceType);
     }
 
     /**
      * Sests the {@link #reduce(java.util.List)} to ignore failed invocations.
      */
-    public SumFloatTask ignoreExceptions() {
+    public AvgTask ignoreExceptions() {
         this.reducer.ignoreExceptions();
         return this;
     }
 
     /**
      * Performs the actual sum operation by delegating to its internal
-     * {@link org.openspaces.core.executor.support.SumFloatReducer}.
+     * {@link SumReducer}.
      */
-    public Double reduce(List<AsyncResult<Float>> results) throws Exception {
+    public R reduce(List<AsyncResult<T>> results) throws Exception {
         return reducer.reduce(results);
     }
 }

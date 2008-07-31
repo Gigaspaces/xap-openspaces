@@ -18,35 +18,38 @@ package org.openspaces.core.executor.support;
 
 import com.gigaspaces.async.AsyncResult;
 import com.gigaspaces.async.AsyncResultsReducer;
+import org.openspaces.core.util.numbers.NumberHelper;
+import org.openspaces.core.util.numbers.NumberHelperFactory;
 
 import java.util.List;
 
 /**
- * A default implementation of a reducer that sums all the float reuslts into
- * a double result.
+ * A default implementation of a reducer that sums all types <code>T</code>
+ * into a result <code>R</code>.
  *
  * @author kimchy
  */
-public class SumFloatReducer implements AsyncResultsReducer<Float, Double> {
+public class SumReducer<T extends Number, R extends Number> implements AsyncResultsReducer<T, R> {
 
     private volatile boolean ignoreExceptions;
+
+    protected final NumberHelper<R> redeuceHelper;
+
+    public SumReducer(Class<R> reduceType) throws IllegalArgumentException {
+        redeuceHelper = NumberHelperFactory.getNumberHelper(reduceType);
+    }
 
     /**
      * Causes the reducer to ignore exceptions and just sum the results that succeeded.
      */
-    public SumFloatReducer ignoreExceptions() {
+    public SumReducer ignoreExceptions() {
         this.ignoreExceptions = true;
         return this;
     }
 
-    /**
-     * Sums all the float values of the results into a double. Will throw an exception
-     * by default. Will only sum the successful results if {@link #ignoreExceptions()} is
-     * called.
-     */
-    public Double reduce(List<AsyncResult<Float>> results) throws Exception {
-        double sum = 0;
-        for (AsyncResult<Float> result : results) {
+    public R reduce(List<AsyncResult<T>> results) throws Exception {
+        R sum = redeuceHelper.ZERO();
+        for (AsyncResult<T> result : results) {
             if (result.getException() != null) {
                 if (ignoreExceptions) {
                     continue;
@@ -54,7 +57,7 @@ public class SumFloatReducer implements AsyncResultsReducer<Float, Double> {
                     throw result.getException();
                 }
             }
-            sum += result.getResult();
+            sum = redeuceHelper.add(sum, result.getResult());
         }
         return sum;
     }
