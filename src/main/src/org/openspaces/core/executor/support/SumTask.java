@@ -49,7 +49,7 @@ public class SumTask<T extends Number, R extends Number> extends AbstractDelegat
      *
      * @param task The task to delegate the execution to.
      */
-    public SumTask(Class<R> reduceType, Task<T> task) {
+    public SumTask(Class<R> reduceType, Task<T> task) throws IllegalArgumentException {
         super(task);
         this.reducer = new SumReducer<T, R>(reduceType);
     }
@@ -61,7 +61,7 @@ public class SumTask<T extends Number, R extends Number> extends AbstractDelegat
      * @param task   The task to delegate the execution to.
      * @param filter A result filter to be called for each result
      */
-    public SumTask(Class<R> reduceType, Task<T> task, AsyncResultFilter<T> filter) {
+    public SumTask(Class<R> reduceType, Task<T> task, AsyncResultFilter<T> filter) throws IllegalArgumentException {
         super(task, filter);
         this.reducer = new SumReducer<T, R>(reduceType);
     }

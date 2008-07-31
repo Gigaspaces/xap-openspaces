@@ -49,7 +49,7 @@ public class AvgTask<T extends Number, R extends Number> extends AbstractDelegat
      *
      * @param task The task to delegate the execution to.
      */
-    public AvgTask(Class<R> reduceType, Task<T> task) {
+    public AvgTask(Class<R> reduceType, Task<T> task) throws IllegalArgumentException {
         super(task);
         this.reducer = new AvgReducer<T, R>(reduceType);
     }
@@ -61,7 +61,7 @@ public class AvgTask<T extends Number, R extends Number> extends AbstractDelegat
      * @param task   The task to delegate the execution to.
      * @param filter A result filter to be called for each result
      */
-    public AvgTask(Class<R> reduceType, Task<T> task, AsyncResultFilter<T> filter) {
+    public AvgTask(Class<R> reduceType, Task<T> task, AsyncResultFilter<T> filter) throws IllegalArgumentException {
         super(task, filter);
         this.reducer = new AvgReducer<T, R>(reduceType);
     }

@@ -49,7 +49,7 @@ public class MaxTask<T extends Number> extends AbstractDelegatingDistributedTask
      *
      * @param task The task to delegate the execution to.
      */
-    public MaxTask(Class<T> reduceType, Task<T> task) {
+    public MaxTask(Class<T> reduceType, Task<T> task) throws IllegalArgumentException {
         super(task);
         this.reducer = new MaxReducer<T>(reduceType);
     }
@@ -61,7 +61,7 @@ public class MaxTask<T extends Number> extends AbstractDelegatingDistributedTask
      * @param task   The task to delegate the execution to.
      * @param filter A result filter to be called for each result
      */
-    public MaxTask(Class<T> reduceType, Task<T> task, AsyncResultFilter<T> filter) {
+    public MaxTask(Class<T> reduceType, Task<T> task, AsyncResultFilter<T> filter) throws IllegalArgumentException {
         super(task, filter);
         this.reducer = new MaxReducer<T>(reduceType);
     }
