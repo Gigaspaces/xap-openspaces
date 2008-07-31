@@ -370,7 +370,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
             }
 
-            if (enableExecutorInjection && getApplicationContext() != null) {
+            if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection && getApplicationContext() != null) {
                 if (filterProviders == null) {
                     filterProviders = new FilterProviderFactory[]{new ExecutorFilterProviderFactory()};
                 } else {
