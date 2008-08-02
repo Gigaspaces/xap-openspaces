@@ -16,13 +16,25 @@
 
 package org.openspaces.core.util.numbers;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
+ * A factory allowing to create {@link org.openspaces.core.util.numbers.NumberHelper} implemenations
+ * based on the provided {@link Number} type (such as <code>Integer</code> or <code>Float</code>).
+ *
  * @author kimchy
  */
 public class NumberHelperFactory {
 
+    /**
+     * A factory allowing to create {@link org.openspaces.core.util.numbers.NumberHelper} implemenations
+     * based on the provided {@link Number} type (such as <code>Integer</code> or <code>Float</code>).
+     *
+     * @param type The type to construct the mappaed {@link org.openspaces.core.util.numbers.NumberHelper}.
+     * @return The {@link org.openspaces.core.util.numbers.NumberHelper} mapping for the provided type
+     * @throws IllegalArgumentException No {@link org.openspaces.core.util.numbers.NumberHelper} for the provided type
+     */
     @SuppressWarnings("unchecked")
     public static <N extends Number> NumberHelper<N> getNumberHelper(Class<N> type) throws IllegalArgumentException {
         if (type.equals(Integer.class)) {
@@ -47,6 +59,10 @@ public class NumberHelperFactory {
 
         if (type.equals(BigInteger.class)) {
             return (NumberHelper<N>) new BigIntegerHelper();
+        }
+
+        if (type.equals(BigDecimal.class)) {
+            return (NumberHelper<N>) new BigDecimalHelper();
         }
 
         throw new IllegalArgumentException("No number helper support for type [" + type.getName() + "]");

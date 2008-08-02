@@ -19,6 +19,9 @@ package org.openspaces.core.util.numbers;
 import java.util.Comparator;
 
 /**
+ * A generic interface on top of a specific {@link Number} implementation allowing
+ * to use it in a generalized fashion.
+ *
  * @author kimchy
  */
 public interface NumberHelper<N extends Number> extends Comparator<Number> {
