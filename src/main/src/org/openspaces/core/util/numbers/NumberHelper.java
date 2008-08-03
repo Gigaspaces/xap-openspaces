@@ -26,21 +26,52 @@ import java.util.Comparator;
  */
 public interface NumberHelper<N extends Number> extends Comparator<Number> {
 
+    /**
+     * Casts the give {@link Number} into the type the number helper handles.
+     */
     N cast(Number n);
 
+    /**
+     * Returns the maximum number for the specific type the number helper handles.
+     */
     N MAX_VALUE();
 
+    /**
+     * Returns the minimum number for the specific type the number helper handles.
+     */
     N MIN_VALUE();
 
+    /**
+     * Returns the "ONE" value for the given type.
+     */
     N ONE();
 
+    /**
+     * Returns the "ZERO" value for the given type.
+     */
     N ZERO();
 
+    /**
+     * Adds the two numbers (can be of any Number type) and returns the type result
+     * that the number helper handles.
+     */
     N add(Number lhs, Number rhs);
 
+    /**
+     * Substracts the two numbers (can be of any Number type) and returns the type result
+     * that the number helper handles.
+     */
     N sub(Number lhs, Number rhs);
 
+    /**
+     * Multiplies the two numbers (can be of any Number type) and returns the type result
+     * that the number helper handles.
+     */
     N mult(Number lhs, Number rhs);
 
+    /**
+     * Divides the two numbers (can be of any Number type) and returns the type result
+     * that the number helper handles.
+     */
     N div(Number lhs, Number rhs);
 }
