@@ -18,7 +18,6 @@ package org.openspaces.core.executor.juc;
 
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.executor.TaskRoutingProvider;
-import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 import org.openspaces.core.executor.support.ProcessObjectsProvider;
 
 import java.io.Externalizable;
@@ -68,7 +67,7 @@ public class CallableTaskAdapter<T extends Serializable> implements Task<T>, Pro
      * Tries to extract the routing information form the task.
      */
     public Object getRouting() {
-        return ExecutorMetaDataProvider.extractRouting(callable);
+        return callable;
     }
 
     /**

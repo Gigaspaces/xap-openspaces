@@ -18,7 +18,6 @@ package org.openspaces.core.executor.support;
 
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.executor.TaskRoutingProvider;
-import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -55,7 +54,7 @@ public class SimpleDelegatingTask<T extends Serializable> implements DelegatingT
      * Tries to extract the routing information form the task.
      */
     public Object getRouting() {
-        return ExecutorMetaDataProvider.extractRouting(task);
+        return task;
     }
 
     /**

@@ -32,6 +32,7 @@ import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
+import org.openspaces.core.executor.TaskRoutingProvider;
 import org.openspaces.core.executor.internal.ExecutorAsyncFuture;
 import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 import org.openspaces.core.executor.internal.InternalDistributedSpaceTaskWrapper;
@@ -429,12 +430,26 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task) {
-        return execute(task, executorMetaDataProvider.findRouting(task));
+        Object routing = null;
+        if (task instanceof TaskRoutingProvider) {
+            Object optionalRouting = executorMetaDataProvider.findRouting(((TaskRoutingProvider) task).getRouting());
+            if (optionalRouting != null) {
+                routing = optionalRouting;
+            }
+        }
+        if (routing == null) {
+            routing = executorMetaDataProvider.findRouting(task);
+        }
+        return execute(task, routing);
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, Object routing) {
         if (routing == null) {
             throw new IllegalArgumentException("Task [" + task + "] can not be executed without routing information");
+        }
+        Object optionalRouting = executorMetaDataProvider.findRouting(routing);
+        if (optionalRouting != null) {
+            routing = optionalRouting;
         }
         try {
             Transaction tx = getCurrentTransaction();
@@ -444,12 +459,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routing) {
-        AsyncFuture<T>[] futures = new AsyncFuture[routing.length];
+    public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routings) {
+        AsyncFuture<T>[] futures = new AsyncFuture[routings.length];
         Transaction tx = getCurrentTransaction();
-        for (int i = 0; i < routing.length; i++) {
+        for (int i = 0; i < routings.length; i++) {
             try {
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing[i]), tx);
+                Object routing = routings[i];
+                Object optionalRouting = executorMetaDataProvider.findRouting(routing);
+                if (optionalRouting != null) {
+                    routing = optionalRouting;
+                }
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx);
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }

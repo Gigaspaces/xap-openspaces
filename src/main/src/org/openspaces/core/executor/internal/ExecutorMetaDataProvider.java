@@ -17,7 +17,6 @@
 package org.openspaces.core.executor.internal;
 
 import com.gigaspaces.annotation.pojo.SpaceRouting;
-import org.openspaces.core.executor.Task;
 import org.openspaces.core.executor.TaskRoutingProvider;
 import org.springframework.dao.DataAccessException;
 
@@ -60,20 +59,23 @@ public class ExecutorMetaDataProvider {
         }
     }
 
-    public Object findRouting(Task task) {
-        if (task instanceof TaskRoutingProvider) {
-            return ((TaskRoutingProvider) task).getRouting();
+    public Object findRouting(Object obj) {
+        if (obj == null) {
+            return null;
         }
-        Method method = routingMethods.get(task.getClass());
+        if (obj instanceof TaskRoutingProvider) {
+            return ((TaskRoutingProvider) obj).getRouting();
+        }
+        Method method = routingMethods.get(obj.getClass());
         if (method == null) {
-            method = findRoutingMethod(task);
-            routingMethods.put(task.getClass(), method);
+            method = findRoutingMethod(obj);
+            routingMethods.put(obj.getClass(), method);
         }
         if (method == NO_METHOD) {
             return null;
         }
         try {
-            return method.invoke(task);
+            return method.invoke(obj);
         } catch (IllegalAccessException e) {
             throw new FailedToExecuteRoutingMethodException(e.getMessage(), e);
         } catch (InvocationTargetException e) {

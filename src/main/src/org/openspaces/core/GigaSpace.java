@@ -859,6 +859,10 @@ public interface GigaSpace {
      * Executes a task on a specific space node. The space node it will
      * execute on should is controlled by the routing value provided as a second paramter.
      *
+     * <p>The routing object itself does not have to be the actual routing value, but can be a POJO
+     * that defined a method annotated with <code>@SpaceRouting</code> annotation (this works well
+     * when wanting to use entries as the routing parameters).
+     *
      * <p>In order to control the using the Task itself, use {@link #execute(org.openspaces.core.executor.Task)}.
      *
      * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
@@ -880,6 +884,10 @@ public interface GigaSpace {
      * on each space node with all the results reduced by the
      * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
      *
+     * <p>The routing object itself does not have to be the actual routing value, but can be a POJO
+     * that defined a method annotated with <code>@SpaceRouting</code> annotation (this works well
+     * when wanting to use entries as the routing parameters).
+     * 
      * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
      * if tasks should continue to accumelate or it should break and execute the reduce operation on the
      * results received so far.
