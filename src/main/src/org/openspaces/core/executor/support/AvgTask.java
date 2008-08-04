@@ -20,6 +20,10 @@ import com.gigaspaces.async.AsyncResult;
 import com.gigaspaces.async.AsyncResultFilter;
 import org.openspaces.core.executor.Task;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.List;
 
 /**
@@ -35,11 +39,14 @@ import java.util.List;
  * @author kimchy
  * @see SumReducer
  */
-public class AvgTask<T extends Number, R extends Number> extends AbstractDelegatingDistributedTask<T, R> {
+public class AvgTask<T extends Number, R extends Number> extends AbstractDelegatingDistributedTask<T, R> implements Externalizable {
 
     private transient AvgReducer<T, R> reducer;
 
-    protected AvgTask() {
+    /**
+     * Here for externalizable.
+     */
+    public AvgTask() {
         super();
     }
 
@@ -80,5 +87,13 @@ public class AvgTask<T extends Number, R extends Number> extends AbstractDelegat
      */
     public R reduce(List<AsyncResult<T>> results) throws Exception {
         return reducer.reduce(results);
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super._writeExternal(out);
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super._readExternal(in);
     }
 }

@@ -21,6 +21,9 @@ import com.gigaspaces.async.AsyncResultFilterEvent;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -58,5 +61,13 @@ public abstract class AbstractDelegatingDistributedTask<T extends Serializable, 
 
     protected AsyncResultFilter<T> getFilter() {
         return filter;
+    }
+
+    protected void _writeExternal(ObjectOutput output) throws IOException {
+        super._writeExternal(output);
+    }
+
+    protected void _readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
+        super._readExternal(input);
     }
 }

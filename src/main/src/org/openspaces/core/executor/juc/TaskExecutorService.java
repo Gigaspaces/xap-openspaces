@@ -16,7 +16,9 @@
 
 package org.openspaces.core.executor.juc;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * An exetend interface to {@link ExecutorService}.
@@ -24,4 +26,11 @@ import java.util.concurrent.ExecutorService;
  * @author kimchy
  */
 public interface TaskExecutorService extends ExecutorService {
+
+    /**
+     * Submits a callabale to to be executed on the Space using the provided routing.
+     *
+     * @see org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task, Object) 
+     */
+    <T> Future<T> submit(Callable<T> task, Object routing);
 }

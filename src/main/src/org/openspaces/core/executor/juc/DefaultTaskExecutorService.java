@@ -17,13 +17,14 @@
 package org.openspaces.core.executor.juc;
 
 import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.async.AsyncFutureListener;
-import com.gigaspaces.async.AsyncResult;
 import com.gigaspaces.async.AsyncResultsReducer;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.core.executor.support.WaitForAllListener;
+import org.openspaces.core.executor.support.WaitForAnyListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -33,6 +34,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
+ * An implemenation of an {@link java.util.concurrent.ExecutorService} that uses the executors support
+ * implemented in {@link org.openspaces.core.GigaSpace}.
+ *
  * @author kimchy
  */
 public class DefaultTaskExecutorService implements TaskExecutorService {
@@ -63,6 +67,10 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         return result;
     }
 
+    public <T> Future<T> submit(Callable<T> task, Object routing) {
+        return gigaSpace.execute(new CallableTaskAdapter(task), routing);
+    }
+
     public AsyncFuture<?> submit(Runnable task) {
         AsyncFuture<?> result;
         if (task instanceof AsyncResultsReducer) {
@@ -84,35 +92,27 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
     }
 
     public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks) throws InterruptedException {
-        ArrayList<Future<T>> results = new ArrayList<Future<T>>(tasks.size());
-        for (Callable<T> task : tasks) {
-            results.add(submit(task));
-        }
-        for (Future<T> result : results) {
-            try {
-                result.get();
-            } catch (ExecutionException e) {
-                // ignore this exception, we reutrn all the completed tasks
-            }
-        }
-        return results;
+        return invokeAll(tasks, -1, TimeUnit.MILLISECONDS);
     }
 
     public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
-        ArrayList<Future<T>> results = new ArrayList<Future<T>>(tasks.size());
+        WaitForAllListener<T> listener = new WaitForAllListener<T>(tasks.size());
+        ArrayList<AsyncFuture<T>> results = new ArrayList<AsyncFuture<T>>(tasks.size());
         for (Callable<T> task : tasks) {
-            results.add(submit(task));
-        }
-        for (Future<T> result : results) {
-            try {
-                result.get(timeout, unit);
-            } catch (ExecutionException e) {
-                // ignore this exception, we reutrn all the completed tasks
-            } catch (TimeoutException e) {
-                // ignore this exception, we reutrn all the completed tasks
+            AsyncFuture<T> result;
+            if (task instanceof AsyncResultsReducer) {
+                result = gigaSpace.execute(new CallableDistributedTaskAdapter(task));
+            } else {
+                result = gigaSpace.execute(new CallableTaskAdapter(task));
             }
+            result.setListener(listener);
+            results.add(result);
         }
-        return results;
+        Future<T>[] result = listener.waitForResult(timeout, unit);
+        for (AsyncFuture<T> future : results) {
+            future.cancel(false);
+        }
+        return Arrays.asList(result);
     }
 
     public <T> T invokeAny(Collection<Callable<T>> tasks) throws InterruptedException, ExecutionException {
@@ -125,7 +125,7 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
     }
 
     public <T> T invokeAny(Collection<Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        WaitForAnyListener<T> listener = new WaitForAnyListener<T>(timeout == -1 ? timeout : unit.toMillis(timeout));
+        WaitForAnyListener<T> listener = new WaitForAnyListener<T>(tasks.size());
         ArrayList<AsyncFuture<T>> results = new ArrayList<AsyncFuture<T>>(tasks.size());
         for (Callable<T> task : tasks) {
             AsyncFuture<T> result;
@@ -137,7 +137,7 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
             result.setListener(listener);
             results.add(result);
         }
-        T result = listener.waitForResult();
+        T result = listener.waitForResult(timeout, unit);
         for (AsyncFuture<T> future : results) {
             future.cancel(false);
         }
@@ -167,45 +167,4 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         return true;
     }
 
-    private class WaitForAnyListener<T> implements AsyncFutureListener<T> {
-
-        private final Object lock = new Object();
-
-        private T result;
-
-        private long timout = -1;
-
-        public WaitForAnyListener() {
-        }
-
-        public WaitForAnyListener(long timout) {
-            this.timout = timout;
-        }
-
-        public void onResult(AsyncResult<T> result) {
-            synchronized (lock) {
-                if (result.getException() == null) {
-                    this.result = result.getResult();
-                    lock.notifyAll();
-                }
-            }
-        }
-
-        public T waitForResult() throws InterruptedException {
-            synchronized (lock) {
-                if (result != null) {
-                    return result;
-                }
-                if (timout == -1) {
-                    lock.wait();
-                } else {
-                    lock.wait(timout);
-                }
-                if (result != null) {
-                    return result;
-                }
-            }
-            return null;
-        }
-    }
 }

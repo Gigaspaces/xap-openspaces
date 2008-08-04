@@ -17,6 +17,8 @@
 package org.openspaces.core.executor.juc;
 
 import org.openspaces.core.executor.Task;
+import org.openspaces.core.executor.TaskRoutingProvider;
+import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 import org.openspaces.core.executor.support.ProcessObjectsProvider;
 
 import java.io.Externalizable;
@@ -30,7 +32,7 @@ import java.io.Serializable;
  *
  * @author kimchy
  */
-public class RunnableTaskAdapter<T extends Serializable> implements Task<T>, ProcessObjectsProvider, Externalizable {
+public class RunnableTaskAdapter<T extends Serializable> implements Task<T>, ProcessObjectsProvider, TaskRoutingProvider, Externalizable {
 
     private Runnable runnable;
 
@@ -72,6 +74,13 @@ public class RunnableTaskAdapter<T extends Serializable> implements Task<T>, Pro
      */
     public Object[] getObjectsToProcess() {
         return new Object[]{runnable};
+    }
+
+    /**
+     * Tries to extract the routing information form the task.
+     */
+    public Object getRouting() {
+        return ExecutorMetaDataProvider.extractRouting(runnable);
     }
 
     /**

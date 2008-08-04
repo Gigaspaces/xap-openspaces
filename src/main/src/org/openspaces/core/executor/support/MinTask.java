@@ -20,6 +20,10 @@ import com.gigaspaces.async.AsyncResult;
 import com.gigaspaces.async.AsyncResultFilter;
 import org.openspaces.core.executor.Task;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.List;
 
 /**
@@ -35,11 +39,11 @@ import java.util.List;
  * @author kimchy
  * @see org.openspaces.core.executor.support.MaxReducer
  */
-public class MinTask<T extends Number> extends AbstractDelegatingDistributedTask<T, T> {
+public class MinTask<T extends Number> extends AbstractDelegatingDistributedTask<T, T> implements Externalizable {
 
     private transient MinReducer<T> reducer;
 
-    protected MinTask() {
+    public MinTask() {
         super();
     }
 
@@ -80,5 +84,13 @@ public class MinTask<T extends Number> extends AbstractDelegatingDistributedTask
      */
     public T reduce(List<AsyncResult<T>> results) throws Exception {
         return reducer.reduce(results);
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super._writeExternal(out);
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super._readExternal(in);
     }
 }

@@ -43,6 +43,23 @@ public class ExecutorMetaDataProvider {
         }
     }
 
+    public static Object extractRouting(Object task) {
+        if (task instanceof TaskRoutingProvider) {
+            return ((TaskRoutingProvider) task).getRouting();
+        }
+        Method method = findRoutingMethod(task);
+        if (method == NO_METHOD) {
+            return null;
+        }
+        try {
+            return method.invoke(task);
+        } catch (IllegalAccessException e) {
+            throw new FailedToExecuteRoutingMethodException(e.getMessage(), e);
+        } catch (InvocationTargetException e) {
+            throw new FailedToExecuteRoutingMethodException(e.getTargetException().getMessage(), e.getTargetException());
+        }
+    }
+
     public Object findRouting(Task task) {
         if (task instanceof TaskRoutingProvider) {
             return ((TaskRoutingProvider) task).getRouting();
@@ -71,7 +88,7 @@ public class ExecutorMetaDataProvider {
         }
     }
 
-    private Method findRoutingMethod(Task task) {
+    private static Method findRoutingMethod(Object task) {
         Class targetClass = task.getClass();
         do {
             Method[] methods = targetClass.getDeclaredMethods();

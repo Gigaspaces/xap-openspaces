@@ -21,6 +21,10 @@ import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultFilterEvent;
 import org.openspaces.core.executor.DistributedTask;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.security.AccessControlContext;
 import java.security.AccessController;
@@ -32,13 +36,20 @@ import java.util.List;
  *
  * @author kimchy
  */
-public class PrivilegedDistributedTask<T extends Serializable, R> extends AbstractDelegatingDistributedTask<T, R> {
+public class PrivilegedDistributedTask<T extends Serializable, R> extends AbstractDelegatingDistributedTask<T, R> implements Externalizable {
 
     private transient T result;
 
     private transient R reduceResult;
 
     private transient Exception exception;
+
+    /**
+     * Here for externlizable.
+     */
+    public PrivilegedDistributedTask() {
+        super();
+    }
 
     /**
      * Constructs a new privileged task wrapping the actual task to execute.
@@ -109,5 +120,13 @@ public class PrivilegedDistributedTask<T extends Serializable, R> extends Abstra
                 return getFilter().onResult(event);
             }
         }, acc);
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super._writeExternal(out);
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super._readExternal(in);
     }
 }

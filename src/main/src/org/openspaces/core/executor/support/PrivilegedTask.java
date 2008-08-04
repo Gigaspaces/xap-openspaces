@@ -18,6 +18,10 @@ package org.openspaces.core.executor.support;
 
 import org.openspaces.core.executor.Task;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.security.AccessControlContext;
 import java.security.AccessController;
@@ -28,11 +32,18 @@ import java.security.PrivilegedAction;
  *
  * @author kimchy
  */
-public class PrivilegedTask<T extends Serializable> extends SimpleDelegatingTask<T> {
+public class PrivilegedTask<T extends Serializable> extends SimpleDelegatingTask<T> implements Externalizable {
 
     private transient T result;
 
     private transient Exception exception;
+
+    /**
+     * Here for externalizable.
+     */
+    public PrivilegedTask() {
+        super();
+    }
 
     /**
      * Constructs a new privileged task wrapping the actual task to execute.
@@ -60,5 +71,13 @@ public class PrivilegedTask<T extends Serializable> extends SimpleDelegatingTask
             throw exception;
         else
             return result;
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super._writeExternal(out);
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super._readExternal(in);
     }
 }

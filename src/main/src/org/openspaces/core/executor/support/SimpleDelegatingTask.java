@@ -17,7 +17,12 @@
 package org.openspaces.core.executor.support;
 
 import org.openspaces.core.executor.Task;
+import org.openspaces.core.executor.TaskRoutingProvider;
+import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -25,7 +30,7 @@ import java.io.Serializable;
  *
  * @author kimchy
  */
-public class SimpleDelegatingTask<T extends Serializable> implements DelegatingTask<T> {
+public class SimpleDelegatingTask<T extends Serializable> implements DelegatingTask<T>, TaskRoutingProvider {
 
     private Task<T> task;
 
@@ -47,9 +52,24 @@ public class SimpleDelegatingTask<T extends Serializable> implements DelegatingT
     }
 
     /**
+     * Tries to extract the routing information form the task.
+     */
+    public Object getRouting() {
+        return ExecutorMetaDataProvider.extractRouting(task);
+    }
+
+    /**
      * Simply delegates the execution to the provided delegated task.
      */
     public T execute() throws Exception {
         return task.execute();
+    }
+
+    protected void _writeExternal(ObjectOutput output) throws IOException {
+        output.writeObject(task);
+    }
+
+    protected void _readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
+        task = (Task<T>) input.readObject();
     }
 }
