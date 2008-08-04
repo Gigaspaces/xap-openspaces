@@ -205,6 +205,7 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
                     return result;
                 }
             }
+            return null;
         }
     }
 }
