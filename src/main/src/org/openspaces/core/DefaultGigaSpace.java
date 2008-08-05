@@ -17,6 +17,7 @@
 package org.openspaces.core;
 
 import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
@@ -62,11 +63,11 @@ import java.util.concurrent.ExecutorService;
  */
 public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
-    private ISpaceProxy space;
+    final private ISpaceProxy space;
 
-    private TransactionProvider txProvider;
+    final private TransactionProvider txProvider;
 
-    private ExceptionTranslator exTranslator;
+    final private ExceptionTranslator exTranslator;
 
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
@@ -74,10 +75,9 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     private long defaultWriteLease = Lease.FOREVER;
 
-
     private int defaultIsolationLevel;
 
-    private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
+    final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
     private ExecutorService asyncExecutorService;
 
@@ -142,7 +142,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         this.defaultWriteLease = defaultWriteLease;
     }
 
-    // GigaSpace Inteface Methods
+    // GigaSpace interface Methods
 
     public IJSpace getSpace() {
         return this.space;
@@ -395,7 +395,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException {
         try {
             Object[] retVals = space.updateMultiple(entries, getCurrentTransaction(), leases);
@@ -410,7 +409,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException {
         try {
             Object[] retVals = space.updateMultiple(entries, getCurrentTransaction(), leases, updateModifiers);
@@ -453,7 +451,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
         try {
             Transaction tx = getCurrentTransaction();
-            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx), tx);
+            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener)null),
+                    tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -469,7 +468,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 if (optionalRouting != null) {
                     routing = optionalRouting;
                 }
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx);
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx,
+                        (AsyncFutureListener)null);
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
@@ -486,7 +486,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
         try {
             Transaction tx = getCurrentTransaction();
-            return wrapFuture(space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), getCurrentTransaction()), tx);
+            return wrapFuture(space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task),
+                    getCurrentTransaction(),(AsyncFutureListener)null), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
