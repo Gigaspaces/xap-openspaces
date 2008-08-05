@@ -17,6 +17,7 @@
 package org.openspaces.core;
 
 import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
@@ -65,6 +66,18 @@ public class ExecutorBuilder<T extends Serializable, R> {
      * @see org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)
      */
     public ExecutorBuilder<T, R> add(Task<T> task) {
+        holders.add(new Holder(task, null));
+        return this;
+    }
+
+    /**
+     * Adds a task to be executed similary to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)}.
+     *
+     * @param task The task to add
+     * @return The executor builder to add more tasks to or {@link #execute()}.
+     * @see org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)
+     */
+    public ExecutorBuilder<T, R> add(Task<T> task, AsyncFutureListener<T> listener) {
         holders.add(new Holder(task, null));
         return this;
     }

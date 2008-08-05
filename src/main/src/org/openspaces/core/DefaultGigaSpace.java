@@ -41,6 +41,7 @@ import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.internal.InternalGigaSpace;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.internal.TransactionalAsyncFuture;
+import org.openspaces.core.transaction.internal.TransactionalAsyncFutureListener;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
@@ -428,6 +429,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task) {
+        return execute(task, (AsyncFutureListener<T>) null);
+    }
+
+    public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, AsyncFutureListener<T> listener) {
         Object routing = null;
         if (task instanceof TaskRoutingProvider) {
             Object optionalRouting = executorMetaDataProvider.findRouting(((TaskRoutingProvider) task).getRouting());
@@ -438,10 +443,14 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (routing == null) {
             routing = executorMetaDataProvider.findRouting(task);
         }
-        return execute(task, routing);
+        return execute(task, routing, listener);
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, Object routing) {
+        return execute(task, routing, (AsyncFutureListener<T>) null);
+    }
+
+    public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, Object routing, AsyncFutureListener<T> listener) {
         if (routing == null) {
             throw new IllegalArgumentException("Task [" + task + "] can not be executed without routing information");
         }
@@ -451,8 +460,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
         try {
             Transaction tx = getCurrentTransaction();
-            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener)null),
-                    tx);
+            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, wrapListener(listener, tx)), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -468,8 +476,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 if (optionalRouting != null) {
                     routing = optionalRouting;
                 }
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx,
-                        (AsyncFutureListener)null);
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener)null);
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
@@ -484,10 +491,13 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
+        return execute(task, (AsyncFutureListener<R>) null);
+    }
+
+    public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, AsyncFutureListener<R> listener) {
         try {
             Transaction tx = getCurrentTransaction();
-            return wrapFuture(space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task),
-                    getCurrentTransaction(),(AsyncFutureListener)null), tx);
+            return wrapFuture(space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), tx, wrapListener(listener, tx)), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -532,6 +542,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @Override
     public String toString() {
         return space.toString();
+    }
+
+    public <T> AsyncFutureListener<T> wrapListener(AsyncFutureListener<T> listener, Transaction tx) {
+        if (listener == null) {
+            return null;
+        }
+        if (tx == null) {
+            return listener;
+        }
+        return TransactionalAsyncFutureListener.wrapIfNeeded(listener, this);
     }
 
     public <T> AsyncFuture<T> wrapFuture(AsyncFuture<T> future, Transaction tx) {
