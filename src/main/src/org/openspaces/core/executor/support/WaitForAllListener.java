@@ -25,6 +25,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * A listener that can be used to set on several execution and then wait
+ * for all the results (using {@link #waitForResult()}. The number of executions
+ * needs to be known in advance and set in the constructor.
+ *
  * @author kimchy
  */
 public class WaitForAllListener<T> implements AsyncFutureListener<T> {
@@ -41,10 +45,18 @@ public class WaitForAllListener<T> implements AsyncFutureListener<T> {
 
     private int numberOfResultsArrived;
 
+    /**
+     * Constructs a new listener with the number of executions this listener will
+     * be set on.
+     */
     public WaitForAllListener(int numberOfResults) {
         this(numberOfResults, null);
     }
 
+    /**
+     * Constructs a new listener with the number of executions this listener will
+     * be set on with an optional delegate listener.
+     */
     public WaitForAllListener(int numberOfResults, AsyncFutureListener<T> listener) {
         this.listener = listener;
         this.numberOfResults = numberOfResults;
@@ -66,10 +78,16 @@ public class WaitForAllListener<T> implements AsyncFutureListener<T> {
         }
     }
 
+    /**
+     * Waits for all the results indefently. The futures retured all are done.
+     */
     public Future<T>[] waitForResult() throws InterruptedException {
         return waitForResult(-1, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Waits for all the results for the given time period.
+     */
     public Future<T>[] waitForResult(long timeout, TimeUnit unit) throws InterruptedException {
         lock.lock();
         try {

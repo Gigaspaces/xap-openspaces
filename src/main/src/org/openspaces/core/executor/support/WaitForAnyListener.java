@@ -25,6 +25,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * A listener that can be used to set on several execution and then wait
+ * for any of the results (using {@link #waitForResult()}. The number of executions
+ * needs to be known in advance and set in the constructor.
+ *
  * @author kimchy
  */
 public class WaitForAnyListener<T> implements AsyncFutureListener<T> {
@@ -41,10 +45,18 @@ public class WaitForAnyListener<T> implements AsyncFutureListener<T> {
 
     private final AsyncFutureListener<T> listener;
 
+    /**
+     * Constructs a new listener with the number of executions this listener will
+     * be set on.
+     */
     public WaitForAnyListener(int numberOfResults) {
         this(numberOfResults, null);
     }
 
+    /**
+     * Constructs a new listener with the number of executions this listener will
+     * be set on with an optional delegate listener.
+     */
     public WaitForAnyListener(int numberOfResults, AsyncFutureListener<T> listener) {
         this.numberOfResults = numberOfResults;
         this.listener = listener;
@@ -68,6 +80,9 @@ public class WaitForAnyListener<T> implements AsyncFutureListener<T> {
         }
     }
 
+    /**
+     * Waits for any result indefently.
+     */
     public T waitForResult() throws InterruptedException {
         try {
             return waitForResult(-1, TimeUnit.MILLISECONDS);
@@ -77,6 +92,9 @@ public class WaitForAnyListener<T> implements AsyncFutureListener<T> {
         }
     }
 
+    /**
+     * Waits for any result for the given time period.
+     */
     public T waitForResult(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
         lock.lock();
         try {

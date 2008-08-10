@@ -110,7 +110,9 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         }
         Future<T>[] result = listener.waitForResult(timeout, unit);
         for (AsyncFuture<T> future : results) {
-            future.cancel(false);
+            if (!future.isDone()) {
+                future.cancel(false);
+            }
         }
         return Arrays.asList(result);
     }
@@ -139,7 +141,9 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         }
         T result = listener.waitForResult(timeout, unit);
         for (AsyncFuture<T> future : results) {
-            future.cancel(false);
+            if (!future.isDone()) {
+                future.cancel(false);
+            }
         }
         return result;
     }
