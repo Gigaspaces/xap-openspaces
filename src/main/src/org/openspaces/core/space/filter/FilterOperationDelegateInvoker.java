@@ -16,6 +16,9 @@
 
 package org.openspaces.core.space.filter;
 
+import com.gigaspaces.reflect.IMethod;
+import com.gigaspaces.reflect.fast.ASMMethodFactory;
+import com.gigaspaces.reflect.standard.StandardMethod;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
@@ -64,15 +67,21 @@ class FilterOperationDelegateInvoker {
 
     private int operationCode;
 
-    private Method processMethod;
+    private IMethod processMethod;
+
+    private Class<?>[] parameterTypes;
 
     /**
      * Constructs a new delegate for the given operation code and a method to invoke.
      */
     public FilterOperationDelegateInvoker(int operationCode, Method processMethod) {
         this.operationCode = operationCode;
-        this.processMethod = processMethod;
-        this.processMethod.setAccessible(true);
+        try {
+            this.processMethod = ASMMethodFactory.getMethod(processMethod);
+        } catch (NoSuchMethodException e) {
+            this.processMethod = new StandardMethod(processMethod);
+        }
+        this.parameterTypes = processMethod.getParameterTypes();
     }
 
     /**
@@ -85,7 +94,7 @@ class FilterOperationDelegateInvoker {
     /**
      * Returns the method that will be delegated to.
      */
-    public Method getProcessMethod() {
+    public IMethod getProcessMethod() {
         return processMethod;
     }
 
@@ -95,23 +104,22 @@ class FilterOperationDelegateInvoker {
     public void invokeProcess(IJSpace space, Object delegate, SpaceContext context, ISpaceFilterEntry entry)
             throws FilterExecutionException {
         Object[] params;
-        int numberOfParams = processMethod.getParameterTypes().length;
-        if (numberOfParams == 0) {
+        if (parameterTypes.length == 0) {
             params = null;
         } else {
             Object entryParam = entry;
             if (entryParam != null) {
-                entryParam = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[0], space, entry);
+                entryParam = detectSpaceFilterEntryParam(parameterTypes[0], space, entry);
                 // perform filtering based on type
                 if (entryParam == null) {
                     return;
                 }
             }
-            if (numberOfParams == 1) {
+            if (parameterTypes.length == 1) {
                 params = new Object[]{entryParam};
-            } else if (numberOfParams == 2) {
+            } else if (parameterTypes.length == 2) {
                 params = new Object[]{entryParam, operationCode};
-            } else if (numberOfParams == 3) {
+            } else if (parameterTypes.length == 3) {
                 params = new Object[]{entryParam, operationCode, context};
             } else {
                 throw new FilterExecutionException("Method [" + processMethod.getName() + "] should not have more than 3 parameters");
@@ -124,6 +132,9 @@ class FilterOperationDelegateInvoker {
                     "] with operation code [" + operationCode + "]", e);
         } catch (InvocationTargetException e) {
             throw new FilterExecutionException("Failed to execute method [" + processMethod.getName() +
+                    "] with operation code [" + operationCode + "]", e.getTargetException());
+        } catch (Exception e) {
+            throw new FilterExecutionException("Failed to execute method [" + processMethod.getName() +
                     "] with operation code [" + operationCode + "]", e);
         }
     }
@@ -134,32 +145,31 @@ class FilterOperationDelegateInvoker {
     public void invokeProcess(IJSpace space, Object delegate, SpaceContext context, ISpaceFilterEntry[] entries)
             throws FilterExecutionException {
         Object[] params = null;
-        int numberOfParams = processMethod.getParameterTypes().length;
-        if (numberOfParams == 0) {
+        if (parameterTypes.length == 0) {
             params = null;
         } else {
             Object entryParam1 = entries[0];
             if (entryParam1 != null) {
-                entryParam1 = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[0], space, entries[0]);
+                entryParam1 = detectSpaceFilterEntryParam(parameterTypes[0], space, entries[0]);
                 if (entryParam1 == null) {
                     return;
                 }
             }
-            if (numberOfParams == 1) {
+            if (parameterTypes.length == 1) {
                 params = new Object[]{entryParam1};
             } else {
                 Object entryParam2 = entries[1];
                 if (entryParam2 != null) {
-                    entryParam2 = detectSpaceFilterEntryParam(processMethod.getParameterTypes()[1], space, entries[1]);
+                    entryParam2 = detectSpaceFilterEntryParam(parameterTypes[1], space, entries[1]);
                     if (entryParam2 == null) {
                         return;
                     }
                 }
-                if (numberOfParams == 2) {
+                if (parameterTypes.length == 2) {
                     params = new Object[]{entryParam1, entryParam2};
-                } else if (numberOfParams == 3) {
+                } else if (parameterTypes.length == 3) {
                     params = new Object[]{entryParam1, entryParam2, operationCode};
-                } else if (numberOfParams == 4) {
+                } else if (parameterTypes.length == 4) {
                     params = new Object[]{entryParam1, entryParam2, operationCode, context};
                 } else {
                     throw new FilterExecutionException("Method [" + processMethod.getName() + "] should not have more than 4 parameters");
@@ -172,6 +182,9 @@ class FilterOperationDelegateInvoker {
             throw new FilterExecutionException("Failed to access method [" + processMethod.getName() +
                     "] with operation code [" + operationCode + "]", e);
         } catch (InvocationTargetException e) {
+            throw new FilterExecutionException("Failed to execute method [" + processMethod.getName() +
+                    "] with operation code [" + operationCode + "]", e.getTargetException());
+        } catch (Exception e) {
             throw new FilterExecutionException("Failed to execute method [" + processMethod.getName() +
                     "] with operation code [" + operationCode + "]", e);
         }
