@@ -16,12 +16,12 @@
 
 package org.openspaces.core.properties;
 
-import java.lang.reflect.Field;
-import java.util.Properties;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.Properties;
 
 /**
  * A Spring {@link BeanPostProcessor} that process beans that implement
@@ -85,12 +85,7 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
                     } catch (Exception e) {
                         throw new IllegalArgumentException("Failed to inject Properties (Bean-Level Merged Properties)", e);
                     }
-                }
-            }
-        });
-        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
-            public void doWith(Field field) {
-                if (field.isAnnotationPresent(BeanLevelPropertiesContext.class)) {
+                } else if (field.isAnnotationPresent(BeanLevelPropertiesContext.class)) {
                     if (!field.isAccessible()) {
                         field.setAccessible(true);
                     }
