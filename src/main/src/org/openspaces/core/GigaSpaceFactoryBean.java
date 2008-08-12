@@ -121,12 +121,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
 
-    private int asyncMinThreads = 0;
-
-    private int asyncMaxThreads = 10;
-
-    private int asyncKeepAliveTime = 60 * 1000;
-
 
     private String beanName;
 
@@ -242,32 +236,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         this.transactionManager = transactionManager;
     }
 
-    /**
-     * Sets the minimum numebr of threads in the async invocations (operations that return
-     * {@link com.gigaspaces.async.AsyncResult} will use. Defaults to <code>0</code>.
-     */
-    public void setAsyncMinThreads(int asyncMinThreads) {
-        this.asyncMinThreads = asyncMinThreads;
-    }
-
-    /**
-     * Sets the maximum numebr of threads in the async invocations (operations that return
-     * {@link com.gigaspaces.async.AsyncResult} will use. Defaults to <code>10</code>.
-     */
-    public void setAsyncMaxThreads(int asyncMaxThreads) {
-        this.asyncMaxThreads = asyncMaxThreads;
-    }
-
-    /**
-     * When the async number of threads is greater than the min,
-     * this is the maximum time that excess idle threads will wait
-     * for new tasks before terminating (in <b>seconds</b>). Defaults to
-     * <code>60</code> which is 1 minute.
-     */
-    public void setAsyncKeepAliveTime(int asyncKeepAliveTime) {
-        this.asyncKeepAliveTime = asyncKeepAliveTime * 1000;
-    }
-
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
@@ -309,11 +277,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             }
             txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
         }
-        if (asyncMinThreads > asyncMaxThreads) {
-            asyncMaxThreads = asyncMinThreads;
-        }
-        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel, asyncMinThreads,
-                asyncMaxThreads, asyncKeepAliveTime, beanName == null ? "" : beanName);
+        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);

@@ -51,7 +51,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
 
         mockIJSpace.expects(once()).method("getReadModifiers").will(returnValue(0));
         gs = new DefaultGigaSpace((IJSpace) mockIJSpace.proxy(), (TransactionProvider) mockTxProvider.proxy(),
-                (ExceptionTranslator) mockExTranslator.proxy(), TransactionDefinition.ISOLATION_DEFAULT, 0, 10, 1000, "test");
+                (ExceptionTranslator) mockExTranslator.proxy(), TransactionDefinition.ISOLATION_DEFAULT);
     }
 
     public void testReadOperation() {

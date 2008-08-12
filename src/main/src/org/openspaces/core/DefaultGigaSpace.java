@@ -26,7 +26,6 @@ import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.ReadModifiers;
-import com.j_spaces.kernel.threadpool.DynamicExecutors;
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
@@ -34,7 +33,6 @@ import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.executor.TaskRoutingProvider;
-import org.openspaces.core.executor.internal.ExecutorAsyncFuture;
 import org.openspaces.core.executor.internal.ExecutorMetaDataProvider;
 import org.openspaces.core.executor.internal.InternalDistributedSpaceTaskWrapper;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
@@ -46,7 +44,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
 import java.io.Serializable;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
@@ -80,8 +77,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
-    private ExecutorService asyncExecutorService;
-
     /**
      * Constructs a new DefaultGigaSpace implementation.
      *
@@ -94,8 +89,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      *                              levels values.
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
-                            int defaultIsolationLevel, int asyncMinThreads, int asyncMaxThreads, int asyncKeepAliveTime,
-                            String asyncThreadNamePrefix) {
+                            int defaultIsolationLevel) {
         this.space = (ISpaceProxy) space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
@@ -116,8 +110,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
-        this.asyncExecutorService = DynamicExecutors.newScalingThreadPool(asyncMinThreads, asyncMaxThreads, asyncKeepAliveTime,
-                DynamicExecutors.daemonThreadFactory("gigaspace-" + asyncThreadNamePrefix));
     }
 
     /**
@@ -155,10 +147,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     public ExceptionTranslator getExceptionTranslator() {
         return this.exTranslator;
-    }
-
-    public ExecutorService getAsyncExecutorService() {
-        return asyncExecutorService;
     }
 
     public void clean() throws DataAccessException {
@@ -558,6 +546,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (tx != null) {
             future = new TransactionalAsyncFuture<T>(future, this);
         }
-        return new ExecutorAsyncFuture<T>(future, this);
+        return future;
     }
 }
