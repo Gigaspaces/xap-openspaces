@@ -17,8 +17,7 @@
 package org.openspaces.core.space.filter;
 
 import com.gigaspaces.reflect.IMethod;
-import com.gigaspaces.reflect.fast.ASMMethodFactory;
-import com.gigaspaces.reflect.standard.StandardMethod;
+import com.gigaspaces.reflect.ReflectionUtil;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
@@ -76,11 +75,7 @@ class FilterOperationDelegateInvoker {
      */
     public FilterOperationDelegateInvoker(int operationCode, Method processMethod) {
         this.operationCode = operationCode;
-        try {
-            this.processMethod = ASMMethodFactory.getMethod(processMethod);
-        } catch (NoSuchMethodException e) {
-            this.processMethod = new StandardMethod(processMethod);
-        }
+        this.processMethod = ReflectionUtil.createMethod(processMethod);
         this.parameterTypes = processMethod.getParameterTypes();
     }
 
