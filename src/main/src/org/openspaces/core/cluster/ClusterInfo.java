@@ -16,6 +16,8 @@
 
 package org.openspaces.core.cluster;
 
+import java.io.Serializable;
+
 /**
  * Holds cluster related information. Beans within the Spring context (or processing unit context)
  * can use this bean (by implementing {@link ClusterInfoAware}) in order to be informed of their
@@ -42,7 +44,7 @@ package org.openspaces.core.cluster;
  *
  * @author kimchy
  */
-public class ClusterInfo implements Cloneable {
+public class ClusterInfo implements Cloneable, Serializable {
 
     private String schema;
 
