@@ -847,8 +847,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task The task to execute
      * @return a Future representing pending completion of the task,
@@ -867,8 +866,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task     The task to execute
      * @param listener A listener to be notified when execution completes
@@ -891,8 +889,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task    The task to execute
      * @param routing The routing value that will control on which node the task will be executed on
@@ -915,8 +912,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task     The task to execute
      * @param routing  The routing value that will control on which node the task will be executed on
@@ -946,8 +942,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task    The task to execute
      * @param routing A list of routing values, each resulting in an execution of the task on the space node
@@ -973,8 +968,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task The task to execute
      * @return a Future representing pending completion of the task,
@@ -998,8 +992,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task     The task to execute
      * @param listener A listener to be notified when execution completes
@@ -1020,8 +1013,7 @@ public interface GigaSpace {
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available. Note, make sure
-     * this variables are defined as <b>transient</b>.
+     * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param reducer The reducer to reduce the results of all the different tasks added.
      * @return The executor builer.
