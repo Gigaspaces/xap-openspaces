@@ -1445,6 +1445,9 @@ public interface GigaSpace {
      * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
      * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
      *
+     * <p>The last parameter can be of type {@link com.gigaspaces.async.AsyncFutureListener} which, this case,
+     * it will be used to register a listener to be notified of the result.
+     *
      * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
      * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).

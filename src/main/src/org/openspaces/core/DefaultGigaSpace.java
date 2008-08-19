@@ -580,20 +580,22 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routings) {
-        AsyncFutureListener<T> listener = null;
+        AsyncFutureListener<R> listener = null;
+        int numberOfRoutings = routings.length;
         if (routings.length > 0 && routings[routings.length - 1] instanceof AsyncFutureListener) {
-            listener = (AsyncFutureListener<T>) routings[routings.length - 1];
+            listener = (AsyncFutureListener<R>) routings[routings.length - 1];
+            numberOfRoutings -= 1;
         }
-        AsyncFuture<T>[] futures = new AsyncFuture[routings.length];
+        AsyncFuture<T>[] futures = new AsyncFuture[numberOfRoutings];
         Transaction tx = getCurrentTransaction();
-        for (int i = 0; i < routings.length; i++) {
+        for (int i = 0; i < numberOfRoutings; i++) {
             try {
                 Object routing = routings[i];
                 Object optionalRouting = executorMetaDataProvider.findRouting(routing);
                 if (optionalRouting != null) {
                     routing = optionalRouting;
                 }
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, wrapListener(listener, tx));
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener) null);
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
@@ -604,7 +606,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } else {
             result = FutureFactory.create(futures, task);
         }
-        return wrapFuture(result, tx);
+        result = wrapFuture(result, tx);
+        if (listener != null) {
+            result.setListener(wrapListener(listener, tx));
+        }
+        return result;
     }
 
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task) {
