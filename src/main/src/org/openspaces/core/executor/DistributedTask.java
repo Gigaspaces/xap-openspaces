@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * A distributed task is a {@link org.openspaces.core.executor.Task} that is executed on
- * sevearl space nodes, requiring to {@link #reduce(java.util.List)} the list of
+ * several space nodes, requiring to {@link #reduce(java.util.List)} the list of
  * {@link com.gigaspaces.async.AsyncResult}s.
  *
  * @author kimchy
