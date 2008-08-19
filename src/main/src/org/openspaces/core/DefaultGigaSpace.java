@@ -38,8 +38,8 @@ import org.openspaces.core.executor.internal.InternalDistributedSpaceTaskWrapper
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.internal.InternalGigaSpace;
 import org.openspaces.core.transaction.TransactionProvider;
-import org.openspaces.core.transaction.internal.TransactionalAsyncFuture;
-import org.openspaces.core.transaction.internal.TransactionalAsyncFutureListener;
+import org.openspaces.core.transaction.internal.InternalAsyncFuture;
+import org.openspaces.core.transaction.internal.InternalAsyncFutureListener;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
@@ -662,15 +662,12 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             return null;
         }
         if (tx == null) {
-            return listener;
+            return new InternalAsyncFutureListener<T>(this, listener);
         }
-        return TransactionalAsyncFutureListener.wrapIfNeeded(listener, this);
+        return InternalAsyncFutureListener.wrapIfNeeded(listener, this);
     }
 
     public <T> AsyncFuture<T> wrapFuture(AsyncFuture<T> future, Transaction tx) {
-        if (tx != null) {
-            future = new TransactionalAsyncFuture<T>(future, this);
-        }
-        return future;
+        return new InternalAsyncFuture<T>(future, this, tx);
     }
 }

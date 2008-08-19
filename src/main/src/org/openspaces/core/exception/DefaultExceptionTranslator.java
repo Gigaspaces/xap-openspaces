@@ -51,6 +51,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         return new UncategorizedSpaceException(e.getMessage(), e);
     }
 
+    public DataAccessException translateNoUncategorized(Throwable e) {
+        return internalTranslate(e);
+    }
+
     private DataAccessException internalTranslate(Throwable e) {
         if (e == null) {
             return null;

@@ -33,4 +33,6 @@ public interface ExceptionTranslator {
      * @return The translated exception
      */
     DataAccessException translate(Throwable e);
+
+    DataAccessException translateNoUncategorized(Throwable e);
 }
