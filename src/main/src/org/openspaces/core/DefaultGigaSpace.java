@@ -44,6 +44,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.TransactionDefinition;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
@@ -219,6 +220,64 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> AsyncFuture<T> asyncRead(T template) throws DataAccessException {
+        return asyncRead(template, defaultReadTimeout);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(T template, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncRead(template, defaultReadTimeout, listener);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(T template, long timeout) throws DataAccessException {
+        return asyncRead(template, timeout, null);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncRead(template, timeout, getModifiersForIsolationLevel(), listener);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers) throws DataAccessException {
+        return asyncRead(template, timeout, modifiers, null);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
+        Transaction tx = getCurrentTransaction();
+        try {
+            return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, listener), tx);
+        } catch (RemoteException e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> AsyncFuture<T> asyncRead(Query<T> template) throws DataAccessException {
+        return asyncRead(template, defaultReadTimeout);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncRead(template, defaultReadTimeout, listener);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout) throws DataAccessException {
+        return asyncRead(template, timeout, (AsyncFutureListener<T>) null);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncRead(template, timeout, getModifiersForIsolationLevel(), listener);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+        return asyncRead(template, timeout, modifiers, (AsyncFutureListener<T>) null);
+    }
+
+    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
+        Transaction tx = getCurrentTransaction();
+        try {
+            return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, listener), tx);
+        } catch (RemoteException e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public <T> T readIfExists(T template) throws DataAccessException {
         return readIfExists(template, defaultReadTimeout);
     }
@@ -283,10 +342,14 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         return take(template, defaultTakeTimeout);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T take(T template, long timeout) throws DataAccessException {
+        return take(template, timeout, 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T take(T template, long timeout, int modifiers) throws DataAccessException {
         try {
-            return (T) space.take(template, getCurrentTransaction(), timeout);
+            return (T) space.take(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -296,11 +359,73 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         return take(template, defaultTakeTimeout);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T take(Query<T> template, long timeout) throws DataAccessException {
+        return take(template, timeout, 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T take(Query<T> template, long timeout, int modifiers) throws DataAccessException {
         try {
-            return (T) space.take(template, getCurrentTransaction(), timeout);
+            return (T) space.take(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> AsyncFuture<T> asyncTake(T template) throws DataAccessException {
+        return asyncTake(template, defaultTakeTimeout);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(T template, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncTake(template, defaultTakeTimeout, listener);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(T template, long timeout) throws DataAccessException {
+        return asyncTake(template, timeout, 0);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncTake(template, timeout, 0, listener);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers) throws DataAccessException {
+        return asyncTake(template, timeout, modifiers, null);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
+        Transaction tx = getCurrentTransaction();
+        try {
+            return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, listener), tx);
+        } catch (RemoteException e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> AsyncFuture<T> asyncTake(Query<T> template) throws DataAccessException {
+        return asyncTake(template, defaultTakeTimeout);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncTake(template, defaultTakeTimeout, listener);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout) throws DataAccessException {
+        return asyncTake(template, timeout, 0);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
+        return asyncTake(template, timeout, 0, listener);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+        return asyncTake(template, timeout, modifiers, (AsyncFutureListener<T>) null);
+    }
+
+    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
+        Transaction tx = getCurrentTransaction();
+        try {
+            return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, listener), tx);
+        } catch (RemoteException e) {
             throw exTranslator.translate(e);
         }
     }
@@ -464,7 +589,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 if (optionalRouting != null) {
                     routing = optionalRouting;
                 }
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener)null);
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener) null);
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }

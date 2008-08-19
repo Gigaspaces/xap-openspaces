@@ -310,6 +310,256 @@ public interface GigaSpace {
     <T> T read(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 template with <code>null</code> fields being
+     *                 wildcards ("match anything") other fields being values ("match
+     *                 exactly on the serialized form").
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(T template) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 template with <code>null</code> fields being
+     *                 wildcards ("match anything") other fields being values ("match
+     *                 exactly on the serialized form").
+     * @param listener A listener to be notified when a result arrives
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(T template, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 template with <code>null</code> fields being
+     *                 wildcards ("match anything") other fields being values ("match
+     *                 exactly on the serialized form").
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching object. A timeout of
+     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                 equivalent to a wait of zero.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(T template, long timeout) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 template with <code>null</code> fields being
+     *                 wildcards ("match anything") other fields being values ("match
+     *                 exactly on the serialized form").
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching object. A timeout of
+     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                 equivalent to a wait of zero.
+     * @param listener A listener to be notified when a result arrives
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
+     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Modifiers are used to define the behavior of a read operation.
+     *
+     * @param template  The template used for matching. Matching is done against
+     *                  template with <code>null</code> fields being
+     *                  wildcards ("match anything") other fields being values ("match
+     *                  exactly on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching object. A timeout of
+     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                  equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     */
+    <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
+     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Modifiers are used to define the behavior of a read operation.
+     *
+     * @param template  The template used for matching. Matching is done against
+     *                  template with <code>null</code> fields being
+     *                  wildcards ("match anything") other fields being values ("match
+     *                  exactly on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching object. A timeout of
+     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                  equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param listener  A listener to be notified when a result arrives
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     */
+    <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(Query<T> template) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param listener A listener to be notified when a result arrives
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching object. A timeout of
+     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                 equivalent to a wait of zero.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching object. A timeout of
+     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                 equivalent to a wait of zero.
+     * @param listener A listener to be notified when a result arrives
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
+     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Modifiers are used to define the behavior of a read operation.
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching object. A timeout of
+     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                  equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     */
+    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
+     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Modifiers are used to define the behavior of a read operation.
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching object. A timeout of
+     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                  equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param listener  A listener to be notified when a result arrives
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     */
+    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
      * Read any matching object from the space, returning <code>null</code> if
      * there currently is none. Matching and timeouts are done as in
      * <code>read</code>, except that blocking in this call is done only if
@@ -552,6 +802,24 @@ public interface GigaSpace {
      * Take (remove) any matching entry from the space, blocking until one exists.
      * Return <code>null</code> if the timeout expires.
      *
+     * @param template  The template used for matching. Matching is done against
+     *                  the template with <code>null</code> fields being wildcards (
+     *                  "match anything") other fields being values ("match exactly
+     *                  on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> T take(T template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space, blocking until one exists.
+     * Return <code>null</code> if the timeout expires.
+     *
      * <p>Note, the timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
      *
@@ -576,6 +844,245 @@ public interface GigaSpace {
      * @throws DataAccessException
      */
     <T> T take(Query<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space, blocking until one exists.
+     * Return <code>null</code> if the timeout expires.
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> T take(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 the template with <code>null</code> fields being wildcards (
+     *                 "match anything") other fields being values ("match exactly
+     *                 on the serialized form").
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(T template) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 the template with <code>null</code> fields being wildcards (
+     *                 "match anything") other fields being values ("match exactly
+     *                 on the serialized form").
+     * @param listener A listener to be notified when a result arrives
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(T template, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 the template with <code>null</code> fields being wildcards (
+     *                 "match anything") other fields being values ("match exactly
+     *                 on the serialized form").
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching entry. A timeout of
+     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                 time at all; this is equivalent to a wait of zero.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(T template, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template The template used for matching. Matching is done against
+     *                 the template with <code>null</code> fields being wildcards (
+     *                 "match anything") other fields being values ("match exactly
+     *                 on the serialized form").
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching entry. A timeout of
+     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                 time at all; this is equivalent to a wait of zero.
+     * @param listener A listener to be notified when a result arrives
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template  The template used for matching. Matching is done against
+     *                  the template with <code>null</code> fields being wildcards (
+     *                  "match anything") other fields being values ("match exactly
+     *                  on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template  The template used for matching. Matching is done against
+     *                  the template with <code>null</code> fields being wildcards (
+     *                  "match anything") other fields being values ("match exactly
+     *                  on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param listener  A listener to be notified when a result arrives
+     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @param listener
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(Query<T> template) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Note, the timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param listener A listener to be notified when a result arrives.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching entry. A timeout of
+     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                 time at all; this is equivalent to a wait of zero.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching entry. A timeout of
+     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                 time at all; this is equivalent to a wait of zero.
+     * @param listener A listener to be notified when a result arrives.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @param listener  A listener to be notified when a result arrives.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
