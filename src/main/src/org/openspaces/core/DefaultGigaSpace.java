@@ -580,6 +580,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, Object... routings) {
+        AsyncFutureListener<T> listener = null;
+        if (routings.length > 0 && routings[routings.length - 1] instanceof AsyncFutureListener) {
+            listener = (AsyncFutureListener<T>) routings[routings.length - 1];
+        }
         AsyncFuture<T>[] futures = new AsyncFuture[routings.length];
         Transaction tx = getCurrentTransaction();
         for (int i = 0; i < routings.length; i++) {
@@ -589,7 +593,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 if (optionalRouting != null) {
                     routing = optionalRouting;
                 }
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener) null);
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, wrapListener(listener, tx));
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
