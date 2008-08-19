@@ -90,18 +90,6 @@ public class DefaultExceptionTranslatorTests extends TestCase {
         assertEquals(ObjectConversionException.class, dae.getClass());
     }
 
-    public void testInternalSpaceExceptionOnlyWithMessage() {
-        DataAccessException dae = exTranslator.translate(new net.jini.space.InternalSpaceException("test"));
-        assertEquals(InternalSpaceException.class, dae.getClass());
-        assertNull(((InternalSpaceException) dae).getNestedException());
-    }
-
-    public void testInternalSpaceExceptionWithUnidentifiedException() {
-        DataAccessException dae = exTranslator.translate(new net.jini.space.InternalSpaceException("test", new Exception()));
-        assertEquals(InternalSpaceException.class, dae.getClass());
-        assertNotNull(((InternalSpaceException) dae).getNestedException());
-    }
-
     public void testInternalSpaceExceptionWithIdentifiedException() {
         Exception cause = new Exception("cause");
         net.jini.core.entry.UnusableEntryException uee = new net.jini.core.entry.UnusableEntryException(cause);
