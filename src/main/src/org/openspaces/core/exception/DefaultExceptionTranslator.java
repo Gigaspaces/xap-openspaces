@@ -24,7 +24,6 @@ import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
 import com.j_spaces.core.client.sql.SQLQueryException;
 import com.j_spaces.core.exception.ClosedResourceException;
-import com.j_spaces.core.exception.internal.ProxyInternalSpaceException;
 import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
@@ -96,16 +95,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
                 }
             }
             return new RemoteDataAccessException(remoteException);
-        }
-
-        if (e instanceof ProxyInternalSpaceException) {
-            if (e.getCause() != null) {
-                DataAccessException dae = internalTranslate(e.getCause());
-                if (dae != null) {
-                    return dae;
-                }
-            }
-            return new InternalSpaceException((ProxyInternalSpaceException) e);
         }
 
         if (e instanceof ClosedResourceException) {
