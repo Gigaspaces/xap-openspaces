@@ -78,8 +78,8 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         }
 
         if (e instanceof net.jini.space.InternalSpaceException) {
-            if (((net.jini.space.InternalSpaceException) e).nestedException != null) {
-                DataAccessException dae = internalTranslate(((net.jini.space.InternalSpaceException) e).nestedException);
+            if (e.getCause() != null) {
+                DataAccessException dae = internalTranslate(e.getCause());
                 if (dae != null) {
                     return dae;
                 }
@@ -105,7 +105,7 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
                     return dae;
                 }
             }
-            return new InternalSpaceException((ProxyInternalSpaceException) e); 
+            return new InternalSpaceException((ProxyInternalSpaceException) e);
         }
 
         if (e instanceof ClosedResourceException) {
