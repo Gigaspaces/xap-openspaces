@@ -200,7 +200,7 @@ public class ClusterInfo implements Cloneable, Serializable {
         if (getNumberOfBackups() == null || getNumberOfBackups() == 0) {
             return getInstanceId() - 1;
         }
-        return ((getInstanceId() - 1) * getNumberOfBackups()) + (getBackupId() == null ? 0 : getBackupId());
+        return ((getInstanceId() - 1) * (getNumberOfBackups() + 1)) + (getBackupId() == null ? 0 : getBackupId());
     }
 
     /**
