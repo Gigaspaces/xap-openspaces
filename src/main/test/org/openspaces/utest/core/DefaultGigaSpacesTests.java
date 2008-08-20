@@ -169,7 +169,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(JavaSpace.NO_WAIT)).will(
+        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(0)).will(
                 returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
 
@@ -182,7 +182,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(10l)).will(returnValue(retVal));
+        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(10l), eq(0)).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
 
         gs.setDefaultTakeTimeout(10l);
@@ -195,7 +195,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(11l)).will(returnValue(retVal));
+        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(11l), eq(0)).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
 
         Object actualRetVal = gs.take(template, 11l);
