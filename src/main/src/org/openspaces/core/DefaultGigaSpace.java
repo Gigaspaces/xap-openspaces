@@ -41,6 +41,7 @@ import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.internal.InternalAsyncFuture;
 import org.openspaces.core.transaction.internal.InternalAsyncFutureListener;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.TransactionDefinition;
 
 import java.io.Serializable;
@@ -78,6 +79,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
+    private final DefaultGigaSpace clusteredGigaSpace;
+
     /**
      * Constructs a new DefaultGigaSpace implementation.
      *
@@ -111,6 +114,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
+        if (this.space.isClustered()) {
+            clusteredGigaSpace = this;
+        } else {
+            try {
+                clusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), txProvider, exTranslator, defaultIsolationLevel);
+            } catch (Exception e) {
+                throw new InvalidDataAccessApiUsageException("Failed to get clustered Space from actual space");
+            }
+        }
     }
 
     /**
@@ -119,6 +131,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public void setDefaultReadTimeout(long defaultReadTimeout) {
         this.defaultReadTimeout = defaultReadTimeout;
+        this.clusteredGigaSpace.setDefaultReadTimeout(defaultReadTimeout);
     }
 
     /**
@@ -127,6 +140,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public void setDefaultTakeTimeout(long defaultTakeTimeout) {
         this.defaultTakeTimeout = defaultTakeTimeout;
+        this.clusteredGigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
     }
 
     /**
@@ -134,12 +148,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public void setDefaultWriteLease(long defaultWriteLease) {
         this.defaultWriteLease = defaultWriteLease;
+        this.clusteredGigaSpace.setDefaultWriteLease(defaultWriteLease);
     }
 
     // GigaSpace interface Methods
 
     public IJSpace getSpace() {
         return this.space;
+    }
+
+    public GigaSpace getClustered() {
+        return this.clusteredGigaSpace;
     }
 
     public TransactionProvider getTxProvider() {

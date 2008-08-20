@@ -81,6 +81,13 @@ public interface GigaSpace {
     IJSpace getSpace();
 
     /**
+     * Returns a clustered view of the {@link org.openspaces.core.GigaSpace} is this is a GigaSpace
+     * that worked directly against a cluster member. If this is an already clustered view, will
+     * return the same instnace.
+     */
+    GigaSpace getClustered();
+
+    /**
      * Returns the transaction provider allowing to access the current running transaction. Allows
      * to execute low level {@link com.j_spaces.core.IJSpace} operations that requires explicit
      * transaction object.

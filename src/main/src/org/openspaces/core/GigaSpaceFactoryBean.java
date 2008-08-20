@@ -17,6 +17,7 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
@@ -103,7 +104,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      */
     private static final Constants constants = new Constants(TransactionDefinition.class);
 
-    private IJSpace space;
+    private ISpaceProxy space;
 
     private TransactionProvider txProvider;
 
@@ -133,7 +134,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      * @param space The space used
      */
     public void setSpace(IJSpace space) {
-        this.space = space;
+        this.space = (ISpaceProxy) space;
     }
 
     /**
@@ -248,7 +249,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      */
     public void afterPropertiesSet() {
         Assert.notNull(this.space, "space property is required");
-        IJSpace space = this.space;
+        ISpaceProxy space = this.space;
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
             // not want to get the actual member (the cluster flag was set on the local cache already)
@@ -264,8 +265,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
                 }
             }
         }
-        if (!clustered && !space.isEmbedded()) {
-            space = SpaceUtils.getClusterMemberSpace(space);
+        if (!clustered && space.isClustered()) {
+            space = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
         }
         if (exTranslator == null) {
             exTranslator = new DefaultExceptionTranslator();
