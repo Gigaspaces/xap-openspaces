@@ -122,7 +122,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public void setDefaultReadTimeout(long defaultReadTimeout) {
         this.defaultReadTimeout = defaultReadTimeout;
-        this.clusteredGigaSpace.setDefaultReadTimeout(defaultReadTimeout);
     }
 
     /**
@@ -131,7 +130,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public void setDefaultTakeTimeout(long defaultTakeTimeout) {
         this.defaultTakeTimeout = defaultTakeTimeout;
-        this.clusteredGigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
     }
 
     /**
@@ -139,7 +137,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public void setDefaultWriteLease(long defaultWriteLease) {
         this.defaultWriteLease = defaultWriteLease;
-        this.clusteredGigaSpace.setDefaultWriteLease(defaultWriteLease);
     }
 
     // GigaSpace interface Methods
