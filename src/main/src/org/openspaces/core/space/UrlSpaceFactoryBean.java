@@ -17,6 +17,8 @@
 package org.openspaces.core.space;
 
 import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.reflect.IField;
+import com.gigaspaces.reflect.ReflectionUtil;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
@@ -30,8 +32,12 @@ import com.j_spaces.core.filters.ISpaceFilter;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import com.j_spaces.sadapter.datasource.DataAdapter;
 import net.jini.core.entry.UnusableEntryException;
+import org.openspaces.core.GigaSpace;
+import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.executor.TaskGigaSpace;
+import org.openspaces.core.executor.TaskGigaSpaceAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.executor.support.DelegatingTask;
 import org.openspaces.core.executor.support.ProcessObjectsProvider;
@@ -43,13 +49,17 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
@@ -478,12 +488,20 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
     }
 
+    private Map<Class, Object> tasksGigaSpaceInjectionMap = new ConcurrentHashMap<Class, Object>();
+
+    private static Object NO_FIELD = new Object();
+
     private class ExecutorSpaceFilter implements ISpaceFilter {
 
         private IJSpace space;
 
+        private GigaSpace gigaSpace;
+
         public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
             this.space = space;
+            // here we full it to think it is clustered, so we won't try to get the cluster memeber (we already have the embedded space)
+            this.gigaSpace = new GigaSpaceConfigurer(space).clustered(true).gigaSpace();
         }
 
         public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
@@ -501,6 +519,42 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     task = ((InternalSpaceTaskWrapper) task).getTask();
                 }
                 while (true) {
+                    if (task instanceof TaskGigaSpaceAware) {
+                        ((TaskGigaSpaceAware) task).setGigaSpace(gigaSpace);
+                    } else {
+                        Object field = tasksGigaSpaceInjectionMap.get(task.getClass());
+                        if (field == NO_FIELD) {
+                            // do nothing
+                        } else if (field != null) {
+                            try {
+                                ((IField) field).set(task, gigaSpace);
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException("Failed to set task GigaSpace field", e);
+                            }
+                        } else {
+                            final AtomicReference<Field> ref = new AtomicReference<Field>();
+                            ReflectionUtils.doWithFields(task.getClass(), new ReflectionUtils.FieldCallback() {
+                                public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                                    if (field.isAnnotationPresent(TaskGigaSpace.class)) {
+                                        ref.set(field);
+                                    }
+                                }
+                            });
+                            if (ref.get() == null) {
+                                tasksGigaSpaceInjectionMap.put(task.getClass(), NO_FIELD);
+                            } else {
+                                ref.get().setAccessible(true);
+                                IField fastField = ReflectionUtil.createField(ref.get());
+                                tasksGigaSpaceInjectionMap.put(task.getClass(), fastField);
+                                try {
+                                    fastField.set(task, gigaSpace);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException("Failed to set task GigaSpace field", e);
+                                }
+                            }
+                        }
+                    }
+
                     beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                     beanFactory.initializeBean(task, task.getClass().getName());
 
