@@ -500,8 +500,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
             this.space = space;
-            // here we full it to think it is clustered, so we won't try to get the cluster memeber (we already have the embedded space)
-            this.gigaSpace = new GigaSpaceConfigurer(space).clustered(true).gigaSpace();
+            this.gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
         }
 
         public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
