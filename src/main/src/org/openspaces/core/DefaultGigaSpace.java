@@ -79,7 +79,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
-    private final DefaultGigaSpace clusteredGigaSpace;
+    private DefaultGigaSpace clusteredGigaSpace;
 
     /**
      * Constructs a new DefaultGigaSpace implementation.
@@ -113,15 +113,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 break;
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
-        }
-        if (this.space.isClustered()) {
-            clusteredGigaSpace = this;
-        } else {
-            try {
-                clusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), txProvider, exTranslator, defaultIsolationLevel);
-            } catch (Exception e) {
-                throw new InvalidDataAccessApiUsageException("Failed to get clustered Space from actual space");
-            }
         }
     }
 
@@ -158,6 +149,21 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public GigaSpace getClustered() {
+        if (clusteredGigaSpace != null) {
+            return clusteredGigaSpace;
+        }
+        if (this.space.isClustered()) {
+            clusteredGigaSpace = this;
+        } else {
+            try {
+                clusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), txProvider, exTranslator, defaultIsolationLevel);
+                clusteredGigaSpace.setDefaultReadTimeout(defaultReadTimeout);
+                clusteredGigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
+                clusteredGigaSpace.setDefaultWriteLease(defaultWriteLease);
+            } catch (Exception e) {
+                throw new InvalidDataAccessApiUsageException("Failed to get clustered Space from actual space", e);
+            }
+        }
         return this.clusteredGigaSpace;
     }
 
