@@ -61,7 +61,7 @@ import java.rmi.RemoteException;
  * is optional and defaults to the Jini {@link TransactionManager} instance. Note, this can be
  * overridden by sub classes.
  *
- * <p>By default the transaction timeout will be <code>FOREVER</code>. The default timeout on the
+ * <p>By default the transaction timeout will be <code>90000</code> milliseconds. The default timeout on the
  * transaction manager level can be set using {@link #setDefaultTimeout(Long)}. If the timeout is
  * explicitly set using Spring support for transactions (for example using
  * {@link org.springframework.transaction.TransactionDefinition}) this value will be used.

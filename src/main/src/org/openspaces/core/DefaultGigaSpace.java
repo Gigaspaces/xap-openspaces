@@ -265,7 +265,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
-            return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, listener), tx);
+            return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
         } catch (RemoteException e) {
             throw exTranslator.translate(e);
         }
@@ -294,7 +294,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
-            return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, listener), tx);
+            return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
         } catch (RemoteException e) {
             throw exTranslator.translate(e);
         }
@@ -417,7 +417,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
-            return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, listener), tx);
+            return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
         } catch (RemoteException e) {
             throw exTranslator.translate(e);
         }
@@ -446,7 +446,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
-            return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, listener), tx);
+            return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
         } catch (RemoteException e) {
             throw exTranslator.translate(e);
         }

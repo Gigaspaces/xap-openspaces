@@ -19,6 +19,8 @@ package org.openspaces.core.transaction.internal;
 import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResult;
 import net.jini.core.transaction.Transaction;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
 import org.openspaces.core.transaction.manager.AbstractJiniTransactionManager;
@@ -32,6 +34,8 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
  * @author kimchy
  */
 public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
+
+    private static final Log logger = LogFactory.getLog(InternalAsyncFutureListener.class);
 
     public static <T> AsyncFutureListener<T> wrapIfNeeded(AsyncFutureListener<T> listener, GigaSpace gigaSpace) {
         DefaultTransactionProvider txProvider = (DefaultTransactionProvider) gigaSpace.getTxProvider();
@@ -62,6 +66,8 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
 
     private final JiniTransactionHolder holder;
 
+    private final boolean transactionalListener;
+
     public InternalAsyncFutureListener(GigaSpace gigaSpace, AsyncFutureListener<T> listener) {
         this(gigaSpace, listener, null, null, null);
     }
@@ -73,6 +79,7 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
         this.txStatus = txStatus;
         this.transactionManager = transactionManager;
         this.holder = holder;
+        this.transactionalListener = listener instanceof TransactionalAsyncFutureListener;
     }
 
     public void onResult(AsyncResult<T> asyncResult) {
@@ -85,14 +92,38 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
             try {
                 ExistingJiniTransactionManager.bindExistingTransaction(tx, true, true);
                 listener.onResult(result);
+                if (transactionalListener) {
+                    ((TransactionalAsyncFutureListener<T>) listener).onTransactionalResult(result, txStatus);
+                }
                 ExistingJiniTransactionManager.unbindExistingTransaction();
                 transactionManager.commit(txStatus);
+                if (transactionalListener) {
+                    ((TransactionalAsyncFutureListener<T>) listener).onPostCommitTransaction(result);
+                }
             } catch (RuntimeException e) {
-                transactionManager.rollback(txStatus);
+                try {
+                    transactionManager.rollback(txStatus);
+                } catch (RuntimeException e1) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Failed to rollback transaction after failed commit", e1);
+                    }
+                }
+                if (transactionalListener) {
+                    ((TransactionalAsyncFutureListener<T>) listener).onPostRollbackTransaction(result);
+                }
                 throw e;
             }
         } else {
             listener.onResult(result);
+            if (transactionalListener) {
+                try {
+                    ((TransactionalAsyncFutureListener<T>) listener).onTransactionalResult(result, txStatus);
+                    ((TransactionalAsyncFutureListener<T>) listener).onPostCommitTransaction(result);
+                } catch (RuntimeException e) {
+                    ((TransactionalAsyncFutureListener<T>) listener).onPostRollbackTransaction(result);
+                    throw e;
+                }
+            }
         }
     }
 
