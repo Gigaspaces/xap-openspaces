@@ -18,6 +18,7 @@ package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
+import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -29,9 +30,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IJSpace space = urlSpaceConfigurer.space();
  *
- * GigaSpace gigaSpace = new GigaSpaceConfigurer(space).defaultTakeTimeout(1000).gigaSpace();
+ * GigaSpace gigaSpace = new GigaSpaceConfigurer(urlSpaceConfigurer).defaultTakeTimeout(1000).gigaSpace();
  * ...
  * urlSpaceConfigurer.destroySpace(); // optional
  * </pre>
@@ -50,6 +50,14 @@ public class GigaSpaceConfigurer {
     public GigaSpaceConfigurer(IJSpace space) {
         gigaSpaceFactoryBean = new GigaSpaceFactoryBean();
         gigaSpaceFactoryBean.setSpace(space);
+    }
+
+    /**
+     * Constructs a new configurer based on the Space.
+     */
+    public GigaSpaceConfigurer(UrlSpaceConfigurer configurer) {
+        gigaSpaceFactoryBean = new GigaSpaceFactoryBean();
+        gigaSpaceFactoryBean.setSpace(configurer.space());
     }
 
     /**
