@@ -36,6 +36,8 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.executor.AutowiredTask;
+import org.openspaces.core.executor.AutowiredTaskMarker;
 import org.openspaces.core.executor.TaskGigaSpace;
 import org.openspaces.core.executor.TaskGigaSpaceAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
@@ -554,14 +556,16 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                         }
                     }
 
-                    beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-                    beanFactory.initializeBean(task, task.getClass().getName());
+                    if (isAutowire(task)) {
+                        beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+                        beanFactory.initializeBean(task, task.getClass().getName());
+                    }
 
                     if (task instanceof ProcessObjectsProvider) {
                         Object[] objects = ((ProcessObjectsProvider) task).getObjectsToProcess();
                         if (objects != null) {
                             for (Object obj : objects) {
-                                if (obj != null) {
+                                if (obj != null && isAutowire(obj)) {
                                     beanFactory.autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                                     beanFactory.initializeBean(obj, obj.getClass().getName());
                                 }
@@ -586,6 +590,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         public void close() throws RuntimeException {
 
+        }
+
+        private boolean isAutowire(Object obj) {
+            if (obj instanceof AutowiredTaskMarker) {
+                return true;
+            }
+            return obj.getClass().isAnnotationPresent(AutowiredTask.class);
         }
     }
 }
