@@ -22,5 +22,5 @@ package org.openspaces.core.executor;
  *
  * @author kimchy
  */
-public interface AutowiredTaskMarker {
+public interface AutowireTaskMarker {
 }

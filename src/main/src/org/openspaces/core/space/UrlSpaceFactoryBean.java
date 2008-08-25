@@ -36,8 +36,8 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.executor.AutowiredTask;
-import org.openspaces.core.executor.AutowiredTaskMarker;
+import org.openspaces.core.executor.AutowireTask;
+import org.openspaces.core.executor.AutowireTaskMarker;
 import org.openspaces.core.executor.TaskGigaSpace;
 import org.openspaces.core.executor.TaskGigaSpaceAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
@@ -49,6 +49,7 @@ import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFac
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -559,6 +560,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     if (isAutowire(task)) {
                         beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                         beanFactory.initializeBean(task, task.getClass().getName());
+                    } else {
+                        if (task instanceof ApplicationContextAware) {
+                            ((ApplicationContextAware) task).setApplicationContext(applicationContext);
+                        }
                     }
 
                     if (task instanceof ProcessObjectsProvider) {
@@ -568,6 +573,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                                 if (obj != null && isAutowire(obj)) {
                                     beanFactory.autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                                     beanFactory.initializeBean(obj, obj.getClass().getName());
+                                } else {
+                                    if (task instanceof ApplicationContextAware) {
+                                        ((ApplicationContextAware) task).setApplicationContext(applicationContext);
+                                    }
                                 }
                             }
                         }
@@ -593,10 +602,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
 
         private boolean isAutowire(Object obj) {
-            if (obj instanceof AutowiredTaskMarker) {
+            if (obj instanceof AutowireTaskMarker) {
                 return true;
             }
-            return obj.getClass().isAnnotationPresent(AutowiredTask.class);
+            return obj.getClass().isAnnotationPresent(AutowireTask.class);
         }
     }
 }
