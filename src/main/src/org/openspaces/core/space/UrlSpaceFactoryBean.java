@@ -433,7 +433,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             if (shouldApplyClusterInfo()) {
                 if (clusterInfo.getNumberOfInstances() != null) {
                     String totalMembers = clusterInfo.getNumberOfInstances().toString();
-                    if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() != 0) {
+                    if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() > -1) {
                         totalMembers += "," + clusterInfo.getNumberOfBackups();
                     }
                     props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_TOTAL_MEMBERS), totalMembers);
