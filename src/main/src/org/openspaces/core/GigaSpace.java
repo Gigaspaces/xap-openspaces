@@ -1357,8 +1357,13 @@ public interface GigaSpace {
      *
      * <p>In order to control the routing externally, use {@link #execute(org.openspaces.core.executor.Task, Object)}.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
@@ -1376,8 +1381,13 @@ public interface GigaSpace {
      *
      * <p>In order to control the routing externally, use {@link #execute(org.openspaces.core.executor.Task, Object)}.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
@@ -1399,8 +1409,13 @@ public interface GigaSpace {
      *
      * <p>In order to control the using the Task itself, use {@link #execute(org.openspaces.core.executor.Task)}.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
@@ -1422,8 +1437,13 @@ public interface GigaSpace {
      *
      * <p>In order to control the using the Task itself, use {@link #execute(org.openspaces.core.executor.Task)}.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
@@ -1455,8 +1475,13 @@ public interface GigaSpace {
      * <p>The last parameter can be of type {@link com.gigaspaces.async.AsyncFutureListener} which, this case,
      * it will be used to register a listener to be notified of the result.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
@@ -1481,8 +1506,13 @@ public interface GigaSpace {
      * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
      * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
@@ -1493,30 +1523,36 @@ public interface GigaSpace {
      */
     <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task);
 
-    /**
-     * Executes the task on all the primary space nodes within the cluster (broadcast). The task is executed
-     * on each space node with all the results reduced by the
-     * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
-     *
-     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
-     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
-     * results received so far.
-     *
-     * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
-     * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
-     *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
-     * {@link org.springframework.context.ApplicationContextAware} are also available.
-     *
-     * @param task     The task to execute
-     * @param listener A listener to be notified when execution completes
-     * @return a Future representing pending completion of the task,
-     *         and whose <code>get()</code> method will return the task value upon completion.
-     */
-    <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, AsyncFutureListener<R> listener);
+//    /**
+//     * Executes the task on all the primary space nodes within the cluster (broadcast). The task is executed
+//     * on each space node with all the results reduced by the
+//     * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
+//     *
+//     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
+//     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+//     * results received so far.
+//     *
+//     * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
+//     * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
+//     *
+//    * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+//    * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+//    * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+//    *
+//    * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+//    * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+//    * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+//    * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+//    * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+//    * {@link org.springframework.context.ApplicationContextAware} are also available.
+//     *
+//     * @param task     The task to execute
+//     * @param listener A listener to be notified when execution completes
+//     * @return a Future representing pending completion of the task,
+//     *         and whose <code>get()</code> method will return the task value upon completion.
+//     */
+// REMOVE this because of compliation problem, you can still use this API.    
+//    <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, AsyncFutureListener<R> listener);
 
     /**
      * Constructs an executor builder allowing to accumlate different tasks required to be executed
@@ -1526,8 +1562,13 @@ public interface GigaSpace {
      * if tasks should continue to accumelate or it should break and execute the reduce operation on the
      * results received so far.
      *
-     * <p>Resources defined within processing unit (space node) the task is executed on are accessible by
-     * using either the {@link org.springframework.beans.factory.annotation.Autowired} or
+     * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
+     *
+     * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
+     * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
+     * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.

@@ -568,6 +568,9 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, AsyncFutureListener<T> listener) {
+        if (task instanceof DistributedTask) {
+            return distExecute((DistributedTask) task, listener);
+        }
         Object routing = null;
         if (task instanceof TaskRoutingProvider) {
             Object optionalRouting = executorMetaDataProvider.findRouting(((TaskRoutingProvider) task).getRouting());
@@ -608,6 +611,9 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             listener = (AsyncFutureListener<R>) routings[routings.length - 1];
             numberOfRoutings -= 1;
         }
+        if (numberOfRoutings == 0) {
+            return execute(task, listener);
+        }
         AsyncFuture<T>[] futures = new AsyncFuture[numberOfRoutings];
         Transaction tx = getCurrentTransaction();
         for (int i = 0; i < numberOfRoutings; i++) {
@@ -640,6 +646,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, AsyncFutureListener<R> listener) {
+        return distExecute(task, listener);
+    }
+
+    public <T extends Serializable, R> AsyncFuture<R> distExecute(DistributedTask<T, R> task, AsyncFutureListener<R> listener) {
         try {
             Transaction tx = getCurrentTransaction();
             return wrapFuture(space.execute(new InternalDistributedSpaceTaskWrapper<T, R>(task), tx, wrapListener(listener, tx)), tx);
