@@ -29,6 +29,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * An internal implemenation of {@link com.gigaspaces.executor.DistributedSpaceTask} that wraps the actual {@link org.openspaces.core.executor.Task}
+ * to be executed.
+ *
  * @author kimchy
  */
 public class InternalDistributedSpaceTaskWrapper<T extends Serializable, R> extends InternalSpaceTaskWrapper<T>

@@ -30,6 +30,9 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
+ * An internal implemenation of {@link SpaceTask} that wraps the actual {@link org.openspaces.core.executor.Task}
+ * to be executed.
+ * 
  * @author kimchy
  */
 public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTask<T>, Externalizable {
