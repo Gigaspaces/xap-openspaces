@@ -17,6 +17,8 @@
 package org.openspaces.core.executor.internal;
 
 import com.gigaspaces.annotation.pojo.SpaceRouting;
+import com.gigaspaces.reflect.IMethod;
+import com.gigaspaces.reflect.ReflectionUtil;
 import org.openspaces.core.executor.TaskRoutingProvider;
 import org.springframework.dao.DataAccessException;
 
@@ -26,17 +28,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * A helper class allowing to extract meta data related to executors/tasks (such as
+ * routing information).
+ *
  * @author kimchy
  */
 public class ExecutorMetaDataProvider {
 
-    private Map<Class, Method> routingMethods = new ConcurrentHashMap<Class, Method>();
+    private Map<Class, IMethod> routingMethods = new ConcurrentHashMap<Class, IMethod>();
 
-    private static Method NO_METHOD;
+    private static IMethod NO_METHOD;
 
     static {
         try {
-            NO_METHOD = Object.class.getMethod("toString");
+            NO_METHOD = ReflectionUtil.createMethod(Object.class.getMethod("toString"));
         } catch (NoSuchMethodException e) {
             // won't happen
         }
@@ -46,7 +51,7 @@ public class ExecutorMetaDataProvider {
         if (task instanceof TaskRoutingProvider) {
             return ((TaskRoutingProvider) task).getRouting();
         }
-        Method method = findRoutingMethod(task);
+        IMethod method = findRoutingMethod(task);
         if (method == NO_METHOD) {
             return null;
         }
@@ -66,7 +71,7 @@ public class ExecutorMetaDataProvider {
         if (obj instanceof TaskRoutingProvider) {
             return ((TaskRoutingProvider) obj).getRouting();
         }
-        Method method = routingMethods.get(obj.getClass());
+        IMethod method = routingMethods.get(obj.getClass());
         if (method == null) {
             method = findRoutingMethod(obj);
             routingMethods.put(obj.getClass(), method);
@@ -90,14 +95,14 @@ public class ExecutorMetaDataProvider {
         }
     }
 
-    private static Method findRoutingMethod(Object task) {
+    private static IMethod findRoutingMethod(Object task) {
         Class targetClass = task.getClass();
         do {
             Method[] methods = targetClass.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(SpaceRouting.class)) {
                     method.setAccessible(true);
-                    return method;
+                    return ReflectionUtil.createMethod(method);
                 }
             }
             targetClass = targetClass.getSuperclass();
