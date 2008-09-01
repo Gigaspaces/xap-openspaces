@@ -560,25 +560,20 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     if (isAutowire(task)) {
                         beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                         beanFactory.initializeBean(task, task.getClass().getName());
-                    } else {
-                        if (task instanceof ApplicationContextAware) {
-                            ((ApplicationContextAware) task).setApplicationContext(applicationContext);
-                        }
-                    }
-
-                    if (task instanceof ProcessObjectsProvider) {
-                        Object[] objects = ((ProcessObjectsProvider) task).getObjectsToProcess();
-                        if (objects != null) {
-                            for (Object obj : objects) {
-                                if (obj != null && isAutowire(obj)) {
-                                    beanFactory.autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-                                    beanFactory.initializeBean(obj, obj.getClass().getName());
-                                } else {
-                                    if (task instanceof ApplicationContextAware) {
-                                        ((ApplicationContextAware) task).setApplicationContext(applicationContext);
+                        if (task instanceof ProcessObjectsProvider) {
+                            Object[] objects = ((ProcessObjectsProvider) task).getObjectsToProcess();
+                            if (objects != null) {
+                                for (Object obj : objects) {
+                                    if (obj != null) {
+                                        beanFactory.autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+                                        beanFactory.initializeBean(obj, obj.getClass().getName());
                                     }
                                 }
                             }
+                        }
+                    } else {
+                        if (task instanceof ApplicationContextAware) {
+                            ((ApplicationContextAware) task).setApplicationContext(applicationContext);
                         }
                     }
 
