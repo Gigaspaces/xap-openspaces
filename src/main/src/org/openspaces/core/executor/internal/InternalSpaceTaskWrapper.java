@@ -18,6 +18,7 @@ package org.openspaces.core.executor.internal;
 
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 import com.gigaspaces.executor.SpaceTask;
+import com.gigaspaces.executor.SpaceTaskWrapper;
 import com.j_spaces.core.IJSpace;
 import net.jini.core.transaction.Transaction;
 import org.openspaces.core.executor.Task;
@@ -35,7 +36,7 @@ import java.io.Serializable;
  * 
  * @author kimchy
  */
-public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTask<T>, Externalizable {
+public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTask<T>, SpaceTaskWrapper, Externalizable {
 
     private Task<T> task;
 
@@ -59,6 +60,10 @@ public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTa
             }
         }
         return task.execute();
+    }
+
+    public Object getWrappedTask() {
+        return getTask();
     }
 
     public Task<T> getTask() {
