@@ -735,6 +735,10 @@ public interface GigaSpace {
      * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
+     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
+     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
+     * not all cluster members are available.
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -758,6 +762,10 @@ public interface GigaSpace {
      * <code>modifiers</code> parameter. Equivalent when called with the default
      * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
+     *
+     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
+     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
+     * not all cluster members are available.
      *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
@@ -1196,6 +1204,48 @@ public interface GigaSpace {
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(Query<T> template, int maxEntries) throws DataAccessException;
+
+    /**
+     * Takes (removes) all the entries matching the specified template from this
+     * space.
+     *
+     * <p>An optinoal modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
+     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
+     * not all cluster members are available.
+     *
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @return Removed matched entries from the space
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] takeMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
+
+    /**
+     * Takes (removes) all the entries matching the specified template from this
+     * space.
+     *
+     * <p>An optinoal modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
+     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
+     * not all cluster members are available.
+     *
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @return Removed matched entries from the space
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] takeMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.

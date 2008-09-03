@@ -496,6 +496,24 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T[] takeMultiple(T template, int maxEntries, int modifiers) throws DataAccessException {
+        try {
+            return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] takeMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException {
+        try {
+            return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public <T> LeaseContext<T> write(T entry) throws DataAccessException {
         return write(entry, defaultWriteLease);
     }
