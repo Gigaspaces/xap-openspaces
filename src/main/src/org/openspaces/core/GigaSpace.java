@@ -735,9 +735,9 @@ public interface GigaSpace {
      * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
-     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
-     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
-     * not all cluster members are available.
+     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
+     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
+     * number of entries are returned and one or more cluster members are not available.
      *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
@@ -763,9 +763,9 @@ public interface GigaSpace {
      * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
-     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
-     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
-     * not all cluster members are available.
+     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
+     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
+     * number of entries are returned and one or more cluster members are not available.
      *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
@@ -1209,9 +1209,9 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * <p>An optinoal modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
-     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
-     * not all cluster members are available.
+     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
+     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
+     * number of entries are returned and one or more cluster members are not available.
      *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
@@ -1230,9 +1230,9 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * <p>An optinoal modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEPTION}
-     * which will cause {@link org.openspaces.core.QueryMultiplePartialFailureException} to be thrown in case
-     * not all cluster members are available.
+     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
+     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
+     * number of entries are returned and one or more cluster members are not available.
      *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.

@@ -20,10 +20,9 @@ import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 /**
- * Thrown when read/take multiple is called and and the max limit can't be satisfied
- * because part of the cluster is not avaliable.
+ * Thrown when not all of the requested number of entries are returned and one or more cluster members are not available.
  *
- * <p>In order to enable this behaviour, the following modifier should be passed {@link com.j_spaces.core.client.ReadModifiers#THROW_QUERY_MULTIPLE_PARTIAL_FAILURE_EXCEOTION}
+ * <p>In order to enable this behaviour, the following modifier should be passed {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
  * to either {@link org.openspaces.core.GigaSpace#readMultiple(Object, int, int)} or.
  *
  * @author kimchy
@@ -48,10 +47,16 @@ public class QueryMultiplePartialFailureException extends InvalidDataAccessResou
         }
     }
 
+    /**
+     * Returnst the results from the cluster members that were available.
+     */
     public Object getResults() {
         return results;
     }
 
+    /**
+     * Returns the exceptions raised from the cluster members that were not available.
+     */
     public Throwable[] getCauses() {
         return causes;
     }
