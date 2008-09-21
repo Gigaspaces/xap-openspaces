@@ -105,6 +105,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new SpaceClosedException((ClosedResourceException) e);
         }
 
+        if (e instanceof com.j_spaces.core.exception.SpaceUnavailableException) {
+            return new SpaceUnavailableException((com.j_spaces.core.exception.SpaceUnavailableException) e);
+        }
+
         if (e instanceof ConversionException) {
             return new ObjectConversionException((ConversionException) e);
         }
