@@ -75,10 +75,11 @@ public class MapConfigurer {
     /**
      * If no local cache properties are set, will mark this map to use local cache.
      */
-    public void useLocalCache() {
+    public MapConfigurer useLocalCache() {
         if (localCacheSupport == null) {
             localCacheSupport = new LocalCacheSupport();
         }
+        return this;
     }
 
     /**
