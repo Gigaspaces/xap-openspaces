@@ -383,7 +383,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
             }
 
-            if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection && getApplicationContext() != null) {
+            if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection) {
                 if (filterProviders == null) {
                     filterProviders = new FilterProviderFactory[]{new ExecutorFilterProviderFactory()};
                 } else {
@@ -511,10 +511,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 return;
             }
             ApplicationContext applicationContext = getApplicationContext();
-            if (applicationContext == null) {
-                return;
+            AutowireCapableBeanFactory beanFactory = null;
+            if (applicationContext != null) {
+                beanFactory = applicationContext.getAutowireCapableBeanFactory();
             }
-            AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
             try {
                 Object task = entry.getObject(space);
                 if (task instanceof InternalSpaceTaskWrapper) {
@@ -558,6 +558,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     }
 
                     if (isAutowire(task)) {
+                        if (beanFactory == null) {
+                            throw new IllegalStateException("Task [" + task.getClass().getName() + "] is configured to do autowiring but the space was not started with application context");
+                        }
                         beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
                         beanFactory.initializeBean(task, task.getClass().getName());
                         if (task instanceof ProcessObjectsProvider) {
@@ -572,6 +575,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                             }
                         }
                     } else {
+                        if (applicationContext == null) {
+                            throw new IllegalStateException("Task [" + task.getClass().getName() + "] is configured to do autowiring but the space was not started with application context");
+                        }
                         if (task instanceof ApplicationContextAware) {
                             ((ApplicationContextAware) task).setApplicationContext(applicationContext);
                         }
