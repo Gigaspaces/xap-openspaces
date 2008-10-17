@@ -198,6 +198,8 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
         gigaMap = new DefaultGigaMap(map, txProvider, exTranslator, defaultIsolationLevel);
         gigaMap.setDefaultTimeToLive(defaultTimeToLive);
         gigaMap.setDefaultWaitForResponse(defaultWaitForResponse);
+        gigaMap.setDefaultLockTimeToLive(defaultLockTimeToLive);
+        gigaMap.setDefaultWaitingForLockTimeout(defaultWaitingForLockTimeout);
     }
 
     /**
