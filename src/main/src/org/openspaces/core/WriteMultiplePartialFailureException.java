@@ -31,6 +31,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class WriteMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
 
+    private static final long serialVersionUID = 1L;
+
     private final IWriteResult[] results;
 
     private ExceptionTranslator exceptionTranslator;
@@ -53,6 +55,7 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
     private class TranslatedWriteResult implements IWriteResult {
 
+        private static final long serialVersionUID = 1L;
         private IWriteResult result;
 
         private TranslatedWriteResult(IWriteResult result) {
@@ -73,6 +76,10 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
         public Lease getLease() {
             return result.getLease();
+        }
+
+        public boolean isError() {
+            return result.isError();
         }
     }
 }
