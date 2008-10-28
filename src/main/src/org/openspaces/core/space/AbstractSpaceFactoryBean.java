@@ -107,6 +107,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         this.securityConfig = securityConfig;
     }
 
+    protected SecurityConfig getSecurityConfig() {
+        return securityConfig;
+    }
+
     /**
      * Injected by Spring thanks to {@link ApplicationContextAware}.
      */
@@ -148,8 +152,6 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
         if (securityConfig != null) {
             if (StringUtils.hasText(securityConfig.getUsername()) && StringUtils.hasText(securityConfig.getPassword())) {
                 SecurityContext securityContext = new SecurityContext(securityConfig.getUsername(), securityConfig.getPassword());
-                securityContext.setEncrypted(securityConfig.isEncrypted());
-                securityContext.setPermissions(securityConfig.getPermissions());
                 try {
                     space.setSecurityContext(securityContext);
                 } catch (RemoteException e) {

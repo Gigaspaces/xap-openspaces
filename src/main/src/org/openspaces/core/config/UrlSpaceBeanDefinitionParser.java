@@ -123,14 +123,6 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
             if (StringUtils.hasText(password)) {
                 securityConfig.setPassword(password);
             }
-            String encrypted = securityEle.getAttribute("encrypted");
-            if (StringUtils.hasText(encrypted)) {
-                securityConfig.setEncrypted(Boolean.valueOf(encrypted));
-            }
-            String permissions = securityEle.getAttribute("permissions");
-            if (StringUtils.hasText(permissions)) {
-                securityConfig.setPermissions(permissions);
-            }
             builder.addPropertyValue("securityConfig", securityConfig);
         }
     }

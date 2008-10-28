@@ -30,9 +30,13 @@ public class SecurityConfig {
 
     private String password = SecurityContext.ANONYMOUS_USER;
 
-    private boolean encrypted;
+    public SecurityConfig() {
+    }
 
-    private String permissions;
+    public SecurityConfig(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     /**
      * Returns the username to connect to the Space with.
@@ -60,35 +64,5 @@ public class SecurityConfig {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * Returns if the password is encrypted or not.
-     */
-    public boolean isEncrypted() {
-        return encrypted;
-    }
-
-    /**
-     * Sets if the password is encrypted or not.
-     */
-    public void setEncrypted(boolean encrypted) {
-        this.encrypted = encrypted;
-    }
-
-    /**
-     * Sets the permissions for operations on the space. Consists of concatanation
-     * of <code>R</code> (read operations), <code>W</code> (write operations) and <code>A</code> (admin operations).
-     */
-    public String getPermissions() {
-        return permissions;
-    }
-
-    /**
-     * Returns the permissions for operations on the space. Consists of concatanation
-     * of <code>R</code> (read operations), <code>W</code> (write operations) and <code>A</code> (admin operations).
-     */
-    public void setPermissions(String permissions) {
-        this.permissions = permissions;
     }
 }

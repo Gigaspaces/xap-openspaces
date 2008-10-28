@@ -452,6 +452,20 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             // no need for a shutdown hook in the space as well
             props.setProperty(Constants.Container.CONTAINER_SHUTDOWN_HOOK_PROP, "false");
 
+            // handle security
+            if (beanLevelProperties != null) {
+                String username = beanLevelProperties.getProperty("security.username");
+                String password = beanLevelProperties.getProperty("security.password");
+                if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
+                    setSecurityConfig(new SecurityConfig(username, password));
+                }
+            }
+
+            if (getSecurityConfig() != null) {
+                // enable security filter by default
+                props.setProperty("space-config.filters.DefaultSecurityFilter.enabled", "true");
+            }
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
             }
