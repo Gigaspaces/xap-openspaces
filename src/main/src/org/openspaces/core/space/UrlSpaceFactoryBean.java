@@ -456,12 +456,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             if (beanLevelProperties != null) {
                 String username = beanLevelProperties.getProperty("security.username");
                 String password = beanLevelProperties.getProperty("security.password");
-                if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
-                    setSecurityConfig(new SecurityConfig(username, password));
+                SecurityConfig securityConfig = new SecurityConfig(username, password);
+                if (securityConfig.isFilled()) {
+                    setSecurityConfig(securityConfig);
                 }
             }
 
-            if (getSecurityConfig() != null) {
+            if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
                 // enable security filter by default
                 props.setProperty("space-config.filters.DefaultSecurityFilter.enabled", "true");
             }

@@ -17,6 +17,7 @@
 package org.openspaces.core.space;
 
 import com.j_spaces.core.SecurityContext;
+import org.springframework.util.StringUtils;
 
 /**
  * A configuration object allowing to configure security context (username, password) when
@@ -64,5 +65,9 @@ public class SecurityConfig {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isFilled() {
+        return StringUtils.hasText(username) && StringUtils.hasText(password);
     }
 }
