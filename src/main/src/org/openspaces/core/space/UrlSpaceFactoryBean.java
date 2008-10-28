@@ -462,8 +462,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 }
             }
 
-            if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
-                // enable security filter by default
+            if (!SpaceUtils.isRemoteProtocol(url) && getSecurityConfig() != null && getSecurityConfig().isFilled()) {
+                // enable security filter by default for embedded spaces
                 props.setProperty("space-config.filters.DefaultSecurityFilter.enabled", "true");
             }
 
