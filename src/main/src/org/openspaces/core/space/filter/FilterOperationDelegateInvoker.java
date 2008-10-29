@@ -26,6 +26,8 @@ import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>A filter operation delegate invoker, invoking a method associated with the given operation code.
@@ -69,6 +71,8 @@ class FilterOperationDelegateInvoker {
     private IMethod processMethod;
 
     private Class<?>[] parameterTypes;
+
+    private Map<String, Class> classCache = new ConcurrentHashMap<String, Class>();
 
     /**
      * Constructs a new delegate for the given operation code and a method to invoke.
@@ -191,11 +195,14 @@ class FilterOperationDelegateInvoker {
             return entry;
         }
         if (filterOnTypes) {
-            Class entryClass;
-            try {
-                entryClass = ClassUtils.getDefaultClassLoader().loadClass(entry.getClassName());
-            } catch (ClassNotFoundException e) {
-                throw new FilterExecutionException("Failed to find class [" + entry.getClassName() + "]", e);
+            Class entryClass = classCache.get(entry.getClassName());
+            if (entryClass == null) {
+                try {
+                    entryClass = ClassUtils.getDefaultClassLoader().loadClass(entry.getClassName());
+                } catch (ClassNotFoundException e) {
+                    throw new FilterExecutionException("Failed to find class [" + entry.getClassName() + "]", e);
+                }
+                classCache.put(entry.getClassName(), entryClass);
             }
             if (!paramType.isAssignableFrom(entryClass)) {
                 return null;
