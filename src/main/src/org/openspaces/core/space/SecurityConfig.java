@@ -68,6 +68,6 @@ public class SecurityConfig {
     }
 
     public boolean isFilled() {
-        return StringUtils.hasText(username) && StringUtils.hasText(password);
+        return (StringUtils.hasText(username) && !"${security.username}".equals(username)) && (StringUtils.hasText(password) && !"${security.password}".equals(password));
     }
 }
