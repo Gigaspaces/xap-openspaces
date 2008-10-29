@@ -194,6 +194,11 @@ class FilterOperationDelegateInvoker {
         if (ISpaceFilterEntry.class.isAssignableFrom(paramType)) {
             return entry;
         }
+        if (entry.getClassName() == null) {
+            // in case of UID base operation, there is no classname, simply filter it out
+            return null;
+        }
+        // TODO in the future, we might have classname with UID based API, in this case, we will still need to filter it
         if (filterOnTypes) {
             Class entryClass = classCache.get(entry.getClassName());
             if (entryClass == null) {
