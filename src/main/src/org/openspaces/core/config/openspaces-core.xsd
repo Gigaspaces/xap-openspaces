@@ -38,6 +38,8 @@
                             <xsd:complexType>
                                 <xsd:attribute name="username" type="xsd:string"/>
                                 <xsd:attribute name="password" type="xsd:string"/>
+                                <xsd:attribute name="encrypted" type="xsd:string"/> <!-- TODO: remove -->
+                                <xsd:attribute name="permissions" type="xsd:string"/> <!-- TODO: remove -->
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
