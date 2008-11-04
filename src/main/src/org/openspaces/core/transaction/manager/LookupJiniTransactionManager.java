@@ -18,6 +18,9 @@ package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.jini.JiniServiceFactoryBean;
+import org.openspaces.pu.container.servicegrid.PUServiceDetails;
+import org.openspaces.pu.container.servicegrid.PlainPUServiceDetails;
+import org.openspaces.pu.container.servicegrid.ServiceDetailsProvider;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionSystemException;
@@ -35,7 +38,7 @@ import java.util.Arrays;
  *
  * @author kimchy
  */
-public class LookupJiniTransactionManager extends AbstractJiniTransactionManager {
+public class LookupJiniTransactionManager extends AbstractJiniTransactionManager implements ServiceDetailsProvider {
 
     private static final long serialVersionUID = -917940171952237730L;
 
@@ -106,6 +109,17 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
                     + "], locators [" + Arrays.toString(locators) + "] timeout [" + lookupTimeout + "] and name [" + transactionManagerName + "]");
         }
         return transactionManager;
+    }
+
+    public PUServiceDetails[] getServicesDetails() {
+        StringBuilder desc = new StringBuilder();
+        if (groups != null) {
+            desc.append(Arrays.toString(groups));
+        }
+        if (locators != null) {
+            desc.append(Arrays.toString(locators));
+        }
+        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "loookup", desc.toString(), "")};
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
