@@ -44,9 +44,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
     private TransactionManager proxy;
 
     protected TransactionManager doCreateTransactionManager() throws Exception {
-        URL mahaloConfig = ResourceLoader.getResourceURL("config/services/services.config");
-        if (mahaloConfig == null)
-            throw new IllegalArgumentException("Could not find Mahalo configuration (config/services/services.config)");
+        URL mahaloConfig = ResourceLoader.getServicesConfigUrl();
 
         Class mahaloClass = ClassUtils.forName("com.sun.jini.mahalo.TransientMahaloImpl");
         Constructor constructor = mahaloClass.getDeclaredConstructor(String[].class, LifeCycle.class, boolean.class);
