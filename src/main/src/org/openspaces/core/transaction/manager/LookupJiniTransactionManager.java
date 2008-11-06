@@ -119,7 +119,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         if (locators != null) {
             desc.append(Arrays.toString(locators));
         }
-        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "loookup", desc.toString(), "")};
+        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "lookup", desc.toString(), "")};
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
