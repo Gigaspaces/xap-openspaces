@@ -17,6 +17,7 @@
 package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.server.TransactionManager;
+import org.openspaces.pu.container.servicegrid.PUServiceDetails;
 import org.springframework.util.Assert;
 
 /**
@@ -47,5 +48,9 @@ public class DirectJiniTransactionManager extends AbstractJiniTransactionManager
     protected TransactionManager doCreateTransactionManager() throws Exception {
         Assert.notNull(transactionManager, "transactionManager is required property");
         return this.transactionManager;
+    }
+
+    public PUServiceDetails[] getServicesDetails() {
+        return new PUServiceDetails[0];
     }
 }
