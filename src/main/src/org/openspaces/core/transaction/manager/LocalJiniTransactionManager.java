@@ -112,7 +112,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
     }
 
     public PUServiceDetails[] getServicesDetails() {
-        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "local", space.getName(), space.toString())};
+        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "local", getBeanName(), "Local over Space [" + space.getName() + "]")};
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)

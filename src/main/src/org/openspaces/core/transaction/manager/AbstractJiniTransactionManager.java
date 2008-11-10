@@ -106,6 +106,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         this.beanName = beanName;
     }
 
+    protected String getBeanName() {
+        return this.beanName;
+    }
+
     public Object getTransactionalContext() {
         return transactionalContext;
     }

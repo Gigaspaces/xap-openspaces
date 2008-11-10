@@ -112,14 +112,15 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
     }
 
     public PUServiceDetails[] getServicesDetails() {
-        StringBuilder desc = new StringBuilder();
+        StringBuilder longDesc = new StringBuilder();
+        longDesc.append("Lookup ");
         if (groups != null) {
-            desc.append(Arrays.toString(groups));
+            longDesc.append(Arrays.toString(groups));
         }
         if (locators != null) {
-            desc.append(Arrays.toString(locators));
+            longDesc.append(Arrays.toString(locators));
         }
-        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "lookup", desc.toString(), "")};
+        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "lookup", getBeanName(), longDesc.toString())};
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)

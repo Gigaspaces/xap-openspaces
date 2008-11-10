@@ -70,6 +70,6 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
     }
 
     public PUServiceDetails[] getServicesDetails() {
-        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "distributed", "", "")};
+        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "distributed", getBeanName(), "Distributed (embedded)")};
     }
 }
