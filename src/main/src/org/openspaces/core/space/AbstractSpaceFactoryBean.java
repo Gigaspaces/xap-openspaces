@@ -32,7 +32,10 @@ import org.openspaces.core.space.mode.SpaceAfterPrimaryListener;
 import org.openspaces.core.space.mode.SpaceBeforeBackupListener;
 import org.openspaces.core.space.mode.SpaceBeforePrimaryListener;
 import org.openspaces.core.util.SpaceUtils;
+import org.openspaces.pu.service.ProcessingUnitServiceDetails;
+import org.openspaces.pu.service.ProcessingUnitServiceDetailsProvider;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -68,10 +71,12 @@ import java.util.Map;
  *
  * @author kimchy
  */
-public abstract class AbstractSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean,
-        ApplicationContextAware, ApplicationListener, MemberAliveIndicator {
+public abstract class AbstractSpaceFactoryBean implements BeanNameAware, InitializingBean, DisposableBean, FactoryBean,
+        ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ProcessingUnitServiceDetailsProvider {
 
     protected Log logger = LogFactory.getLog(getClass());
+
+    private String beanName;
 
     private IJSpace space;
 
@@ -119,6 +124,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
 
     protected ApplicationContext getApplicationContext() {
         return this.applicationContext;
+    }
+
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     /**
@@ -357,6 +366,10 @@ public abstract class AbstractSpaceFactoryBean implements InitializingBean, Disp
                 listener.onAfterPrimary(new AfterSpaceModeChangeEvent(space, SpaceMode.PRIMARY));
             }
         }
+    }
+
+    public ProcessingUnitServiceDetails[] getServicesDetails() {
+        return new ProcessingUnitServiceDetails[] {new SpaceProcessingUnitServiceDetails(beanName, space)};
     }
 
     private class PrimaryBackupListener implements ISpaceModeListener {

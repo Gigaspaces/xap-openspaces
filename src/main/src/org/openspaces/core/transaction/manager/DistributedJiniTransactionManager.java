@@ -22,8 +22,8 @@ import com.sun.jini.start.LifeCycle;
 import com.sun.jini.start.ServiceProxyAccessor;
 import net.jini.admin.Administrable;
 import net.jini.core.transaction.server.TransactionManager;
-import org.openspaces.pu.container.servicegrid.PUServiceDetails;
-import org.openspaces.pu.container.servicegrid.PlainPUServiceDetails;
+import org.openspaces.pu.service.PlainProcessingUnitServiceDetails;
+import org.openspaces.pu.service.ProcessingUnitServiceDetails;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.ClassUtils;
 
@@ -69,7 +69,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
         }
     }
 
-    public PUServiceDetails[] getServicesDetails() {
-        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "distributed", getBeanName(), "Distributed (embedded)")};
+    public ProcessingUnitServiceDetails[] getServicesDetails() {
+        return new ProcessingUnitServiceDetails[] {new PlainProcessingUnitServiceDetails(getBeanName(), SERVICE_TYPE, "distributed", getBeanName(), "Distributed (embedded)")};
     }
 }

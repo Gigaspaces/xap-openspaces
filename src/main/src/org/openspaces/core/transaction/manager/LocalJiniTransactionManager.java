@@ -22,8 +22,8 @@ import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.container.servicegrid.PUServiceDetails;
-import org.openspaces.pu.container.servicegrid.PlainPUServiceDetails;
+import org.openspaces.pu.service.PlainProcessingUnitServiceDetails;
+import org.openspaces.pu.service.ProcessingUnitServiceDetails;
 import org.springframework.aop.framework.Advised;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
@@ -111,8 +111,8 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
         return LocalTransactionManager.getInstance(space);
     }
 
-    public PUServiceDetails[] getServicesDetails() {
-        return new PUServiceDetails[] {new PlainPUServiceDetails(SERVICE_TYPE, "local", getBeanName(), "Local over Space [" + space.getName() + "]")};
+    public ProcessingUnitServiceDetails[] getServicesDetails() {
+        return new ProcessingUnitServiceDetails[] {new PlainProcessingUnitServiceDetails(beanName, SERVICE_TYPE, "local", getBeanName(), "Local over Space [" + space.getName() + "]")};
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
