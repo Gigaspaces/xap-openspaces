@@ -33,6 +33,8 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
     // can be "embedded", "localview", "localcache", "remote"
     private String type;
 
+    private SpaceType spaceType;
+
     public SpaceProcessingUnitServiceDetails() {
     }
 
@@ -41,12 +43,16 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
         this.serviceID = new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits());
         SpaceURL spaceURL = space.getFinderURL();
         type = "embedded";
+        spaceType = SpaceType.EMBEDDED;
         if (space instanceof LocalSpaceView) {
             type = "localview";
+            spaceType = SpaceType.LOCAL_VIEW;
         } else if (space instanceof DCacheSpaceImpl) {
             type = "localcache";
+            spaceType = SpaceType.LOCAL_CACHE;
         } else if (SpaceUtils.isRemoteProtocol(space)) {
             type = "remote";
+            spaceType = SpaceType.REMOTE;
         } else { // embedded
         }
         this.name = spaceURL.getSpaceName();
@@ -93,6 +99,10 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
         return type;
     }
 
+    public SpaceType getSpaceType() {
+        return spaceType;
+    }
+
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(id);
         out.writeUTF(name);
@@ -100,6 +110,7 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
         out.writeLong(serviceID.getMostSignificantBits());
         out.writeLong(serviceID.getLeastSignificantBits());
         out.writeUTF(type);
+        out.writeObject(spaceType);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -108,5 +119,6 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
         containerName = in.readUTF();
         serviceID = new ServiceID(in.readLong(), in.readLong());
         type = in.readUTF();
+        spaceType = (SpaceType) in.readObject();
     }
 }
