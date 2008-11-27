@@ -49,7 +49,7 @@ public class LockManager {
      * A empty lock value written to indicate a lock when there is no value
      * to lock on (i.e. calling lock on a key where there is no value in the cache).
      */
-    public static Object EMPTY_LOCK_VALUE = "";
+    final public static Object EMPTY_LOCK_VALUE = "";
 
     public static boolean isEmptyLockValue(Object value) {
         return (value instanceof String) && ((String) value).length() == 0;
