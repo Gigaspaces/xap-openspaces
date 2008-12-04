@@ -35,11 +35,14 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
 
     private SpaceType spaceType;
 
+    private IJSpace space;
+
     public SpaceProcessingUnitServiceDetails() {
     }
 
     public SpaceProcessingUnitServiceDetails(String id, IJSpace space) {
         this.id = id;
+        this.space = space;
         this.serviceID = new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits());
         SpaceURL spaceURL = space.getFinderURL();
         type = "embedded";
