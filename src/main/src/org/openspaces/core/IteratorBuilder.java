@@ -16,6 +16,8 @@
 
 package org.openspaces.core;
 
+import com.gigaspaces.client.iterator.GSIteratorConfig;
+import com.gigaspaces.client.iterator.IteratorScope;
 import com.j_spaces.core.client.GSIterator;
 import com.j_spaces.core.client.Query;
 import net.jini.core.lease.Lease;
@@ -32,9 +34,9 @@ import java.util.List;
  * {@link #addTemplate(com.j_spaces.core.client.Query)}, a null template will be used to iterate
  * over all the content of the Space.
  *
- * <p>The iterator can also iterate on history entries. By default it will only iterate on future
- * entries in the Space (entries that match the given template(s)). When calling {@link #withHistory()}
- * the iterator will also iterate over existing entries.
+ * <p>The iterator can iterate on entries currently in the space, future entries or both.
+ * By default it will only iterate on future entries in the Space (entries that match the 
+ * given template(s)). Use {@link #iteratorScope(IteratorScope)} to set the iterator's scope.
  *
  * <p>Lease for the iterator can be controlled using {@link #leaseDuration(long)}. A leased iterator
  * which expires is considered as <em>invalidated</em>. A cancelled iterator is an exhausted iterator
@@ -70,14 +72,8 @@ import java.util.List;
 public class IteratorBuilder {
 
     private GigaSpace gigaSpace;
-
     private List<Object> templates = new ArrayList<Object>();
-
-    private boolean withHistory;
-
-    private int bufferSize = 100;
-
-    private long leaseDuration = Lease.FOREVER;
+    private GSIteratorConfig iteratorConfig = new GSIteratorConfig();
 
     /**
      * Constructs a new iterator builder using the given GigaSpace.
@@ -89,9 +85,18 @@ public class IteratorBuilder {
     /**
      * Sets to initially contain all of the visible matching entities in the space. If not called,
      * will contain only visible matching entities thereafter.
+     * DEPRECATED: use {@link #iteratorScope(IteratorScope)} instead.
      */
+    @Deprecated
     public IteratorBuilder withHistory() {
-        withHistory = true;
+        return iteratorScope(IteratorScope.CURRENT_AND_FUTURE);
+    }
+    
+    /**
+     * Determines iterator's scope: current entries, future entries or both.
+     */
+    public IteratorBuilder iteratorScope(IteratorScope iteratorScope) {
+        iteratorConfig.setIteratorScope(iteratorScope);
         return this;
     }
 
@@ -100,7 +105,7 @@ public class IteratorBuilder {
      * and defaults to <code>100</code>.
      */
     public IteratorBuilder bufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
+        this.iteratorConfig.setBufferSize(bufferSize);
         return this;
     }
 
@@ -109,7 +114,7 @@ public class IteratorBuilder {
      * match set. Defaults to <code>FOREVER</code>.
      */
     public IteratorBuilder leaseDuration(long leaseDuration) {
-        this.leaseDuration = leaseDuration;
+        this.iteratorConfig.setLeaseDuration(leaseDuration);
         return this;
     }
 
@@ -141,7 +146,7 @@ public class IteratorBuilder {
             templates.add(null);
         }
         try {
-            return new GSIterator(gigaSpace.getSpace(), templates, bufferSize, withHistory, leaseDuration);
+            return new GSIterator(gigaSpace.getSpace(), templates, iteratorConfig);
         } catch (Exception e) {
             throw gigaSpace.getExceptionTranslator().translate(e);
         }
