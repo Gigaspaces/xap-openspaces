@@ -24,7 +24,7 @@ public abstract class AbstractJiniTxManagerBeanDefinitionParser extends Abstract
             if (StringUtils.hasText(rtt)) {
                 renewalConfig.setRenewRTT(Long.parseLong(rtt));
             }
-            String poolSize = renewEle.getAttribute("pool-getSize");
+            String poolSize = renewEle.getAttribute("pool-size");
             if (StringUtils.hasText(poolSize)) {
                 renewalConfig.setPoolSize(Integer.parseInt(poolSize));
             }
