@@ -18,6 +18,7 @@ package org.openspaces.core;
 
 import com.gigaspaces.client.iterator.GSIteratorConfig;
 import com.gigaspaces.client.iterator.IteratorScope;
+import com.gigaspaces.events.EventSessionConfig;
 import com.j_spaces.core.client.GSIterator;
 import com.j_spaces.core.client.Query;
 import net.jini.core.lease.Lease;
@@ -118,6 +119,14 @@ public class IteratorBuilder {
         return this;
     }
 
+    /**
+     * The event session configuration to be used when subscribing 
+     * for notifications. 
+     */
+    public IteratorBuilder eventSessionConfig(EventSessionConfig eventSessionConfig){
+        this.iteratorConfig.setEventSessionConfig(eventSessionConfig);
+        return this;
+    }
     /**
      * Adds a template that will be used to control the matching entries the iterator
      * will iterate over.
