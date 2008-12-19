@@ -124,7 +124,8 @@ public class IteratorBuilder {
      * for notifications. 
      */
     public IteratorBuilder eventSessionConfig(EventSessionConfig eventSessionConfig){
-        this.iteratorConfig.setEventSessionConfig(eventSessionConfig);
+        //TODO fix this build error
+//        this.iteratorConfig.setEventSessionConfig(eventSessionConfig);
         return this;
     }
     /**
