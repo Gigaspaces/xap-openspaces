@@ -169,9 +169,11 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(0)).will(
+        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(ReadModifiers.READ_COMMITTED)).will(
                 returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
 
         Object actualRetVal = gs.take(template);
 
@@ -182,8 +184,10 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(10l), eq(0)).will(returnValue(retVal));
+        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(10l), eq(ReadModifiers.READ_COMMITTED)).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
 
         gs.setDefaultTakeTimeout(10l);
         Object actualRetVal = gs.take(template);
@@ -195,8 +199,10 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(11l), eq(0)).will(returnValue(retVal));
+        mockIJSpace.expects(once()).method("take").with(same(template), NULL, eq(11l), eq(ReadModifiers.READ_COMMITTED)).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
 
         Object actualRetVal = gs.take(template, 11l);
 

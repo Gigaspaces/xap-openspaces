@@ -208,6 +208,35 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> T readById(Class<T> clazz, Object id) {
+        return readById(clazz, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readById(Class<T> clazz, Object id, long timeout) {
+        return readById(clazz, id, null, timeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readById(Class<T> clazz, Object id, long timeout, int modifiers) {
+        return readById(clazz, id, null, timeout, modifiers);
+    }
+
+    public <T> T readById(Class<T> clazz, Object id, Object routing) {
+        return readById(clazz, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readById(Class<T> clazz, Object id, Object routing, long timeout) {
+        return readById(clazz, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public <T> T read(T template) throws DataAccessException {
         return read(template, defaultReadTimeout);
     }
@@ -360,12 +389,41 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> T takeById(Class<T> clazz, Object id) {
+        return takeById(clazz, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeById(Class<T> clazz, Object id, long timeout) {
+        return takeById(clazz, id, null, timeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeById(Class<T> clazz, Object id, long timeout, int modifiers) {
+        return takeById(clazz, id, null, timeout, modifiers);
+    }
+
+    public <T> T takeById(Class<T> clazz, Object id, Object routing) {
+        return takeById(clazz, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout) {
+        return takeById(clazz, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public <T> T take(T template) throws DataAccessException {
         return take(template, defaultTakeTimeout);
     }
 
     public <T> T take(T template, long timeout) throws DataAccessException {
-        return take(template, timeout, 0);
+        return take(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
@@ -382,7 +440,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> T take(Query<T> template, long timeout) throws DataAccessException {
-        return take(template, timeout, 0);
+        return take(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
@@ -403,11 +461,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(T template, long timeout) throws DataAccessException {
-        return asyncTake(template, timeout, 0);
+        return asyncTake(template, timeout, getModifiersForIsolationLevel());
     }
 
     public <T> AsyncFuture<T> asyncTake(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
-        return asyncTake(template, timeout, 0, listener);
+        return asyncTake(template, timeout, getModifiersForIsolationLevel(), listener);
     }
 
     public <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers) throws DataAccessException {
@@ -432,11 +490,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout) throws DataAccessException {
-        return asyncTake(template, timeout, 0);
+        return asyncTake(template, timeout, getModifiersForIsolationLevel());
     }
 
     public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
-        return asyncTake(template, timeout, 0, listener);
+        return asyncTake(template, timeout, getModifiersForIsolationLevel(), listener);
     }
 
     public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers) throws DataAccessException {

@@ -207,6 +207,93 @@ public interface GigaSpace {
     Object snapshot(Object entry) throws DataAccessException;
 
     /**
+     * Read an object from the space matching its id and the class. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param clazz The class of the entry
+     * @param id    The id of the entry
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(Class<T> clazz, Object id) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id and the class. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param clazz   The class of the entry
+     * @param id      The id of the entry
+     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(Class<T> clazz, Object id, long timeout) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id and the class. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param clazz     The class of the entry
+     * @param id        The id of the entry
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(Class<T> clazz, Object id, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, the class and the routing value. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param clazz   The class of the entry
+     * @param id      The id of the entry
+     * @param routing The routing value
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(Class<T> clazz, Object id, Object routing) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, the class and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param clazz   The class of the entry
+     * @param id      The id of the entry
+     * @param routing The routing value
+     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, the class and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param clazz     The class of the entry
+     * @param id        The id of the entry
+     * @param routing   The routing value
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read any matching object from the space, blocking until one exists. Return
      * <code>null</code> if the timeout expires.
      *
@@ -779,6 +866,93 @@ public interface GigaSpace {
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id and the class. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param clazz The class of the entry
+     * @param id    The id of the entry
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(Class<T> clazz, Object id) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id and the class. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param clazz   The class of the entry
+     * @param id      The id of the entry
+     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(Class<T> clazz, Object id, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id and the class. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param clazz     The class of the entry
+     * @param id        The id of the entry
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(Class<T> clazz, Object id, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, the class and the routing value. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param clazz   The class of the entry
+     * @param id      The id of the entry
+     * @param routing The routing value
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(Class<T> clazz, Object id, Object routing) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, the class and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param clazz   The class of the entry
+     * @param id      The id of the entry
+     * @param routing The routing value
+     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, the class and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param clazz     The class of the entry
+     * @param id        The id of the entry
+     * @param routing   The routing value
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
