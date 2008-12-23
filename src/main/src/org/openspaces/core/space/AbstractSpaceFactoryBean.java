@@ -32,8 +32,8 @@ import org.openspaces.core.space.mode.SpaceAfterPrimaryListener;
 import org.openspaces.core.space.mode.SpaceBeforeBackupListener;
 import org.openspaces.core.space.mode.SpaceBeforePrimaryListener;
 import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.service.ProcessingUnitServiceDetails;
-import org.openspaces.pu.service.ProcessingUnitServiceDetailsProvider;
+import org.openspaces.pu.service.ServiceDetails;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
@@ -72,7 +72,7 @@ import java.util.Map;
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements BeanNameAware, InitializingBean, DisposableBean, FactoryBean,
-        ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ProcessingUnitServiceDetailsProvider {
+        ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -368,8 +368,8 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
         }
     }
 
-    public ProcessingUnitServiceDetails[] getServicesDetails() {
-        return new ProcessingUnitServiceDetails[] {new SpaceProcessingUnitServiceDetails(beanName, space)};
+    public ServiceDetails[] getServicesDetails() {
+        return new ServiceDetails[] {new SpaceServiceDetails(beanName, space)};
     }
 
     private class PrimaryBackupListener implements ISpaceModeListener {

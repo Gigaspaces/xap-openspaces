@@ -6,7 +6,7 @@ import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.view.LocalSpaceView;
 import net.jini.core.lookup.ServiceID;
 import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.service.PlainProcessingUnitServiceDetails;
+import org.openspaces.pu.service.PlainServiceDetails;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -17,7 +17,7 @@ import java.io.ObjectOutput;
  *
  * @author kimchy
  */
-public class SpaceProcessingUnitServiceDetails extends PlainProcessingUnitServiceDetails {
+public class SpaceServiceDetails extends PlainServiceDetails {
 
     public static final String ATTRIBUTE_SERVICEID = "service-id";
     public static final String ATTRIBUTE_SPACENAME = "space-name";
@@ -26,10 +26,10 @@ public class SpaceProcessingUnitServiceDetails extends PlainProcessingUnitServic
 
     private IJSpace space;
 
-    public SpaceProcessingUnitServiceDetails() {
+    public SpaceServiceDetails() {
     }
 
-    public SpaceProcessingUnitServiceDetails(String id, IJSpace space) {
+    public SpaceServiceDetails(String id, IJSpace space) {
         super(id, "space", null, null, null);
         this.space = space;
         getAttributes().put(ATTRIBUTE_SERVICEID, new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits()));

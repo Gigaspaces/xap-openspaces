@@ -32,7 +32,7 @@ import net.jini.core.transaction.UnknownTransactionException;
 import net.jini.core.transaction.server.NestableTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.lease.LeaseRenewalManager;
-import org.openspaces.pu.service.ProcessingUnitServiceDetailsProvider;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.RemoteAccessException;
@@ -72,7 +72,7 @@ import java.rmi.RemoteException;
  * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
  */
 public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements
-        JiniPlatformTransactionManager, InitializingBean, BeanNameAware, ProcessingUnitServiceDetailsProvider {
+        JiniPlatformTransactionManager, InitializingBean, BeanNameAware, ServiceDetailsProvider {
 
     protected static final String SERVICE_TYPE = "tx-manager";
 

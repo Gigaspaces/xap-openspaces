@@ -18,9 +18,9 @@ package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.core.jini.JiniServiceFactoryBean;
-import org.openspaces.pu.service.PlainProcessingUnitServiceDetails;
-import org.openspaces.pu.service.ProcessingUnitServiceDetails;
-import org.openspaces.pu.service.ProcessingUnitServiceDetailsProvider;
+import org.openspaces.pu.service.PlainServiceDetails;
+import org.openspaces.pu.service.ServiceDetails;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionSystemException;
@@ -38,7 +38,7 @@ import java.util.Arrays;
  *
  * @author kimchy
  */
-public class LookupJiniTransactionManager extends AbstractJiniTransactionManager implements ProcessingUnitServiceDetailsProvider {
+public class LookupJiniTransactionManager extends AbstractJiniTransactionManager implements ServiceDetailsProvider {
 
     private static final long serialVersionUID = -917940171952237730L;
 
@@ -111,7 +111,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         return transactionManager;
     }
 
-    public ProcessingUnitServiceDetails[] getServicesDetails() {
+    public ServiceDetails[] getServicesDetails() {
         StringBuilder longDesc = new StringBuilder();
         longDesc.append("Lookup ");
         if (groups != null) {
@@ -120,7 +120,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         if (locators != null) {
             longDesc.append(Arrays.toString(locators));
         }
-        return new ProcessingUnitServiceDetails[] {new PlainProcessingUnitServiceDetails(getBeanName(), SERVICE_TYPE, "lookup", getBeanName(), longDesc.toString())};
+        return new ServiceDetails[] {new PlainServiceDetails(getBeanName(), SERVICE_TYPE, "lookup", getBeanName(), longDesc.toString())};
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)

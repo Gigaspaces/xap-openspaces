@@ -17,7 +17,7 @@
 package org.openspaces.core.transaction.manager;
 
 import net.jini.core.transaction.server.TransactionManager;
-import org.openspaces.pu.service.ProcessingUnitServiceDetails;
+import org.openspaces.pu.service.ServiceDetails;
 import org.springframework.util.Assert;
 
 /**
@@ -50,7 +50,7 @@ public class DirectJiniTransactionManager extends AbstractJiniTransactionManager
         return this.transactionManager;
     }
 
-    public ProcessingUnitServiceDetails[] getServicesDetails() {
-        return new ProcessingUnitServiceDetails[0];
+    public ServiceDetails[] getServicesDetails() {
+        return new ServiceDetails[0];
     }
 }
