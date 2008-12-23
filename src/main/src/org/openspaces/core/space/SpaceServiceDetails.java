@@ -31,6 +31,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
     public SpaceServiceDetails() {
     }
 
+    public SpaceServiceDetails(IJSpace space) {
+        this(null, space);
+    }
+
     public SpaceServiceDetails(String id, IJSpace space) {
         super(id, "space", null, null, null);
         this.space = space;
@@ -54,6 +58,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         getAttributes().put(Attributes.SPACECONTAINERNAME, spaceURL.getContainerName());
         description = spaceURL.getSpaceName();
         longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
+
+        if (id == null) {
+            this.id = type + ":" + spaceURL.getSpaceName();
+        }
     }
 
     public String getName() {
