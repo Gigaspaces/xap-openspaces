@@ -19,10 +19,12 @@ import java.io.ObjectOutput;
  */
 public class SpaceServiceDetails extends PlainServiceDetails {
 
-    public static final String ATTRIBUTE_SERVICEID = "service-id";
-    public static final String ATTRIBUTE_SPACENAME = "space-name";
-    public static final String ATTRIBUTE_SPACECONTAINERNAME = "space-container-name";
-    public static final String ATTRIBUTE_SPACETYPE = "space-type";
+    public static final class Attributes {
+        public static final String SERVICEID = "service-id";
+        public static final String SPACENAME = "space-name";
+        public static final String SPACECONTAINERNAME = "space-container-name";
+        public static final String SPACETYPE = "space-type";
+    }
 
     private IJSpace space;
 
@@ -32,7 +34,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
     public SpaceServiceDetails(String id, IJSpace space) {
         super(id, "space", null, null, null);
         this.space = space;
-        getAttributes().put(ATTRIBUTE_SERVICEID, new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits()));
+        getAttributes().put(Attributes.SERVICEID, new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits()));
         SpaceURL spaceURL = space.getFinderURL();
         type = "embedded";
         SpaceType spaceType = SpaceType.EMBEDDED;
@@ -47,27 +49,27 @@ public class SpaceServiceDetails extends PlainServiceDetails {
             spaceType = SpaceType.REMOTE;
         } else { // embedded
         }
-        getAttributes().put(ATTRIBUTE_SPACETYPE, spaceType);
-        getAttributes().put(ATTRIBUTE_SPACENAME, spaceURL.getSpaceName());
-        getAttributes().put(ATTRIBUTE_SPACECONTAINERNAME, spaceURL.getContainerName());
+        getAttributes().put(Attributes.SPACETYPE, spaceType);
+        getAttributes().put(Attributes.SPACENAME, spaceURL.getSpaceName());
+        getAttributes().put(Attributes.SPACECONTAINERNAME, spaceURL.getContainerName());
         description = spaceURL.getSpaceName();
         longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
     }
 
     public String getName() {
-        return (String) getAttributes().get(ATTRIBUTE_SPACENAME);
+        return (String) getAttributes().get(Attributes.SPACENAME);
     }
 
     public String getContainerName() {
-        return (String) getAttributes().get(ATTRIBUTE_SPACECONTAINERNAME);
+        return (String) getAttributes().get(Attributes.SPACECONTAINERNAME);
     }
 
     public ServiceID getServiceID() {
-        return (ServiceID) getAttributes().get(ATTRIBUTE_SERVICEID);
+        return (ServiceID) getAttributes().get(Attributes.SERVICEID);
     }
 
     public SpaceType getSpaceType() {
-        return (SpaceType) getAttributes().get(ATTRIBUTE_SPACETYPE);
+        return (SpaceType) getAttributes().get(Attributes.SPACETYPE);
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
