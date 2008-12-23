@@ -6,9 +6,8 @@ import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.view.LocalSpaceView;
 import net.jini.core.lookup.ServiceID;
 import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.service.ProcessingUnitServiceDetails;
+import org.openspaces.pu.service.PlainProcessingUnitServiceDetails;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -18,22 +17,12 @@ import java.io.ObjectOutput;
  *
  * @author kimchy
  */
-public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceDetails, Externalizable {
+public class SpaceProcessingUnitServiceDetails extends PlainProcessingUnitServiceDetails {
 
-    private static final long serialVersionUID = 1L;
-
-    private String id;
-    
-    private String name;
-
-    private String containerName;
-
-    private ServiceID serviceID;
-
-    // can be "embedded", "localview", "localcache", "remote"
-    private String type;
-
-    private SpaceType spaceType;
+    public static final String ATTRIBUTE_SERVICEID = "service-id";
+    public static final String ATTRIBUTE_SPACENAME = "space-name";
+    public static final String ATTRIBUTE_SPACECONTAINERNAME = "space-container-name";
+    public static final String ATTRIBUTE_SPACETYPE = "space-type";
 
     private IJSpace space;
 
@@ -41,12 +30,12 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
     }
 
     public SpaceProcessingUnitServiceDetails(String id, IJSpace space) {
-        this.id = id;
+        super(id, "space", null, null, null);
         this.space = space;
-        this.serviceID = new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits());
+        getAttributes().put(ATTRIBUTE_SERVICEID, new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits()));
         SpaceURL spaceURL = space.getFinderURL();
         type = "embedded";
-        spaceType = SpaceType.EMBEDDED;
+        SpaceType spaceType = SpaceType.EMBEDDED;
         if (space instanceof LocalSpaceView) {
             type = "localview";
             spaceType = SpaceType.LOCAL_VIEW;
@@ -58,70 +47,34 @@ public class SpaceProcessingUnitServiceDetails implements ProcessingUnitServiceD
             spaceType = SpaceType.REMOTE;
         } else { // embedded
         }
-        this.name = spaceURL.getSpaceName();
-        this.containerName = spaceURL.getContainerName();
-    }
-
-    public SpaceProcessingUnitServiceDetails(String id, String name, String containerName, ServiceID serviceID, String type) {
-        this.id = id;
-        this.name = name;
-        this.containerName = containerName;
-        this.serviceID = serviceID;
-        this.type = type;
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public String getServiceType() {
-        return "space";
-    }
-
-    public String getDescription() {
-        return name;
-    }
-
-    public String getLongDescription() {
-        return containerName + ":" + name;
+        getAttributes().put(ATTRIBUTE_SPACETYPE, spaceType);
+        getAttributes().put(ATTRIBUTE_SPACENAME, spaceURL.getSpaceName());
+        getAttributes().put(ATTRIBUTE_SPACECONTAINERNAME, spaceURL.getContainerName());
+        description = spaceURL.getSpaceName();
+        longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
     }
 
     public String getName() {
-        return name;
+        return (String) getAttributes().get(ATTRIBUTE_SPACENAME);
     }
 
     public String getContainerName() {
-        return containerName;
+        return (String) getAttributes().get(ATTRIBUTE_SPACECONTAINERNAME);
     }
 
     public ServiceID getServiceID() {
-        return serviceID;
-    }
-
-    public String getType() {
-        return type;
+        return (ServiceID) getAttributes().get(ATTRIBUTE_SERVICEID);
     }
 
     public SpaceType getSpaceType() {
-        return spaceType;
+        return (SpaceType) getAttributes().get(ATTRIBUTE_SPACETYPE);
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(id);
-        out.writeUTF(name);
-        out.writeUTF(containerName);
-        out.writeLong(serviceID.getMostSignificantBits());
-        out.writeLong(serviceID.getLeastSignificantBits());
-        out.writeUTF(type);
-        out.writeObject(spaceType);
+        super.writeExternal(out);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        id = in.readUTF();
-        name = in.readUTF();
-        containerName = in.readUTF();
-        serviceID = new ServiceID(in.readLong(), in.readLong());
-        type = in.readUTF();
-        spaceType = (SpaceType) in.readObject();
+        super.readExternal(in);
     }
 }
