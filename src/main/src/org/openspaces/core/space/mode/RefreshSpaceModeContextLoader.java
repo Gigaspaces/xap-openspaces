@@ -46,7 +46,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
             childAppContextClassLoader = new URLClassLoader(urlClassLoader.getURLs(), urlClassLoader.getParent());
         } else if (classLoader instanceof ServiceClassLoader) {
             ServiceClassLoader serviceClassLoader = (ServiceClassLoader) classLoader;
-            childAppContextClassLoader = new ServiceClassLoader(serviceClassLoader.getSearchPath(), serviceClassLoader.getClassAnnotator(), serviceClassLoader.getParent());
+            childAppContextClassLoader = new ServiceClassLoader(serviceClassLoader.getName(), serviceClassLoader.getSearchPath(), serviceClassLoader.getClassAnnotator(), serviceClassLoader.getParent());
         } else {
             logger.warn("Can't handle class loader [" + classLoader + "], refreshing is disabled");
             childAppContextClassLoader = classLoader;
