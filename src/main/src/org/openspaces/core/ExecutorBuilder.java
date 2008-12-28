@@ -30,8 +30,8 @@ import java.util.ArrayList;
 
 /**
  * The executor builder allows to combine all the different types of executing tasks
- * into a single execution (of course, the execution itself, of all the tasks, is asyncronous).
- * Similar to map redice where first all the tasks are defined, and then executed, and later on,
+ * into a single execution (of course, the execution itself, of all the tasks, is asynchronous).
+ * Similar to map reduce where first all the tasks are defined, and then executed, and later on,
  * reduced.
  *
  * @author kimchy
@@ -50,7 +50,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
      * with, and a reducer to reduce all the different tasks results.
      *
      * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
-     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * if tasks should continue to accumulate or it should break and execute the reduce operation on the
      * results received so far.
      */
     ExecutorBuilder(GigaSpace gigaSpace, AsyncResultsReducer<T, R> reducer) {
@@ -59,7 +59,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
     }
 
     /**
-     * Adds a task to be executed similary to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)}.
+     * Adds a task to be executed similarly to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)}.
      *
      * @param task The task to add
      * @return The executor builder to add more tasks to or {@link #execute()}.
@@ -71,7 +71,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
     }
 
     /**
-     * Adds a task to be executed similary to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)}.
+     * Adds a task to be executed similarly to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task)}.
      *
      * @param task The task to add
      * @return The executor builder to add more tasks to or {@link #execute()}.
@@ -95,7 +95,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
     }
 
     /**
-     * Adds a task to be executed similary to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.DistributedTask, Object[])}
+     * Adds a task to be executed similarly to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.DistributedTask, Object[])}
      *
      * @param task The task to add
      * @return The executor builder to add more tasks to or {@link #execute()}.
@@ -107,7 +107,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
     }
 
     /**
-     * Adds a task to be executed similary to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.DistributedTask)}
+     * Adds a task to be executed similarly to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.DistributedTask)}
      *
      * @param task The task to add
      * @return The executor builder to add more tasks to or {@link #execute()}.
@@ -119,15 +119,15 @@ public class ExecutorBuilder<T extends Serializable, R> {
     }
 
     /**
-     * Executes all the given tasks (asyncronously) based on their execution mode and returns a future
+     * Executes all the given tasks (asynchronously) based on their execution mode and returns a future
      * allowing to retrieve the reduced operation of all the tasks.
      *
      * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
-     * during the reduce operation. The moderator (assuming the redicer provided implements
+     * during the reduce operation. The moderator (assuming the reducer provided implements
      * {@link com.gigaspaces.async.AsyncResultFilter}) can be used as a mechanism to listen for results as they arrive.
      *
      * @return a Future representing pending completion of the task,
-     *         and whose <code>get()</code> method will return the task value upon comletion.
+     *         and whose <code>get()</code> method will return the task value upon completion.
      */
     public AsyncFuture<R> execute() {
         if (holders.size() == 0) {
@@ -159,11 +159,11 @@ public class ExecutorBuilder<T extends Serializable, R> {
         return gigaSpace.wrapFuture(result, gigaSpace.getCurrentTransaction());
     }
 
-    private class Holder<T extends Serializable> {
-        Task<T> task;
+    private static class Holder<S extends Serializable> {
+        Task<S> task;
         Object routing;
 
-        public Holder(Task<T> task, Object routing) {
+        public Holder(Task<S> task, Object routing) {
             this.task = task;
             this.routing = routing;
         }
