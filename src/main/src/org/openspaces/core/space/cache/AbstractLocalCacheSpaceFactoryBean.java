@@ -16,11 +16,11 @@
 
 package org.openspaces.core.space.cache;
 
+import com.gigaspaces.client.cache.ISpaceLocalCache;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.FinderException;
 import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.CannotCreateSpaceException;

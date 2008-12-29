@@ -16,12 +16,12 @@
 
 package org.openspaces.core.space;
 
+import com.gigaspaces.client.cache.ISpaceLocalCache;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
-import com.j_spaces.core.client.cache.ISpaceLocalCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.MemberAliveIndicator;
