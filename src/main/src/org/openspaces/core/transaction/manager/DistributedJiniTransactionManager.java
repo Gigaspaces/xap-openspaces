@@ -18,8 +18,8 @@ package org.openspaces.core.transaction.manager;
 
 import com.j_spaces.kernel.ResourceLoader;
 import com.sun.jini.admin.DestroyAdmin;
+import com.sun.jini.mahalo.TxnManager;
 import com.sun.jini.start.LifeCycle;
-import com.sun.jini.start.ServiceProxyAccessor;
 import net.jini.admin.Administrable;
 import net.jini.core.transaction.server.TransactionManager;
 import org.openspaces.pu.service.PlainServiceDetails;
@@ -39,7 +39,7 @@ import java.net.URL;
  */
 public class DistributedJiniTransactionManager extends AbstractJiniTransactionManager implements DisposableBean {
 
-    private Object impl;
+    private TxnManager impl;
 
     private TransactionManager proxy;
 
@@ -49,8 +49,8 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
         Class mahaloClass = ClassUtils.forName("com.sun.jini.mahalo.TransientMahaloImpl");
         Constructor constructor = mahaloClass.getDeclaredConstructor(String[].class, LifeCycle.class, boolean.class);
         constructor.setAccessible(true);
-        impl = constructor.newInstance(new String[] {mahaloConfig.toExternalForm()}, null, false);
-        proxy = (TransactionManager) ((ServiceProxyAccessor) impl).getServiceProxy();
+        impl = (TxnManager) constructor.newInstance(new String[] {mahaloConfig.toExternalForm()}, null, false);
+        proxy = impl.getLocalProxy();
         return proxy;
     }
 
