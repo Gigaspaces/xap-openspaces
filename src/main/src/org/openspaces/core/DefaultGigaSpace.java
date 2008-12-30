@@ -231,7 +231,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
-            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, null);
+            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, false, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -412,7 +412,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
-            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, null);
+            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, false, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
