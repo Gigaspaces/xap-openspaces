@@ -329,6 +329,35 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> T readIfExistsById(Class<T> clazz, Object id) {
+        return readIfExistsById(clazz, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readIfExistsById(Class<T> clazz, Object id, long timeout) {
+        return readIfExistsById(clazz, id, null, timeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readIfExistsById(Class<T> clazz, Object id, long timeout, int modifiers) {
+        return readIfExistsById(clazz, id, null, timeout, modifiers);
+    }
+
+    public <T> T readIfExistsById(Class<T> clazz, Object id, Object routing) {
+        return readIfExistsById(clazz, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout) {
+        return readIfExistsById(clazz, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public <T> T readIfExists(T template) throws DataAccessException {
         return readIfExists(template, defaultReadTimeout);
     }
@@ -506,6 +535,35 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         try {
             return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
         } catch (RemoteException e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> T takeIfExistsById(Class<T> clazz, Object id) {
+        return takeIfExistsById(clazz, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExistsById(Class<T> clazz, Object id, long timeout) {
+        return takeIfExistsById(clazz, id, null, timeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExistsById(Class<T> clazz, Object id, long timeout, int modifiers) {
+        return takeIfExistsById(clazz, id, null, timeout, modifiers);
+    }
+
+    public <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing) {
+        return takeIfExistsById(clazz, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout) {
+        return takeIfExistsById(clazz, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, null);
+        } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
