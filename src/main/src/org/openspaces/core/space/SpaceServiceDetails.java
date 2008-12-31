@@ -40,16 +40,16 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         this.space = space;
         getAttributes().put(Attributes.SERVICEID, new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits()));
         SpaceURL spaceURL = space.getFinderURL();
-        type = "embedded";
+        serviceSubType = "embedded";
         SpaceType spaceType = SpaceType.EMBEDDED;
         if (space instanceof LocalSpaceView) {
-            type = "localview";
+            serviceSubType = "localview";
             spaceType = SpaceType.LOCAL_VIEW;
         } else if (space instanceof DCacheSpaceImpl) {
-            type = "localcache";
+            serviceSubType = "localcache";
             spaceType = SpaceType.LOCAL_CACHE;
         } else if (SpaceUtils.isRemoteProtocol(space)) {
-            type = "remote";
+            serviceSubType = "remote";
             spaceType = SpaceType.REMOTE;
         } else { // embedded
         }
@@ -60,7 +60,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
 
         if (id == null) {
-            this.id = type + ":" + spaceURL.getSpaceName();
+            this.id = serviceSubType + ":" + spaceURL.getSpaceName();
         }
     }
 
