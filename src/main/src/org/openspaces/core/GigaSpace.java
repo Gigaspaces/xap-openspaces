@@ -68,6 +68,12 @@ import java.io.Serializable;
 public interface GigaSpace {
 
     /**
+     * Returns the name of the giga space. If it is configured with Spring for example, will reutrn the
+     * bean name, if not, will default to the space name.
+     */
+    String getName();
+
+    /**
      * Returns the <code>IJSpace</code> used by this GigaSpace implementation to delegate
      * different space operations.
      *

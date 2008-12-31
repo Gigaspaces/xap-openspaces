@@ -282,6 +282,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);
+        gigaSpace.setName(beanName == null ? space.getName() : beanName);
     }
 
     /**

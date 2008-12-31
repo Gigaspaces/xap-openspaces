@@ -63,6 +63,8 @@ import java.rmi.RemoteException;
  */
 public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
+    private String name;
+
     final private ISpaceProxy space;
 
     final private TransactionProvider txProvider;
@@ -114,6 +116,14 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     /**
