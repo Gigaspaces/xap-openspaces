@@ -733,9 +733,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task, Object routing, AsyncFutureListener<T> listener) {
-        if (routing == null) {
-            throw new IllegalArgumentException("Task [" + task + "] can not be executed without routing information");
-        }
         Object optionalRouting = executorMetaDataProvider.findRouting(routing);
         if (optionalRouting != null) {
             routing = optionalRouting;
