@@ -18,6 +18,7 @@ package org.openspaces.core.space.mode;
 
 import org.jini.rio.boot.ServiceClassLoader;
 
+import java.net.URL;
 import java.net.URLClassLoader;
 
 /**
@@ -46,7 +47,9 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
             childAppContextClassLoader = new URLClassLoader(urlClassLoader.getURLs(), urlClassLoader.getParent());
         } else if (classLoader instanceof ServiceClassLoader) {
             ServiceClassLoader serviceClassLoader = (ServiceClassLoader) classLoader;
-            childAppContextClassLoader = new ServiceClassLoader(serviceClassLoader.getName(), serviceClassLoader.getSearchPath(), serviceClassLoader.getClassAnnotator(), serviceClassLoader.getParent());
+            childAppContextClassLoader = new ServiceClassLoader(serviceClassLoader.getName(), new URL[0], serviceClassLoader.getClassAnnotator(), serviceClassLoader); // we rely on parent last here
+            ((ServiceClassLoader) childAppContextClassLoader).setLibPath(serviceClassLoader.getLibPath());
+            ((ServiceClassLoader) childAppContextClassLoader).setSlashPath(serviceClassLoader.getSlashPath());
         } else {
             logger.warn("Can't handle class loader [" + classLoader + "], refreshing is disabled");
             childAppContextClassLoader = classLoader;
