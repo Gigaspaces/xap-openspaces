@@ -2,6 +2,7 @@ package org.openspaces.core.space;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.DCacheSpaceImpl;
+import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.view.LocalSpaceView;
 import net.jini.core.lookup.ServiceID;
@@ -24,6 +25,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         public static final String SPACENAME = "space-name";
         public static final String SPACECONTAINERNAME = "space-container-name";
         public static final String SPACETYPE = "space-type";
+        public static final String CLUSTERED = "clustered";
     }
 
     private IJSpace space;
@@ -56,6 +58,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         getAttributes().put(Attributes.SPACETYPE, spaceType);
         getAttributes().put(Attributes.SPACENAME, spaceURL.getSpaceName());
         getAttributes().put(Attributes.SPACECONTAINERNAME, spaceURL.getContainerName());
+        getAttributes().put(Attributes.CLUSTERED, ((ISpaceProxy) space).isClustered());
         description = spaceURL.getSpaceName();
         longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
 
@@ -78,6 +81,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
 
     public SpaceType getSpaceType() {
         return (SpaceType) getAttributes().get(Attributes.SPACETYPE);
+    }
+
+    public boolean isClustered() {
+        return (Boolean) getAttributes().get(Attributes.CLUSTERED);
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
