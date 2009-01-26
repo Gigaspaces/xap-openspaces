@@ -194,6 +194,9 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
      * Destroys the space and unregisters the internal space mode listener (if registered).
      */
     public void destroy() throws Exception {
+        if (space == null) {
+            return;
+        }
         if (isRegisterForSpaceModeNotifications()) {
             // unregister the space mode listener
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
