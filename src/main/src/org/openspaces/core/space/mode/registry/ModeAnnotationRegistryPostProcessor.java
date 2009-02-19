@@ -16,8 +16,6 @@
 
 package org.openspaces.core.space.mode.registry;
 
-import java.lang.reflect.Method;
-
 import org.openspaces.core.space.mode.PostBackup;
 import org.openspaces.core.space.mode.PostPrimary;
 import org.openspaces.core.space.mode.PreBackup;
@@ -27,6 +25,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.lang.reflect.Method;
 
 /**
  * Scans the bean's methods for the annotations {@link PreBackup}, {@link PostBackup}, {@link PrePrimary}
@@ -43,6 +43,9 @@ public class ModeAnnotationRegistryPostProcessor implements BeanPostProcessor, A
         ModeAnnotationRegistry registry = (ModeAnnotationRegistry)applicationContext.getBean("intenral-modeAnnotationRegistry");
         if (registry != null) {
             Class<?> beanClass = this.getBeanClass(bean);
+            if (beanClass == null) {
+                return bean;
+            }
 
             // find if the bean has the relevant annotations
             for (Method method : beanClass.getMethods()) {
