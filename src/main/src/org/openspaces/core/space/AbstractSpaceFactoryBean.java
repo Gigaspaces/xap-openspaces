@@ -18,6 +18,7 @@ package org.openspaces.core.space;
 
 import com.gigaspaces.client.cache.ISpaceLocalCache;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
+import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SecurityContext;
@@ -233,16 +234,21 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
             if (applicationContext != null) {
-                applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, currentSpaceMode));
-                applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, currentSpaceMode));
-                
-                if (currentSpaceMode == SpaceMode.BACKUP) {
-                    fireSpaceBeforeBackupEvent();
-                    fireSpaceAfterBackupEvent();
-                }
-                else if (currentSpaceMode == SpaceMode.PRIMARY) {
-                    fireSpaceBeforePrimaryEvent();
-                    fireSpaceAfterPrimaryEvent();
+                SpaceInitializationIndicator.setInitializer();
+                try {
+                    applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, currentSpaceMode));
+                    applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, currentSpaceMode));
+
+                    if (currentSpaceMode == SpaceMode.BACKUP) {
+                        fireSpaceBeforeBackupEvent();
+                        fireSpaceAfterBackupEvent();
+                    }
+                    else if (currentSpaceMode == SpaceMode.PRIMARY) {
+                        fireSpaceBeforePrimaryEvent();
+                        fireSpaceAfterPrimaryEvent();
+                    }
+                } finally {
+                    SpaceInitializationIndicator.unsetInitializer();
                 }
             }
         }
