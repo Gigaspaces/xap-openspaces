@@ -22,6 +22,7 @@ import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SecurityContext;
+import com.j_spaces.core.client.LookupFinder;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -155,7 +156,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
      * and backup handling of different beans within the context. The registration is based on
      * {@link #isRegisterForSpaceModeNotifications()}.
      */
-    public void afterPropertiesSet() throws DataAccessException {
+    public synchronized void afterPropertiesSet() throws DataAccessException {
         this.space = doCreateSpace();
         // apply security configuration if set
         if (securityConfig != null && securityConfig.isFilled()) {
@@ -194,10 +195,13 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
     /**
      * Destroys the space and unregisters the internal space mode listener (if registered).
      */
-    public void destroy() throws Exception {
+    public synchronized void destroy() throws Exception {
         if (space == null) {
             return;
         }
+        // close the lookup finder (cleans it). Will not be closed when running within the GSC since we want to share it
+        LookupFinder.close();
+        
         if (isRegisterForSpaceModeNotifications()) {
             // unregister the space mode listener
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
