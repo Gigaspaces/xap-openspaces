@@ -33,4 +33,6 @@ public interface JiniPlatformTransactionManager extends PlatformTransactionManag
      * synchronization which is based on thread local).
      */
     Object getTransactionalContext();
+
+    String getBeanName();
 }
