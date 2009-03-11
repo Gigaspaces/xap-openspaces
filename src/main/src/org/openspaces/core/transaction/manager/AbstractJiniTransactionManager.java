@@ -156,6 +156,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
      */
     protected abstract TransactionManager doCreateTransactionManager() throws Exception;
 
+    public TransactionManager getTransactionManager() {
+        return this.transactionManager;
+    }
+
     public void afterPropertiesSet() throws Exception {
         this.transactionManager = doCreateTransactionManager();
         Assert.notNull(this.transactionManager, "Jini transactionManager is required");

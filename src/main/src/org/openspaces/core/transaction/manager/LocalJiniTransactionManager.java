@@ -19,7 +19,9 @@ package org.openspaces.core.transaction.manager;
 import com.gigaspaces.client.cache.ISpaceLocalCache;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.LocalTransactionManager;
+import com.sun.jini.admin.DestroyAdmin;
 import net.jini.core.transaction.server.TransactionManager;
+import net.jini.lookup.DiscoveryAdmin;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.pu.service.PlainServiceDetails;
@@ -28,6 +30,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * Spring transaction manager ({@link org.springframework.transaction.PlatformTransactionManager}
@@ -43,7 +46,7 @@ import org.springframework.util.Assert;
  * @author kimchy
  * @see com.j_spaces.core.client.LocalTransactionManager
  */
-public class LocalJiniTransactionManager extends AbstractJiniTransactionManager {
+public class LocalJiniTransactionManager extends AbstractJiniTransactionManager implements DisposableBean {
 
     private static final long serialVersionUID = -2672383547433358975L;
 
@@ -113,6 +116,10 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
 
     public ServiceDetails[] getServicesDetails() {
         return new ServiceDetails[] {new PlainServiceDetails(beanName, SERVICE_TYPE, "local", getBeanName(), "Local over Space [" + space.getName() + "]")};
+    }
+
+    public void destroy() throws Exception {
+        ((LocalTransactionManager) getTransactionManager()).destroy();
     }
 
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
