@@ -55,6 +55,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
     }
 
     public void destroy() throws Exception {
+        super.destroy();
         if (proxy == null) {
             return;
         }

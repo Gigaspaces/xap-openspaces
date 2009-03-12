@@ -119,6 +119,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
     }
 
     public void destroy() throws Exception {
+        super.destroy();
         ((LocalTransactionManager) getTransactionManager()).destroy();
     }
 

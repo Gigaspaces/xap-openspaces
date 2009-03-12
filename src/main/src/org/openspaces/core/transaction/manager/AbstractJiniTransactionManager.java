@@ -33,8 +33,10 @@ import net.jini.core.transaction.server.NestableTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.lease.LeaseRenewalManager;
 import org.openspaces.pu.service.ServiceDetailsProvider;
+import org.openspaces.pu.service.ServiceDetails;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.InvalidIsolationLevelException;
@@ -72,7 +74,7 @@ import java.rmi.RemoteException;
  * @see org.openspaces.core.transaction.manager.JiniTransactionHolder
  */
 public abstract class AbstractJiniTransactionManager extends AbstractPlatformTransactionManager implements
-        JiniPlatformTransactionManager, InitializingBean, BeanNameAware, ServiceDetailsProvider {
+        JiniPlatformTransactionManager, InitializingBean, BeanNameAware, ServiceDetailsProvider, DisposableBean {
 
     protected static final String SERVICE_TYPE = "tx-manager";
 
@@ -175,6 +177,15 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 leaseRenewalManagers[i] = new LeaseRenewalManager(new RenewalConfiguration(leaseRenewalConfig.getRenewRTT()));
             }
             logger.debug(logMessage("Creatred transaction manager with lease renewal pool [" + leaseRenewalConfig.getPoolSize() + "] and RTT [" + leaseRenewalConfig.getRenewRTT() + "]"));
+        }
+    }
+
+    public void destroy() throws Exception {
+        if (leaseRenewalManagers != null) {
+            for (LeaseRenewalManager leaseRenewalManager : leaseRenewalManagers) {
+                leaseRenewalManager.terminate();
+            }
+            leaseRenewalManagers = null;
         }
     }
 
