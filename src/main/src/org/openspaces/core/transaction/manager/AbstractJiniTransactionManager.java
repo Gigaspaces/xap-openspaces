@@ -33,7 +33,6 @@ import net.jini.core.transaction.server.NestableTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.lease.LeaseRenewalManager;
 import org.openspaces.pu.service.ServiceDetailsProvider;
-import org.openspaces.pu.service.ServiceDetails;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.DisposableBean;
