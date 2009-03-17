@@ -197,9 +197,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
         if (space == null) {
             return;
         }
-        // close the lookup finder (cleans it). Will not be closed when running within the GSC since we want to share it
-        LookupFinder.close();
-        
+
         if (isRegisterForSpaceModeNotifications()) {
             // unregister the space mode listener
             IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
@@ -220,6 +218,9 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
         } finally {
             space = null;
         }
+
+        // close the lookup finder (cleans it). Will not be closed when running within the GSC since we want to share it
+        LookupFinder.close();
     }
 
     /**
