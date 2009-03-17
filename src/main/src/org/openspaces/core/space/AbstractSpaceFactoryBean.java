@@ -16,7 +16,6 @@
 
 package org.openspaces.core.space;
 
-import com.gigaspaces.client.cache.ISpaceLocalCache;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
