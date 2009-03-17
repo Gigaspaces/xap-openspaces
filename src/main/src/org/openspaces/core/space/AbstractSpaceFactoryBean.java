@@ -23,6 +23,7 @@ import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.client.LookupFinder;
+import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -210,8 +211,8 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
         }
         try {
-            if (space instanceof ISpaceLocalCache) {
-                ((ISpaceLocalCache) space).close();
+            if (space instanceof ISpaceProxy) {
+                ((ISpaceProxy) space).close();
             }
             if (!SpaceUtils.isRemoteProtocol(space)) {
                 // shutdown the space if we are in embedded mode
