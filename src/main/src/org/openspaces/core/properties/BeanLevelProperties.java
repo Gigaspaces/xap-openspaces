@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Collections;
 
 /**
  * An extension to Spring support for properties based configuration. This is a properties holder
@@ -103,6 +104,10 @@ public class BeanLevelProperties implements Serializable {
             props.putAll(nameBasedProperties);
         }
         return props;
+    }
+
+    public Map<String, Properties> getBeans() {
+        return Collections.synchronizedMap(beanProperties);
     }
 
     public String toString() {
