@@ -39,6 +39,9 @@ public class ModeAnnotationRegistryPostProcessor implements BeanPostProcessor, A
     private ApplicationContext applicationContext;
     
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (bean == null) {
+            return bean;
+        }
         // get the registry bean
         ModeAnnotationRegistry registry = (ModeAnnotationRegistry)applicationContext.getBean("intenral-modeAnnotationRegistry");
         if (registry != null) {

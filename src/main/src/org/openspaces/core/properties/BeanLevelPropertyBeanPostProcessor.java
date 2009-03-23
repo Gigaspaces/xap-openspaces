@@ -74,6 +74,9 @@ public class BeanLevelPropertyBeanPostProcessor implements BeanPostProcessor {
         if (bean instanceof BeanLevelPropertiesAware) {
             ((BeanLevelPropertiesAware) bean).setBeanLevelProperties(beanLevelProperties);
         }
+        if (bean == null) {
+            return null;
+        }
         ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
             public void doWith(Field field) {
                 if (field.isAnnotationPresent(BeanLevelMergedPropertiesContext.class)) {

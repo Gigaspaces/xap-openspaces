@@ -109,6 +109,9 @@ public class GigaSpaceContextBeanPostProcessor extends InstantiationAwareBeanPos
 
     @Override
     public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        if (bean == null) {
+            return true;
+        }
         List<AnnotatedMember> metadata = findClassMetadata(bean.getClass());
         for (AnnotatedMember member : metadata) {
             member.inject(bean);

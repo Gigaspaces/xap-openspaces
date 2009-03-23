@@ -45,7 +45,10 @@ public class ClusterInfoBeanPostProcessor implements BeanPostProcessor {
     public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
         if (bean instanceof ClusterInfoAware) {
             ((ClusterInfoAware) bean).setClusterInfo(clusterInfo);
-        } 
+        }
+        if (bean == null) {
+            return bean;
+        }
         
         ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
             public void doWith(Field field) {
