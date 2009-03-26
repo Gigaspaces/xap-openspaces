@@ -45,9 +45,9 @@ public class LocalJiniTxManagerConfigurer {
     }
 
     /**
-     * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setDefaultTimeout(Long)
+     * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setDefaultTimeout(int)
      */
-    public LocalJiniTxManagerConfigurer defaultTimeout(long defaultTimeout) {
+    public LocalJiniTxManagerConfigurer defaultTimeout(int defaultTimeout) {
         localJiniTransactionManager.setDefaultTimeout(defaultTimeout);
         return this;
     }

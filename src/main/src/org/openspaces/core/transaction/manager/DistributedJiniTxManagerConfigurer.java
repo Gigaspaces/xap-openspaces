@@ -34,9 +34,9 @@ public class DistributedJiniTxManagerConfigurer {
     }
 
     /**
-     * @see DistributedJiniTransactionManager#setDefaultTimeout(Long)
+     * @see DistributedJiniTransactionManager#setDefaultTimeout(int)
      */
-    public DistributedJiniTxManagerConfigurer defaultTimeout(long defaultTimeout) {
+    public DistributedJiniTxManagerConfigurer defaultTimeout(int defaultTimeout) {
         distributedJiniTransactionManager.setDefaultTimeout(defaultTimeout);
         return this;
     }

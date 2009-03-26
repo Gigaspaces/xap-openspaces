@@ -51,9 +51,9 @@ public class LookupJiniTxManagerConfigurer {
     }
 
     /**
-     * @see LookupJiniTransactionManager#setDefaultTimeout(Long)
+     * @see LookupJiniTransactionManager#setDefaultTimeout(int)
      */
-    public LookupJiniTxManagerConfigurer defaultTimeout(long defaultTimeout) {
+    public LookupJiniTxManagerConfigurer defaultTimeout(int defaultTimeout) {
         lookupJiniTransactionManager.setDefaultTimeout(defaultTimeout);
         return this;
     }

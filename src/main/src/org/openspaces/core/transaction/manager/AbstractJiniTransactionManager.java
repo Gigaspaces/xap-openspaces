@@ -63,8 +63,8 @@ import java.rmi.RemoteException;
  * is optional and defaults to the Jini {@link TransactionManager} instance. Note, this can be
  * overridden by sub classes.
  *
- * <p>By default the transaction timeout will be <code>90000</code> milliseconds. The default timeout on the
- * transaction manager level can be set using {@link #setDefaultTimeout(Long)}. If the timeout is
+ * <p>By default the transaction timeout will be <code>90</code> seconds. The default timeout on the
+ * transaction manager level can be set using {@link #setDefaultTimeout(int)}. If the timeout is
  * explicitly set using Spring support for transactions (for example using
  * {@link org.springframework.transaction.TransactionDefinition}) this value will be used.
  *
@@ -88,9 +88,6 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     // the jini participant - can be javaspace or any other service that wants
     // to take part in the transaction
     private Object transactionalContext;
-
-    //default tx timeout, initialized to 90 seconds
-    private Long defaultTimeout;
 
     private Long commitTimeout = DEFAULT_TX_COMMIT_TIMEOUT;
 
@@ -117,15 +114,6 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     public void setTransactionalContext(Object txResource) {
         this.transactionalContext = txResource;
-    }
-
-    /**
-     * Sets the default timeout to use if {@link TransactionDefinition#TIMEOUT_DEFAULT} is used. Set
-     * in <b>seconds</b> (in order to follow the {@link TransactionDefinition} contract). Defaults
-     * to 60 seconds.
-     */
-    public void setDefaultTimeout(Long defaultTimeout) {
-        this.defaultTimeout = defaultTimeout;
     }
 
     /**
@@ -229,8 +217,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         try {
             if (txObject.getJiniHolder() == null) {
                 long timeout = DEFAULT_TX_TIMEOUT;
-                if (defaultTimeout != null) {
-                    timeout = defaultTimeout * 1000;
+                if (getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
+                    timeout = getDefaultTimeout() * 1000;
                 }
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                     timeout = definition.getTimeout() * 1000;
