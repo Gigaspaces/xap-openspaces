@@ -101,6 +101,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
         SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
         spaceUrl.putAll(props);
         spaceUrl.getCustomProperties().putAll(props);
+        propereUrl(spaceUrl);
         try {
             localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, null);
         } catch (FinderException e) {
@@ -122,6 +123,10 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * concrete local cache implementation.
      */
     protected abstract Properties createCacheProeprties();
+
+    protected void propereUrl(SpaceURL spaceURL) {
+        
+    }
 
     /**
      * Returns an {@link com.j_spaces.core.IJSpace IJSpace} that is the local cache wrapping the

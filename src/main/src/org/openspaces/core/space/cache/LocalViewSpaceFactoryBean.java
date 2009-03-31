@@ -60,8 +60,11 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
      * {@link #setLocalViews(java.util.List)} locaViews}.
      */
     protected Properties createCacheProeprties() {
-        Properties props = new Properties();
-        props.put(SpaceURL.VIEWS, localViews.toArray(new View<?>[localViews.size()]));
-        return props;
+        return new Properties();
+    }
+
+    @Override
+    protected void propereUrl(SpaceURL spaceURL) {
+        spaceURL.getCustomProperties().put(SpaceURL.VIEWS, localViews.toArray(new View<?>[localViews.size()]));
     }
 }
