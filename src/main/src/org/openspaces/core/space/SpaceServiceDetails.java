@@ -26,6 +26,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         public static final String SPACECONTAINERNAME = "space-container-name";
         public static final String SPACETYPE = "space-type";
         public static final String CLUSTERED = "clustered";
+        public static final String URL = "url";
     }
 
     private IJSpace space;
@@ -61,6 +62,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         getAttributes().put(Attributes.CLUSTERED, ((ISpaceProxy) space).isClustered());
         description = spaceURL.getSpaceName();
         longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
+        getAttributes().put(Attributes.URL, space.getFinderURL().toString());
 
         if (id == null) {
             this.id = serviceSubType + ":" + spaceURL.getSpaceName();
@@ -85,6 +87,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
 
     public boolean isClustered() {
         return (Boolean) getAttributes().get(Attributes.CLUSTERED);
+    }
+
+    public String getUrl() {
+        return (String) getAttributes().get(Attributes.URL);
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
