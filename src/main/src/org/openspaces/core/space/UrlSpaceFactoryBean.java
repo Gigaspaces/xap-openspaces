@@ -592,7 +592,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                             }
                         }
                     } else {
-                        if (task instanceof ApplicationContextAware) {
+                        if (applicationContext != null && task instanceof ApplicationContextAware) {
                             ((ApplicationContextAware) task).setApplicationContext(applicationContext);
                         }
                         if (task instanceof ClusterInfoAware) {
