@@ -535,6 +535,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 if (task instanceof InternalSpaceTaskWrapper) {
                     task = ((InternalSpaceTaskWrapper) task).getTask();
                 }
+                // go over the task and inject what can be injected
+                // break when there is no more DelegatingTasks
                 while (true) {
                     if (task instanceof TaskGigaSpaceAware) {
                         ((TaskGigaSpaceAware) task).setGigaSpace(gigaSpace);
@@ -590,11 +592,11 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                             }
                         }
                     } else {
-                        if (applicationContext == null) {
-                            throw new IllegalStateException("Task [" + task.getClass().getName() + "] is configured to do autowiring but the space was not started with application context");
-                        }
                         if (task instanceof ApplicationContextAware) {
                             ((ApplicationContextAware) task).setApplicationContext(applicationContext);
+                        }
+                        if (task instanceof ClusterInfoAware) {
+                            ((ClusterInfoAware) task).setClusterInfo(clusterInfo);
                         }
                     }
 
