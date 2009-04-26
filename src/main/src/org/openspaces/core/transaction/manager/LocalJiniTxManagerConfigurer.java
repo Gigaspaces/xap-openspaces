@@ -17,7 +17,6 @@
 package org.openspaces.core.transaction.manager;
 
 import com.j_spaces.core.IJSpace;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -27,7 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class LocalJiniTxManagerConfigurer {
 
-    private LocalJiniTransactionManager localJiniTransactionManager;
+    final private LocalJiniTransactionManager localJiniTransactionManager;
 
     private boolean initialized = false;
 
@@ -85,8 +84,6 @@ public class LocalJiniTxManagerConfigurer {
     }
 
     public void destroy() throws Exception {
-        if (localJiniTransactionManager instanceof DisposableBean) {
-            ((DisposableBean) localJiniTransactionManager).destroy();
-        }
+        localJiniTransactionManager.destroy();
     }
 }

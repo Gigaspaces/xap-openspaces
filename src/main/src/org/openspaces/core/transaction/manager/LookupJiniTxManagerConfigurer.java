@@ -26,7 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class LookupJiniTxManagerConfigurer {
 
-    private LookupJiniTransactionManager lookupJiniTransactionManager;
+    final private LookupJiniTransactionManager lookupJiniTransactionManager;
 
     private boolean initialized = false;
 
@@ -91,8 +91,6 @@ public class LookupJiniTxManagerConfigurer {
     }
 
     public void destroy() throws Exception {
-        if (lookupJiniTransactionManager instanceof DisposableBean) {
-            ((DisposableBean) lookupJiniTransactionManager).destroy();
-        }
+        lookupJiniTransactionManager.destroy();
     }
 }
