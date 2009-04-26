@@ -62,7 +62,7 @@ public class SimpleReplicationFilter implements IReplicationFilter {
         closeCalled.incrementAndGet();
     }
 
-    public class ProcessEntry {
+    public static class ProcessEntry {
         int direction;
 
         IReplicationFilterEntry replicationFilterEntry;
