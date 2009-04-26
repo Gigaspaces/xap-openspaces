@@ -225,7 +225,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
      * A Spring synctonization that acts as a placeholder for the Space associtaed with the current
      * Spring transaction.
      */
-    private class SpaceAndTransactionSync implements TransactionSynchronization {
+    private static class SpaceAndTransactionSync implements TransactionSynchronization {
 
         private IJSpace space;
 

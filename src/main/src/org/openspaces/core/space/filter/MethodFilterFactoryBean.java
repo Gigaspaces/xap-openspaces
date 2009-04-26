@@ -382,7 +382,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
         this.beforeExecute = beforeExecute;
     }
 
-    private class UniqueMethodFilter implements ReflectionUtils.MethodFilter {
+    private static class UniqueMethodFilter implements ReflectionUtils.MethodFilter {
 
         private Set<String> processedMethods = new HashSet<String>();
 

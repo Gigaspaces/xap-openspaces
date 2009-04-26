@@ -161,7 +161,7 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
     /**
      * An entry in the registry that holds the bean instace and the method to invoke.
      */
-    class RegistryEntry {
+    static class RegistryEntry {
         
         /**
          * The bean instance.
