@@ -16,7 +16,6 @@
 
 package org.openspaces.core.transaction.manager;
 
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
