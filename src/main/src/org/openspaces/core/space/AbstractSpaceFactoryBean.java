@@ -21,6 +21,7 @@ import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SecurityContext;
+import com.j_spaces.core.SpaceHealthStatus;
 import com.j_spaces.core.client.LookupFinder;
 import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
@@ -288,17 +289,20 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
     }
 
     /**
-     * Returns if this space is alive or not by pinging the Space.
+     * Returns if this space is alive or not by pinging the Space and if it is considered healthy.
      */
     public boolean isAlive() {
         try {
-            IJSpace spaceToPing;
+            ISpaceProxy spaceToPing;
             if (!SpaceUtils.isRemoteProtocol(space)) {
-                spaceToPing = SpaceUtils.getClusterMemberSpace(space);
+                spaceToPing = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
             } else {
-                spaceToPing = space;
+                spaceToPing = (ISpaceProxy) space;
             }
-            spaceToPing.ping();
+            //Check if the space is considered healthy
+            SpaceHealthStatus spaceHealthStatus = spaceToPing.getSpaceHealthStatus();
+            if (!spaceHealthStatus.isHealthy())
+                throw spaceHealthStatus.getUnhealthyReason();
         } catch (Exception e) {
             return false;
         }
