@@ -69,7 +69,7 @@ public class ClusterInfo implements Cloneable, Serializable {
      * Constructs a new Cluster info
      *
      * @param schema            The cluster schema
-     * @param instanceId        The instnaceid
+     * @param instanceId        The instance id
      * @param backupId          The backupId (can be <code>null</code>)
      * @param numberOfInstances Number of instances
      * @param numberOfBackups   Number Of backups (can be <code>null</code>)
