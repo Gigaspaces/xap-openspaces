@@ -75,7 +75,7 @@ import java.util.Map;
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements BeanNameAware, InitializingBean, DisposableBean, FactoryBean,
-        ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
+ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -98,7 +98,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
     private SecurityConfig securityConfig;
 
     /**
-     * Sets if the space should register for primary backup (mode) notifications. Default behaviour (if the flag was not set)
+     * Sets if the space should register for primary backup (mode) notifications. Default behavior (if the flag was not set)
      * will register to primary backup notification if the space was found using an embedded
      * protocol, and will not register for notification if the space was found using <code>rmi</code>
      * or <code>jini</code> protocols.
@@ -255,7 +255,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
         }
     }
-    
+
     /**
      * Spring factory bean returning the {@link IJSpace} created during the bean initialization
      * ({@link #afterPropertiesSet()}).
@@ -329,7 +329,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
         }
         return !SpaceUtils.isRemoteProtocol(space);
     }
-    
+
     /**
      * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode#BACKUP} to all beans in the application context
      * that implement the {@link SpaceBeforeBackupListener} interface.
@@ -342,7 +342,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
         }
     }
-    
+
     /**
      * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode#BACKUP} to all beans in the application context
      * that implement the {@link SpaceAfterBackupListener} interface.
@@ -354,8 +354,8 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
                 listener.onAfterBackup(new AfterSpaceModeChangeEvent(space, SpaceMode.BACKUP));
             }
         }
-     }
-    
+    }
+
     /**
      * Sends {@link BeforeSpaceModeChangeEvent} events with space mode {@link SpaceMode#PRIMARY} to all beans in the application context
      * that implement the {@link SpaceBeforePrimaryListener} interface.
@@ -368,7 +368,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
         }
     }
-    
+
     /**
      * Sends {@link AfterSpaceModeChangeEvent} events with space mode {@link SpaceMode#PRIMARY} to all beans in the application context
      * that implement the {@link SpaceAfterPrimaryListener} interface.
@@ -395,7 +395,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, spaceMode));
-                
+
                 if (spaceMode == SpaceMode.BACKUP) {
                     fireSpaceBeforeBackupEvent();
                 }
@@ -415,7 +415,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
             if (applicationContext != null) {
                 applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, spaceMode));
-                
+
                 if (spaceMode == SpaceMode.BACKUP) {
                     fireSpaceAfterBackupEvent();
                 }
