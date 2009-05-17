@@ -233,7 +233,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                     // and create a lease renewal manager that will renew the lease each duration till the
                     // configured timeout
                     txCreated = TransactionFactory.create(transactionManager, leaseRenewalConfig.getRenewDuration());
-                    leaseRenewalManager = leaseRenewalManagers[Math.abs(txCreated.hashCode()) % leaseRenewalConfig.getPoolSize()];
+                    leaseRenewalManager = leaseRenewalManagers[Math.abs(txCreated.hashCode() % leaseRenewalConfig.getPoolSize())];
                     leaseRenewalManager.renewFor(txCreated.lease, timeout,
                             leaseRenewalConfig.getRenewDuration(), leaseRenewalConfig.getLeaseListener());
                 } else {
