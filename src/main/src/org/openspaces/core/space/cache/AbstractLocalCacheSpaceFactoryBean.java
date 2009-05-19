@@ -24,6 +24,9 @@ import com.j_spaces.core.client.SpaceURL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.CannotCreateSpaceException;
+import org.openspaces.core.space.SpaceServiceDetails;
+import org.openspaces.pu.service.ServiceDetailsProvider;
+import org.openspaces.pu.service.ServiceDetails;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -44,7 +47,7 @@ import java.util.Properties;
  *
  * @author kimchy
  */
-public abstract class AbstractLocalCacheSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, BeanNameAware {
+public abstract class AbstractLocalCacheSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, BeanNameAware, ServiceDetailsProvider {
 
     protected Log logger = LogFactory.getLog(this.getClass());
 
@@ -148,5 +151,9 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      */
     public boolean isSingleton() {
         return true;
+    }
+
+    public ServiceDetails[] getServicesDetails() {
+        return new ServiceDetails[] {new SpaceServiceDetails(beanName, localCacheSpace)};
     }
 }
