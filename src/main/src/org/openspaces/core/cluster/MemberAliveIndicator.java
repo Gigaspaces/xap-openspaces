@@ -29,7 +29,10 @@ public interface MemberAliveIndicator {
     boolean isMemberAliveEnabled();
     
     /**
-     * Return <code>true</code> if the member is alive or not.
+     * Return <code>true</code> if the member is alive or not. An exception thrown
+     * is considered as an indication that the member is not alive, and allows for
+     * further information to be supplies as to the reason that the member is not
+     * alive.
      */
-    boolean isAlive();
+    boolean isAlive() throws Exception;
 }
