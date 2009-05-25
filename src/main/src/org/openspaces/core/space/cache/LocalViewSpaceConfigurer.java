@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspaces.core.space.SpaceConfigurer;
+
 /**
  * A simple configurer helper to create {@link IJSpace} local view. The configurer wraps
  * {@link LocalViewSpaceFactoryBean} and providing a simpler means
@@ -32,11 +34,10 @@ import java.util.Properties;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IJSpace space = urlSpaceConfigurer.space();
  *
- * LocalViewSpaceConfigurer localViewConfigurer = new LocalViewSpaceConfigurer(space)
+ * LocalViewSpaceConfigurer localViewConfigurer = new LocalViewSpaceConfigurer(urlSpaceConfigurer)
  *           .addView(new View(SimpleMessage.class, "processed = true"));
- * IJSpace localView = localViewConfigurer.localView();
+ * GigaSpace localViewGigaSpace = new GigaSpaceConfigurer(localViewConfigurer).gigaSpace();
  * ...
  * localViewConfigurer.destroy();
  * urlSpaceConfigurer.destroy(); // optional
@@ -44,7 +45,7 @@ import java.util.Properties;
  *
  * @author kimchy
  */
-public class LocalViewSpaceConfigurer {
+public class LocalViewSpaceConfigurer implements SpaceConfigurer {
 
     private LocalViewSpaceFactoryBean localViewSpaceFactoryBean;
 
@@ -53,6 +54,10 @@ public class LocalViewSpaceConfigurer {
     private Properties properties = new Properties();
 
     private List<View<?>> localViews = new ArrayList<View<?>>();
+
+    public LocalViewSpaceConfigurer(SpaceConfigurer spaceConfigurer) {
+        this(spaceConfigurer.space());
+    }
 
     public LocalViewSpaceConfigurer(IJSpace space) {
         localViewSpaceFactoryBean = new LocalViewSpaceFactoryBean();
@@ -84,5 +89,9 @@ public class LocalViewSpaceConfigurer {
 
     public void destroy() {
         localViewSpaceFactoryBean.destroy();
+    }
+
+    public IJSpace space() {
+        return localView();
     }
 }

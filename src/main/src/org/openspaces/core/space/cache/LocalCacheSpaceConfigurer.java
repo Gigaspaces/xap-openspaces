@@ -20,6 +20,8 @@ import com.j_spaces.core.IJSpace;
 
 import java.util.Properties;
 
+import org.openspaces.core.space.SpaceConfigurer;
+
 /**
  * A simple configurer helper to create {@link IJSpace} local cache. The configurer wraps
  * {@link LocalCacheSpaceFactoryBean} and providing a simpler means
@@ -29,18 +31,17 @@ import java.util.Properties;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("cache")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IJSpace space = urlSpaceConfigurer.space();
  *
- * LocalCacheSpaceConfigurer localCacheConfigurer = new LocalCacheSpaceConfigurer(space).updateMode(UpdateMode.PULL);
- * IJSpace localCache = localCacheConfigurer.localCache();
+ * LocalCacheSpaceConfigurer localCacheConfigurer = new LocalCacheSpaceConfigurer(urlSpaceConfigurer).updateMode(UpdateMode.PULL);
+ * GigaSpace localCacheGigaSpace = new GigaSpaceConfigurer(localCacheConfigurer).gigaSpace();
  * ...
  * localCacheConfigurer.destroy();
- * urlSpaceConfigurer.destroy(); // optional
+ * urlSpaceConfigurer.destroy();
  * </pre>
  *
  * @author kimchy
  */
-public class LocalCacheSpaceConfigurer {
+public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
 
     public static enum UpdateMode {
         PULL,
@@ -52,6 +53,10 @@ public class LocalCacheSpaceConfigurer {
     private IJSpace space;
 
     private Properties properties = new Properties();
+
+    public LocalCacheSpaceConfigurer(SpaceConfigurer spaceConfigurer) {
+        this(spaceConfigurer.space());
+    }
 
     public LocalCacheSpaceConfigurer(IJSpace space) {
         localCacheSpaceFactoryBean = new LocalCacheSpaceFactoryBean();
@@ -86,5 +91,9 @@ public class LocalCacheSpaceConfigurer {
 
     public void destroy() {
         localCacheSpaceFactoryBean.destroy();
+    }
+
+    public IJSpace space() {
+        return localCache();
     }
 }

@@ -19,6 +19,7 @@ package org.openspaces.core;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.space.UrlSpaceConfigurer;
+import org.openspaces.core.space.SpaceConfigurer;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -55,7 +56,7 @@ public class GigaSpaceConfigurer {
     /**
      * Constructs a new configurer based on the Space.
      */
-    public GigaSpaceConfigurer(UrlSpaceConfigurer configurer) {
+    public GigaSpaceConfigurer(SpaceConfigurer configurer) {
         gigaSpaceFactoryBean = new GigaSpaceFactoryBean();
         gigaSpaceFactoryBean.setSpace(configurer.space());
     }

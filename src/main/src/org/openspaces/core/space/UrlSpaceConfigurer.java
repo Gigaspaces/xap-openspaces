@@ -39,14 +39,13 @@ import java.util.Properties;
  * <pre>
  * UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer("/./space").schema("persistent")
  *          .noWriteLeaseMode(true).lookupGroups(new String[] {"kimchy"});
- * IJSpace space = urlSpaceConfigurer.space();
  * ...
  * urlSpaceConfigurer.destroy(); // optional
  * </pre>
  *
  * @author kimchy
  */
-public class UrlSpaceConfigurer {
+public class UrlSpaceConfigurer implements SpaceConfigurer {
 
     private UrlSpaceFactoryBean urlSpaceFactoryBean;
 
@@ -68,6 +67,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setParameters(java.util.Map)
      */
     public UrlSpaceConfigurer addParameter(String name, String value) {
+        validate();
         parameters.put(name, value);
         return this;
     }
@@ -76,6 +76,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setProperties(java.util.Properties)
      */
     public UrlSpaceConfigurer addProperty(String name, String value) {
+        validate();
         properties.setProperty(name, value);
         return this;
     }
@@ -84,6 +85,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setUrlProperties(java.util.Properties)
      */
     public UrlSpaceConfigurer addUrlProperty(String name, String value) {
+        validate();
         urlProperties.setProperty(name, value);
         return this;
     }
@@ -92,6 +94,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setSchema(String)
      */
     public UrlSpaceConfigurer schema(String schema) {
+        validate();
         urlSpaceFactoryBean.setSchema(schema);
         return this;
     }
@@ -100,6 +103,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setFifo(boolean)
      */
     public UrlSpaceConfigurer fifo(boolean fifo) {
+        validate();
         urlSpaceFactoryBean.setFifo(fifo);
         return this;
     }
@@ -108,6 +112,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupGroups(String)
      */
     public UrlSpaceConfigurer lookupGroups(String lookupGroups) {
+        validate();
         urlSpaceFactoryBean.setLookupGroups(lookupGroups);
         return this;
     }
@@ -116,6 +121,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupGroups(String)
      */
     public UrlSpaceConfigurer lookupGroups(String ... lookupGroups) {
+        validate();
         urlSpaceFactoryBean.setLookupGroups(StringUtils.arrayToCommaDelimitedString(lookupGroups));
         return this;
     }
@@ -124,6 +130,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupLocators(String)
      */
     public UrlSpaceConfigurer lookupLocators(String lookupLocators) {
+        validate();
         urlSpaceFactoryBean.setLookupLocators(lookupLocators);
         return this;
     }
@@ -132,6 +139,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupLocators(String)
      */
     public UrlSpaceConfigurer lookupLocators(String ... lookupLocators) {
+        validate();
         urlSpaceFactoryBean.setLookupLocators(StringUtils.arrayToCommaDelimitedString(lookupLocators));
         return this;
     }
@@ -140,6 +148,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setLookupTimeout(Integer)
      */
     public UrlSpaceConfigurer lookupTimeout(int lookupTimeout) {
+        validate();
         urlSpaceFactoryBean.setLookupTimeout(lookupTimeout);
         return this;
     }
@@ -148,6 +157,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setVersioned(boolean)
      */
     public UrlSpaceConfigurer versioned(boolean versioned) {
+        validate();
         urlSpaceFactoryBean.setVersioned(versioned);
         return this;
     }
@@ -156,6 +166,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setNoWriteLease(boolean)
      */
     public UrlSpaceConfigurer noWriteLease(boolean noWriteLease) {
+        validate();
         urlSpaceFactoryBean.setNoWriteLease(noWriteLease);
         return this;
     }
@@ -164,6 +175,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setMirror(boolean)
      */
     public UrlSpaceConfigurer mirror(boolean mirror) {
+        validate();
         urlSpaceFactoryBean.setMirror(mirror);
         return this;
     }
@@ -172,6 +184,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setFilterProviders(org.openspaces.core.space.filter.FilterProviderFactory[])
      */
     public UrlSpaceConfigurer addFilterProvider(FilterProviderFactory filterProviderFactory) {
+        validate();
         filterProviderFactories.add(filterProviderFactory);
         return this;
     }
@@ -180,6 +193,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setReplicationFilterProvider(org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory)
      */
     public UrlSpaceConfigurer replicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
+        validate();
         urlSpaceFactoryBean.setReplicationFilterProvider(replicationFilterProvider);
         return this;
     }
@@ -188,6 +202,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setExternalDataSource(com.gigaspaces.datasource.ManagedDataSource)
      */
     public UrlSpaceConfigurer externalDataSource(ManagedDataSource externalDataSource) {
+        validate();
         urlSpaceFactoryBean.setExternalDataSource(externalDataSource);
         return this;
     }
@@ -196,6 +211,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setClusterInfo(org.openspaces.core.cluster.ClusterInfo)
      */
     public UrlSpaceConfigurer clusterInfo(ClusterInfo clusterInfo) {
+        validate();
         urlSpaceFactoryBean.setClusterInfo(clusterInfo);
         return this;
     }
@@ -204,6 +220,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.AbstractSpaceFactoryBean#setRegisterForSpaceModeNotifications(boolean)
      */
     public UrlSpaceConfigurer registerForSpaceModeNotifications(boolean registerForSpaceMode) {
+        validate();
         urlSpaceFactoryBean.setRegisterForSpaceModeNotifications(registerForSpaceMode);
         return this;
     }
@@ -212,6 +229,7 @@ public class UrlSpaceConfigurer {
      * @see org.openspaces.core.space.AbstractSpaceFactoryBean#setSecurityConfig(SecurityConfig)
      */
     public UrlSpaceConfigurer securityConfig(SecurityConfig securityConfig) {
+        validate();
         urlSpaceFactoryBean.setSecurityConfig(securityConfig);
         return this;
     }
@@ -220,6 +238,7 @@ public class UrlSpaceConfigurer {
      * Sets a custom primary backup listener
      */
     public UrlSpaceConfigurer primaryBackupListener(ISpaceModeListener primaryBackupListener) {
+        validate();
         urlSpaceFactoryBean.setPrimaryBackupListener(primaryBackupListener);
         return this;
     }
@@ -245,5 +264,11 @@ public class UrlSpaceConfigurer {
      */
     public void destroy() throws Exception {
         urlSpaceFactoryBean.destroy();
+    }
+
+    private void validate() {
+        if (space != null) {
+            throw new IllegalArgumentException("Can't invoke method, space() has already been called");
+        }
     }
 }
