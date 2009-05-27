@@ -44,6 +44,7 @@ public abstract class AbstractFilterProviderAdapterFactoryBean extends AbstractF
      * <p>Subclasses should provide the main Map of operation per {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker FilterOperationDelegateInvoker}
      * which is used to initialize the {@link org.openspaces.core.space.filter.FilterOperationDelegate FilterOperationDelegate}.
      */
+    @Override
     protected FilterProvider doGetFilterProvider() throws IllegalArgumentException {
         Map<Integer, FilterOperationDelegateInvoker> invokerLookup = doGetInvokerLookup();
         if (invokerLookup.size() == 0) {

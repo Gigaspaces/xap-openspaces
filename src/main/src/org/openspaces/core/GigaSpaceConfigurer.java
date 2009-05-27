@@ -18,7 +18,6 @@ package org.openspaces.core;
 
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
-import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.core.space.SpaceConfigurer;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.PlatformTransactionManager;
