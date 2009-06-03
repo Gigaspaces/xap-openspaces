@@ -16,13 +16,19 @@
 
 package org.openspaces.core;
 
+import com.j_spaces.core.InvalidFifoTemplateException;
+
 /**
- * This exception is thrown during write operation when the Entry's class FIFO
+ * This exception used to be thrown during write operation when the Entry's class FIFO
  * mode already been defined and a later write operation define different FIFO mode.
+ * Since FIFO is now supported per-operation, this validation is no longer relevant.
  * Wraps {@link com.j_spaces.core.InvalidFifoClassException}.
  *
  * @author kimchy
+ * @deprecated This exception is no longer thrown.
+ * @see InvalidFifoTemplateException
  */
+@Deprecated
 public class InvalidFifoClassException extends InvalidFifoOperationException {
 
     private com.j_spaces.core.InvalidFifoClassException e;
