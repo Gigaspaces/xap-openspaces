@@ -215,7 +215,7 @@ public class LockManager {
         try {
             tr.commit();
         } catch (Exception e) {
-            logger.warn("Failed to abort transaction and unlocking the object, ignoring", e);
+            logger.warn("Failed to commit transaction and unlocking the object, ignoring", e);
         } finally {
             lockedUIDHashMap.remove(uid);
         }
