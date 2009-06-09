@@ -39,13 +39,12 @@ public class ThreadLocalMarshaller {
      * The object has to implement interface Serializable or Externalizable.
      */
     public static byte[] objectToByteBuffer(Object obj) throws IOException {
-        byte[] result = null;
         OptimizedByteArrayOutputStream outStream = cachedByteArrayOutputStream.get();
         outStream.reset();
         ObjectOutputStream out = new ObjectOutputStream(outStream);
         out.writeObject(obj);
         out.flush();
-        result = outStream.toByteArray();
+        byte[] result = outStream.toByteArray();
         out.close();
 
         return result;
