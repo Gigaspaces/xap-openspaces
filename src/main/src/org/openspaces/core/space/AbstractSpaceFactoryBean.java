@@ -291,21 +291,17 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     /**
      * Returns if this space is alive or not by pinging the Space and if it is considered healthy.
      */
-    public boolean isAlive() {
-        try {
-            ISpaceProxy spaceToPing;
-            if (!SpaceUtils.isRemoteProtocol(space)) {
-                spaceToPing = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
-            } else {
-                spaceToPing = (ISpaceProxy) space;
-            }
-            //Check if the space is considered healthy
-            SpaceHealthStatus spaceHealthStatus = spaceToPing.getSpaceHealthStatus();
-            if (!spaceHealthStatus.isHealthy())
-                throw spaceHealthStatus.getUnhealthyReason();
-        } catch (Exception e) {
-            return false;
+    public boolean isAlive() throws Exception {
+        ISpaceProxy spaceToPing;
+        if (!SpaceUtils.isRemoteProtocol(space)) {
+            spaceToPing = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
+        } else {
+            spaceToPing = (ISpaceProxy) space;
         }
+        //Check if the space is considered healthy
+        SpaceHealthStatus spaceHealthStatus = spaceToPing.getSpaceHealthStatus();
+        if (!spaceHealthStatus.isHealthy())
+            throw spaceHealthStatus.getUnhealthyReason();
         return true;
     }
 
