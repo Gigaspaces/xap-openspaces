@@ -222,14 +222,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         return readById(clazz, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
     }
 
-    public <T> T readById(Class<T> clazz, Object id, long timeout) {
-        return readById(clazz, id, null, timeout, getModifiersForIsolationLevel());
-    }
-
-    public <T> T readById(Class<T> clazz, Object id, long timeout, int modifiers) {
-        return readById(clazz, id, null, timeout, modifiers);
-    }
-
     public <T> T readById(Class<T> clazz, Object id, Object routing) {
         return readById(clazz, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
     }
@@ -343,14 +335,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         return readIfExistsById(clazz, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
     }
 
-    public <T> T readIfExistsById(Class<T> clazz, Object id, long timeout) {
-        return readIfExistsById(clazz, id, null, timeout, getModifiersForIsolationLevel());
-    }
-
-    public <T> T readIfExistsById(Class<T> clazz, Object id, long timeout, int modifiers) {
-        return readIfExistsById(clazz, id, null, timeout, modifiers);
-    }
-
     public <T> T readIfExistsById(Class<T> clazz, Object id, Object routing) {
         return readIfExistsById(clazz, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
     }
@@ -430,14 +414,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     public <T> T takeById(Class<T> clazz, Object id) {
         return takeById(clazz, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
-    }
-
-    public <T> T takeById(Class<T> clazz, Object id, long timeout) {
-        return takeById(clazz, id, null, timeout, getModifiersForIsolationLevel());
-    }
-
-    public <T> T takeById(Class<T> clazz, Object id, long timeout, int modifiers) {
-        return takeById(clazz, id, null, timeout, modifiers);
     }
 
     public <T> T takeById(Class<T> clazz, Object id, Object routing) {
@@ -551,14 +527,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     public <T> T takeIfExistsById(Class<T> clazz, Object id) {
         return takeIfExistsById(clazz, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
-    }
-
-    public <T> T takeIfExistsById(Class<T> clazz, Object id, long timeout) {
-        return takeIfExistsById(clazz, id, null, timeout, getModifiersForIsolationLevel());
-    }
-
-    public <T> T takeIfExistsById(Class<T> clazz, Object id, long timeout, int modifiers) {
-        return takeIfExistsById(clazz, id, null, timeout, modifiers);
     }
 
     public <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing) {

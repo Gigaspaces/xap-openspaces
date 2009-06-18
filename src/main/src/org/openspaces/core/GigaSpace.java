@@ -230,37 +230,6 @@ public interface GigaSpace {
     <T> T readById(Class<T> clazz, Object id) throws DataAccessException;
 
     /**
-     * Read an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz   The class of the entry
-     * @param id      The id of the entry
-     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T readById(Class<T> clazz, Object id, long timeout) throws DataAccessException;
-
-    /**
-     * Read an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz     The class of the entry
-     * @param id        The id of the entry
-     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T readById(Class<T> clazz, Object id, long timeout, int modifiers) throws DataAccessException;
-
-    /**
      * Read an object from the space matching its id, the class and the routing value. Returns
      * <code>null</code> if there is no match.
      *
@@ -681,45 +650,6 @@ public interface GigaSpace {
     <T> T readIfExistsById(Class<T> clazz, Object id) throws DataAccessException;
 
     /**
-     * Read an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Matching and timeouts are done as in
-     * <code>readById</code>, except that blocking in this call is done only if
-     * necessary to wait for transactional state to settle.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz   The class of the entry
-     * @param id      The id of the entry
-     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T readIfExistsById(Class<T> clazz, Object id, long timeout) throws DataAccessException;
-
-    /**
-     * Read an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Matching and timeouts are done as in
-     * <code>readById</code>, except that blocking in this call is done only if
-     * necessary to wait for transactional state to settle.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz     The class of the entry
-     * @param id        The id of the entry
-     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T readIfExistsById(Class<T> clazz, Object id, long timeout, int modifiers) throws DataAccessException;
-
-    /**
      * Read an object from the space matching its id, the class and the routing value. Returns
      * <code>null</code> if there is no match.
      *
@@ -1000,37 +930,6 @@ public interface GigaSpace {
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      */
     <T> T takeById(Class<T> clazz, Object id) throws DataAccessException;
-
-    /**
-     * Take (remove) an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz   The class of the entry
-     * @param id      The id of the entry
-     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T takeById(Class<T> clazz, Object id, long timeout) throws DataAccessException;
-
-    /**
-     * Take (remove) an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz     The class of the entry
-     * @param id        The id of the entry
-     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T takeById(Class<T> clazz, Object id, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id, the class and the routing value. Returns
@@ -1409,43 +1308,6 @@ public interface GigaSpace {
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      */
     <T> T takeIfExistsById(Class<T> clazz, Object id) throws DataAccessException;
-
-    /**
-     * Take (remove) an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Matching and timeouts are done as in <code>takeById</code>, except that blocking in this
-     * call is done only if necessary to wait for transactional state to settle.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz   The class of the entry
-     * @param id      The id of the entry
-     * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T takeIfExistsById(Class<T> clazz, Object id, long timeout) throws DataAccessException;
-
-    /**
-     * Take (remove) an object from the space matching its id and the class. Returns
-     * <code>null</code> if there is no match within the specified timeout.
-     *
-     * <p>Matching and timeouts are done as in <code>takeById</code>, except that blocking in this
-     * call is done only if necessary to wait for transactional state to settle.
-     *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
-     *
-     * @param clazz     The class of the entry
-     * @param id        The id of the entry
-     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     */
-    <T> T takeIfExistsById(Class<T> clazz, Object id, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id, the class and the routing value. Returns
