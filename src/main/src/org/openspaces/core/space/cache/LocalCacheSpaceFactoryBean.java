@@ -88,7 +88,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      * on either {@link #setUpdateMode(int) localCacheUpdateMode} or
      * {@link #setUpdateModeName(String) localCacheUpdateModeName}.
      */
-    protected Properties createCacheProeprties() {
+    protected Properties createCacheProperties() {
         Properties props = new Properties();
         props.put(SpaceURL.LOCAL_CACHE_UPDATE_MODE, Integer.toString(localCacheUpdateMode));
         return props;

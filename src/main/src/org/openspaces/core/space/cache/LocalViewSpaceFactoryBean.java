@@ -59,7 +59,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
      * Creates newly created properties that holds the views set using
      * {@link #setLocalViews(java.util.List)} locaViews}.
      */
-    protected Properties createCacheProeprties() {
+    protected Properties createCacheProperties() {
         return new Properties();
     }
 

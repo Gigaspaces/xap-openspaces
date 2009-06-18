@@ -43,7 +43,7 @@ public class ModeAnnotationRegistryPostProcessor implements BeanPostProcessor, A
             return bean;
         }
         // get the registry bean
-        ModeAnnotationRegistry registry = (ModeAnnotationRegistry)applicationContext.getBean("intenral-modeAnnotationRegistry");
+        ModeAnnotationRegistry registry = (ModeAnnotationRegistry)applicationContext.getBean("internal-modeAnnotationRegistry");
         if (registry != null) {
             Class<?> beanClass = this.getBeanClass(bean);
             if (beanClass == null) {

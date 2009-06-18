@@ -5,7 +5,7 @@ import net.jini.core.transaction.Transaction;
 import org.openspaces.core.GigaSpace;
 
 /**
- * An intenral API of {@link org.openspaces.core.GigaSpace}
+ * An internal API of {@link org.openspaces.core.GigaSpace}
  *
  * @author kimchy
  */

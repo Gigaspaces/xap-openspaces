@@ -35,11 +35,11 @@ public class AnnotationSupportBeanDefinitionParser implements BeanDefinitionPars
     public BeanDefinition parse(Element element, ParserContext parserContext) {
 
         BeanDefinition bd = new RootBeanDefinition(ModeAnnotationRegistry.class);
-        BeanComponentDefinition bcd = new BeanComponentDefinition(bd, "intenral-modeAnnotationRegistry");
+        BeanComponentDefinition bcd = new BeanComponentDefinition(bd, "internal-modeAnnotationRegistry");
         parserContext.registerBeanComponent(bcd);
 
         bd = new RootBeanDefinition(ModeAnnotationRegistryPostProcessor.class);
-        bcd = new BeanComponentDefinition(bd, "intenral-modeAnnotationRegistryPostProcessor");
+        bcd = new BeanComponentDefinition(bd, "internal-modeAnnotationRegistryPostProcessor");
         parserContext.registerBeanComponent(bcd);
         
         return null;

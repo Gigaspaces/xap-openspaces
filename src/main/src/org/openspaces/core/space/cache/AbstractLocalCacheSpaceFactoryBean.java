@@ -43,7 +43,7 @@ import java.util.Properties;
  * <p>
  * Allows to set additional properties that further configure the local cache using
  * {@link #setProperties(Properties)}. Properties that control the nature of the local cache are
- * obtained using {@link #createCacheProeprties()} callback.
+ * obtained using {@link #createCacheProperties()} callback.
  *
  * @author kimchy
  */
@@ -87,7 +87,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     /**
      * Constructs a new local cache {@link IJSpace} based on the master local cache set using
      * {@link #setSpace(IJSpace)} and a set of properties driving the actual local cache type based
-     * on {@link #createCacheProeprties()}. Additional properties are applied based on
+     * on {@link #createCacheProperties()}. Additional properties are applied based on
      * {@link #setProperties(java.util.Properties)}.
      *
      * @see com.j_spaces.core.client.SpaceFinder#find(com.j_spaces.core.client.SpaceURL,com.j_spaces.core.IJSpace,com.sun.jini.start.LifeCycle)
@@ -95,7 +95,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     public void afterPropertiesSet() {
         Assert.notNull(space, "space property must be set");
         IJSpace actualSpace = space;
-        Properties props = createCacheProeprties();
+        Properties props = createCacheProperties();
         props.put(SpaceURL.USE_LOCAL_CACHE, "true");
         if (properties != null) {
             props.putAll(properties);
@@ -125,7 +125,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * Subclasses should implement this method to return the properties relevant for the local
      * concrete local cache implementation.
      */
-    protected abstract Properties createCacheProeprties();
+    protected abstract Properties createCacheProperties();
 
     protected void propereUrl(SpaceURL spaceURL) {
         
