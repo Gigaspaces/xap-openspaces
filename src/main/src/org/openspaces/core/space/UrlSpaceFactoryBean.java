@@ -441,7 +441,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 if (clusterInfo.getInstanceId() != null && url.indexOf("&" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1) {
                     props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_MEMBER_ID), clusterInfo.getInstanceId().toString());
                 }
-                if (clusterInfo.getBackupId() != null && url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1) {
+                if (clusterInfo.getBackupId() != null && clusterInfo.getBackupId() != 0 && url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1) {
                     props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_BACKUP_ID), clusterInfo.getBackupId().toString());
                 }
                 if (StringUtils.hasText(clusterInfo.getSchema()) && url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1) {
