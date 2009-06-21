@@ -18,6 +18,7 @@ package org.openspaces.core.transaction.manager;
 
 import com.j_spaces.core.IJSpace;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.openspaces.core.space.UrlSpaceConfigurer;
 
 /**
  * A simple configurer for {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager}.
@@ -29,6 +30,10 @@ public class LocalJiniTxManagerConfigurer {
     final private LocalJiniTransactionManager localJiniTransactionManager;
 
     private boolean initialized = false;
+
+    public LocalJiniTxManagerConfigurer(UrlSpaceConfigurer urlSpaceConfigurer) {
+        this(urlSpaceConfigurer.space());
+    }
 
     public LocalJiniTxManagerConfigurer(IJSpace space) {
         localJiniTransactionManager = new LocalJiniTransactionManager();
