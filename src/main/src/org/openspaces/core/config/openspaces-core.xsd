@@ -65,8 +65,8 @@
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
-                                    Sets the properties the IJSpace will be created with (same as paramters). Note, this
-                                    should not be confused with url-properties. The properties here are the ones refered
+                                    Sets the properties the IJSpace will be created with (same as parameters). Note, this
+                                    should not be confused with url-properties. The properties here are the ones referred
                                     to as custom properties and allows for example to control the xpath injection to
                                     space schema.
                                 </xsd:documentation>
@@ -87,7 +87,7 @@
                         <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
-                                    Sets the parameters the IJSpace will be created with (same as paramters). Note, this
+                                    Sets the parameters the IJSpace will be created with (same as parameters). Note, this
                                     should not be confused with url-properties. The properties here are the ones
                                     referred to as custom properties and allows for example to control the xpath
                                     injection to space schema.
@@ -363,7 +363,7 @@
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The operation code (number) the filter will be registered to. Operation code
-                                            stands for a specfic operation the space will perform, for example, before
+                                            stands for a specific operation the space will perform, for example, before
                                             write.
                                         </xsd:documentation>
                                     </xsd:annotation>
@@ -371,7 +371,7 @@
                                 <xsd:attribute name="code-name" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            The operation code (name) the filter will be regsitered to. Operation code
+                                            The operation code (name) the filter will be registered to. Operation code
                                             stands for a specific operation the space will perform, for example,
                                             before-write.
                                         </xsd:documentation>
@@ -996,7 +996,7 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets if this local transaction manager will work on top of a clustered Space, or will
-                                work directly with a cluster memeber.
+                                work directly with a cluster member.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
