@@ -19,13 +19,13 @@ package org.openspaces.core.executor.internal;
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 import com.gigaspaces.reflect.IMethod;
 import com.gigaspaces.reflect.ReflectionUtil;
+import com.gigaspaces.util.collections.CopyOnUpdateMap;
 import org.openspaces.core.executor.TaskRoutingProvider;
 import org.springframework.dao.DataAccessException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A helper class allowing to extract meta data related to executors/tasks (such as
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ExecutorMetaDataProvider {
 
-    private Map<Class, IMethod> routingMethods = new ConcurrentHashMap<Class, IMethod>();
+    private Map<Class, IMethod> routingMethods = new CopyOnUpdateMap<Class, IMethod>();
 
     private static IMethod NO_METHOD;
 
@@ -44,23 +44,6 @@ public class ExecutorMetaDataProvider {
             NO_METHOD = ReflectionUtil.createMethod(Object.class.getMethod("toString"));
         } catch (NoSuchMethodException e) {
             // won't happen
-        }
-    }
-
-    public static Object extractRouting(Object task) {
-        if (task instanceof TaskRoutingProvider) {
-            return ((TaskRoutingProvider) task).getRouting();
-        }
-        IMethod method = findRoutingMethod(task);
-        if (method == NO_METHOD) {
-            return null;
-        }
-        try {
-            return method.invoke(task);
-        } catch (IllegalAccessException e) {
-            throw new FailedToExecuteRoutingMethodException(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            throw new FailedToExecuteRoutingMethodException(e.getTargetException().getMessage(), e.getTargetException());
         }
     }
 
