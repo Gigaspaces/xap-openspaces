@@ -376,7 +376,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
     /**
      * Filter callback before execute operation.
      *
-     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_EXECUTE_TRIGGER
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_EXECUTE
      */
     public void setBeforeExecute(String beforeExecute) {
         this.beforeExecute = beforeExecute;

@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Allows for beans to be injected with {@link ClusterInfo}.
  *
  * @author shaiw
- * @see {@link org.openspaces.core.cluster.ClusterInfoAware}}
+ * @see {@link org.openspaces.core.cluster.ClusterInfoAware}
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

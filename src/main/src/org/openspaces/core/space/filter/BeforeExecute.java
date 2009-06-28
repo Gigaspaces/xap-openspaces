@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  *
  * @author kimchy
  * @see AnnotationFilterFactoryBean
- * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_EXECUTE_TRIGGER
+ * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_EXECUTE
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

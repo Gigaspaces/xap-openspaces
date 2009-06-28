@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Allows for beans to be injected with {@link BeanLevelProperties}.
  * 
- * @see {@link BeanLevelPropertiesAware}} 
+ * @see {@link org.openspaces.core.properties.BeanLevelPropertiesAware}
  * @author shaiw
  */
 @Target(ElementType.FIELD)

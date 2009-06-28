@@ -19,7 +19,7 @@ import com.gigaspaces.cluster.activeelection.SpaceMode;
 
 /**
  * Enables beans implementing this interface to get notified before a space changes its mode to
- * {@link SpaceMode.BACKUP}.
+ * {@link com.gigaspaces.cluster.activeelection.SpaceMode#BACKUP}.
  * 
  * @author shaiw
  */
