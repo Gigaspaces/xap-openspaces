@@ -16,8 +16,8 @@
 
 package org.openspaces.core.space.filter;
 
-import com.gigaspaces.reflect.IMethod;
-import com.gigaspaces.reflect.ReflectionUtil;
+import com.gigaspaces.internal.reflection.IMethod;
+import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;

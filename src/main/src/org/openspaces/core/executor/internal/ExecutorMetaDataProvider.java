@@ -17,9 +17,9 @@
 package org.openspaces.core.executor.internal;
 
 import com.gigaspaces.annotation.pojo.SpaceRouting;
+import com.gigaspaces.internal.reflection.IMethod;
+import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
-import com.gigaspaces.reflect.IMethod;
-import com.gigaspaces.reflect.ReflectionUtil;
 import org.openspaces.core.executor.TaskRoutingProvider;
 import org.springframework.dao.DataAccessException;
 
