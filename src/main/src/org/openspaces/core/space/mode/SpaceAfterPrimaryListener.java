@@ -15,8 +15,6 @@
  */
 package org.openspaces.core.space.mode;
 
-import com.gigaspaces.cluster.activeelection.SpaceMode;
-
 /**
  * Enables beans implementing this interface to get notified after a space changes its mode to
  * {@link com.gigaspaces.cluster.activeelection.SpaceMode#PRIMARY}.
