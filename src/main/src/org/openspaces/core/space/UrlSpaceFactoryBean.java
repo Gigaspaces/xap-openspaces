@@ -17,9 +17,9 @@
 package org.openspaces.core.space;
 
 import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
 import com.gigaspaces.reflect.IField;
 import com.gigaspaces.reflect.ReflectionUtil;
-import com.gigaspaces.util.collections.CopyOnUpdateMap;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
