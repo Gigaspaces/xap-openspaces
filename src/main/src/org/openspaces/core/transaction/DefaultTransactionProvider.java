@@ -97,14 +97,14 @@ public class DefaultTransactionProvider implements TransactionProvider {
      */
     public Transaction.Created getCurrentTransaction(Object transactionalContext, IJSpace space) {
 
-        // try and perform early exit when we should not support declerative transactions for better perfromance
-        if (actualTransactionalContext == null && !isJta) {
-            return null;
-        }
-
         JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(ExistingJiniTransactionManager.CONTEXT);
         if (txObject != null && txObject.hasTransaction()) {
             return txObject.getTxCreated();
+        }
+
+        // try and perform early exit when we should not support declerative transactions for better perfromance
+        if (actualTransactionalContext == null && !isJta) {
+            return null;
         }
 
         if (!TransactionSynchronizationManager.isSynchronizationActive()) {
