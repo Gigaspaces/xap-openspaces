@@ -16,7 +16,7 @@
 
 package org.openspaces.core.exception;
 
-import com.gigaspaces.converter.ConversionException;
+import com.gigaspaces.internal.metadata.converter.ConversionException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.CacheException;
 import com.j_spaces.core.client.CacheTimeoutException;

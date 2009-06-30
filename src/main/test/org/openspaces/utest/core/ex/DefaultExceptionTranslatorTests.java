@@ -16,7 +16,7 @@
 
 package org.openspaces.utest.core.ex;
 
-import com.gigaspaces.converter.ConversionException;
+import com.gigaspaces.internal.metadata.converter.ConversionException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;

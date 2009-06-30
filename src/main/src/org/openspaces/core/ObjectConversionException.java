@@ -16,12 +16,13 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.converter.ConversionException;
+import com.gigaspaces.internal.metadata.converter.ConversionException;
+
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 /**
  * Thrown when a conversion error occurred. For example, when trying to convert a Pojo into an entry in the space.
- * A wrapper for {@link com.gigaspaces.converter.ConversionException}.
+ * A wrapper for {@link com.gigaspaces.internal.metadata.converter.ConversionException}.
  *
  * @author kimchy
  */
