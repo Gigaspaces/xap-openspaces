@@ -16,7 +16,7 @@
 
 package org.openspaces.core.map;
 
-import com.gigaspaces.client.cache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.cache.map.MapCache;

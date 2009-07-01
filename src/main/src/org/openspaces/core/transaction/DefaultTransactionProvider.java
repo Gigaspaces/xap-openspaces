@@ -16,8 +16,8 @@
 
 package org.openspaces.core.transaction;
 
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.LocalTransactionManager;
 import com.j_spaces.core.client.XAResourceImpl;
 import net.jini.core.transaction.Transaction;

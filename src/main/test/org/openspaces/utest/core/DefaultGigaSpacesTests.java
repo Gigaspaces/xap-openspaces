@@ -16,9 +16,9 @@
 
 package org.openspaces.utest.core;
 
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.ReadModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;

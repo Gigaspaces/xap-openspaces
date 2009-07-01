@@ -1,10 +1,10 @@
 package org.openspaces.core.space;
 
+import com.gigaspaces.internal.client.dcache.localcache.DCacheSpaceImpl;
+import com.gigaspaces.internal.client.dcache.localview.LocalSpaceView;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.DCacheSpaceImpl;
-import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.view.LocalSpaceView;
 import net.jini.core.lookup.ServiceID;
 import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.pu.service.PlainServiceDetails;

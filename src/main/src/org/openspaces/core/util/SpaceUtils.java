@@ -16,8 +16,8 @@
 
 package org.openspaces.core.util;
 
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.ISpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;

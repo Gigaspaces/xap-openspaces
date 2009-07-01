@@ -16,9 +16,9 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.client.cache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.ISpaceProxy;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
 import org.apache.commons.logging.Log;
