@@ -1,7 +1,7 @@
 package org.openspaces.core.space;
 
-import com.gigaspaces.internal.client.dcache.localcache.DCacheSpaceImpl;
-import com.gigaspaces.internal.client.dcache.localview.LocalSpaceView;
+import com.gigaspaces.internal.client.dcache.localcache.LocalCacheImpl;
+import com.gigaspaces.internal.client.dcache.localview.LocalViewImpl;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
@@ -45,10 +45,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         SpaceURL spaceURL = space.getFinderURL();
         serviceSubType = "embedded";
         SpaceType spaceType = SpaceType.EMBEDDED;
-        if (space instanceof LocalSpaceView) {
+        if (space instanceof LocalViewImpl) {
             serviceSubType = "localview";
             spaceType = SpaceType.LOCAL_VIEW;
-        } else if (space instanceof DCacheSpaceImpl) {
+        } else if (space instanceof LocalCacheImpl) {
             serviceSubType = "localcache";
             spaceType = SpaceType.LOCAL_CACHE;
         } else if (SpaceUtils.isRemoteProtocol(space)) {
