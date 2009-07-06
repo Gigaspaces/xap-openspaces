@@ -225,6 +225,13 @@ public class ClusterInfo implements Cloneable, Serializable {
         return retVal.toString();
     }
 
+    /**
+     * Returns a unique name of the processing unit. Returns [name]_[suffix]
+     */
+    public String getUniqueName() {
+        return getName() + "_" + getSuffix();
+    }
+
     public ClusterInfo copy() {
         ClusterInfo clusterInfo = new ClusterInfo();
         clusterInfo.setBackupId(getBackupId());
