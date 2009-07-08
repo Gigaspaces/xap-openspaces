@@ -16,6 +16,7 @@
 
 package org.openspaces.core.space;
 
+import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.j_spaces.core.IJSpace;
@@ -47,7 +48,7 @@ import java.util.Properties;
  */
 public class UrlSpaceConfigurer implements SpaceConfigurer {
 
-    private UrlSpaceFactoryBean urlSpaceFactoryBean;
+    final private UrlSpaceFactoryBean urlSpaceFactoryBean;
 
     private IJSpace space;
 
@@ -101,7 +102,9 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
 
     /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setFifo(boolean)
+     * @deprecated Use {@link FifoSupport} instead.
      */
+    @Deprecated
     public UrlSpaceConfigurer fifo(boolean fifo) {
         validate();
         urlSpaceFactoryBean.setFifo(fifo);
