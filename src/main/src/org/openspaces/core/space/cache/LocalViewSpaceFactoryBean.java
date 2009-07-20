@@ -64,7 +64,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     }
 
     @Override
-    protected void propereUrl(SpaceURL spaceURL) {
+    protected void prepareUrl(SpaceURL spaceURL) {
         spaceURL.getCustomProperties().put(SpaceURL.VIEWS, localViews.toArray(new View<?>[localViews.size()]));
     }
 }
