@@ -431,17 +431,17 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
             // if deploy info is provided, apply it to the space url (only if it is an embedde Space).
             if (shouldApplyClusterInfo()) {
-                if (clusterInfo.getNumberOfInstances() != null && url.indexOf("&" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1) {
+                if (clusterInfo.getNumberOfInstances() != null && url.indexOf("&" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1) {
                     String totalMembers = clusterInfo.getNumberOfInstances().toString();
                     if (clusterInfo.getNumberOfBackups() != null && clusterInfo.getNumberOfBackups() > -1) {
                         totalMembers += "," + clusterInfo.getNumberOfBackups();
                     }
                     props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_TOTAL_MEMBERS), totalMembers);
                 }
-                if (clusterInfo.getInstanceId() != null && url.indexOf("&" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1) {
+                if (clusterInfo.getInstanceId() != null && url.indexOf("&" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1) {
                     props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_MEMBER_ID), clusterInfo.getInstanceId().toString());
                 }
-                if (clusterInfo.getBackupId() != null && clusterInfo.getBackupId() != 0 && url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1) {
+                if (clusterInfo.getBackupId() != null && clusterInfo.getBackupId() != 0 && url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1) {
                     props.setProperty(SpaceUtils.spaceUrlProperty(SpaceURL.CLUSTER_BACKUP_ID), clusterInfo.getBackupId().toString());
                 }
                 if (StringUtils.hasText(clusterInfo.getSchema()) && url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1) {
