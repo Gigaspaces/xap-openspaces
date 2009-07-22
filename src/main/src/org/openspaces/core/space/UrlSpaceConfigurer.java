@@ -83,6 +83,15 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     }
 
     /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setProperties(java.util.Properties)
+     */
+    public UrlSpaceConfigurer addProperties(Properties properties) {
+        validate();
+        this.properties.putAll(properties);
+        return this;
+    }
+
+    /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setUrlProperties(java.util.Properties)
      */
     public UrlSpaceConfigurer addUrlProperty(String name, String value) {
