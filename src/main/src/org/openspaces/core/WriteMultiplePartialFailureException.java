@@ -35,7 +35,7 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
     private final IWriteResult[] results;
 
-    private ExceptionTranslator exceptionTranslator;
+    private final ExceptionTranslator exceptionTranslator;
 
     public WriteMultiplePartialFailureException(com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
