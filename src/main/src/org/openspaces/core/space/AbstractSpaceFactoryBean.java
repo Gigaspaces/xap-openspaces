@@ -21,19 +21,13 @@ import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.SpaceHealthStatus;
-import com.j_spaces.core.client.LookupFinder;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import com.j_spaces.core.client.LookupFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.MemberAliveIndicator;
-import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.SpaceAfterBackupListener;
-import org.openspaces.core.space.mode.SpaceAfterPrimaryListener;
-import org.openspaces.core.space.mode.SpaceBeforeBackupListener;
-import org.openspaces.core.space.mode.SpaceBeforePrimaryListener;
+import org.openspaces.core.space.mode.*;
 import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -75,13 +69,13 @@ import java.util.Map;
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements BeanNameAware, InitializingBean, DisposableBean, FactoryBean,
-ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
+        ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
 
     protected Log logger = LogFactory.getLog(getClass());
 
     private String beanName;
 
-    private IJSpace space;
+    private ISpaceProxy space;
 
     private ApplicationContext applicationContext;
 
@@ -158,14 +152,15 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
      * {@link #isRegisterForSpaceModeNotifications()}.
      */
     public synchronized void afterPropertiesSet() throws DataAccessException {
-        this.space = doCreateSpace();
+        this.space = (ISpaceProxy) doCreateSpace();
         // apply security configuration if set
         if (securityConfig != null && securityConfig.isFilled()) {
-            SecurityContext securityContext = new SecurityContext(securityConfig.getUsername(), securityConfig.getPassword());
             try {
-                space.setSecurityContext(securityContext);
-            } catch (RemoteException e) {
-                throw new CannotCreateSpaceException("Failed to set security context", e);
+                if (space.isServiceSecured()) {
+                    space.login(securityConfig.toUserDetails());
+                }
+            } catch (Exception e) {
+                throw new CannotCreateSpaceException("Failed to login to secured space", e);
             }
         }
 
@@ -244,8 +239,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
                     if (currentSpaceMode == SpaceMode.BACKUP) {
                         fireSpaceBeforeBackupEvent();
                         fireSpaceAfterBackupEvent();
-                    }
-                    else if (currentSpaceMode == SpaceMode.PRIMARY) {
+                    } else if (currentSpaceMode == SpaceMode.PRIMARY) {
                         fireSpaceBeforePrimaryEvent();
                         fireSpaceAfterPrimaryEvent();
                     }
@@ -379,7 +373,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     }
 
     public ServiceDetails[] getServicesDetails() {
-        return new ServiceDetails[] {new SpaceServiceDetails(beanName, space)};
+        return new ServiceDetails[]{new SpaceServiceDetails(beanName, space)};
     }
 
     private class PrimaryBackupListener implements ISpaceModeListener {
@@ -394,8 +388,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
 
                 if (spaceMode == SpaceMode.BACKUP) {
                     fireSpaceBeforeBackupEvent();
-                }
-                else if (spaceMode == SpaceMode.PRIMARY) {
+                } else if (spaceMode == SpaceMode.PRIMARY) {
                     fireSpaceBeforePrimaryEvent();
                 }
             }
@@ -414,8 +407,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
 
                 if (spaceMode == SpaceMode.BACKUP) {
                     fireSpaceAfterBackupEvent();
-                }
-                else if (spaceMode == SpaceMode.PRIMARY) {
+                } else if (spaceMode == SpaceMode.PRIMARY) {
                     fireSpaceAfterPrimaryEvent();
                 }
             }

@@ -20,6 +20,7 @@ import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
+import com.gigaspaces.security.UserDetails;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
@@ -52,6 +53,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -63,6 +65,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import java.rmi.MarshalledObject;
+import java.io.IOException;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
@@ -114,6 +118,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private Boolean fifo;
 
+    private Boolean secured;
+
     private FilterProviderFactory[] filterProviders;
 
     private ReplicationFilterProviderFactory replicationFilterProvider;
@@ -153,6 +159,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public UrlSpaceFactoryBean(String url, Map<String, Object> params) {
         this.url = url;
         this.parameters = params;
+    }
+
+    /**
+     * Sets the space as secured. Note, when passing userName and password it will
+     * automatically be secured.
+     */
+    public void setSecured(boolean secured) {
+        this.secured = secured;
     }
 
     /**
@@ -454,12 +468,20 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
             // handle security
             if (beanLevelProperties != null) {
-                String username = beanLevelProperties.getProperty("security.username");
-                String password = beanLevelProperties.getProperty("security.password");
-                SecurityConfig securityConfig = new SecurityConfig(username, password);
-                if (securityConfig.isFilled()) {
-                    setSecurityConfig(securityConfig);
+                MarshalledObject userDetailsObj = (MarshalledObject) beanLevelProperties.get("security.userDetails");
+                if (userDetailsObj != null) {
+                    try {
+                        setSecurityConfig(new SecurityConfig((UserDetails) userDetailsObj.get()));
+                    } catch (Exception e) {
+                        throw new InvalidDataAccessResourceUsageException("Failed to deserialize security user details", e);
+                    }
                 }
+            }
+
+            if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
+                props.put(SpaceURL.SECURED, "true");
+            } else if (secured != null && secured) {
+                props.put(SpaceURL.SECURED, "true");
             }
 
             if (logger.isDebugEnabled()) {

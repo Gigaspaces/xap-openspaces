@@ -17,6 +17,8 @@
 package org.openspaces.core.space;
 
 import com.j_spaces.core.SecurityContext;
+import com.gigaspaces.security.UserDetails;
+import com.gigaspaces.security.User;
 import org.springframework.util.StringUtils;
 
 /**
@@ -27,9 +29,11 @@ import org.springframework.util.StringUtils;
  */
 public class SecurityConfig {
 
-    private String username = SecurityContext.ANONYMOUS_USER;
+    private String username;
 
-    private String password = SecurityContext.ANONYMOUS_USER;
+    private String password;
+
+    private UserDetails userDetails;
 
     public SecurityConfig() {
     }
@@ -37,6 +41,10 @@ public class SecurityConfig {
     public SecurityConfig(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public SecurityConfig(UserDetails userDetails) {
+        this.userDetails = userDetails;
     }
 
     /**
@@ -67,7 +75,20 @@ public class SecurityConfig {
         this.password = password;
     }
 
+    public UserDetails toUserDetails() {
+        if (!isFilled()) {
+            return null;
+        }
+        if (userDetails != null) {
+            return userDetails;
+        }
+        return new User(username, password);
+    }
+
     public boolean isFilled() {
+        if (userDetails != null) {
+            return true;
+        }
         return (StringUtils.hasText(username) && !"${security.username}".equals(username)) && (StringUtils.hasText(password) && !"${security.password}".equals(password));
     }
 }

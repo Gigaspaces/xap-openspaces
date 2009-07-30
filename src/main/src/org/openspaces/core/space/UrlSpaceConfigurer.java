@@ -19,6 +19,7 @@ package org.openspaces.core.space;
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.security.UserDetails;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.space.filter.FilterProviderFactory;
@@ -235,6 +236,28 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         validate();
         urlSpaceFactoryBean.setRegisterForSpaceModeNotifications(registerForSpaceMode);
         return this;
+    }
+
+    /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setSecured(boolean)
+     */
+    public UrlSpaceConfigurer secured(boolean secured) {
+        urlSpaceFactoryBean.setSecured(secured);
+        return this;
+    }
+
+    /**
+     * Creates a secured space with the provided user name and password.
+     */
+    public UrlSpaceConfigurer userDetails(String userName, String password) {
+        return securityConfig(new SecurityConfig(userName, password));
+    }
+
+    /**
+     * Creates a secured space with the provided user details.
+     */
+    public UrlSpaceConfigurer userDetails(UserDetails userDetails) {
+        return securityConfig(new SecurityConfig(userDetails));
     }
 
     /**
