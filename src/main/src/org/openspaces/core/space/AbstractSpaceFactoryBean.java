@@ -69,7 +69,7 @@ import java.util.Map;
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements BeanNameAware, InitializingBean, DisposableBean, FactoryBean,
-        ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
+ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -153,8 +153,8 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
      */
     public synchronized void afterPropertiesSet() throws DataAccessException {
         this.space = (ISpaceProxy) doCreateSpace();
-        // apply security configuration if set
-        if (securityConfig != null && securityConfig.isFilled()) {
+        // apply security configuration if set, only for remote; Security is applied to embedded when space is created
+        if (securityConfig != null && securityConfig.isFilled() && SpaceUtils.isRemoteProtocol(space)) {
             try {
                 if (space.isServiceSecured()) {
                     space.login(securityConfig.toUserDetails());
@@ -204,9 +204,8 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
             }
         }
         try {
-            if (space instanceof ISpaceProxy) {
-                ((ISpaceProxy) space).close();
-            }
+            space.close();
+            
             if (!SpaceUtils.isRemoteProtocol(space)) {
                 // shutdown the space if we are in embedded mode
                 space.getContainer().shutdown();
@@ -290,7 +289,7 @@ public abstract class AbstractSpaceFactoryBean implements BeanNameAware, Initial
         if (!SpaceUtils.isRemoteProtocol(space)) {
             spaceToPing = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
         } else {
-            spaceToPing = (ISpaceProxy) space;
+            spaceToPing = space;
         }
         //Check if the space is considered healthy
         SpaceHealthStatus spaceHealthStatus = spaceToPing.getSpaceHealthStatus();

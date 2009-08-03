@@ -91,7 +91,7 @@ import java.rmi.MarshalledObject;
  * @see com.j_spaces.core.client.SpaceFinder
  */
 public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware,
-        ClusterInfoAware {
+ClusterInfoAware {
 
     private String url;
 
@@ -125,7 +125,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private ManagedDataSource externalDataSource;
 
-    private boolean enableExecutorInjection = true;
+    private final boolean enableExecutorInjection = true;
 
 
     private Properties beanLevelProperties;
@@ -319,6 +319,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * Creates the space by calling {@link #doGetSpaceUrls()} and then using the returned
      * {@link SpaceURL} a space is found using {@link SpaceFinder#find(SpaceURL)}.
      */
+    @Override
     protected IJSpace doCreateSpace() throws DataAccessException {
         SpaceURL[] spaceURLs = doGetSpaceUrls();
         try {
@@ -479,6 +480,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
             if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
                 props.put(SpaceURL.SECURED, "true");
+                props.put("security.userDetails", getSecurityConfig().toUserDetails());
             } else if (secured != null && secured) {
                 props.put(SpaceURL.SECURED, "true");
             }
@@ -522,7 +524,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
     }
 
-    private Map<Class, Object> tasksGigaSpaceInjectionMap = new CopyOnUpdateMap<Class, Object>();
+    private final Map<Class, Object> tasksGigaSpaceInjectionMap = new CopyOnUpdateMap<Class, Object>();
 
     private static Object NO_FIELD = new Object();
 
