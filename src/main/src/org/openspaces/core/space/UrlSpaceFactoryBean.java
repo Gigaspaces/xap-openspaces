@@ -66,7 +66,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import java.rmi.MarshalledObject;
-import java.io.IOException;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.

@@ -16,7 +16,6 @@
 
 package org.openspaces.core.space;
 
-import com.j_spaces.core.SecurityContext;
 import com.gigaspaces.security.UserDetails;
 import com.gigaspaces.security.User;
 import org.springframework.util.StringUtils;
