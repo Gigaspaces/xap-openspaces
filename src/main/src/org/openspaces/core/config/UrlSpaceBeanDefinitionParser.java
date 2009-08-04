@@ -16,8 +16,7 @@
 
 package org.openspaces.core.config;
 
-import org.openspaces.core.space.SecurityConfig;
-import org.openspaces.core.space.UrlSpaceFactoryBean;
+import org.openspaces.core.space.*;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -124,6 +123,31 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
                 securityConfig.setPassword(password);
             }
             builder.addPropertyValue("securityConfig", securityConfig);
+            String secured = securityEle.getAttribute("secured");
+            if (StringUtils.hasText(secured)) {
+                builder.addPropertyValue("secured", Boolean.parseBoolean(secured));
+            }
+        }
+
+        CachePolicy cachePolicy = null;
+        Element allInCacheEle = DomUtils.getChildElementByTagName(element, "all-in-cache-policy");
+        if (allInCacheEle != null) {
+            cachePolicy = new AllInCachePolicy();
+        }
+        Element lruCacheEle = DomUtils.getChildElementByTagName(element, "lru-cache-policy");
+        if (lruCacheEle != null) {
+            cachePolicy = new LruCachePolicy();
+            String size = lruCacheEle.getAttribute("size");
+            if (StringUtils.hasText(size)) {
+                ((LruCachePolicy) cachePolicy).setSize(Integer.parseInt(size));
+            }
+            String initialLoadPercentage = lruCacheEle.getAttribute("initialLoadPercentage");
+            if (StringUtils.hasText(initialLoadPercentage)) {
+                ((LruCachePolicy) cachePolicy).setInitialLoadPercentage(Integer.parseInt(initialLoadPercentage));
+            }
+        }
+        if (cachePolicy != null) {
+            builder.addPropertyValue("cachePolicy", cachePolicy);
         }
     }
 }

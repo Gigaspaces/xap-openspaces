@@ -10,7 +10,7 @@
 
     <xsd:import namespace="http://www.springframework.org/schema/beans"/>
     <xsd:import namespace="http://www.springframework.org/schema/tool"/>
-    
+
     <xsd:element name="annotation-support">
         <xsd:annotation>
             <xsd:documentation>
@@ -38,8 +38,33 @@
                             <xsd:complexType>
                                 <xsd:attribute name="username" type="xsd:string"/>
                                 <xsd:attribute name="password" type="xsd:string"/>
-                                <xsd:attribute name="encrypted" type="xsd:string"/> <!-- TODO: remove -->
-                                <xsd:attribute name="permissions" type="xsd:string"/> <!-- TODO: remove -->
+                                <xsd:attribute name="secured" type="xsd:string"/>
+                                <!-- TODO: remove -->
+                                <xsd:attribute name="encrypted" type="xsd:string"/>
+                                <!-- TODO: remove -->
+                                <xsd:attribute name="permissions" type="xsd:string"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="all-in-cache-policy"/>
+                        <xsd:element name="lru-cache-policy">
+                            <xsd:complexType>
+                                <xsd:attribute name="size" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the cache.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="initialLoadPercentage" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When a space is running in a persistent mode (i.e. using the
+                                            HibernateDataSource implementation), The initial_load sets the % of the
+                                            space cache data to be loaded (default is 50%) maximum size. To disable this
+                                            initial load phase, you should configure the initial_load value to be 0.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
@@ -65,8 +90,10 @@
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
-                                    Sets the properties the IJSpace will be created with (same as parameters). Note, this
-                                    should not be confused with url-properties. The properties here are the ones referred
+                                    Sets the properties the IJSpace will be created with (same as parameters). Note,
+                                    this
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred
                                     to as custom properties and allows for example to control the xpath injection to
                                     space schema.
                                 </xsd:documentation>
@@ -87,7 +114,8 @@
                         <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
-                                    Sets the parameters the IJSpace will be created with (same as parameters). Note, this
+                                    Sets the parameters the IJSpace will be created with (same as parameters). Note,
+                                    this
                                     should not be confused with url-properties. The properties here are the ones
                                     referred to as custom properties and allows for example to control the xpath
                                     injection to space schema.

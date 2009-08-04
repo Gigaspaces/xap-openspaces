@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd">
 
 
     <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 
-    <bean id="space" class="org.openspaces.core.space.UrlSpaceFactoryBean">
-        <property name="url" value="/./space"/>
-        <property name="lookupGroups" value="${user.name}"/>
-    </bean>
+    <bean id="gigaSpaceContextProcessor" class="org.openspaces.core.context.GigaSpaceContextBeanPostProcessor" />
+
+    <os-core:space id="space" url="/./space" lookup-groups="${user.name}">
+        <os-core:lru-cache-policy size="1000" initialLoadPercentage="50" />
+    </os-core:space>
 
     <bean id="gigaSpace" class="org.openspaces.core.GigaSpaceFactoryBean">
         <property name="space" ref="space"/>

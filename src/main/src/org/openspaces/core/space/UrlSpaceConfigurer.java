@@ -221,6 +221,15 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     }
 
     /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setCachePolicy(CachePolicy) 
+     */
+    public UrlSpaceConfigurer cachePolicy(CachePolicy cachePolicy) {
+        validate();
+        urlSpaceFactoryBean.setCachePolicy(cachePolicy);
+        return this;
+    }
+
+    /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setClusterInfo(org.openspaces.core.cluster.ClusterInfo)
      */
     public UrlSpaceConfigurer clusterInfo(ClusterInfo clusterInfo) {

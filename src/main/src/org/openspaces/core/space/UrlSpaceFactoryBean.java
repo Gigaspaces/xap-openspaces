@@ -60,12 +60,12 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
+import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
-import java.rmi.MarshalledObject;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
@@ -90,8 +90,7 @@ import java.rmi.MarshalledObject;
  * @see com.j_spaces.core.client.SpaceURLParser
  * @see com.j_spaces.core.client.SpaceFinder
  */
-public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware,
-ClusterInfoAware {
+public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
     private String url;
 
@@ -124,6 +123,8 @@ ClusterInfoAware {
     private ReplicationFilterProviderFactory replicationFilterProvider;
 
     private ManagedDataSource externalDataSource;
+
+    private CachePolicy cachePolicy;
 
     private final boolean enableExecutorInjection = true;
 
@@ -300,6 +301,17 @@ ClusterInfoAware {
     }
 
     /**
+     * Sets the cache policy that the space will use. If not set, will default to the one configured
+     * in the space schema.
+     *
+     * @see org.openspaces.core.space.AllInCachePolicy
+     * @see org.openspaces.core.space.LruCachePolicy
+     */
+    public void setCachePolicy(CachePolicy cachePolicy) {
+        this.cachePolicy = cachePolicy;
+    }
+
+    /**
      * Externally managed override properties using open spaces extended config support. Should not
      * be set directly but allowed for different Spring context container to set it.
      */
@@ -436,6 +448,10 @@ ClusterInfoAware {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
                 }
+            }
+
+            if (cachePolicy != null) {
+                props.putAll(cachePolicy.toProps());
             }
 
             // copy over the external config overrides
