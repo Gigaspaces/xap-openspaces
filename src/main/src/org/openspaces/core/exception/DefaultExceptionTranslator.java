@@ -17,6 +17,7 @@
 package org.openspaces.core.exception;
 
 import com.gigaspaces.internal.metadata.converter.ConversionException;
+import com.gigaspaces.security.SecurityException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.CacheException;
 import com.j_spaces.core.client.CacheTimeoutException;
@@ -169,6 +170,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
 
         if (e instanceof OperationTimeoutException) {
             return new UpdateOperationTimeoutException((OperationTimeoutException) e);
+        }
+
+        if (e instanceof SecurityException) {
+            return new SecurityAccessException(e);
         }
 
         return null;
