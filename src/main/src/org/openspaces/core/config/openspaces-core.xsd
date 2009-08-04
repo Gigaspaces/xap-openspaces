@@ -559,6 +559,13 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="size" type="xsd:positiveInteger">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The size of the local cache.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="update-mode">
                         <xsd:annotation>
                             <xsd:documentation>

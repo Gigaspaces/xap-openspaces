@@ -17,6 +17,7 @@
 package org.openspaces.core.space.cache;
 
 import com.j_spaces.core.client.SpaceURL;
+import com.j_spaces.core.Constants;
 
 import java.util.Properties;
 
@@ -47,6 +48,8 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
 
     private int localCacheUpdateMode = SpaceURL.UPDATE_MODE_PULL;
 
+    private Integer size;
+
     /**
      * If set to {@link SpaceURL#UPDATE_MODE_PULL} (<code>1</code>) each update triggers an
      * invalidation event at every cache instance. The invalidate event marks the object in the
@@ -62,6 +65,13 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      */
     public void setUpdateMode(int localCacheUpdateMode) {
         this.localCacheUpdateMode = localCacheUpdateMode;
+    }
+
+    /**
+     * Sets the local cache size.
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 
     /**
@@ -91,6 +101,9 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     protected Properties createCacheProperties() {
         Properties props = new Properties();
         props.put(SpaceURL.LOCAL_CACHE_UPDATE_MODE, Integer.toString(localCacheUpdateMode));
+        if (size != null) {
+            props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_SIZE_PROP, size.toString());
+        }
         return props;
     }
 }

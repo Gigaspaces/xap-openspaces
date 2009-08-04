@@ -41,6 +41,11 @@ public class LocalCacheSpaceBeanDefinitionParser extends AbstractLocalCacheSpace
         if (StringUtils.hasLength(updateMode)) {
             builder.addPropertyValue("updateModeName", updateMode);
         }
+
+        String size = element.getAttribute("size");
+        if (StringUtils.hasLength(size)) {
+            builder.addPropertyValue("size", Integer.parseInt(size));
+        }
     }
 
 }

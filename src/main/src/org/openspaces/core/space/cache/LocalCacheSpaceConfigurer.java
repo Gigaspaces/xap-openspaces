@@ -71,12 +71,23 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
+    /**
+     * @see org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean#setUpdateModeName(String)
+     */
     public LocalCacheSpaceConfigurer updateMode(UpdateMode mode) {
         if (mode == UpdateMode.PULL) {
             localCacheSpaceFactoryBean.setUpdateModeName(LocalCacheSpaceFactoryBean.LOCAL_CACHE_UPDATE_MODE_PULL);
         } else if (mode == UpdateMode.PUSH) {
             localCacheSpaceFactoryBean.setUpdateModeName(LocalCacheSpaceFactoryBean.LOCAL_CACHE_UPDATE_MODE_PUSH);
         }
+        return this;
+    }
+
+    /**
+     * @see org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean#setSize(int)
+     */
+    public LocalCacheSpaceConfigurer size(int size) {
+        localCacheSpaceFactoryBean.setSize(size);
         return this;
     }
 
