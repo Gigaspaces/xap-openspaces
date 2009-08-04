@@ -335,7 +335,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     protected IJSpace doCreateSpace() throws DataAccessException {
         SpaceURL[] spaceURLs = doGetSpaceUrls();
         try {
-            return (IJSpace) SpaceFinder.find(spaceURLs);
+            return (IJSpace) SpaceFinder.find(spaceURLs, spaceURLs[0].getCustomProperties());
         } catch (FinderException e) {
             if (SpaceUtils.isRemoteProtocol(spaceURLs[0])) {
                 throw new CannotFindSpaceException("Failed to find space with url " + Arrays.toString(spaceURLs) + "", e);

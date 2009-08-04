@@ -106,7 +106,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
         spaceUrl.getCustomProperties().putAll(props);
         prepareUrl(spaceUrl);
         try {
-            localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, null);
+            localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, props, null, null);
         } catch (FinderException e) {
             throw new CannotCreateSpaceException("Failed to create local cache space for space [" + space + "]", e);
         }
