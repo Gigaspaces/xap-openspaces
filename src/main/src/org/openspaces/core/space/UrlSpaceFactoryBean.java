@@ -494,6 +494,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 }
             }
 
+            if (getSecurityConfig() == null || !getSecurityConfig().isFilled()) {
+                String username = (String) props.remove("security.username");
+                String password = (String) props.remove("security.password");
+                setSecurityConfig(new SecurityConfig(username, password));
+            }
+
+
             if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
                 props.put(SpaceURL.SECURED, "true");
                 props.put("security.userDetails", getSecurityConfig().toUserDetails());
