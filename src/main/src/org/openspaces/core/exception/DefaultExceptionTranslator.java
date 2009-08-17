@@ -61,13 +61,17 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return null;
         }
 
+        if (e instanceof DataAccessException) {
+            return (DataAccessException)e;
+        }
+
         if (e instanceof org.springframework.transaction.TransactionException) {
             return new TransactionDataAccessException((org.springframework.transaction.TransactionException) e);
         }
 
         if (e instanceof CacheException) {
             if (e instanceof CacheTimeoutException) {
-                throw new SpaceTimeoutException(e.getMessage(), e);
+                return new SpaceTimeoutException(e.getMessage(), e);
             }
             Exception e1 = ((CacheException) e).getUnderlyingException();
             if (e1 != null) {
@@ -174,8 +178,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
 
         if (e instanceof SecurityException) {
             return new SecurityAccessException(e);
-        } else if (e instanceof SecurityAccessException) {
-            return (SecurityAccessException)e;
         }
 
         return null;
