@@ -174,6 +174,8 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
 
         if (e instanceof SecurityException) {
             return new SecurityAccessException(e);
+        } else if (e instanceof SecurityAccessException) {
+            return (SecurityAccessException)e;
         }
 
         return null;
