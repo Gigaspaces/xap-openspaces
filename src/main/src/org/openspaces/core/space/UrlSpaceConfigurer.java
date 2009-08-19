@@ -19,7 +19,7 @@ package org.openspaces.core.space;
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
-import com.gigaspaces.security.UserDetails;
+import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.space.filter.FilterProviderFactory;
