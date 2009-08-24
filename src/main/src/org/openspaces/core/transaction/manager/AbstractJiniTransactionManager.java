@@ -218,10 +218,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             if (txObject.getJiniHolder() == null) {
                 long timeout = DEFAULT_TX_TIMEOUT;
                 if (getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
-                    timeout = getDefaultTimeout() * 1000;
+                    timeout = getDefaultTimeout() * 1000L;
                 }
                 if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
-                    timeout = definition.getTimeout() * 1000;
+                    timeout = definition.getTimeout() * 1000L;
                 }
                 if (logger.isTraceEnabled()) {
                     logger.trace(logMessage("Creating new transaction for [" + transactionalContext + "] with timeout [" + timeout + " milliseconds]"));

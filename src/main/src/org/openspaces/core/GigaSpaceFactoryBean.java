@@ -223,7 +223,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      * @see org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT
      */
     public void setDefaultIsolationLevel(int defaultIsolationLevel) {
-        if (!constants.getValues(PREFIX_ISOLATION).contains(new Integer(defaultIsolationLevel))) {
+        if (!constants.getValues(PREFIX_ISOLATION).contains( Integer.valueOf(defaultIsolationLevel))) {
             throw new IllegalArgumentException("Only values of isolation constants allowed");
         }
         this.defaultIsolationLevel = defaultIsolationLevel;
