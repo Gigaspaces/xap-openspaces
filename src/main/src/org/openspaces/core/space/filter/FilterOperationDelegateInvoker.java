@@ -20,6 +20,7 @@ import com.gigaspaces.internal.reflection.IMethod;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
+import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import net.jini.core.entry.UnusableEntryException;
 import org.springframework.util.ClassUtils;
@@ -106,22 +107,26 @@ class FilterOperationDelegateInvoker {
         if (parameterTypes.length == 0) {
             params = null;
         } else {
-            Object entryParam = entry;
-            if (entryParam != null) {
-                entryParam = detectSpaceFilterEntryParam(parameterTypes[0], space, entry);
-                // perform filtering based on type
-                if (entryParam == null) {
-                    return;
-                }
-            }
-            if (parameterTypes.length == 1) {
-                params = new Object[]{entryParam};
-            } else if (parameterTypes.length == 2) {
-                params = new Object[]{entryParam, operationCode};
-            } else if (parameterTypes.length == 3) {
-                params = new Object[]{entryParam, operationCode, context};
+            if (operationCode == FilterOperationCodes.BEFORE_AUTHENTICATION) {
+                params = new Object[]{context};
             } else {
-                throw new FilterExecutionException("Method [" + processMethod.getName() + "] should not have more than 3 parameters");
+                Object entryParam = entry;
+                if (entryParam != null) {
+                    entryParam = detectSpaceFilterEntryParam(parameterTypes[0], space, entry);
+                    // perform filtering based on type
+                    if (entryParam == null) {
+                        return;
+                    }
+                }
+                if (parameterTypes.length == 1) {
+                    params = new Object[]{entryParam};
+                } else if (parameterTypes.length == 2) {
+                    params = new Object[]{entryParam, operationCode};
+                } else if (parameterTypes.length == 3) {
+                    params = new Object[]{entryParam, operationCode, context};
+                } else {
+                    throw new FilterExecutionException("Method [" + processMethod.getName() + "] should not have more than 3 parameters");
+                }
             }
         }
         try {

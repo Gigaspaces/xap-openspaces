@@ -495,6 +495,7 @@
                     <xsd:attribute name="before-remove-by-lease" type="xsd:string"/>
                     <xsd:attribute name="after-remove-by-lease" type="xsd:string"/>
                     <xsd:attribute name="before-execute" type="xsd:string"/>
+                    <xsd:attribute name="before-authentication" type="xsd:string"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

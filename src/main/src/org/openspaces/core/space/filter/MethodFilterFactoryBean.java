@@ -54,6 +54,8 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     private String filterClose;
 
+    private String beforeAuthentication;
+
     private String beforeWrite;
 
     private String afterWrite;
@@ -100,6 +102,9 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
         final Map<Integer, FilterOperationDelegateInvoker> invokerLookup = new HashMap<Integer, FilterOperationDelegateInvoker>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                if (ObjectUtils.nullSafeEquals(method.getName(), beforeAuthentication)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_AUTHENTICATION);
+                }
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeWrite)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_WRITE);
                 }
@@ -214,6 +219,16 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
      */
     public void setBeforeWrite(String beforeWrite) {
         this.beforeWrite = beforeWrite;
+    }
+
+    /**
+     * Filter callback before authentication operation. Note, the method must have a single
+     * parameter of type {@link com.j_spaces.core.SpaceContext}.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#BEFORE_AUTHENTICATION
+     */
+    public void setBeforeAuthentication(String beforeAuthentication) {
+        this.beforeAuthentication = beforeAuthentication;
     }
 
     /**

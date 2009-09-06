@@ -54,6 +54,9 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
         final Map<Integer, FilterOperationDelegateInvoker> invokerLookup = new HashMap<Integer, FilterOperationDelegateInvoker>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                if (method.isAnnotationPresent(BeforeAuthentication.class)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_AUTHENTICATION);
+                }
                 if (method.isAnnotationPresent(BeforeWrite.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_WRITE);
                 }
