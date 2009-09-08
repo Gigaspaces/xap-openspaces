@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Allows for beans to be injected with {@link BeanLevelProperties} that contains the bean level
  * merged properties.
  * 
- * @see {@link org.openspaces.core.properties.BeanLevelMergedPropertiesAware} 
+ * @see org.openspaces.core.properties.BeanLevelMergedPropertiesAware 
  * @author shaiw
  */
 @Target(ElementType.FIELD)
