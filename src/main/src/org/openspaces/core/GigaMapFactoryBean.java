@@ -19,8 +19,6 @@ package org.openspaces.core;
 import com.j_spaces.map.IMap;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
@@ -38,9 +36,6 @@ import org.springframework.util.Assert;
  * @author kimchy
  */
 public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
-
-
-    private static Log logger = LogFactory.getLog(GigaMapFactoryBean.class);
 
     /**
      * Prefix for the isolation constants defined in TransactionDefinition
@@ -69,7 +64,6 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
     private long defaultWaitingForLockTimeout = 10000;
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
-
 
     private String beanName;
 

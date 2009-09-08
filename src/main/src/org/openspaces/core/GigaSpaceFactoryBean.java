@@ -92,7 +92,7 @@ import org.springframework.util.Assert;
  */
 public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
 
-    private static Log logger = LogFactory.getLog(GigaSpaceFactoryBean.class);
+    private static final Log logger = LogFactory.getLog(GigaSpaceFactoryBean.class);
 
     /**
      * Prefix for the isolation constants defined in TransactionDefinition

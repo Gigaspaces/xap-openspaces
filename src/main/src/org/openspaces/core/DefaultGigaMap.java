@@ -49,11 +49,11 @@ import java.util.Set;
  */
 public class DefaultGigaMap implements GigaMap {
 
-    private IMap map;
+    final private IMap map;
 
-    private TransactionProvider txProvider;
+    final private TransactionProvider txProvider;
 
-    private ExceptionTranslator exTranslator;
+    final private ExceptionTranslator exTranslator;
 
     private long defaultWaitForResponse = JavaSpace.NO_WAIT;
 
@@ -65,7 +65,7 @@ public class DefaultGigaMap implements GigaMap {
 
     private int defaultIsolationLevel;
 
-    private LockManager lockManager;
+    final private LockManager lockManager;
 
     /**
      * Constructs a new DefaultGigaMap implementation.

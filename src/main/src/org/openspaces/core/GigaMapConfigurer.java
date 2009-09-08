@@ -41,7 +41,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public class GigaMapConfigurer {
 
-    private GigaMapFactoryBean gigaMapFactoryBean;
+    final private GigaMapFactoryBean gigaMapFactoryBean;
 
     private GigaMap gigaMap;
 

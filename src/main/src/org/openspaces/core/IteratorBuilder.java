@@ -40,7 +40,7 @@ import java.util.List;
  * given template(s)). Use {@link #iteratorScope(IteratorScope)} to set the iterator's scope.
  *
  * <p>Lease for the iterator can be controlled using {@link #leaseDuration(long)}. A leased iterator
- * which expires is considered as <em>invalidated</em>. A cancelled iterator is an exhausted iterator
+ * which expires is considered as <em>invalidated</em>. A canceled iterator is an exhausted iterator
  * and will have no more entities added to it. Calling <code>next</code> on an iterator with either
  * state always returns <code>null</code> or it may throw one of the allowed exceptions. In particular
  * <code>next(timeout)</code> may throw {@link java.rmi.NoSuchObjectException} to indicate that no entity
@@ -52,7 +52,7 @@ import java.util.List;
  * be leased. If there is no possibility that the iterator will become
  * invalidated, implementations should not lease it (i.e. use
  * {@link Lease#FOREVER}). If there is no further interest an iterator may
- * be <code>cancelled</code>.
+ * be <code>canceled</code>.
  *
  * <p>An active lease on an iterator serves as a hint to the space that the
  * client is still interested in matching entities, and as a hint to the
@@ -72,9 +72,9 @@ import java.util.List;
  */
 public class IteratorBuilder {
 
-    private GigaSpace gigaSpace;
-    private List<Object> templates = new ArrayList<Object>();
-    private GSIteratorConfig iteratorConfig = new GSIteratorConfig();
+    final private GigaSpace gigaSpace;
+    final private List<Object> templates = new ArrayList<Object>();
+    final private GSIteratorConfig iteratorConfig = new GSIteratorConfig();
 
     /**
      * Constructs a new iterator builder using the given GigaSpace.

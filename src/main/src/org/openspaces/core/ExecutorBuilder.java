@@ -39,11 +39,11 @@ import java.util.ArrayList;
  */
 public class ExecutorBuilder<T extends Serializable, R> {
 
-    private ArrayList<Holder> holders = new ArrayList<Holder>();
+    final private ArrayList<Holder> holders = new ArrayList<Holder>();
 
-    private InternalGigaSpace gigaSpace;
+    final private InternalGigaSpace gigaSpace;
 
-    private AsyncResultsReducer<T, R> reducer;
+    final private AsyncResultsReducer<T, R> reducer;
 
     /**
      * Constructs a new executor builder, with the {@link org.openspaces.core.GigaSpace} they will execute
@@ -83,7 +83,7 @@ public class ExecutorBuilder<T extends Serializable, R> {
     }
 
     /**
-     * Adds a task to be executed similary to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task, Object)}.
+     * Adds a task to be executed similarly to {@link org.openspaces.core.GigaSpace#execute(org.openspaces.core.executor.Task, Object)}.
      *
      * @param task The task to add
      * @return The executor builder to add more tasks to or {@link #execute()}.
