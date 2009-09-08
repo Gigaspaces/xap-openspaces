@@ -68,7 +68,7 @@ import java.io.Serializable;
 public interface GigaSpace {
 
     /**
-     * Returns the name of the giga space. If it is configured with Spring for example, will reutrn the
+     * Returns the name of the giga space. If it is configured with Spring for example, will return the
      * bean name, if not, will default to the space name.
      */
     String getName();
@@ -219,7 +219,7 @@ public interface GigaSpace {
      * <p>The timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
      *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #readById(Class, Object, Object)} can be used to specify the routing.
      *
@@ -379,7 +379,7 @@ public interface GigaSpace {
     <T> T read(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -398,7 +398,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(T template) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -418,7 +418,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(T template, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -438,7 +438,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(T template, long timeout) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -459,7 +459,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -484,7 +484,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -510,7 +510,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -527,7 +527,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(Query<T> template) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -545,7 +545,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -563,7 +563,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -582,7 +582,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -605,7 +605,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asyncronous manner. Returns
+     * Reads any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -639,7 +639,7 @@ public interface GigaSpace {
      * <p>The timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
      *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #readById(Class, Object, Object)} can be used to specify the routing.
      *
@@ -1067,7 +1067,7 @@ public interface GigaSpace {
     <T> T take(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1085,7 +1085,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(T template) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1104,7 +1104,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(T template, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1123,7 +1123,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(T template, long timeout) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1143,7 +1143,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1163,7 +1163,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1176,16 +1176,15 @@ public interface GigaSpace {
      *                  transactionally proper matching entry. A timeout of
      *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                  time at all; this is equivalent to a wait of zero.
-     * @param listener  A listener to be notified when a result arrives
      * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
-     * @param listener
+     * @param listener A listener to be notified when a result arrives
      * @return A removed entry from the space
      * @throws DataAccessException
      */
     <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1201,7 +1200,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(Query<T> template) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1218,7 +1217,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1235,7 +1234,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1253,7 +1252,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1271,7 +1270,7 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asyncronous manner. Returns
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
      * immediately with a future. The future can then be used to check if there is a
      * match or not. Once a match is found or the timeout expires, the future will
      * return a result (<code>null</code> in case there was no match).
@@ -1299,7 +1298,7 @@ public interface GigaSpace {
      * <p>The timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
      *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
      *
@@ -1666,14 +1665,14 @@ public interface GigaSpace {
      * <p>In order to control the routing externally, use {@link #execute(org.openspaces.core.executor.Task, Object)}.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task The task to execute
@@ -1690,14 +1689,14 @@ public interface GigaSpace {
      * <p>In order to control the routing externally, use {@link #execute(org.openspaces.core.executor.Task, Object)}.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task     The task to execute
@@ -1709,7 +1708,7 @@ public interface GigaSpace {
 
     /**
      * Executes a task on a specific space node. The space node it will
-     * execute on should is controlled by the routing value provided as a second paramter.
+     * execute on should is controlled by the routing value provided as a second parameter.
      *
      * <p>The routing object itself does not have to be the actual routing value, but can be a POJO
      * that defined a method annotated with <code>@SpaceRouting</code> annotation (this works well
@@ -1718,14 +1717,14 @@ public interface GigaSpace {
      * <p>In order to control the using the Task itself, use {@link #execute(org.openspaces.core.executor.Task)}.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task    The task to execute
@@ -1737,7 +1736,7 @@ public interface GigaSpace {
 
     /**
      * Executes a task on a specific space node. The space node it will
-     * execute on should is controlled by the routing value provided as a second paramter.
+     * execute on should is controlled by the routing value provided as a second parameter.
      *
      * <p>The routing object itself does not have to be the actual routing value, but can be a POJO
      * that defined a method annotated with <code>@SpaceRouting</code> annotation (this works well
@@ -1746,14 +1745,14 @@ public interface GigaSpace {
      * <p>In order to control the using the Task itself, use {@link #execute(org.openspaces.core.executor.Task)}.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task     The task to execute
@@ -1774,7 +1773,7 @@ public interface GigaSpace {
      * when wanting to use entries as the routing parameters).
      *
      * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
-     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * if tasks should continue to accumulate or it should break and execute the reduce operation on the
      * results received so far.
      *
      * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
@@ -1784,14 +1783,14 @@ public interface GigaSpace {
      * it will be used to register a listener to be notified of the result.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task    The task to execute
@@ -1808,21 +1807,21 @@ public interface GigaSpace {
      * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
      *
      * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
-     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * if tasks should continue to accumulate or it should break and execute the reduce operation on the
      * results received so far.
      *
      * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
      * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param task The task to execute
@@ -1837,21 +1836,21 @@ public interface GigaSpace {
     //     * {@link org.openspaces.core.executor.DistributedTask#reduce(java.util.List)} operation.
     //     *
     //     * <p>The task can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
-    //     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+    //     * if tasks should continue to accumulate or it should break and execute the reduce operation on the
     //     * results received so far.
     //     *
     //     * <p>The future actual result will be the reduced result of the execution, or the exception thrown during
     //     * during the reduce operation. The moderator can be used as a mechanism to listen for results as they arrive.
     //     *
     //    * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-    //    * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+    //    * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
     //    * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
     //    *
     //    * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
     //    * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
     //    * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
     //    * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-    //    * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+    //    * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
     //    * {@link org.springframework.context.ApplicationContextAware} are also available.
     //     *
     //     * @param task     The task to execute
@@ -1859,30 +1858,30 @@ public interface GigaSpace {
     //     * @return a Future representing pending completion of the task,
     //     *         and whose <code>get()</code> method will return the task value upon completion.
     //     */
-    // REMOVE this because of compliation problem, you can still use this API.
+    // REMOVE this because of compilation problem, you can still use this API.
     //    <T extends Serializable, R> AsyncFuture<R> execute(DistributedTask<T, R> task, AsyncFutureListener<R> listener);
 
     /**
-     * Constructs an executor builder allowing to accumlate different tasks required to be executed
+     * Constructs an executor builder allowing to accumulate different tasks required to be executed
      * into a single execute mechanism with all the results reduced by the reducer provided.
      *
      * <p>The reducer can optionally implement {@link com.gigaspaces.async.AsyncResultFilter} that can control
-     * if tasks should continue to accumelate or it should break and execute the reduce operation on the
+     * if tasks should continue to accumulate or it should break and execute the reduce operation on the
      * results received so far.
      *
      * <p>The space that the task is executed within can be accessible by marking a field with type {@link org.openspaces.core.GigaSpace}
-     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annnotation. Another option is by implementing
+     * using the {@link org.openspaces.core.executor.TaskGigaSpace} annotation. Another option is by implementing
      * the {@link org.openspaces.core.executor.TaskGigaSpaceAware} interface.
      *
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
      * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
-     * Bean lifecycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
+     * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
      * @param reducer The reducer to reduce the results of all the different tasks added.
-     * @return The executor builer.
+     * @return The executor builder.
      */
     <T extends Serializable, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer);
 }
