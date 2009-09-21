@@ -16,12 +16,12 @@
 
 package org.openspaces.core.jini;
 
+import com.j_spaces.core.jini.SharedDiscoveryManagement;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.discovery.LookupDiscovery;
-import net.jini.discovery.LookupDiscoveryManager;
 import net.jini.lookup.ServiceDiscoveryManager;
 import net.jini.lookup.entry.Name;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -172,11 +172,9 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
                 lookupLocators[i] = new LookupLocator(locator);
             }
         }
-        LookupDiscoveryManager lookupDiscovery = null;
         ServiceDiscoveryManager serviceDiscovery = null;
         try {
-            lookupDiscovery = new LookupDiscoveryManager(groups, lookupLocators, null);
-            serviceDiscovery = new ServiceDiscoveryManager(lookupDiscovery, null);
+            serviceDiscovery = SharedDiscoveryManagement.getServiceDiscoveryManager(groups, lookupLocators, null);
             ServiceItem returnObject = serviceDiscovery.lookup(templ, null, timeout);
             if (returnObject != null) {
                 service = returnObject.service;
@@ -187,13 +185,6 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
                     serviceDiscovery.terminate();
                 } catch (Exception e) {
                     logger.warn("Failed to terminate service discovery, ignoring", e);
-                }
-            }
-            if (lookupDiscovery != null) {
-                try {
-                    lookupDiscovery.terminate();
-                } catch (Exception e) {
-                    logger.warn("Failed to terminate lookup discovery, ignoring", e);
                 }
             }
         }
