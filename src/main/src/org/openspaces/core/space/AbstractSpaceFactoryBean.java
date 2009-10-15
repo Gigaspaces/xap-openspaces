@@ -20,9 +20,13 @@ import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
+import com.gigaspaces.internal.dump.InternalDump;
+import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceHealthStatus;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import com.j_spaces.core.admin.SpaceRuntimeInfo;
 import com.j_spaces.core.client.LookupFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +49,7 @@ import org.springframework.dao.DataAccessException;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.io.PrintWriter;
 
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
@@ -69,7 +74,7 @@ import java.util.Map;
  * @author kimchy
  */
 public abstract class AbstractSpaceFactoryBean implements BeanNameAware, InitializingBean, DisposableBean, FactoryBean,
-ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider {
+ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetailsProvider, InternalDumpProcessor {
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -373,6 +378,36 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
 
     public ServiceDetails[] getServicesDetails() {
         return new ServiceDetails[]{new SpaceServiceDetails(beanName, space)};
+    }
+
+    public String getName() {
+        return beanName;
+    }
+
+    public void process(InternalDump dump) throws InternalDumpProcessorFailedException {
+        if (SpaceUtils.isRemoteProtocol(space)) {
+            return;
+        }
+        dump.addPrefix("spaces/" + beanName + "/");
+        try {
+            IJSpace clusterMemberSpace = SpaceUtils.getClusterMemberSpace(space);
+            PrintWriter writer = new PrintWriter(dump.createFileWriter("summary.txt"));
+            writer.println("===== URL =====");
+            writer.println(clusterMemberSpace.getFinderURL());
+            writer.println();
+            writer.println("===== RUNTIME INFO =====");
+            IInternalRemoteJSpaceAdmin admin = ((IInternalRemoteJSpaceAdmin) clusterMemberSpace.getAdmin());
+            SpaceRuntimeInfo runtimeInfo = admin.getRuntimeInfo();
+            for (int i = 0; i < runtimeInfo.m_ClassNames.size(); i++) {
+                writer.println("Class [" + runtimeInfo.m_ClassNames.get(i) + "], Entries [" + runtimeInfo.m_NumOFEntries.get(i) + "], Templates [" + runtimeInfo.m_NumOFTemplates.get(i) + "]");
+            }
+            writer.println();
+            writer.close();
+        } catch (Exception e) {
+            throw new InternalDumpProcessorFailedException(getName(), "Failed to generate space dump", e);
+        } finally {
+            dump.removePrefix();
+        }
     }
 
     private class PrimaryBackupListener implements ISpaceModeListener {
