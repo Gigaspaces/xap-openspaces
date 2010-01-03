@@ -4,6 +4,8 @@ import com.gigaspaces.internal.client.dcache.localcache.LocalCacheImpl;
 import com.gigaspaces.internal.client.dcache.localview.LocalViewImpl;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.NoSuchNameException;
+import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.client.SpaceURL;
 import net.jini.core.lookup.ServiceID;
 import org.openspaces.core.util.SpaceUtils;
@@ -12,6 +14,7 @@ import org.openspaces.pu.service.PlainServiceDetails;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.rmi.RemoteException;
 
 /**
  * A Space service defined within a processing unit.
@@ -27,9 +30,14 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         public static final String SPACETYPE = "space-type";
         public static final String CLUSTERED = "clustered";
         public static final String URL = "url";
+        public static final String SPACE_URL = "spaceUrl";
     }
 
     private IJSpace space;
+
+    private IJSpace directSpace;
+
+    private IInternalRemoteJSpaceAdmin directSpaceAdmin;
 
     public SpaceServiceDetails() {
     }
@@ -55,6 +63,12 @@ public class SpaceServiceDetails extends PlainServiceDetails {
             serviceSubType = "remote";
             spaceType = SpaceType.REMOTE;
         } else { // embedded
+            try {
+                directSpace = ((ISpaceProxy) space).getClusterMember();
+                directSpaceAdmin = (IInternalRemoteJSpaceAdmin) directSpace.getAdmin();
+            } catch (Exception e) {
+                // no direct space???
+            }
         }
         getAttributes().put(Attributes.SPACETYPE, spaceType);
         getAttributes().put(Attributes.SPACENAME, spaceURL.getSpaceName());
@@ -63,6 +77,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         description = spaceURL.getSpaceName();
         longDescription = spaceURL.getContainerName() + ":" + spaceURL.getSpaceName();
         getAttributes().put(Attributes.URL, space.getFinderURL().toString());
+        getAttributes().put(Attributes.SPACE_URL, space.getFinderURL());
 
         if (id == null) {
             this.id = serviceSubType + ":" + spaceURL.getSpaceName();
@@ -92,10 +107,16 @@ public class SpaceServiceDetails extends PlainServiceDetails {
     public String getUrl() {
         return (String) getAttributes().get(Attributes.URL);
     }
+
+    public SpaceURL getSpaceUrl() {
+        return (SpaceURL) getAttributes().get(Attributes.SPACE_URL);
+    }
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         super.writeExternal(out);
     }
+
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
