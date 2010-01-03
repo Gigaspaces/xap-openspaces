@@ -1,20 +1,20 @@
 package org.openspaces.core.space;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+import net.jini.core.lookup.ServiceID;
+
+import org.openspaces.core.util.SpaceUtils;
+import org.openspaces.pu.service.PlainServiceDetails;
+
 import com.gigaspaces.internal.client.dcache.localcache.LocalCacheImpl;
 import com.gigaspaces.internal.client.dcache.localview.LocalViewImpl;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.NoSuchNameException;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.client.SpaceURL;
-import net.jini.core.lookup.ServiceID;
-import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.service.PlainServiceDetails;
-
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.rmi.RemoteException;
 
 /**
  * A Space service defined within a processing unit.
