@@ -642,6 +642,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException {
+        try {
+            return space.writeMultiple(entries, getCurrentTransaction(), lease, updateModifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
 
     public <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException {
         try {
