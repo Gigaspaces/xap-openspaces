@@ -22,6 +22,7 @@ import com.gigaspaces.async.AsyncResultsReducer;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.Query;
+
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -1644,6 +1645,10 @@ public interface GigaSpace {
      */    
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException;
     
+    /**
+     * @deprecated Use {@link #writeMultiple(Object[], long, int) with {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} instead.}
+     */
+    @Deprecated
     <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException;
 
     /**
@@ -1675,8 +1680,10 @@ public interface GigaSpace {
      *         <li>an Exception Object, including OperationTimeoutException - thrown if timeout occurred.
      *         </ul>
      *         </ul>
-     * @throws DataAccessException
+     * @throws DataAccessException         
+     * @deprecated Use {@link #writeMultiple(Object[], long, int) instead.}
      */
+    @Deprecated
     <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
 
     /**
