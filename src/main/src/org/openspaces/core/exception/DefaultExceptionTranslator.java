@@ -179,6 +179,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof SecurityException) {
             return new SecurityAccessException(e);
         }
+        
+        if (e instanceof com.gigaspaces.cluster.replication.MaxReplicationRedoLogSizeReached){
+            return new MaxReplicationRedoLogSizeReached((com.gigaspaces.cluster.replication.MaxReplicationRedoLogSizeReached)e);
+        }
+            
 
         return null;
     }
