@@ -5,16 +5,16 @@ import org.springframework.dao.DataAccessException;
 /**
  * This exeception indicates the redo log reached its planned capacity and operations should be blocked until
  * the redolog size is reduced
- * {@link com.gigaspaces.cluster.replication.MaxReplicationRedoLogSizeReached}
+ * {@link com.gigaspaces.cluster.replication.RedoLogCapacityExceededException}
  * 
  * @author	eitany
  * @since	7.1
  */
-public class MaxReplicationRedoLogSizeReached extends DataAccessException {
+public class RedoLogCapacityExceededException extends DataAccessException {
 
-    private final com.gigaspaces.cluster.replication.MaxReplicationRedoLogSizeReached e;
+    private final com.gigaspaces.cluster.replication.RedoLogCapacityExceededException e;
 
-    public MaxReplicationRedoLogSizeReached(com.gigaspaces.cluster.replication.MaxReplicationRedoLogSizeReached e) {
+    public RedoLogCapacityExceededException(com.gigaspaces.cluster.replication.RedoLogCapacityExceededException e) {
         super(e.getMessage(), e);
         this.e = e;
     }
