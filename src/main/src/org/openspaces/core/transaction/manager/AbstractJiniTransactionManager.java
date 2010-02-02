@@ -443,6 +443,10 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             }
         }
 
+        public void flush() {
+            // nothing to do here
+        }
+
         public Transaction getTransaction() {
             if (hasTransaction()) {
                 return jiniHolder.getTxCreated().transaction;

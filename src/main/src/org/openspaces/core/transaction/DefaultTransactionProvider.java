@@ -261,5 +261,8 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
         public void afterCompletion(int status) {
         }
+
+        public void flush() {
+        }
     }
 }
