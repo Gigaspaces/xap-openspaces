@@ -23,6 +23,8 @@ import com.j_spaces.core.client.SpaceURL;
  */
 public class SpaceServiceDetails extends PlainServiceDetails {
 
+    public static final String SERVICE_TYPE = "space";
+    
     public static final class Attributes {
         public static final String SERVICEID = "service-id";
         public static final String SPACENAME = "space-name";
@@ -47,7 +49,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
     }
 
     public SpaceServiceDetails(String id, IJSpace space) {
-        super(id, "space", null, null, null);
+        super(id, SERVICE_TYPE, null, null, null);
         this.space = space;
         getAttributes().put(Attributes.SERVICEID, new ServiceID(space.getReferentUuid().getMostSignificantBits(), space.getReferentUuid().getLeastSignificantBits()));
         SpaceURL spaceURL = space.getFinderURL();
