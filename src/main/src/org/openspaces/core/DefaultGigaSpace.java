@@ -22,13 +22,16 @@ import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.query.ISpaceQuery;
+
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.Query;
 import com.j_spaces.core.client.ReadModifiers;
+
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
+
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
@@ -40,6 +43,7 @@ import org.openspaces.core.internal.InternalGigaSpace;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.internal.InternalAsyncFuture;
 import org.openspaces.core.transaction.internal.InternalAsyncFutureListener;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.TransactionDefinition;
@@ -256,16 +260,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> T read(Query<T> template) throws DataAccessException {
+    public <T> T read(ISpaceQuery<T> template) throws DataAccessException {
         return read(template, defaultReadTimeout);
     }
 
-    public <T> T read(Query<T> template, long timeout) throws DataAccessException {
+    public <T> T read(ISpaceQuery<T> template, long timeout) throws DataAccessException {
         return read(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T read(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+    public <T> T read(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
         try {
             return (T) space.read(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
@@ -302,27 +306,27 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> AsyncFuture<T> asyncRead(Query<T> template) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template) throws DataAccessException {
         return asyncRead(template, defaultReadTimeout);
     }
 
-    public <T> AsyncFuture<T> asyncRead(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
         return asyncRead(template, defaultReadTimeout, listener);
     }
 
-    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout) throws DataAccessException {
         return asyncRead(template, timeout, (AsyncFutureListener<T>) null);
     }
 
-    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
         return asyncRead(template, timeout, getModifiersForIsolationLevel(), listener);
     }
 
-    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
         return asyncRead(template, timeout, modifiers, (AsyncFutureListener<T>) null);
     }
 
-    public <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
             return wrapFuture(space.asyncRead(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
@@ -369,16 +373,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> T readIfExists(Query<T> template) throws DataAccessException {
+    public <T> T readIfExists(ISpaceQuery<T> template) throws DataAccessException {
         return readIfExists(template, defaultReadTimeout);
     }
 
-    public <T> T readIfExists(Query<T> template, long timeout) throws DataAccessException {
+    public <T> T readIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException {
         return readIfExists(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+    public <T> T readIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
         try {
             return (T) space.readIfExists(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
@@ -399,12 +403,12 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> T[] readMultiple(Query<T> template, int maxEntries) throws DataAccessException {
+    public <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T[] readMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException {
+    public <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException {
         try {
             return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
         } catch (Exception e) {
@@ -450,16 +454,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> T take(Query<T> template) throws DataAccessException {
+    public <T> T take(ISpaceQuery<T> template) throws DataAccessException {
         return take(template, defaultTakeTimeout);
     }
 
-    public <T> T take(Query<T> template, long timeout) throws DataAccessException {
+    public <T> T take(ISpaceQuery<T> template, long timeout) throws DataAccessException {
         return take(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T take(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+    public <T> T take(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
         try {
             return (T) space.take(template, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
@@ -496,27 +500,27 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> AsyncFuture<T> asyncTake(Query<T> template) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template) throws DataAccessException {
         return asyncTake(template, defaultTakeTimeout);
     }
 
-    public <T> AsyncFuture<T> asyncTake(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
         return asyncTake(template, defaultTakeTimeout, listener);
     }
 
-    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout) throws DataAccessException {
         return asyncTake(template, timeout, getModifiersForIsolationLevel());
     }
 
-    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
         return asyncTake(template, timeout, getModifiersForIsolationLevel(), listener);
     }
 
-    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
         return asyncTake(template, timeout, modifiers, (AsyncFutureListener<T>) null);
     }
 
-    public <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
+    public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
             return wrapFuture(space.asyncTake(template, tx, timeout, modifiers, wrapListener(listener, tx)), tx);
@@ -559,12 +563,12 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> T takeIfExists(Query<T> template) throws DataAccessException {
+    public <T> T takeIfExists(ISpaceQuery<T> template) throws DataAccessException {
         return takeIfExists(template, defaultTakeTimeout);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T takeIfExists(Query<T> template, long timeout) throws DataAccessException {
+    public <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException {
         try {
             return (T) space.takeIfExists(template, getCurrentTransaction(), timeout);
         } catch (Exception e) {
@@ -582,7 +586,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T[] takeMultiple(Query<T> template, int maxEntries) throws DataAccessException {
+    public <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException {
         try {
             return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries);
         } catch (Exception e) {
@@ -600,7 +604,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T[] takeMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException {
+    public <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException {
         try {
             return (T[]) space.takeMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
         } catch (Exception e) {

@@ -19,9 +19,9 @@ package org.openspaces.core;
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultsReducer;
+import com.gigaspaces.query.ISpaceQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.Query;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
@@ -60,7 +60,7 @@ import java.io.Serializable;
  *
  * @author kimchy
  * @see com.j_spaces.core.IJSpace
- * @see com.j_spaces.core.client.Query
+ * @see com.gigaspaces.query.ISpaceQuery
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.DefaultGigaSpace
@@ -340,7 +340,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> T read(Query<T> template) throws DataAccessException;
+    <T> T read(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
      * Read any matching object from the space, blocking until one exists. Return
@@ -356,7 +356,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> T read(Query<T> template, long timeout) throws DataAccessException;
+    <T> T read(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
      * Read any matching object from the space, blocking until one exists. Return
@@ -377,7 +377,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
      */
-    <T> T read(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> T read(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -525,7 +525,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> AsyncFuture<T> asyncRead(Query<T> template) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -543,7 +543,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> AsyncFuture<T> asyncRead(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -561,7 +561,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -580,7 +580,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -603,7 +603,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
      */
-    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -627,7 +627,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
      */
-    <T> AsyncFuture<T> asyncRead(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Read an object from the space matching its id and the class. Returns
@@ -780,7 +780,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> T readIfExists(Query<T> template) throws DataAccessException;
+    <T> T readIfExists(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
      * Read any matching object from the space, returning <code>null</code> if
@@ -798,7 +798,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> T readIfExists(Query<T> template, long timeout) throws DataAccessException;
+    <T> T readIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
      * Read any matching object from the space, returning <code>null</code> if
@@ -821,7 +821,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#readIfExists(net.jini.core.entry.Entry,net.jini.core.transaction.Transaction,long,int)
      */
-    <T> T readIfExists(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> T readIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Read any matching entries from the space. Matching is done as in
@@ -833,7 +833,7 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return A copy of the entries read from the space.
@@ -851,13 +851,13 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return A copy of the entries read from the space.
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    <T> T[] readMultiple(Query<T> template, int maxEntries) throws DataAccessException;
+    <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException;
 
     /**
      * Read any matching entries from the space. Matching is done as in
@@ -878,7 +878,7 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
@@ -906,14 +906,14 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A copy of the entries read from the space.
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    <T> T[] readMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException;
+    <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id and the class. Returns
@@ -1034,7 +1034,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> T take(Query<T> template) throws DataAccessException;
+    <T> T take(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -1049,7 +1049,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> T take(Query<T> template, long timeout) throws DataAccessException;
+    <T> T take(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -1065,7 +1065,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> T take(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> T take(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1198,7 +1198,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> AsyncFuture<T> asyncTake(Query<T> template) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1215,7 +1215,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> AsyncFuture<T> asyncTake(Query<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1232,7 +1232,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1250,7 +1250,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1268,7 +1268,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1287,7 +1287,7 @@ public interface GigaSpace {
      * @return A removed entry from the space
      * @throws DataAccessException
      */
-    <T> AsyncFuture<T> asyncTake(Query<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id and the class. Returns
@@ -1409,7 +1409,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> T takeIfExists(Query<T> template) throws DataAccessException;
+    <T> T takeIfExists(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -1427,7 +1427,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
-    <T> T takeIfExists(Query<T> template, long timeout) throws DataAccessException;
+    <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
      * Takes (removes) all the entries matching the specified template from this
@@ -1437,7 +1437,7 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
@@ -1454,14 +1454,14 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    <T> T[] takeMultiple(Query<T> template, int maxEntries) throws DataAccessException;
+    <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException;
 
     /**
      * Takes (removes) all the entries matching the specified template from this
@@ -1475,7 +1475,7 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
@@ -1496,14 +1496,14 @@ public interface GigaSpace {
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.j_spaces.core.client.Query} classes
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
-    <T> T[] takeMultiple(Query<T> template, int maxEntries, int modifiers) throws DataAccessException;
+    <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.

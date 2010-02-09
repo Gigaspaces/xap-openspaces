@@ -19,8 +19,8 @@ package org.openspaces.core;
 import com.gigaspaces.client.iterator.GSIteratorConfig;
 import com.gigaspaces.client.iterator.IteratorScope;
 import com.gigaspaces.events.EventSessionConfig;
+import com.gigaspaces.query.ISpaceQuery;
 import com.j_spaces.core.client.GSIterator;
-import com.j_spaces.core.client.Query;
 import net.jini.core.lease.Lease;
 
 import java.util.ArrayList;
@@ -141,7 +141,7 @@ public class IteratorBuilder {
      * Adds a template that will be used to control the matching entries the iterator
      * will iterate over.
      */
-    public IteratorBuilder addTemplate(Query query) {
+    public IteratorBuilder addTemplate(ISpaceQuery query) {
         templates.add(query);
         return this;
     }
