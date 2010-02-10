@@ -218,6 +218,8 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
                 logger.debug("Closing application context [" + location + "]");
             }
             try {
+                // null the parent, so the close event won't be sent to it as well...
+                applicationContext.setParent(null);
                 applicationContext.close();
             } finally {
                 applicationContext = null;
