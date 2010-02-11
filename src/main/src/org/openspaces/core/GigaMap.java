@@ -101,6 +101,19 @@ public interface GigaMap extends Map, Cache {
     Object put(Object key, Object value, long timeToLive);
 
     /**
+     * Puts <code>value</code> to the cache with specified <code>key</code> for
+     * <code>timeToLive</code> milliseconds to live in the cache.
+     *
+     * @param key        key for the <code>value</code>
+     * @param value      object(~ entry)
+     * @param timeToLive time to keep object in this cache, in milliseconds
+     * @param timeout    A timeout to use if the object is locked under a transaction (in milliseconds)
+     * @return previous value associated with specified key, or <tt>null</tt>
+     *         if there was no mapping for key.
+     */
+    Object put(Object key, Object value, long timeToLive, long timeout);
+
+    /**
      * Puts <code>value</code> to the cache with specified <code>key</code>.
      *
      * @param key        key for the <code>value</code>

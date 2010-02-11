@@ -178,8 +178,12 @@ public class DefaultGigaMap implements GigaMap {
     }
 
     public Object put(Object key, Object value, long timeToLive) {
+        return put(key, value, timeToLive, defaultWaitForResponse);
+    }
+
+    public Object put(Object key, Object value, long timeToLive, long timeout) {
         try {
-            return map.put(key, value, getCurrentTransaction(), timeToLive);
+            return map.put(key, value, getCurrentTransaction(), timeToLive, timeout);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
