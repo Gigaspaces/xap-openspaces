@@ -16,22 +16,23 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.async.AsyncFutureListener;
-import com.gigaspaces.async.AsyncResultsReducer;
-import com.gigaspaces.query.ISpaceQuery;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.LeaseContext;
+import java.io.Serializable;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
+
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.dao.DataAccessException;
 
-import java.io.Serializable;
+import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncFutureListener;
+import com.gigaspaces.async.AsyncResultsReducer;
+import com.gigaspaces.query.ISpaceQuery;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.LeaseContext;
 
 /**
  * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
@@ -870,10 +871,7 @@ public interface GigaSpace {
      * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
-     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
-     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
-     * number of entries are returned and one or more cluster members are not available.
-     *
+     * 
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -898,10 +896,7 @@ public interface GigaSpace {
      * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
-     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
-     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
-     * number of entries are returned and one or more cluster members are not available.
-     *
+     * 
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -1467,10 +1462,7 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
-     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
-     * number of entries are returned and one or more cluster members are not available.
-     *
+     * 
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -1488,10 +1480,7 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * <p>Another possible modifier is {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
-     * which The modifier will cause {@link QueryMultiplePartialFailureException} to be thrown when not all of the requested
-     * number of entries are returned and one or more cluster members are not available.
-     *
+     * 
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match

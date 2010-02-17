@@ -20,9 +20,9 @@ import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 /**
- * Thrown when not all of the requested number of entries are returned and one or more cluster members are not available.
- *
- * <p>In order to enable this behavior, the following modifier should be passed {@link com.j_spaces.core.client.ReadModifiers#THROW_PARTIAL_FAILURE}
+ * Thrown when not all of the requested number of entries are returned and one or more cluster members returned with exception.<br>
+ * QueryMultiplePartialFailureException contains both the entries that were successfully returned and the exceptions that occurred during operation execution.
+ * <p>In order to disable this behavior, the following modifier should be passed {@link com.j_spaces.core.client.ReadModifiers#IGNORE_PARTIAL_FAILURE}
  * to either {@link org.openspaces.core.GigaSpace#readMultiple(Object, int, int)} or.
  *
  * @author kimchy
