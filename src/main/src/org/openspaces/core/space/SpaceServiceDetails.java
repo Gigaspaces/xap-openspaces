@@ -1,20 +1,20 @@
 package org.openspaces.core.space;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
-import net.jini.core.lookup.ServiceID;
-
-import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.service.PlainServiceDetails;
-
 import com.gigaspaces.internal.client.dcache.localcache.LocalCacheImpl;
 import com.gigaspaces.internal.client.dcache.localview.LocalViewImpl;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import com.j_spaces.core.admin.IRemoteJSpaceAdmin;
 import com.j_spaces.core.client.SpaceURL;
+import net.jini.core.lookup.ServiceID;
+import org.openspaces.core.util.SpaceUtils;
+import org.openspaces.pu.service.PlainServiceDetails;
+
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.rmi.RemoteException;
 
 /**
  * A Space service defined within a processing unit.
@@ -24,7 +24,7 @@ import com.j_spaces.core.client.SpaceURL;
 public class SpaceServiceDetails extends PlainServiceDetails {
 
     public static final String SERVICE_TYPE = "space";
-    
+
     public static final class Attributes {
         public static final String SERVICEID = "service-id";
         public static final String SPACENAME = "space-name";
@@ -33,6 +33,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         public static final String CLUSTERED = "clustered";
         public static final String URL = "url";
         public static final String SPACE_URL = "spaceUrl";
+        public static final String MIRROR = "mirror";
     }
 
     private IJSpace space;
@@ -65,6 +66,15 @@ public class SpaceServiceDetails extends PlainServiceDetails {
             serviceSubType = "remote";
             spaceType = SpaceType.REMOTE;
         } else { // embedded
+            try {
+                if (((IRemoteJSpaceAdmin) space.getAdmin()).getConfig().isMirrorServiceEnabled()) {
+                    getAttributes().put(Attributes.MIRROR, true);
+                } else {
+                    getAttributes().put(Attributes.MIRROR, false);
+                }
+            } catch (RemoteException e) {
+                getAttributes().put(Attributes.MIRROR, false);
+            }
             try {
                 directSpace = ((ISpaceProxy) space).getClusterMember();
                 directSpaceAdmin = (IInternalRemoteJSpaceAdmin) directSpace.getAdmin();
@@ -100,6 +110,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
 
     public SpaceType getSpaceType() {
         return (SpaceType) getAttributes().get(Attributes.SPACETYPE);
+    }
+
+    public boolean isMirror() {
+        return (Boolean) getAttributes().get(Attributes.MIRROR);
     }
 
     public boolean isClustered() {
