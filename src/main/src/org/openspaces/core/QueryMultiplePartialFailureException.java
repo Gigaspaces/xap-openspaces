@@ -29,7 +29,7 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class QueryMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
 
-    private final Object results;
+    private final Object[] results;
 
     private final Throwable[] causes;
 
@@ -50,7 +50,7 @@ public class QueryMultiplePartialFailureException extends InvalidDataAccessResou
     /**
      * Returnst the results from the cluster members that were available.
      */
-    public Object getResults() {
+    public Object[] getResults() {
         return results;
     }
 
