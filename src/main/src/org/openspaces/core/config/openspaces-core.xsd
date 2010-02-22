@@ -1160,7 +1160,7 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             Sets the default timeout to use if TransactionDefinition#TIMEOUT_DEFAULT is used. Set in
-                            seconds (in order to follow the TransactionDefinition contract). Defaults to FOREVER.
+                            milliseconds (in order to follow the TransactionDefinition contract). Defaults to FOREVER.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
