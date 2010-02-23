@@ -16,6 +16,13 @@
 
 package org.openspaces.core.exception;
 
+import java.rmi.RemoteException;
+
+import net.jini.core.transaction.TransactionException;
+
+import org.openspaces.core.*;
+import org.springframework.dao.DataAccessException;
+
 import com.gigaspaces.internal.metadata.converter.ConversionException;
 import com.gigaspaces.security.SecurityException;
 import com.j_spaces.core.MemoryShortageException;
@@ -25,11 +32,6 @@ import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
 import com.j_spaces.core.client.sql.SQLQueryException;
 import com.j_spaces.core.exception.ClosedResourceException;
-import net.jini.core.transaction.TransactionException;
-import org.openspaces.core.*;
-import org.springframework.dao.DataAccessException;
-
-import java.rmi.RemoteException;
 
 /**
  * The default exception translator.
@@ -122,8 +124,9 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new WriteMultiplePartialFailureException((com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException) e, this);
         }
 
+      
         if (e instanceof com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException) {
-            return new QueryMultiplePartialFailureException((com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException) e, this);
+            return new BatchOperationException((com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException) e, this);
         }
 
         if (e instanceof SQLQueryException) {
