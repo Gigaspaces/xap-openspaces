@@ -56,6 +56,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         SpaceURL spaceURL = space.getFinderURL();
         serviceSubType = "embedded";
         SpaceType spaceType = SpaceType.EMBEDDED;
+        getAttributes().put(Attributes.MIRROR, false);
         if (space instanceof LocalViewImpl) {
             serviceSubType = "localview";
             spaceType = SpaceType.LOCAL_VIEW;
@@ -69,8 +70,6 @@ public class SpaceServiceDetails extends PlainServiceDetails {
             try {
                 if (((IRemoteJSpaceAdmin) space.getAdmin()).getConfig().isMirrorServiceEnabled()) {
                     getAttributes().put(Attributes.MIRROR, true);
-                } else {
-                    getAttributes().put(Attributes.MIRROR, false);
                 }
             } catch (RemoteException e) {
                 getAttributes().put(Attributes.MIRROR, false);
