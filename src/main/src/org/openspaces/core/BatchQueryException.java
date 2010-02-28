@@ -28,16 +28,15 @@ import org.openspaces.core.exception.ExceptionTranslator;
  * @author anna
  * @since 7.1
  */
-public class BatchOperationException extends QueryMultiplePartialFailureException {
+public class BatchQueryException extends QueryMultiplePartialFailureException {
 
 
     /**
      * @param cause
      * @param exceptionTranslator
      */
-    public BatchOperationException(com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException cause, ExceptionTranslator exceptionTranslator) {
+    public BatchQueryException(com.j_spaces.core.multiple.query.BatchQueryException cause, ExceptionTranslator exceptionTranslator) {
         super(cause, exceptionTranslator);
-
     }
 
     private static final long serialVersionUID = 1L;

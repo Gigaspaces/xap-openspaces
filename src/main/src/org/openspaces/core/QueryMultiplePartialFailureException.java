@@ -26,7 +26,7 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  * to either {@link org.openspaces.core.GigaSpace#readMultiple(Object, int, int)} or.
  *
  * @author kimchy
- * @deprecated since 7.1. Use {@link BatchOperationException}
+ * @deprecated since 7.1. Use {@link BatchQueryException}
  */
 public class QueryMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
 
@@ -34,7 +34,7 @@ public class QueryMultiplePartialFailureException extends InvalidDataAccessResou
 
     private final Throwable[] causes;
 
-    public QueryMultiplePartialFailureException(com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException cause,
+    public QueryMultiplePartialFailureException(com.j_spaces.core.multiple.query.BatchQueryException cause,
             ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
         this.results = cause.getResults();

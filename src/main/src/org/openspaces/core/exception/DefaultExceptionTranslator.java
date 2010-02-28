@@ -125,8 +125,8 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         }
 
       
-        if (e instanceof com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException) {
-            return new BatchOperationException((com.j_spaces.core.multiple.query.QueryMultiplePartialFailureException) e, this);
+        if (e instanceof com.j_spaces.core.multiple.query.BatchQueryException) {
+            return new BatchQueryException((com.j_spaces.core.multiple.query.BatchQueryException) e, this);
         }
 
         if (e instanceof SQLQueryException) {
