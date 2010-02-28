@@ -28,7 +28,9 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  * @author kimchy
  * @see com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException
  * @see com.j_spaces.core.multiple.write.IWriteResult
+ * @deprecated since 7.1. use {@link BatchWriteException}
  */
+@Deprecated
 public class WriteMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
 
     private static final long serialVersionUID = 1L;
@@ -37,7 +39,7 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
     private final ExceptionTranslator exceptionTranslator;
 
-    public WriteMultiplePartialFailureException(com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException cause, ExceptionTranslator exceptionTranslator) {
+    public WriteMultiplePartialFailureException(com.j_spaces.core.multiple.write.BatchWriteException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
         this.exceptionTranslator = exceptionTranslator;
         results = new IWriteResult[cause.getResults().length];

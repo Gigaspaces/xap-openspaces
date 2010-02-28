@@ -20,7 +20,7 @@ import org.openspaces.core.exception.ExceptionTranslator;
  * <ul>
  * <li>An array of exceptions that caused it. One exception per each space that failed.
  * <li>An array of entries that were successfully read or take.
- * </ul.
+ * </ul>
  *
  * <p>
  * <b>Replaced {@link QueryMultiplePartialFailureException}.</b>
