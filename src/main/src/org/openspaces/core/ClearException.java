@@ -1,13 +1,9 @@
-/**
- *
- */
 package org.openspaces.core;
 
 import org.openspaces.core.exception.ExceptionTranslator;
 
-
 /**
- * Thrown when one of the following space operations fails: <b>readMultiple,takeMultiple,clear.</b>
+ * Thrown when a clear space operations fails.</b>
  *
  * <p>Thrown on:
  * <ul>
@@ -28,17 +24,14 @@ import org.openspaces.core.exception.ExceptionTranslator;
  * @author anna
  * @since 7.1
  */
-public class BatchQueryException extends QueryMultiplePartialFailureException {
-
+public class ClearException extends QueryMultiplePartialFailureException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * @param cause
      * @param exceptionTranslator
      */
-    public BatchQueryException(com.j_spaces.core.multiple.query.BatchQueryException cause, ExceptionTranslator exceptionTranslator) {
+    public ClearException(com.gigaspaces.client.ClearException cause, ExceptionTranslator exceptionTranslator) {
         super(cause, exceptionTranslator);
     }
-
-    private static final long serialVersionUID = 1L;
-
 }

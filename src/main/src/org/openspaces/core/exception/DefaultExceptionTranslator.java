@@ -124,9 +124,14 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new WriteMultipleException((com.gigaspaces.client.WriteMultipleException) e, this);
         }
 
-      
-        if (e instanceof com.j_spaces.core.multiple.query.BatchQueryException) {
-            return new BatchQueryException((com.j_spaces.core.multiple.query.BatchQueryException) e, this);
+        if (e instanceof com.gigaspaces.client.ClearException) {
+            return new ClearException((com.gigaspaces.client.ClearException) e, this);
+        }
+        if (e instanceof com.gigaspaces.client.ReadMultipleException) {
+            return new ReadMultipleException((com.gigaspaces.client.ReadMultipleException) e, this);
+        }
+        if (e instanceof com.gigaspaces.client.TakeMultipleException) {
+            return new TakeMultipleException((com.gigaspaces.client.TakeMultipleException) e, this);
         }
 
         if (e instanceof SQLQueryException) {

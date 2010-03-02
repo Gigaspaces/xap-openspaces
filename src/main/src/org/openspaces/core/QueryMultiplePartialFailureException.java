@@ -34,7 +34,7 @@ public class QueryMultiplePartialFailureException extends InvalidDataAccessResou
 
     private final Throwable[] causes;
 
-    public QueryMultiplePartialFailureException(com.j_spaces.core.multiple.query.BatchQueryException cause,
+    public QueryMultiplePartialFailureException(com.gigaspaces.internal.exceptions.BatchQueryException cause,
             ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
         this.results = cause.getResults();
