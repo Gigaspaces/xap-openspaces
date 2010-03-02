@@ -120,8 +120,8 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new ObjectConversionException((ConversionException) e);
         }
 
-        if (e instanceof com.j_spaces.core.multiple.write.BatchWriteException) {
-            return new WriteMultiplePartialFailureException((com.j_spaces.core.multiple.write.BatchWriteException) e, this);
+        if (e instanceof com.gigaspaces.client.WriteMultipleException) {
+            return new WriteMultipleException((com.gigaspaces.client.WriteMultipleException) e, this);
         }
 
       

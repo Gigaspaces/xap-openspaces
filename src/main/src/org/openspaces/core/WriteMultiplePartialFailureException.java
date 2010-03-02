@@ -16,7 +16,7 @@
 
 package org.openspaces.core;
 
-import com.j_spaces.core.multiple.write.IWriteResult;
+import com.gigaspaces.client.WriteMultipleException.IWriteResult;
 import net.jini.core.lease.Lease;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
@@ -27,8 +27,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  *
  * @author kimchy
  * @see com.j_spaces.core.multiple.write.WriteMultiplePartialFailureException
- * @see com.j_spaces.core.multiple.write.IWriteResult
- * @deprecated since 7.1. use {@link BatchWriteException}
+ * @see com.gigaspaces.client.WriteMultipleException.IWriteResult
+ * @deprecated since 7.1. use {@link WriteMultipleException}
  */
 @Deprecated
 public class WriteMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
@@ -39,7 +39,7 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
     private final ExceptionTranslator exceptionTranslator;
 
-    public WriteMultiplePartialFailureException(com.j_spaces.core.multiple.write.BatchWriteException cause, ExceptionTranslator exceptionTranslator) {
+    public WriteMultiplePartialFailureException(com.gigaspaces.client.WriteMultipleException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
         this.exceptionTranslator = exceptionTranslator;
         results = new IWriteResult[cause.getResults().length];

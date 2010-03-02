@@ -22,11 +22,10 @@ import org.openspaces.core.exception.ExceptionTranslator;
  * @author  eitany
  * @since   7.1
  */
-public class BatchWriteException extends WriteMultiplePartialFailureException {
+public class WriteMultipleException extends WriteMultiplePartialFailureException  {
+    private static final long serialVersionUID = 1L;
 
-    public BatchWriteException(com.j_spaces.core.multiple.write.BatchWriteException cause, ExceptionTranslator exceptionTranslator) {
+    public WriteMultipleException(com.gigaspaces.client.WriteMultipleException cause, ExceptionTranslator exceptionTranslator) {
         super(cause, exceptionTranslator);
     }
-
-    private static final long serialVersionUID = 1L;
 }
