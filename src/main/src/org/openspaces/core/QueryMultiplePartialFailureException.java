@@ -26,7 +26,7 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  * to either {@link org.openspaces.core.GigaSpace#readMultiple(Object, int, int)} or.
  *
  * @author kimchy
- * @deprecated since 7.1. Use {@link BatchQueryException}
+ * @deprecated since 7.1. Use operation specific exception {@link ReadMultipleException},{@link TakeMultipleException} or {@link ClearException}
  */
 public class QueryMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
 
