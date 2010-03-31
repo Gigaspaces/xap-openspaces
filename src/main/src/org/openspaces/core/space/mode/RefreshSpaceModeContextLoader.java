@@ -42,12 +42,21 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
     }
 
     protected void loadApplicationContext() throws Exception {
+        if (applicationContext != null) {
+            return;
+        }
         if (classLoader.getClass().equals(URLClassLoader.class)) {
             URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
             childAppContextClassLoader = new URLClassLoader(urlClassLoader.getURLs(), urlClassLoader.getParent());
         } else if (classLoader instanceof ServiceClassLoader) {
             ServiceClassLoader serviceClassLoader = (ServiceClassLoader) classLoader;
-            childAppContextClassLoader = new ServiceClassLoader(serviceClassLoader.getName(), new URL[0], serviceClassLoader.getClassAnnotator(), serviceClassLoader); // we rely on parent last here
+            String name = serviceClassLoader.getName();
+            if (beanName != null) {
+                name = name + "/" + beanName;
+            } else {
+                name = name + "/{refreshable}";
+            }
+            childAppContextClassLoader = new ServiceClassLoader(name, new URL[0], serviceClassLoader.getClassAnnotator(), serviceClassLoader); // we rely on parent last here
             ((ServiceClassLoader) childAppContextClassLoader).setLibPath(serviceClassLoader.getLibPath());
             ((ServiceClassLoader) childAppContextClassLoader).setSlashPath(serviceClassLoader.getSlashPath());
         } else {

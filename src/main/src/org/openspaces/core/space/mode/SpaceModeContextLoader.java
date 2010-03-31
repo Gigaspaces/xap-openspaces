@@ -30,6 +30,7 @@ import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -60,13 +61,15 @@ import org.springframework.util.MethodInvoker;
  * @author kimchy
  */
 public class SpaceModeContextLoader implements ApplicationContextAware, InitializingBean, DisposableBean,
-        ApplicationListener, BeanLevelPropertiesAware, ClusterInfoAware {
+        ApplicationListener, BeanLevelPropertiesAware, ClusterInfoAware, BeanNameAware {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
     private Resource location;
 
     private GigaSpace gigaSpace;
+
+    protected String beanName;
 
     private boolean activeWhenPrimary = true;
 
@@ -76,7 +79,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
 
     private ClusterInfo clusterInfo;
 
-    private volatile ResourceApplicationContext applicationContext;
+    protected volatile ResourceApplicationContext applicationContext;
 
     /**
      * The location of the Spring xml context application to be loaded.
@@ -122,6 +125,10 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.parentApplicationContext = applicationContext;
+    }
+
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     public void afterPropertiesSet() throws Exception {
