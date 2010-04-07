@@ -191,6 +191,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof com.gigaspaces.cluster.replication.RedoLogCapacityExceededException){
             return new RedoLogCapacityExceededException((com.gigaspaces.cluster.replication.RedoLogCapacityExceededException)e);
         }
+        
+        if (e instanceof com.gigaspaces.client.ResourceCapacityExceededException){
+            return new ResourceCapacityExceededException((com.gigaspaces.client.ResourceCapacityExceededException)e);
+        }
+            
             
 
         return null;

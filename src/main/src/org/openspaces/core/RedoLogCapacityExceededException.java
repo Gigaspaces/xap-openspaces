@@ -1,7 +1,5 @@
 package org.openspaces.core;
 
-import org.springframework.dao.DataAccessException;
-
 /**
  * This exeception indicates the redo log reached its planned capacity and operations should be blocked until
  * the redolog size is reduced
@@ -10,7 +8,7 @@ import org.springframework.dao.DataAccessException;
  * @author	eitany
  * @since	7.1
  */
-public class RedoLogCapacityExceededException extends DataAccessException {
+public class RedoLogCapacityExceededException extends ResourceCapacityExceededException {
 
     private final com.gigaspaces.cluster.replication.RedoLogCapacityExceededException e;
 

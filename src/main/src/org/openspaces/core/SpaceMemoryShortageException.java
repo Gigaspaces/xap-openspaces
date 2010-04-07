@@ -17,7 +17,6 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.MemoryShortageException;
-import org.springframework.dao.DataAccessException;
 
 /**
  * This Exception indicates that the space server process reached
@@ -26,7 +25,7 @@ import org.springframework.dao.DataAccessException;
  *
  * @author kimchy
  */
-public class SpaceMemoryShortageException extends DataAccessException {
+public class SpaceMemoryShortageException extends ResourceCapacityExceededException {
 
     private MemoryShortageException e;
 
