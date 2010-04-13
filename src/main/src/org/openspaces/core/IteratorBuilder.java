@@ -31,7 +31,7 @@ import java.util.List;
  * chaining for simple configuration of an iterator and then call {@link #iterate()} to get the
  * actual iterator.
  *
- * <p>By default, when no template is added (using {@link #addTemplate(Object)} or
+ * <p>By default, when no template is added (using {@link #addTemplate(ISpaceQuery)} or
  * {@link #addTemplate(com.j_spaces.core.client.Query)}, a null template will be used to iterate
  * over all the content of the Space.
  *

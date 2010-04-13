@@ -1615,7 +1615,7 @@ public interface GigaSpace {
      * value for each corresponds to it's cell in the returned array.
      * see <code>'returns'</code> for possible return values.
      * 
-     * @param objects           the objects to write. 
+     * @param entries           the entries to write. 
      * @param lease             the requested lease time, in milliseconds
      * @param updateModifiers   operation modifiers, values from {@link com.j_spaces.core.client.UpdateModifiers UpdateModifiers}.
      *         
