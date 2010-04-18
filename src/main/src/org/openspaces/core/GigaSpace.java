@@ -1371,10 +1371,10 @@ public interface GigaSpace {
     <T> T takeIfExists(T template) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space, blocking until one exists.
-     * Return <code>null</code> if the timeout expires. Matching and timeouts are
-     * done as in <code>take</code>, except that blocking in this call is done
-     * only if necessary to wait for transactional state to settle.
+     * Take (remove) any matching entry from the space, returning <code>null</code> if
+     * there currently is none. Matching and timeouts are done as in <code>take</code>,
+     * except that blocking in this call is done only if necessary to wait for transactional
+     * state to settle.
      *
      * @param template The template used for matching. Matching is done against
      *                 the template with <code>null</code> fields being wildcards (
