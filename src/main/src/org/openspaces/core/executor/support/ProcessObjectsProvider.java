@@ -10,7 +10,7 @@ package org.openspaces.core.executor.support;
 public interface ProcessObjectsProvider {
 
     /**
-     * Retuns an array of objects that needs processing on the space node side. Processing an
+     * Returns an array of objects that needs processing on the space node side. Processing an
  * objects allows to inject resources defined within the processing unit.
      */
     Object[] getObjectsToProcess();

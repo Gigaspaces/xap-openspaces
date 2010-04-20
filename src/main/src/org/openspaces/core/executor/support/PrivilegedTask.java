@@ -39,7 +39,7 @@ public class PrivilegedTask<T extends Serializable> extends SimpleDelegatingTask
     private transient Exception exception;
 
     /**
-     * Here for externalizable.
+     * Here for Externalizable.
      */
     public PrivilegedTask() {
         super();
@@ -53,7 +53,7 @@ public class PrivilegedTask<T extends Serializable> extends SimpleDelegatingTask
     }
 
     /**
-     * Exeutes the provided task under access controls.
+     * Executes the provided task under access controls.
      */
     public T execute() throws Exception {
         AccessControlContext acc = AccessController.getContext();

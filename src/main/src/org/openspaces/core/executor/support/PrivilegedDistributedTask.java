@@ -45,7 +45,7 @@ public class PrivilegedDistributedTask<T extends Serializable, R> extends Abstra
     private transient Exception exception;
 
     /**
-     * Here for externlizable.
+     * Here for Externalizable.
      */
     public PrivilegedDistributedTask() {
         super();
@@ -108,7 +108,7 @@ public class PrivilegedDistributedTask<T extends Serializable, R> extends Abstra
     }
 
     /**
-     * Exeutes the filter (if provided) under access controls.
+     * Executes the filter (if provided) under access controls.
      */
     public Decision onResult(final AsyncResultFilterEvent<T> event) {
         if (getFilter() == null) {

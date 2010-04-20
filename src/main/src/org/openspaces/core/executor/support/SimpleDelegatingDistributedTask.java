@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * A simple impelemntation of delegating distributed task that accepts the task to delegate to.
+ * A simple implementation of delegating distributed task that accepts the task to delegate to.
  *
  * @author kimchy
  */

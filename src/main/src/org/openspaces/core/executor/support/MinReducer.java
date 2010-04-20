@@ -24,7 +24,7 @@ import org.openspaces.core.util.numbers.NumberHelperFactory;
 import java.util.List;
 
 /**
- * A default implementation of a reducer that returnt the minimum of <code>T</code>.
+ * A default implementation of a reducer that return the minimum of <code>T</code>.
  *
  * @author kimchy
  */

@@ -25,7 +25,7 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
- * A simple impelemntation of delegating task that accepts the task to delegate to.
+ * A simple implementation of delegating task that accepts the task to delegate to.
  *
  * @author kimchy
  */
