@@ -27,14 +27,14 @@ import java.io.ObjectOutput;
 import java.util.List;
 
 /**
- * A min distrubted task that accepts a {@link org.openspaces.core.executor.Task} to delegate
+ * A min distrubuted task that accepts a {@link org.openspaces.core.executor.Task} to delegate
  * the actual execution to and implements the {@link #reduce(java.util.List)} operation.
  *
- * <p>By defualt, throws an exception if one of the execution fails. {@link #ignoreExceptions()}
+ * <p>By default, throws an exception if one of the execution fails. {@link #ignoreExceptions()}
  * can be called to only perform the operation on all the successful operations, ignoring the failed
  * ones.
  *
- * <p>Can accept an optioanl {@link com.gigaspaces.async.AsyncResultFilter}.
+ * <p>Can accept an optional {@link com.gigaspaces.async.AsyncResultFilter}.
  *
  * @author kimchy
  * @see org.openspaces.core.executor.support.MaxReducer
@@ -71,7 +71,7 @@ public class MinTask<T extends Number> extends AbstractDelegatingDistributedTask
     }
 
     /**
-     * Sests the {@link #reduce(java.util.List)} to ignore failed invocations.
+     * Sets the {@link #reduce(java.util.List)} to ignore failed invocations.
      */
     public MinTask ignoreExceptions() {
         this.reducer.ignoreExceptions();
