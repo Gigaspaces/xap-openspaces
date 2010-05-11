@@ -21,6 +21,10 @@ import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultFilter;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.async.FutureFactory;
+import com.gigaspaces.client.IReadByIdsResult;
+import com.gigaspaces.client.ITakeByIdsResult;
+import com.gigaspaces.client.ReadByIdsResult;
+import com.gigaspaces.internal.client.QueryResultType;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.query.ISpaceQuery;
 
@@ -834,4 +838,84 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> AsyncFuture<T> wrapFuture(AsyncFuture<T> future, Transaction tx) {
         return new InternalAsyncFuture<T>(future, this, tx);
     }
+
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    
+    public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
