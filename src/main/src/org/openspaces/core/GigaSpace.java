@@ -930,6 +930,10 @@ public interface GigaSpace {
      * <p>Note, if the space is partitioned, and the Class doesn't have a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #readByIds(Class, Object[], Object, int)} can be used to specify the routing.
+     * 
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
+     * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
@@ -971,6 +975,9 @@ public interface GigaSpace {
      * <p>Note, the IDs and Routings arrays are correlated and should be in the same size.
      * If routings is null and the cluster is partitioned, the operation will broadcast to
      * all of the partitions. 
+     *
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
      * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
@@ -986,6 +993,9 @@ public interface GigaSpace {
      * <p>Note, if routings is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      * 
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
+     * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
      * @param routings  The objects routings array.
@@ -1000,6 +1010,9 @@ public interface GigaSpace {
      * <p>Note, if the space is partitioned, and the Class doesn't have a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #takeByIds(Class, Object[], Object)} can be used to specify the routing.
+     *
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
      * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
@@ -1015,6 +1028,9 @@ public interface GigaSpace {
      * <p>Note, if the space is partitioned, and the Class doesn't have a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #takeByIds(Class, Object[], Object, int)} can be used to specify the routing.
+     *
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
      * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
@@ -1042,6 +1058,9 @@ public interface GigaSpace {
      * 
      * <p>Note, if routing is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
+     *
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
      * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
@@ -1069,6 +1088,9 @@ public interface GigaSpace {
      * 
      * <p>Note, if routings is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
+     *
+     * <p>FIFO is not supported by this operation - the results order are always correlated to
+     * the specified IDs array.
      * 
      * @param clazz     The class type.
      * @param ids       The objects IDs array.
