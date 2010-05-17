@@ -24,6 +24,7 @@ import com.gigaspaces.async.FutureFactory;
 import com.gigaspaces.client.IReadByIdsResult;
 import com.gigaspaces.client.ITakeByIdsResult;
 import com.gigaspaces.client.ReadByIdsResult;
+import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.internal.client.QueryResultType;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.query.ISpaceQuery;
@@ -85,8 +86,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     private long defaultWriteLease = Lease.FOREVER;
 
-    private int defaultIsolationLevel;
 
+    private int defaultIsolationLevel;
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
     private DefaultGigaSpace clusteredGigaSpace;
@@ -839,6 +840,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         return new InternalAsyncFuture<T>(future, this, tx);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) {
+        try {
+            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }    
+    
+    @SuppressWarnings("unchecked")
     public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) {
         try {
             return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultType.POJO));
@@ -847,6 +858,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
         try {
             return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultType.POJO));
@@ -855,6 +867,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
         try {
             return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultType.POJO));
@@ -863,14 +876,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) {
-        try {
-            return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
-        } catch (Exception e) {
-            throw exTranslator.translate(e);
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing) {
         try {
             return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
@@ -879,6 +885,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings) {
         try {
             return new ReadByIdsResult<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
@@ -887,35 +894,58 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
     
-    
+    @SuppressWarnings("unchecked")
     public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new TakeByIdsResult<T>((T[]) space.takeByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new TakeByIdsResult<T>((T[]) space.takeByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new TakeByIdsResult<T>((T[]) space.takeByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new TakeByIdsResult<T>((T[]) space.takeByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new TakeByIdsResult<T>((T[]) space.takeByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new TakeByIdsResult<T>((T[]) space.takeByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultType.POJO));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
 }

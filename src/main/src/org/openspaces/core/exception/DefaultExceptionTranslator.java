@@ -130,6 +130,12 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof com.gigaspaces.client.ReadMultipleException) {
             return new ReadMultipleException((com.gigaspaces.client.ReadMultipleException) e, this);
         }
+        if (e instanceof com.gigaspaces.client.ReadByIdsException) {
+            return new ReadByIdsException((com.gigaspaces.client.ReadByIdsException) e, this);
+        }
+        if (e instanceof com.gigaspaces.client.TakeByIdsException) {
+            return new TakeByIdsException((com.gigaspaces.client.TakeByIdsException) e, this);
+        }
         if (e instanceof com.gigaspaces.client.TakeMultipleException) {
             return new TakeMultipleException((com.gigaspaces.client.TakeMultipleException) e, this);
         }
