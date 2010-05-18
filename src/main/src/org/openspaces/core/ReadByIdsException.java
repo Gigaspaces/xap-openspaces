@@ -3,6 +3,7 @@ package org.openspaces.core;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
+import com.gigaspaces.client.ReadTakeByIdResult;
 import com.gigaspaces.client.ReadByIdsException.IReadByIdResult;
 
 /**
@@ -47,10 +48,16 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
         
     private class TranslatedReadByIdResult implements IReadByIdResult {
 
-        private IReadByIdResult _result;
+        private ReadTakeByIdResult _result;
+        private ReadByIdResultType _resultType;
         
-        public TranslatedReadByIdResult(IReadByIdResult result) {
+        public TranslatedReadByIdResult(ReadTakeByIdResult result) {
             _result = result;
+            if (_result.isError()) {
+                _resultType = ReadByIdResultType.ERROR;                
+            } else {
+                _resultType = (_result.getObject() == null)? ReadByIdResultType.NOT_FOUND : ReadByIdResultType.OBJECT;
+            }
         }
         
         public Throwable getError() {
@@ -70,7 +77,11 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
 
         public boolean isError() {
             return _result.isError();
-        }        
+        }
+        
+        public ReadByIdResultType getResultType() {
+            return _resultType;
+        }
     }
     
     
