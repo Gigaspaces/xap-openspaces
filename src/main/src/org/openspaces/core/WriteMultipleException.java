@@ -2,6 +2,8 @@ package org.openspaces.core;
 
 import org.openspaces.core.exception.ExceptionTranslator;
 
+import com.gigaspaces.client.WriteMultipleException.IWriteResult;
+
 /**
  * Thrown when writeMultiple operation fails.
  *
@@ -28,4 +30,11 @@ public class WriteMultipleException extends WriteMultiplePartialFailureException
     public WriteMultipleException(com.gigaspaces.client.WriteMultipleException cause, ExceptionTranslator exceptionTranslator) {
         super(cause, exceptionTranslator);
     }
+
+    @Override
+    public IWriteResult[] getResults() {
+        return super.getResults();
+    }
+    
+    
 }
