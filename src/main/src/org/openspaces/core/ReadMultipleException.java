@@ -39,4 +39,16 @@ public class ReadMultipleException extends QueryMultiplePartialFailureException 
     public ReadMultipleException(com.gigaspaces.client.ReadMultipleException cause, ExceptionTranslator exceptionTranslator) {
         super(cause, exceptionTranslator);
     }
+
+    @Override
+    public Throwable[] getCauses() {
+        return super.getCauses();
+    }
+
+    @Override
+    public Object[] getResults() {
+        return super.getResults();
+    }
+    
+    
 }

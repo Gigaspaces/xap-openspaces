@@ -39,4 +39,16 @@ public class TakeMultipleException extends QueryMultiplePartialFailureException 
     public TakeMultipleException(com.gigaspaces.client.TakeMultipleException cause, ExceptionTranslator exceptionTranslator) {
         super(cause, exceptionTranslator);
     }
+
+    @Override
+    public Throwable[] getCauses() {
+        return super.getCauses();
+    }
+
+    @Override
+    public Object[] getResults() {
+        return super.getResults();
+    }
+    
+    
 }
