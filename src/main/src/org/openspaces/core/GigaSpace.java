@@ -30,8 +30,8 @@ import org.springframework.dao.DataAccessException;
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultsReducer;
-import com.gigaspaces.client.IReadByIdsResult;
-import com.gigaspaces.client.ITakeByIdsResult;
+import com.gigaspaces.client.ReadByIdsResult;
+import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.query.ISpaceQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
@@ -913,192 +913,203 @@ public interface GigaSpace {
     <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
-     * Read objects from the space matching their IDs and the specified class type.
+     * Read objects from the space matching their IDs and the specified class.
      *
-     * <p>Note, if the space is partitioned, and the Class doesn't a specific property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #readByIds(Class, Object[], Object)} can be used to specify the routing.
-     * @param clazz The class type.
-     * @param ids   The objects IDs array.
-     * @return An IReadByIdsResult reference containing the matched results.
+     * <p>Note, if the space is partitioned and the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.
+     * 
+     * @param clazz The class.
+     * @param ids   The object IDs array.
+     * @return a ReadByIdsResult containing the matched results.
      */
-    <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) throws DataAccessException;
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) throws DataAccessException;
 
     /**
-     * Read objects from the space matching their IDs and the specified class type.
+     * Read objects from the space matching their IDs and the specified class, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
      *
-     * <p>Note, if the space is partitioned, and the Class doesn't have a specific property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #readByIds(Class, Object[], Object, int)} can be used to specify the routing.
+     * <p>Note, if the space is partitioned and the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.     
+     *
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
      * 
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
-     * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An IReadByIdsResult reference containing the matched results.
+     * @param clazz     The class.
+     * @param ids       The object IDs array.
+     * @param modifiers The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a ReadByIdsResult containing the matched results.
      */
-    <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) throws DataAccessException;
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) throws DataAccessException;
     
     
     /**
-     * Read objects from the space matching their IDs, the specified class type and routing.
+     * Read objects from the space matching their IDs, the specified class and routing key.
      * 
-     * <p>Note, if routing is null and the cluster is partitioned, the operation will broadcast
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routing   The routing of the specified objects IDs.
-     * @return An IReadByIdsResult reference containing the matched results.
+     * @param clazz         The class.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @return a ReadByIdsResult containing the matched results.
      */
-    <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing) throws DataAccessException;
-    
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey) throws DataAccessException;
+
     /**
-     * Read objects from the space matching their IDs, the specified class type and routings.
+     * Read objects from the space matching their IDs, the specified class type and routing key, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
      * 
-     * <p>Note, the IDs and Routings arrays are correlated and should be in the same size.
-     * If routings is null and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions. 
-     * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routings  The objects routings array.  
-     * @return An IReadByIdsResult reference containing the matched results.
-     */
-    <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings) throws DataAccessException;
-        
-    /**
-     * Read objects from the space matching their IDs, the specified class type and routing.
-     * 
-     * <p>Note, the IDs and Routings arrays are correlated and should be in the same size.
-     * If routings is null and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions. 
-     *
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
-     * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routing   The routing value.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An IReadByIdsResult reference containing the matched results.
-     */
-    <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) throws DataAccessException;
-    
-    /**
-     * Read objects from the space matching their IDs, the specified class type and routings.
-     * 
-     * <p>Note, if routings is null and the cluster is partitioned, the operation will broadcast
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
+     *
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
      * 
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
-     * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routings  The objects routings array.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An IReadByIdsResult reference containing the matched results.
+     * @param clazz         The class.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @param modifiers     The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a ReadByIdsResult containing the matched results.
      */
-    <T> IReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) throws DataAccessException;
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
+    
+    /**
+     * Read objects from the space matching their IDs, the specified class and the routing keys.
+     * 
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
+     * 
+     * @param clazz         The class.
+     * @param ids           The object IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys) throws DataAccessException;       
+    
+    /**
+     * Read objects from the space matching their IDs, the specified class and the routing keys, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * 
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
+     * 
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param clazz         The class type.
+     * @param ids           The objects\ IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
             
     /**
-     * Take (remove) objects from the space matching their IDs and class type.
-     * 
-     * <p>Note, if the space is partitioned, and the Class doesn't have a specific property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #takeByIds(Class, Object[], Object)} can be used to specify the routing.
+     * Take (remove) objects from the space matching their IDs and the specified class.
      *
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
+     * <p>Note, if the space is partitioned, or the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routing   The routing value.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An ITakeByIdsResult reference containing the matched results.
+     * @param clazz The class.
+     * @param ids   The object IDs array.
+     * @return a TakeByIdsResult containing the matched results.
      */
-    <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) throws DataAccessException;
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) throws DataAccessException;
 
     /**
-     * Take (remove) objects from the space matching their IDs and class type.
-     * 
-     * <p>Note, if the space is partitioned, and the Class doesn't have a specific property
-     * for its routing value, the operation will broadcast to all partitions. The
-     * {@link #takeByIds(Class, Object[], Object, int)} can be used to specify the routing.
+     * Take (remove) objects from the space matching their IDs and the specified class, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
      *
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
+     * <p>Note, if the space is partitioned, or the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.     
+     *
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routing   The routing value.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An ITakeByIdsResult reference containing the matched results.
+     * @param clazz     The class.
+     * @param ids       The object IDs array.
+     * @param modifiers The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a TakeByIdsResult containing the matched results.
      */
-    <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) throws DataAccessException;
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) throws DataAccessException;
 
     /**
-     * Take (remove) objects from the space matching their IDs, the class type and routing. 
+     * Take (remove) objects from the space matching their IDs, the specified class and routing key.
      * 
-     * <p>Note, if routing is null and the cluster is partitioned, the operation will broadcast
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routing   The routing value.
-     * @return An ITakeByIdsResult reference containing the matched results.
+     * @param clazz         The class.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @return a TakeByIdsResult containing the matched results.
      */
-    <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing) throws DataAccessException;
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey) throws DataAccessException;
 
     /**
-     * Take (remove) objects from the space matching their IDs, the class type and routing. 
+     * Take (remove) objects from the space matching their IDs, the specified class type and routing key, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
      * 
-     * <p>Note, if routing is null and the cluster is partitioned, the operation will broadcast
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      *
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routing   The routing value.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An ITakeByIdsResult reference containing the matched results.
+     * @param clazz         The class.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @param modifiers     The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a TakeByIdsResult containing the matched results.
      */
-    <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) throws DataAccessException;
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
         
     /**
-     * Take (remove) objects from the space matching their IDs, the class type and routings. 
+     * Take (remove) objects from the space matching their IDs, the specified class and the routing keys.
      * 
-     * <p>Note, if routings is null and the cluster is partitioned, the operation will broadcast
-     * to all of the partitions.
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routings  The objects Routings array.
-     * @return An ITakeByIdsResult reference containing the matched results.
+     * @param clazz         The class.
+     * @param ids           The object IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @return a TakeByIdsResult containing the matched results.
      */
-    <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings) throws DataAccessException;
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys) throws DataAccessException;
     
     /**
-     * Take (remove) objects from the space matching their IDs, the class type and routings. 
+     * Take (remove) objects from the space matching their IDs, the specified class and the routing keys, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
      * 
-     * <p>Note, if routings is null and the cluster is partitioned, the operation will broadcast
-     * to all of the partitions.
-     *
-     * <p>FIFO is not supported by this operation - the results order are always correlated to
-     * the specified IDs array.
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
      * 
-     * @param clazz     The class type.
-     * @param ids       The objects IDs array.
-     * @param routings  The objects Routings array.
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param clazz         The class type.
+     * @param ids           The objects\ IDs array.
+     * @param routingKeys   The object routing keys array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return An ITakeByIdsResult reference containing the matched results.
+     * @return a TakeByIdsResult containing the matched results.
      */
-    <T> ITakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) throws DataAccessException;   
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
     
     /**
      * Take (remove) an object from the space matching its id and the class. Returns

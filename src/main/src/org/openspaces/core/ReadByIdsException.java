@@ -4,7 +4,7 @@ import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import com.gigaspaces.client.ReadTakeByIdResult;
-import com.gigaspaces.client.ReadByIdsException.IReadByIdResult;
+import com.gigaspaces.client.ReadByIdsException.ReadByIdResult;
 
 /**
  * Thrown when readByIds operation fails.
@@ -27,12 +27,12 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
 
     private static final long serialVersionUID = 1L;
     private ExceptionTranslator _exceptionTranslator;
-    private IReadByIdResult[] _results;
+    private ReadByIdResult[] _results;
     
     public ReadByIdsException(com.gigaspaces.client.ReadByIdsException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
         _exceptionTranslator = exceptionTranslator;
-        _results = new IReadByIdResult[cause.getResults().length];
+        _results = new ReadByIdResult[cause.getResults().length];
         for (int i = 0; i < _results.length; i++) {
             _results[i] = new TranslatedReadByIdResult(cause.getResults()[i]);
         }
@@ -42,11 +42,11 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
      * Returns the results contained in the exception.
      * @return An array of IReadByIdResult objects.
      */
-    public IReadByIdResult[] getResults() {
+    public ReadByIdResult[] getResults() {
         return _results;
     }
         
-    private class TranslatedReadByIdResult implements IReadByIdResult {
+    private class TranslatedReadByIdResult implements ReadByIdResult {
 
         private ReadTakeByIdResult _result;
         private ReadByIdResultType _resultType;
