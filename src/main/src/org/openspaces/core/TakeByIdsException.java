@@ -1,3 +1,4 @@
+// JAVA-DOC-STAMP
 package org.openspaces.core;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -40,7 +41,7 @@ public class TakeByIdsException extends InvalidDataAccessResourceUsageException 
 
     /**
      * Returns the results contained in the exception.
-     * @return An array of IReadByIdResult objects.
+     * @return An array of TakeByIdResult objects.
      */
     public TakeByIdResult[] getResults() {
         return _results;

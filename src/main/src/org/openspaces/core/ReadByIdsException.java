@@ -1,3 +1,4 @@
+// JAVA-DOC-STAMP
 package org.openspaces.core;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -15,7 +16,7 @@ import com.gigaspaces.client.ReadByIdsException.ReadByIdResult;
  * <li>Cluster/single space topologies. 
  * </ul>
  *
- * <p>The exception contains an array of IReadByIdResult objects where each result in the array contains
+ * <p>The exception contains an array of ReadByIdResult objects where each result in the array contains
  * either a read object or an exception upon failure. The result array index corresponds to the ID index in
  * the operation's supplied IDs array.
  * 
@@ -40,7 +41,7 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
 
     /**
      * Returns the results contained in the exception.
-     * @return An array of IReadByIdResult objects.
+     * @return An array of ReadByIdResult objects.
      */
     public ReadByIdResult[] getResults() {
         return _results;
