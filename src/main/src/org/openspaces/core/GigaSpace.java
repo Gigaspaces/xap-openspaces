@@ -1554,10 +1554,10 @@ public interface GigaSpace {
     <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space, blocking until one exists.
-     * Return <code>null</code> if the timeout expires. Matching and timeouts are
-     * done as in <code>take</code>, except that blocking in this call is done
-     * only if necessary to wait for transactional state to settle.
+     * Take (remove) any matching entry from the space, returning <code>null</code> if
+     * there currently is none. Matching and timeouts are done as in <code>take</code>, 
+     * except that blocking in this call is done only if necessary to wait for transactional 
+     * state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
@@ -1591,10 +1591,10 @@ public interface GigaSpace {
     <T> T takeIfExists(T template, long timeout) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space, blocking until one exists.
-     * Return <code>null</code> if the timeout expires. Matching and timeouts are
-     * done as in <code>take</code>, except that blocking in this call is done
-     * only if necessary to wait for transactional state to settle.
+     * Take (remove) any matching entry from the space, returning <code>null</code> if
+     * there currently is none. Matching and timeouts are done as in <code>take</code>,
+     * except that blocking in this call is done only if necessary to wait for transactional
+     * state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
@@ -1608,10 +1608,10 @@ public interface GigaSpace {
     <T> T takeIfExists(ISpaceQuery<T> template) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space, blocking until one exists.
-     * Return <code>null</code> if the timeout expires. Matching and timeouts are
-     * done as in <code>take</code>, except that blocking in this call is done
-     * only if necessary to wait for transactional state to settle.
+     * Take (remove) any matching entry from the space, returning <code>null</code> if
+     * there currently is none. Matching and timeouts are done as in <code>take</code>,
+     * except that blocking in this call is done only if necessary to wait for transactional
+     * state to settle.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
