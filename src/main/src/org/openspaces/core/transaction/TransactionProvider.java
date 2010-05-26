@@ -43,8 +43,8 @@ public interface TransactionProvider {
      * If no transaction is currently executing, <code>null</code> value will be returned. This
      * usually means that the operation will be performed without a transaction.
      *
-     * @param transactionalContext Transactional context to (optionally) fetch the transcation by
-     * @param space                The actual Space this operation will be perfomed on
+     * @param transactionalContext Transactional context to (optionally) fetch the transaction by
+     * @param space                The actual Space this operation will be performed on
      * @return The transaction object to be used with {@link com.j_spaces.core.IJSpace} operations.
      *         Can be <code>null</code>.
      */
@@ -56,7 +56,7 @@ public interface TransactionProvider {
      * transactional context can be passed and optionally used in order to fetch the current running
      * transaction.
      *
-     * @param transactionalContext Transactional context to (optionally) fetch the transcation by
+     * @param transactionalContext Transactional context to (optionally) fetch the transaction by
      * @return The transaction isolation level mapping to Spring
      *         {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}.
      */

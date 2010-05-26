@@ -36,7 +36,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * Defaut transaction provider works in conjunction with
+ * Default transaction provider works in conjunction with
  * {@link org.openspaces.core.transaction.manager.JiniPlatformTransactionManager JiniPlatformTransactionManager}
  * and one of its derived classes. Uses Spring support for transactional resource binding (using
  * thread local) in order to get the current transaction. If no transaction is active, will return
@@ -102,7 +102,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
             return txObject.getTxCreated();
         }
 
-        // try and perform early exit when we should not support declerative transactions for better perfromance
+        // try and perform early exit when we should not support declarative transactions for better performance
         if (actualTransactionalContext == null && !isJta) {
             return null;
         }
@@ -123,7 +123,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
                 }
             }
 
-            // regsiter and enlist a new XA resource with the transaction manager
+            // Register and enlist a new XA resource with the transaction manager
             JtaTransactionManager jtaTransactionManager = (JtaTransactionManager) transactionManager;
             LocalTransactionManager localTxManager;
             try {
@@ -132,7 +132,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
                 throw new TransactionDataAccessException("Failed to get local transaction manager for space [" + space + "]", e);
             }
             XAResource xaResourceSpace = new XAResourceImpl(localTxManager, space);
-            // set the default timoeut to be the one specified on the JTA transaction manager
+            // set the default timeout to be the one specified on the JTA transaction manager
             if (jtaTransactionManager.getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                 try {
                     xaResourceSpace.setTransactionTimeout(jtaTransactionManager.getDefaultTimeout() * 1000);
@@ -179,7 +179,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
         if (isJta) {
             return null;
         }
-        // try and perform early exit when we should not support declerative transactions for better perfromance
+        // try and perform early exit when we should not support declarative transactions for better performance
         if (actualTransactionalContext == null) {
             return null;
         }
@@ -222,7 +222,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
     }
 
     /**
-     * A Spring synctonization that acts as a placeholder for the Space associtaed with the current
+     * A Spring synctonization that acts as a placeholder for the Space associated with the current
      * Spring transaction.
      */
     private static class SpaceAndTransactionSync implements TransactionSynchronization {
