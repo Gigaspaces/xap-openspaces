@@ -919,7 +919,7 @@ public interface GigaSpace {
      * for its routing value (which means that the ID property is not used for routing),
      * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
      * can be used to specify the routing explicitly.
-     * 
+     *
      * @param clazz The class.
      * @param ids   The object IDs array.
      * @return a ReadByIdsResult containing the matched results.
@@ -934,7 +934,7 @@ public interface GigaSpace {
      * for its routing value (which means that the ID property is not used for routing),
      * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
      * can be used to specify the routing explicitly.     
-     *
+     * 
      * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
@@ -958,14 +958,14 @@ public interface GigaSpace {
      * @return a ReadByIdsResult containing the matched results.
      */
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey) throws DataAccessException;
-
+    
     /**
      * Read objects from the space matching their IDs, the specified class type and routing key, with the
      * provided {@link com.j_spaces.core.client.ReadModifiers}.
      * 
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
-     *
+     * 
      * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
@@ -976,7 +976,7 @@ public interface GigaSpace {
      * @return a ReadByIdsResult containing the matched results.
      */
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
-    
+        
     /**
      * Read objects from the space matching their IDs, the specified class and the routing keys.
      * 
@@ -984,7 +984,7 @@ public interface GigaSpace {
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
      * all of the partitions. 
-     * 
+     *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKeys   The object routing keys array.
@@ -1004,7 +1004,7 @@ public interface GigaSpace {
      * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
-     * @param clazz         The class type.
+     * @param clazz     The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
@@ -1014,12 +1014,12 @@ public interface GigaSpace {
             
     /**
      * Take (remove) objects from the space matching their IDs and the specified class.
-     *
+     * 
      * <p>Note, if the space is partitioned, or the Class defines a specific property
      * for its routing value (which means that the ID property is not used for routing),
      * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
      * can be used to specify the routing explicitly.
-     * 
+     *
      * @param clazz The class.
      * @param ids   The object IDs array.
      * @return a TakeByIdsResult containing the matched results.
@@ -1029,7 +1029,7 @@ public interface GigaSpace {
     /**
      * Take (remove) objects from the space matching their IDs and the specified class, with the
      * provided {@link com.j_spaces.core.client.ReadModifiers}.
-     *
+     * 
      * <p>Note, if the space is partitioned, or the Class defines a specific property
      * for its routing value (which means that the ID property is not used for routing),
      * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
@@ -1071,7 +1071,7 @@ public interface GigaSpace {
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
-     * @param modifiers     The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a TakeByIdsResult containing the matched results.
      */
     <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
@@ -1099,11 +1099,11 @@ public interface GigaSpace {
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
      * all of the partitions. 
-     * 
+     *
      * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
-     * @param clazz         The class type.
+     * @param clazz     The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
@@ -1118,7 +1118,7 @@ public interface GigaSpace {
      * <p>The timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
      *
-     * <p>Note, if the space is partitioned, and the Entry has a specfic property
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
      *
