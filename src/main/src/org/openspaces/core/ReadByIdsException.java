@@ -5,7 +5,6 @@ import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import com.gigaspaces.client.ReadTakeByIdResult;
-import com.gigaspaces.client.ReadByIdsException.ReadByIdResult;
 
 /**
  * Thrown when readByIds operation fails.
@@ -27,18 +26,16 @@ import com.gigaspaces.client.ReadByIdsException.ReadByIdResult;
 public class ReadByIdsException extends InvalidDataAccessResourceUsageException {
 
     private static final long serialVersionUID = 1L;
-    private ExceptionTranslator _exceptionTranslator;
     private ReadByIdResult[] _results;
     
     public ReadByIdsException(com.gigaspaces.client.ReadByIdsException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
-        _exceptionTranslator = exceptionTranslator;
         _results = new ReadByIdResult[cause.getResults().length];
         for (int i = 0; i < _results.length; i++) {
-            _results[i] = new TranslatedReadByIdResult(cause.getResults()[i]);
-        }
+            _results[i] = new ReadByIdResult(cause.getResults()[i], exceptionTranslator);
+        }        
     }
-
+    
     /**
      * Returns the results contained in the exception.
      * @return An array of ReadByIdResult objects.
@@ -46,21 +43,55 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
     public ReadByIdResult[] getResults() {
         return _results;
     }
+    
+    /**
+     * Holds a ReadByIdsException result.
+     * The result contains the object's Id, the result type, the read object and the thrown exception. 
+     * 
+     * @author idan
+     * @since 7.1.1
+     *
+     */
+    public static class ReadByIdResult {
         
-    private class TranslatedReadByIdResult implements ReadByIdResult {
-
+        /**
+         * Determines the result type of a read by id operation result.
+         * @author idan
+         * @since 7.1.1
+         *
+         */
+        public enum ReadByIdResultType {            
+            /**
+             * Operation failed - result contains the exception that caused the failure.
+             */
+            ERROR,          
+            /**
+             * Operation succeeded - result contains the object matching the corresponded Id.
+             */
+            OBJECT,         
+            /**
+             * Operation succeeded - there's no object matching the corresponded Id.
+             */
+            NOT_FOUND
+        }
+        
         private ReadTakeByIdResult _result;
         private ReadByIdResultType _resultType;
+        private ExceptionTranslator _exceptionTranslator;
         
-        public TranslatedReadByIdResult(ReadTakeByIdResult result) {
+        protected ReadByIdResult(ReadTakeByIdResult result, ExceptionTranslator exceptionTranslator) {
             _result = result;
             if (_result.isError()) {
                 _resultType = ReadByIdResultType.ERROR;                
             } else {
                 _resultType = (_result.getObject() == null)? ReadByIdResultType.NOT_FOUND : ReadByIdResultType.OBJECT;
             }
+            _exceptionTranslator = exceptionTranslator;
         }
-        
+                
+        /**
+         * @return On error returns the exception that occurred, otherwise null.
+         */
         public Throwable getError() {
             if (_result.getError() == null) {
                 return null;
@@ -68,22 +99,34 @@ public class ReadByIdsException extends InvalidDataAccessResourceUsageException 
             return _exceptionTranslator.translate(_result.getError());
         }
 
+        /**
+         * @return The object Id this result is relevant for.
+         */
         public Object getId() {
             return _result.getId();
         }
 
+        /**
+         * @return The read object for this result or null if no object was found or an exception occurred.
+         */
         public Object getObject() {
             return _result.getObject();
         }
 
+        /**
+         * @return True if an exception is associated with this result.
+         */
         public boolean isError() {
             return _result.isError();
         }
         
+        /**
+         * @return This result's object type.
+         */
         public ReadByIdResultType getResultType() {
             return _resultType;
         }
-    }
-    
+    }    
+        
     
 }
