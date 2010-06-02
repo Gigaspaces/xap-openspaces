@@ -1836,7 +1836,7 @@ public interface GigaSpace {
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException;
     
     /**
-     * @deprecated Use {@link #writeMultiple(Object[], long, int) with {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} instead.}
+     * @deprecated Use {@link #writeMultiple(Object[], long, int)} with {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} instead.
      */
     @Deprecated
     <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException;
@@ -1871,7 +1871,7 @@ public interface GigaSpace {
      *         </ul>
      *         </ul>
      * @throws DataAccessException         
-     * @deprecated Use {@link #writeMultiple(Object[], long, int) instead.}
+     * @deprecated Use {@link #writeMultiple(Object[], long, int)} instead.
      */
     @Deprecated
     <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
