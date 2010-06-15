@@ -44,16 +44,15 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
         if (holder == null || transactionManager == null) {
             // just wrap for exception translation
             return new InternalAsyncFutureListener<T>(gigaSpace, listener, null, transactionManager, holder);
-        } else {
-            // here, we create a dummy transaction status (with its new transction set to true, so the commit/roolback
-            // process will be perfomed). We also increase the ref count of the transcation, so only the last one will
-            // be performed
-            AbstractJiniTransactionManager.JiniTransactionObject jiniTransactionObject = new AbstractJiniTransactionManager.JiniTransactionObject();
-            jiniTransactionObject.setJiniHolder(holder, false);
-            TransactionStatus txStatus = new DefaultTransactionStatus(jiniTransactionObject, true, false, false, false, null);
-            holder.incRef();
-            return new InternalAsyncFutureListener<T>(gigaSpace, listener, txStatus, transactionManager, holder);
-        }
+        } 
+        // here, we create a dummy transaction status (with its new transaction set to true, so the commit/roolback
+        // process will be performed). We also increase the ref count of the transaction, so only the last one will
+        // be performed
+        AbstractJiniTransactionManager.JiniTransactionObject jiniTransactionObject = new AbstractJiniTransactionManager.JiniTransactionObject();
+        jiniTransactionObject.setJiniHolder(holder, false);
+        TransactionStatus txStatus = new DefaultTransactionStatus(jiniTransactionObject, true, false, false, false, null);
+        holder.incRef();
+        return new InternalAsyncFutureListener<T>(gigaSpace, listener, txStatus, transactionManager, holder);
     }
 
     private final GigaSpace gigaSpace;

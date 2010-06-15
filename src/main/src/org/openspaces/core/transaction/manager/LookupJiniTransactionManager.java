@@ -85,6 +85,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
      * {@link JiniServiceFactoryBean}. The lookup can use a specified
      * {@link #setTransactionManagerName(String)} and a {@link #setLookupTimeout(Long)}.
      */
+    @Override
     protected TransactionManager doCreateTransactionManager() throws Exception {
         JiniServiceFactoryBean serviceFactory = new JiniServiceFactoryBean();
         serviceFactory.setServiceClass(TransactionManager.class);
@@ -123,6 +124,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
         return new ServiceDetails[] {new PlainServiceDetails(getBeanName(), SERVICE_TYPE, "lookup", getBeanName(), longDesc.toString())};
     }
 
+    @Override
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
             throws InvalidIsolationLevelException {
         if (isolationLevel == TransactionDefinition.ISOLATION_SERIALIZABLE) {

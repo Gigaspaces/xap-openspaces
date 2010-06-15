@@ -176,6 +176,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
     }
 
+    @Override
     protected Object doGetTransaction() throws TransactionException {
 
         JiniTransactionObject txObject = new JiniTransactionObject();
@@ -198,6 +199,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         return txObject;
     }
 
+    @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         if (logger.isTraceEnabled())
@@ -268,6 +270,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
     }
 
+    @Override
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (txObject.getJiniHolder().isDisableCommit()) {
@@ -297,11 +300,13 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
     }
 
+    @Override
     protected boolean isExistingTransaction(Object transaction) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         return txObject.hasTransaction();
     }
 
+    @Override
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (txObject.getJiniHolder().isDisableRollback()) {
@@ -331,6 +336,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
     }
 
+    @Override
     protected void doCleanupAfterCompletion(Object transaction) {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         // Remove the session holder from the thread.
@@ -340,7 +346,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             }
             TransactionSynchronizationManager.unbindResource(getTransactionalContext());
 
-            // remove the lease from the lease renewal mananer
+            // remove the lease from the lease renewal manager
             if (txObject.getJiniHolder().hasLeaseRenewalManager()) {
                 try {
                     txObject.getJiniHolder().getLeaseRenewalManager().remove(txObject.getJiniHolder().getTxCreated().lease);
@@ -352,6 +358,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         txObject.getJiniHolder().clear();
     }
 
+    @Override
     protected void doSetRollbackOnly(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (status.isDebug()) {
@@ -360,17 +367,20 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         txObject.setRollbackOnly();
     }
 
+    @Override
     protected void doResume(Object transaction, Object suspendedResources) throws TransactionException {
         JiniTransactionHolder jiniHolder = (JiniTransactionHolder) suspendedResources;
         TransactionSynchronizationManager.bindResource(getTransactionalContext(), jiniHolder);
     }
 
+    @Override
     protected Object doSuspend(Object transaction) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         txObject.setJiniHolder(null, false);
         return TransactionSynchronizationManager.unbindResource(getTransactionalContext());
     }
 
+    @Override
     protected boolean useSavepointForNestedTransaction() {
         return false;
     }

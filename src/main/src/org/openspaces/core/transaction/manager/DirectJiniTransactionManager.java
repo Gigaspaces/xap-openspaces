@@ -45,6 +45,7 @@ public class DirectJiniTransactionManager extends AbstractJiniTransactionManager
      * Returns the {@link TransactionManager} provided using the
      * {@link #setTransactionManager(TransactionManager)}.
      */
+    @Override
     protected TransactionManager doCreateTransactionManager() throws Exception {
         Assert.notNull(transactionManager, "transactionManager is required property");
         return this.transactionManager;

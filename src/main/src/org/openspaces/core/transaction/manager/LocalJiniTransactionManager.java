@@ -61,7 +61,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
 
     /**
      * Sets if this local transaction manager will work on top of a clustered Space, or will work
-     * directly with a cluster memeber.
+     * directly with a cluster member.
      */
     public void setClustered(Boolean clustered) {
         this.clustered = clustered;
@@ -76,6 +76,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
      * provided {@link GigaSpace}. This allows for zero conf when working with this local
      * transaction manager and {@link GigaSpace}.
      */
+    @Override
     public TransactionManager doCreateTransactionManager() throws Exception {
         Assert.notNull(space, "space property must be set");
 
@@ -87,7 +88,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space");
                 }
-                clustered = true;
+                clustered = Boolean.TRUE;
             } else {
                 clustered = SpaceUtils.isRemoteProtocol(space);
                 if (logger.isDebugEnabled()) {
@@ -116,11 +117,13 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
         return new ServiceDetails[] {new PlainServiceDetails(beanName, SERVICE_TYPE, "local", getBeanName(), "Local over Space [" + space.getName() + "]")};
     }
 
+    @Override
     public void destroy() throws Exception {
         super.destroy();
         ((LocalTransactionManager) getTransactionManager()).destroy();
     }
 
+    @Override
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
             throws InvalidIsolationLevelException {
         if (isolationLevel == TransactionDefinition.ISOLATION_SERIALIZABLE) {

@@ -43,6 +43,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
 
     private TransactionManager proxy;
 
+    @Override
     protected TransactionManager doCreateTransactionManager() throws Exception {
         URL mahaloConfig = ResourceLoader.getServicesConfigUrl();
 
@@ -54,6 +55,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
         return proxy;
     }
 
+    @Override
     public void destroy() throws Exception {
         super.destroy();
         if (proxy == null) {
