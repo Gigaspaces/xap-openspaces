@@ -41,7 +41,6 @@ import java.util.concurrent.TimeoutException;
  */
 public class DefaultTaskExecutorService implements TaskExecutorService {
 
-    
     private GigaSpace gigaSpace;
 
     private volatile boolean shutdown = false;
@@ -92,11 +91,11 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         return future;
     }
 
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks) throws InterruptedException {
         return invokeAll(tasks, -1, TimeUnit.MILLISECONDS);
     }
 
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
         WaitForAllListener<T> listener = new WaitForAllListener<T>(tasks.size());
         ArrayList<AsyncFuture<T>> results = new ArrayList<AsyncFuture<T>>(tasks.size());
         for (Callable<T> task : tasks) {
@@ -118,7 +117,7 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         return Arrays.asList(result);
     }
 
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+    public <T> T invokeAny(Collection<Callable<T>> tasks) throws InterruptedException, ExecutionException {
         try {
             return invokeAny(tasks, -1, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
@@ -127,7 +126,7 @@ public class DefaultTaskExecutorService implements TaskExecutorService {
         }
     }
 
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <T> T invokeAny(Collection<Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         WaitForAnyListener<T> listener = new WaitForAnyListener<T>(tasks.size());
         ArrayList<AsyncFuture<T>> results = new ArrayList<AsyncFuture<T>>(tasks.size());
         for (Callable<T> task : tasks) {
