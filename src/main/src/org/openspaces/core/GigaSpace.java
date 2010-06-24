@@ -214,7 +214,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#snapshot(Object)
      */
-    Object snapshot(Object entry) throws DataAccessException;
+    <T> ISpaceQuery<T> snapshot(Object entry) throws DataAccessException;
 
     /**
      * Read an object from the space matching its id and the class. Returns

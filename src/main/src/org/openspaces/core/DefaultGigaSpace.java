@@ -219,7 +219,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public Object snapshot(Object entry) throws DataAccessException {
+    public <T> ISpaceQuery<T> snapshot(Object entry) throws DataAccessException {
         try {
             return space.snapshot(entry);
         } catch (Exception e) {
