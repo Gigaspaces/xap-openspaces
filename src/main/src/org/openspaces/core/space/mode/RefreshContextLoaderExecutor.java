@@ -19,7 +19,7 @@ package org.openspaces.core.space.mode;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
-import org.openspaces.remoting.SyncSpaceRemotingProxyFactoryBean;
+import org.openspaces.remoting.ExecutorSpaceRemotingProxyFactoryBean;
 
 /**
  * Executes the refresh context mode operation using OpenSpaces sync remoting (allowing
@@ -41,13 +41,13 @@ public class RefreshContextLoaderExecutor {
         UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer(spaceUrl);
         GigaSpace gigaSpace = new GigaSpaceConfigurer(urlSpaceConfigurer.space()).gigaSpace();
 
-        SyncSpaceRemotingProxyFactoryBean syncSpaceRemotingProxyFactoryBean = new SyncSpaceRemotingProxyFactoryBean();
-        syncSpaceRemotingProxyFactoryBean.setGigaSpace(gigaSpace);
-        syncSpaceRemotingProxyFactoryBean.setServiceInterface(RefreshableContextLoader.class);
-        syncSpaceRemotingProxyFactoryBean.setBroadcast(true);
-        syncSpaceRemotingProxyFactoryBean.afterPropertiesSet();
+        ExecutorSpaceRemotingProxyFactoryBean remotingProxyFactoryBean = new ExecutorSpaceRemotingProxyFactoryBean();
+        remotingProxyFactoryBean.setGigaSpace(gigaSpace);
+        remotingProxyFactoryBean.setServiceInterface(RefreshableContextLoader.class);
+        remotingProxyFactoryBean.setBroadcast(true);
+        remotingProxyFactoryBean.afterPropertiesSet();
 
-        RefreshableContextLoader refreshableContextLoader = (RefreshableContextLoader) syncSpaceRemotingProxyFactoryBean.getObject();
+        RefreshableContextLoader refreshableContextLoader = (RefreshableContextLoader) remotingProxyFactoryBean.getObject();
         refreshableContextLoader.refresh();
 
         urlSpaceConfigurer.destroy();
