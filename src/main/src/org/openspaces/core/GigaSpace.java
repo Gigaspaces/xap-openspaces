@@ -154,7 +154,29 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
      */
-    void clear(Object template) throws DataAccessException;
+    int clear(Object template) throws DataAccessException;
+
+    /**
+     * Removes the entries that match the specified template and the specified transaction from this space.
+     *
+     * <p>If the clear operation conducted without transaction (null as value) it will clear all entries that
+     * are not under transaction. Therefore entries under transaction would not be removed from the space.
+     *
+     * <p>The clear operation supports inheritance, therefore template class matching objects
+     * and its sub classes matching objects are part of the candidates population
+     * to be removed from the space. You can in fact clean all space objects (that are not under
+     * transaction) by calling: <code>gigaSpace.clear(null)</code>.
+     *
+     * <p>Notice: The clear operation does not remove notify templates i.e. registration for notifications.
+     *
+     * <p>Modifiers can be used to customize the clean operation. The {@link com.j_spaces.core.client.TakeModifiers}
+     * allow to control, for example, if the clear operation will only evict entries from an LRU cache.
+     *
+     * @param template the template to use for matching
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
+     */
+    int clear(Object template, int modifiers);
 
     /**
      * Count any matching entry from the space. If a running within a transaction

@@ -199,9 +199,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    public void clear(Object template) throws DataAccessException {
+    public int clear(Object template) throws DataAccessException {
         try {
-            space.clear(template, getCurrentTransaction());
+            return space.clear(template, getCurrentTransaction());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public int clear(Object template, int modifiers) throws DataAccessException {
+        try {
+            return space.clear(template, getCurrentTransaction(), modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
