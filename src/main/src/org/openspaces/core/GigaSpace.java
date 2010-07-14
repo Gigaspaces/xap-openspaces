@@ -154,7 +154,7 @@ public interface GigaSpace {
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
      */
-    int clear(Object template) throws DataAccessException;
+    void clear(Object template) throws DataAccessException;
 
     /**
      * Removes the entries that match the specified template and the specified transaction from this space.
