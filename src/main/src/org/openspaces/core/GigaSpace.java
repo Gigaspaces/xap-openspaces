@@ -35,6 +35,7 @@ import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.query.ISpaceQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.TakeModifiers;
 
 /**
  * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
@@ -173,6 +174,8 @@ public interface GigaSpace {
      * allow to control, for example, if the clear operation will only evict entries from an LRU cache.
      *
      * @param template the template to use for matching
+     * @param modifiers one of {@link TakeModifiers}
+     * 
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
      */
@@ -1693,6 +1696,7 @@ public interface GigaSpace {
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @param modifiers one of {@link TakeModifiers}                  
      * @return Removed matched entries from the space
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
@@ -1711,6 +1715,7 @@ public interface GigaSpace {
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @param modifiers one of {@link TakeModifiers}
      * @return Removed matched entries from the space
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
