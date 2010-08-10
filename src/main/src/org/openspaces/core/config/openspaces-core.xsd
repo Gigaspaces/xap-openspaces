@@ -48,14 +48,14 @@
                         <xsd:element name="all-in-cache-policy"/>
                         <xsd:element name="lru-cache-policy">
                             <xsd:complexType>
-                                <xsd:attribute name="size" type="xsd:nonNegativeInteger" use="optional">
+                                <xsd:attribute name="size" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The size of the cache.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="initialLoadPercentage" type="xsd:nonNegativeInteger" use="optional">
+                                <xsd:attribute name="initialLoadPercentage" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             When a space is running in a persistent mode (i.e. using the
@@ -246,7 +246,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="lookup-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The max timeout in milliseconds to find a Container or Space using multicast (jini
@@ -387,7 +387,7 @@
                                 </xsd:documentation>
                             </xsd:annotation>
                             <xsd:complexType>
-                                <xsd:attribute name="code" type="xsd:nonNegativeInteger" use="optional">
+                                <xsd:attribute name="code" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The operation code (number) the filter will be registered to. Operation code
@@ -560,7 +560,7 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="size" type="xsd:positiveInteger">
+                    <xsd:attribute name="size" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The size of the local cache.
@@ -699,7 +699,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-read-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-read-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets the default read timeout for #read(Object) and #readIfExists(Object) operations.
@@ -707,7 +707,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-take-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-take-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets the default take timeout for #take(Object) and #takeIfExists(Object)} operations.
@@ -715,7 +715,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-write-lease" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-write-lease" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets the default write lease for write(Object) operation. Default to FOREVER.
@@ -862,7 +862,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="size-limit" type="xsd:nonNegativeInteger" use="optional">
+                                <xsd:attribute name="size-limit" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Sets the size limit of the local cache. Default to 100000.
@@ -895,7 +895,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="compression" type="xsd:nonNegativeInteger" use="optional">
+                    <xsd:attribute name="compression" type="xsd:string" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets the compression level. Defaults to<code>0</code>.
@@ -934,14 +934,14 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-time-to-live" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-time-to-live" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets the default time to live (in milliseconds) for new entries. Defaults to FOREVER.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-wait-for-response" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-wait-for-response" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets (in milliseconds) the default wait timeout when perfoming #get(Object) or
@@ -949,14 +949,14 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-lock-time-to-live" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-lock-time-to-live" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets (in milliseconds) the default time to live for locks. Defaults to 60 seconds.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="default-waiting-for-lock-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="default-waiting-for-lock-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets (in milliseconds) the default time to wait for a given lock when locking. Defaults
@@ -1085,7 +1085,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="lookup-timeout" type="xsd:nonNegativeInteger">
+                    <xsd:attribute name="lookup-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The lookup timeout (in millis) to wait in order to find the Jini transaction manager.
@@ -1145,7 +1145,7 @@
                                     </xsd:documentation>
                                 </xsd:annotation>
                             </xsd:attribute>
-                            <xsd:attribute name="pool-size" type="xsd:nonNegativeInteger">
+                            <xsd:attribute name="pool-size" type="xsd:string">
                                 <xsd:annotation>
                                     <xsd:documentation>
                                         The pool size value of lease renewal managers (responsible for renewing
@@ -1156,7 +1156,7 @@
                         </xsd:complexType>
                     </xsd:element>
                 </xsd:sequence>
-                <xsd:attribute name="default-timeout" type="xsd:nonNegativeInteger">
+                <xsd:attribute name="default-timeout" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             Sets the default timeout to use if TransactionDefinition#TIMEOUT_DEFAULT is used. Set in
@@ -1164,7 +1164,7 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-                <xsd:attribute name="commit-timeout" type="xsd:nonNegativeInteger">
+                <xsd:attribute name="commit-timeout" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             Sets an optional timeout when performing commit in milliseconds. If not set
@@ -1172,7 +1172,7 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-                <xsd:attribute name="rollback-timeout" type="xsd:nonNegativeInteger">
+                <xsd:attribute name="rollback-timeout" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             Sets an optional timeout when performing rollback/abort in milliseconds. If not set
@@ -1434,7 +1434,7 @@
                 <xsd:sequence>
                     <xsd:element name="filter" type="filterType" minOccurs="1" maxOccurs="1"/>
                 </xsd:sequence>
-                <xsd:attribute name="priority" type="xsd:nonNegativeInteger">
+                <xsd:attribute name="priority" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             The priority of the given filter. Defaults to 0.
