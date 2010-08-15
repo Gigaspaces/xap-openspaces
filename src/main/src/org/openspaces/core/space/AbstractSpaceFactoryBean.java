@@ -16,22 +16,19 @@
 
 package org.openspaces.core.space;
 
-import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
-import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
-import com.gigaspaces.cluster.activeelection.SpaceMode;
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.gigaspaces.internal.dump.InternalDumpProcessor;
-import com.gigaspaces.internal.dump.InternalDump;
-import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.SpaceHealthStatus;
-import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
-import com.j_spaces.core.admin.SpaceRuntimeInfo;
-import com.j_spaces.core.client.LookupFinder;
+import java.io.PrintWriter;
+import java.rmi.RemoteException;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.MemberAliveIndicator;
-import org.openspaces.core.space.mode.*;
+import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
+import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
+import org.openspaces.core.space.mode.SpaceAfterBackupListener;
+import org.openspaces.core.space.mode.SpaceAfterPrimaryListener;
+import org.openspaces.core.space.mode.SpaceBeforeBackupListener;
+import org.openspaces.core.space.mode.SpaceBeforePrimaryListener;
 import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -47,9 +44,19 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.dao.DataAccessException;
 
-import java.rmi.RemoteException;
-import java.util.Map;
-import java.io.PrintWriter;
+import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
+import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
+import com.gigaspaces.cluster.activeelection.SpaceMode;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.internal.dump.InternalDump;
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
+import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.IJSpaceContainer;
+import com.j_spaces.core.SpaceHealthStatus;
+import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
+import com.j_spaces.core.admin.SpaceRuntimeInfo;
+import com.j_spaces.core.client.LookupFinder;
 
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
@@ -209,11 +216,17 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
             }
         }
         try {
+            
+            IJSpaceContainer embeddedContainer = null;
+            if (!SpaceUtils.isRemoteProtocol(space)) {
+                // if we are in embedded mode, store space
+                embeddedContainer = space.getContainer();
+            }
             space.close();
             
-            if (!SpaceUtils.isRemoteProtocol(space)) {
+            if (embeddedContainer != null) {
                 // shutdown the space if we are in embedded mode
-                space.getContainer().shutdown();
+                embeddedContainer.shutdown();
             }
         } finally {
             space = null;
