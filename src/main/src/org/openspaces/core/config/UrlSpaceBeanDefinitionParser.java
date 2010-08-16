@@ -16,7 +16,13 @@
 
 package org.openspaces.core.config;
 
-import org.openspaces.core.space.*;
+import java.util.List;
+
+import org.openspaces.core.space.AllInCachePolicy;
+import org.openspaces.core.space.CachePolicy;
+import org.openspaces.core.space.LruCachePolicy;
+import org.openspaces.core.space.SecurityConfig;
+import org.openspaces.core.space.UrlSpaceFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -25,8 +31,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
-
-import java.util.List;
 
 /**
  * A bean definition builder for {@link UrlSpaceFactoryBean}.
@@ -43,14 +47,17 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
     public static final String URL_PROPERTIES = "url-properties";
 
+    @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
         return UrlSpaceFactoryBean.class;
     }
 
+    @Override
     protected boolean isEligibleAttribute(String attributeName) {
         return super.isEligibleAttribute(attributeName) && !DATA_SOURCE.equals(attributeName);
     }
 
+    @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
@@ -113,16 +120,20 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
         Element securityEle = DomUtils.getChildElementByTagName(element, "security");
         if (securityEle != null) {
-            SecurityConfig securityConfig = new SecurityConfig();
             String username = securityEle.getAttribute("username");
-            if (StringUtils.hasText(username)) {
-                securityConfig.setUsername(username);
-            }
             String password = securityEle.getAttribute("password");
-            if (StringUtils.hasText(password)) {
-                securityConfig.setPassword(password);
+            if (StringUtils.hasText(username)) {
+                SecurityConfig securityConfig = new SecurityConfig();
+                securityConfig.setUsername(username);
+                if (StringUtils.hasText(password)) {
+                    securityConfig.setPassword(password);
+                }
+                builder.addPropertyValue("securityConfig", securityConfig);
             }
-            builder.addPropertyValue("securityConfig", securityConfig);
+            String userDetailsRef = securityEle.getAttribute("user-details");
+            if (StringUtils.hasText(userDetailsRef)) {
+                builder.addPropertyReference("userDetails", userDetailsRef);
+            }
             String secured = securityEle.getAttribute("secured");
             if (StringUtils.hasText(secured)) {
                 builder.addPropertyValue("secured", Boolean.parseBoolean(secured));

@@ -51,6 +51,7 @@ import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
+import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.IJSpaceContainer;
 import com.j_spaces.core.SpaceHealthStatus;
@@ -112,9 +113,17 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     public void setRegisterForSpaceModeNotifications(boolean registerForSpaceMode) {
         this.registerForSpaceMode = registerForSpaceMode;
     }
+    
+    /**
+     * Sets the security configuration with the provided custom user details.
+     * @param userDetails a custom user details.
+     */
+    public void setUserDetails(UserDetails userDetails) {
+        this.securityConfig = new SecurityConfig(userDetails);
+    }
 
     /**
-     * Sets security confiugration for the Space. If not set, no security will be used.
+     * Sets security configuration for the Space. If not set, no security will be used.
      */
     public void setSecurityConfig(SecurityConfig securityConfig) {
         this.securityConfig = securityConfig;

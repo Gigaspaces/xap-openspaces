@@ -38,6 +38,7 @@
                             <xsd:complexType>
                                 <xsd:attribute name="username" type="xsd:string"/>
                                 <xsd:attribute name="password" type="xsd:string"/>
+                                <xsd:attribute name="user-details" type="xsd:string"/>
                                 <xsd:attribute name="secured" type="xsd:string"/>
                                 <!-- TODO: remove -->
                                 <xsd:attribute name="encrypted" type="xsd:string"/>
