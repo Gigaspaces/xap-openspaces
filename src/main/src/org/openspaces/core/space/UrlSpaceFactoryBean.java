@@ -16,24 +16,17 @@
 
 package org.openspaces.core.space;
 
-import com.gigaspaces.datasource.ManagedDataSource;
-import com.gigaspaces.internal.reflection.IField;
-import com.gigaspaces.internal.reflection.ReflectionUtil;
-import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
-import com.gigaspaces.security.directory.UserDetails;
-import com.j_spaces.core.Constants;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.SpaceContext;
-import com.j_spaces.core.client.FinderException;
-import com.j_spaces.core.client.SpaceFinder;
-import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.SpaceURLParser;
-import com.j_spaces.core.filters.FilterOperationCodes;
-import com.j_spaces.core.filters.FilterProvider;
-import com.j_spaces.core.filters.ISpaceFilter;
-import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
-import com.j_spaces.sadapter.datasource.DataAdapter;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.rmi.MarshalledObject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+
 import net.jini.core.entry.UnusableEntryException;
+
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
@@ -58,14 +51,23 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.rmi.MarshalledObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
+import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.internal.reflection.IField;
+import com.gigaspaces.internal.reflection.ReflectionUtil;
+import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
+import com.gigaspaces.security.directory.UserDetails;
+import com.j_spaces.core.Constants;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.SpaceContext;
+import com.j_spaces.core.client.FinderException;
+import com.j_spaces.core.client.SpaceFinder;
+import com.j_spaces.core.client.SpaceURL;
+import com.j_spaces.core.client.SpaceURLParser;
+import com.j_spaces.core.filters.FilterOperationCodes;
+import com.j_spaces.core.filters.FilterProvider;
+import com.j_spaces.core.filters.ISpaceFilter;
+import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
+import com.j_spaces.sadapter.datasource.DataAdapter;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
@@ -484,7 +486,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
             // handle security
             if (beanLevelProperties != null) {
-                MarshalledObject userDetailsObj = (MarshalledObject) beanLevelProperties.get("security.userDetails");
+                MarshalledObject userDetailsObj = (MarshalledObject) beanLevelProperties.get(Constants.Security.USER_DETAILS);
                 if (userDetailsObj != null) {
                     try {
                         setSecurityConfig(new SecurityConfig((UserDetails) userDetailsObj.get()));
@@ -495,15 +497,15 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
 
             if (getSecurityConfig() == null || !getSecurityConfig().isFilled()) {
-                String username = (String) props.remove("security.username");
-                String password = (String) props.remove("security.password");
+                String username = (String) props.remove(Constants.Security.USERNAME);
+                String password = (String) props.remove(Constants.Security.PASSWORD);
                 setSecurityConfig(new SecurityConfig(username, password));
             }
 
 
             if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
                 props.put(SpaceURL.SECURED, "true");
-                props.put("security.userDetails", getSecurityConfig().toUserDetails());
+                props.put(Constants.Security.USER_DETAILS, getSecurityConfig().toUserDetails());
             } else if (secured != null && secured) {
                 props.put(SpaceURL.SECURED, "true");
             }
