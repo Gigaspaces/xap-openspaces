@@ -73,7 +73,7 @@ import com.j_spaces.core.client.TakeModifiers;
 public interface GigaSpace {
 
     /**
-     * Returns the name of the giga space. If it is configured with Spring for example, will return the
+     * Returns the name of the GigaSpace. If it is configured with Spring for example, will return the
      * bean name, if not, will default to the space name.
      */
     String getName();
@@ -82,8 +82,8 @@ public interface GigaSpace {
      * Returns the <code>IJSpace</code> used by this GigaSpace implementation to delegate
      * different space operations.
      *
-     * <p>Allows to execute space operations that are not exposed by this interface, as well as using
-     * it as a parameter to other low level GigaSpace components.
+     * <p>Allows the use of space operations that are not exposed by this interface, as well as use
+     * as a parameter to other low level GigaSpace components.
      *
      * <p>If a transaction object is required for low level operations (as low level operations do not
      * have declarative transaction ex) the {@link #getTxProvider()} should be used to acquire the
@@ -92,9 +92,19 @@ public interface GigaSpace {
     IJSpace getSpace();
 
     /**
-     * Returns a clustered view of the {@link org.openspaces.core.GigaSpace} is this is a GigaSpace
+     * Returns a clustered view of the {@link org.openspaces.core.GigaSpace} if this is a GigaSpace
      * that worked directly against a cluster member. If this is an already clustered view, will
-     * return the same instance.
+     * return the same instance being used to issue this call. 
+     * 
+     * <p>In other words:
+     *
+     * <pre>GigaSpace nonClusteredViewOfGigaSpace= ... // acquire nonclustered view of a clustered space
+     * GigaSpace space=nonClusteredViewofGigaSpace.getClustered();
+     * // space != nonClusteredViewOfSpace</pre>
+     *
+     * <pre>GigaSpace clusteredViewOfGigaSpace= ... // acquire nonclustered view of a clustered space
+     * GigaSpace space=clusteredViewofGigaSpace.getClustered();
+     * // space == clusteredViewOfSpace</pre>
      */
     GigaSpace getClustered();
 
@@ -127,10 +137,10 @@ public interface GigaSpace {
     /**
      * Cleans this space. The side-effects of cleaning the space are:
      * <ul>
-     * <li>all entries and templates are deleted.</li>
-     * <li>all storage adapter contexts are closed.</li>
-     * <li>all engine threads are terminated.</li>
-     * <li>the engine re-initializes itself.</li>
+     * <li>All entries and templates are deleted.</li>
+     * <li>All storage adapter contexts are closed.</li>
+     * <li>All engine threads are terminated.</li>
+     * <li>The engine re-initializes itself.</li>
      * </ul>
      *
      * @throws DataAccessException
@@ -149,10 +159,11 @@ public interface GigaSpace {
      * to be removed from the space. You can in fact clean all space objects (that are not under
      * transaction) by calling: <code>gigaSpace.clear(null)</code>.
      *
-     * <p>Notice: The clear operation does not remove notify templates i.e. registration for notifications.
+     * <p>Notice: The clear operation does not remove notify templates, i.e. registration for notifications.
      *
      * @param template the template to use for matching
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of an error, DataAccessException will
+     *         wrap a ClearException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
      */
     void clear(Object template) throws DataAccessException;
@@ -170,13 +181,15 @@ public interface GigaSpace {
      *
      * <p>Notice: The clear operation does not remove notify templates i.e. registration for notifications.
      *
-     * <p>Modifiers can be used to customize the clean operation. The {@link com.j_spaces.core.client.TakeModifiers}
-     * allow to control, for example, if the clear operation will only evict entries from an LRU cache.
+     * <p>Modifiers can be used to customize the clean operation. For example, the 
+     * {@link com.j_spaces.core.client.TakeModifiers}
+     * allow control over whether the clear operation will only evict entries from an LRU cache.
      *
      * @param template the template to use for matching
      * @param modifiers one of {@link TakeModifiers}
      * 
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of an error, DataAccessException will
+     *         wrap a ClearException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
      */
     int clear(Object template, int modifiers);
@@ -196,7 +209,7 @@ public interface GigaSpace {
     int count(Object template) throws DataAccessException;
 
     /**
-     * Count any matching entry from the space. If a running within a transaction
+     * Count any matching entries from the space. If this is running within a transaction
      * will count all the entries visible under the transaction.
      *
      * <p>Allows to specify modifiers using {@link com.j_spaces.core.client.ReadModifiers}
@@ -216,19 +229,26 @@ public interface GigaSpace {
     /**
      * <p>The process of serializing an entry for transmission to a JavaSpaces service will
      * be identical if the same entry is used twice. This is most likely to be an issue with
-     * templates that are used repeatedly to search for entries with read or take. The client-side
+     * templates that are used repeatedly to search for entries with read or take. 
+     *
+     * <p>The client-side
      * implementations of read and take cannot reasonably avoid this duplicated effort, since they
      * have no efficient way of checking whether the same template is being used without intervening
-     * modification. The snapshot method gives the JavaSpaces service implementor a way to reduce
+     * modification. 
+     *
+     * <p>The snapshot method gives the JavaSpaces service implementor a way to reduce
      * the impact of repeated use of the same entry. Invoking snapshot with an Entry will return
      * another Entry object that contains a snapshot of the original entry. Using the returned snapshot
      * entry is equivalent to using the unmodified original entry in all operations on the same JavaSpaces
-     * service. Modifications to the original entry will not affect the snapshot. You can snapshot a null
+     * service. 
+     *
+     * <p>Modifications to the original entry will not affect the snapshot. You can snapshot a null
      * template; snapshot may or may not return null given a null template. The entry returned from snapshot
      * will be guaranteed equivalent to the original unmodified object only when used with the space. Using
      * the snapshot with any other JavaSpaces service will generate an <code>IllegalArgumentException</code> unless the
      * other space can use it because of knowledge about the JavaSpaces service that generated the snapshot.
-     * The snapshot will be a different object from the original, may or may not have the same hash code,
+     *
+     * <p>The snapshot will be a different object from the original, may or may not have the same hash code,
      * and equals may or may not return true when invoked with the original object, even if the original object
      * is unmodified. A snapshot is guaranteed to work only within the virtual machine in which it was generated.
      * If a snapshot is passed to another virtual machine (for example, in a parameter of an RMI call), using
@@ -865,6 +885,8 @@ public interface GigaSpace {
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return A copy of the entries read from the space.
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException;
@@ -882,6 +904,8 @@ public interface GigaSpace {
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @return A copy of the entries read from the space.
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
@@ -908,6 +932,8 @@ public interface GigaSpace {
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A copy of the entries read from the space.
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
@@ -933,6 +959,8 @@ public interface GigaSpace {
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A copy of the entries read from the space.
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
@@ -1662,7 +1690,8 @@ public interface GigaSpace {
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(T template, int maxEntries) throws DataAccessException;
@@ -1679,7 +1708,8 @@ public interface GigaSpace {
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException;
@@ -1698,7 +1728,8 @@ public interface GigaSpace {
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers one of {@link TakeModifiers}                  
      * @return Removed matched entries from the space
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
@@ -1717,7 +1748,8 @@ public interface GigaSpace {
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers one of {@link TakeModifiers}
      * @return Removed matched entries from the space
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
@@ -1818,7 +1850,8 @@ public interface GigaSpace {
      *
      * @param entries The entries to write to the space.
      * @return Leases for the written entries
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#writeMultiple(Object[],net.jini.core.transaction.Transaction,long)
      */
     <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException;
@@ -1829,7 +1862,8 @@ public interface GigaSpace {
      * @param entries The entries to write to the space.
      * @param lease   The lease the entry will be written with, in <b>milliseconds</b>.
      * @return Leases for the written entries
-     * @throws DataAccessException
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
      * @see com.j_spaces.core.IJSpace#writeMultiple(Object[],net.jini.core.transaction.Transaction,long)
      */
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws DataAccessException;
@@ -1858,8 +1892,9 @@ public interface GigaSpace {
      *         </ul>
      *         <li>or, OperationTimeoutException - thrown if timeout occurred
      *         </ul>
-     * @throws DataAccessException
-     */    
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
+     */
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException;
     
     /**
