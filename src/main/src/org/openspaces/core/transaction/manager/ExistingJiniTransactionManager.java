@@ -22,7 +22,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 /**
  * Expert: An internal helper, allowing to bind Jini {@link net.jini.core.transaction.Transaction} so it
- * will be automatically picked up by operations perfomed using {@link org.openspaces.core.GigaSpace}.
+ * will be automatically picked up by operations performed using {@link org.openspaces.core.GigaSpace}.
  *
  * <p>Note, for each bind, a corresponding unbind should be called preferably in a finally clause.
  *
@@ -47,7 +47,7 @@ public class ExistingJiniTransactionManager {
      * <p>Allows to control if calls for commit/rollback will be disabled or not (i.e. transaction is controlled
      * by an outer entity).
      *
-     * <p>Returns <code>true</code> if the transaction was boudned or not.
+     * <p>Returns <code>true</code> if the transaction was bounded or not.
      *
      * @param transaction     the transaction
      * @param disableCommit   Should commit be disabled or not

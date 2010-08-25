@@ -29,9 +29,9 @@ import net.jini.lease.LeaseListener;
  * round trip time to the server. Should be lower than the then the renew duration.
  * Defaults to 1 second.
  *
- * <p>The transaciton renewal also allows to configure the pool size of renewal managers
+ * <p>The transaction renewal also allows to configure the pool size of renewal managers
  * that will be used to renew transactions. It defaults to 1 and under heavy load of
- * tranasctions with renewals should probably be higher.
+ * transactions with renewals should probably be higher.
  *
  * @author kimchy
  */

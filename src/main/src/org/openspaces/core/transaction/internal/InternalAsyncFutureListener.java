@@ -128,9 +128,9 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
 
     private static class InternalAsyncResult<T> implements AsyncResult<T> {
 
-        private GigaSpace gigaSpace;
+        private final GigaSpace gigaSpace;
 
-        private AsyncResult<T> result;
+        private final AsyncResult<T> result;
 
         private Exception exception;
 

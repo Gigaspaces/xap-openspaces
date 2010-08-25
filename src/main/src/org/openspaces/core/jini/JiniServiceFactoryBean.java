@@ -75,6 +75,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
 
     private int retryCountOnFailure = 3;
 
+    @Override
     public Class<?> getObjectType() {
         // try to discover the class type if possible to make it work with autowiring
         if (actualService == null) {
@@ -193,7 +194,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
 
     /**
      * Sets if this proxy will be a smart proxy. When this value is set to <code>true</code>
-     * the service found will be wrapped with a smart proxy that will detect failuers and try
+     * the service found will be wrapped with a smart proxy that will detect failures and try
      * to lookup the service again in such cases. Defaults to <code>false</code>.
      */
     public void setSmartProxy(boolean smartProxy) {

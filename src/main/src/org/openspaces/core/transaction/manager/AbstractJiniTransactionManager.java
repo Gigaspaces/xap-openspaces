@@ -274,11 +274,13 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (txObject.getJiniHolder().isDisableCommit()) {
-            logger.trace(logMessage("Disabling commit on Jini transaction [" + txObject.toString() + "]"));
+            if (logger.isTraceEnabled())
+                logger.trace(logMessage("Disabling commit on Jini transaction [" + txObject.toString() + "]"));
             return;
         }
         if (txObject.getJiniHolder().decRef() > 0) {
-            logger.trace(logMessage("Disabling commit on Jini transaction reference count is higher [" + txObject.toString() + "]"));
+            if (logger.isTraceEnabled())
+                logger.trace(logMessage("Disabling commit on Jini transaction reference count is higher [" + txObject.toString() + "]"));
             return;
         }
         if (logger.isTraceEnabled())
@@ -310,7 +312,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (txObject.getJiniHolder().isDisableRollback()) {
-            logger.trace(logMessage("Disabling rollback on Jini transaction [" + txObject.toString() + "]"));
+            if (logger.isTraceEnabled())
+                logger.trace(logMessage("Disabling rollback on Jini transaction [" + txObject.toString() + "]"));
             return;
         }
         if (logger.isTraceEnabled())
@@ -362,7 +365,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void doSetRollbackOnly(DefaultTransactionStatus status) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) status.getTransaction();
         if (status.isDebug()) {
-            logger.trace(logMessage("Setting Jini transaction on txContext [" + getTransactionalContext() + "] rollback-only"));
+            logger.debug(logMessage("Setting Jini transaction on txContext [" + getTransactionalContext() + "] rollback-only"));
         }
         txObject.setRollbackOnly();
     }

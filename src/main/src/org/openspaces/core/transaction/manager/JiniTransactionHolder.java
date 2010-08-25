@@ -30,17 +30,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class JiniTransactionHolder extends ResourceHolderSupport {
 
-    private Transaction.Created txCreated;
+    private final Transaction.Created txCreated;
 
-    private int isolationLevel;
+    private final int isolationLevel;
 
-    private LeaseRenewalManager leaseRenewalManager;
+    private final LeaseRenewalManager leaseRenewalManager;
 
     private boolean disableRollback = false;
 
     private boolean disableCommit = false;
 
-    private AtomicInteger referenceCount = new AtomicInteger();
+    private final AtomicInteger referenceCount = new AtomicInteger();
 
     /**
      * Constructs a new jini transaction holder.

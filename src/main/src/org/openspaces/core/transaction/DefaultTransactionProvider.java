@@ -222,7 +222,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
     }
 
     /**
-     * A Spring synctonization that acts as a placeholder for the Space associated with the current
+     * A Spring synchronization that acts as a place-holder for the Space associated with the current
      * Spring transaction.
      */
     private static class SpaceAndTransactionSync implements TransactionSynchronization {
