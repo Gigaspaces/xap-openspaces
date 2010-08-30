@@ -41,6 +41,7 @@ public class SpaceFilterProviderFactory extends AbstractFilterProviderFactoryBea
      * {@link #setFilter(com.j_spaces.core.filters.ISpaceFilter) filter} and operation
      * codes.
      */
+    @Override
     protected FilterProvider doGetFilterProvider() throws IllegalArgumentException {
         FilterProvider filterProvider = new FilterProvider(getBeanName(), (ISpaceFilter) getFilter());
 
@@ -73,13 +74,5 @@ public class SpaceFilterProviderFactory extends AbstractFilterProviderFactoryBea
      */
     public void setOperationCodesNames(String[] operationCodesNames) {
         this.operationCodesNames = operationCodesNames;
-    }
-
-    /**
-     * Override the parent method since this factory requires a concrete implementation of
-     * the an {@link com.j_spaces.core.filters.ISpaceFilter}.
-     */
-    public void setFilter(ISpaceFilter filter) {
-        super.setFilter(filter);
     }
 }
