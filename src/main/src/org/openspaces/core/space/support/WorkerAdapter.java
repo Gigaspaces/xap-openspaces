@@ -23,6 +23,7 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
 import org.openspaces.core.util.SpaceUtils;
+import org.openspaces.events.EventDriven;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
@@ -37,10 +38,12 @@ import org.springframework.util.Assert;
  * the new processing unit architecture. 
  *
  * @author kimchy
+ * @deprecated use {@link EventDriven} containers instead
  */
+@Deprecated
 public class WorkerAdapter implements InitializingBean, DisposableBean, ApplicationListener {
 
-    private static Log logger = LogFactory.getLog(WorkerAdapter.class); 
+    private static final Log logger = LogFactory.getLog(WorkerAdapter.class); 
 
     private IWorker worker;
 
