@@ -37,14 +37,16 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
     private final IWriteResult[] results;
 
-    private final ExceptionTranslator exceptionTranslator;
-
     public WriteMultiplePartialFailureException(com.gigaspaces.client.WriteMultipleException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
-        this.exceptionTranslator = exceptionTranslator;
         results = new IWriteResult[cause.getResults().length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = new TranslatedWriteResult(cause.getResults()[i]);
+            IWriteResult result = cause.getResults()[i];
+            if (result.isError()) {
+                results[i] = new TranslatedWriteResult(result, exceptionTranslator);
+            } else {
+                results[i] = result;
+            }
         }
     }
 
@@ -59,9 +61,11 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
         private static final long serialVersionUID = 1L;
         private final IWriteResult result;
+        private final Throwable error;
 
-        private TranslatedWriteResult(IWriteResult result) {
+        private TranslatedWriteResult(IWriteResult result, ExceptionTranslator exceptionTranslator) {
             this.result = result;
+            this.error = exceptionTranslator.translate(result.getError());
         }
 
         public ResultType getResultType() {
@@ -69,11 +73,7 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
         }
 
         public Throwable getError() {
-            Throwable t = result.getError();
-            if (t == null) {
-                return null;
-            }
-            return exceptionTranslator.translate(t);
+            return error;
         }
 
         public Lease getLease() {

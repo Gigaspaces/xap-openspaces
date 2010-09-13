@@ -26,7 +26,7 @@ import com.gigaspaces.client.ReadTakeByIdResult;
 public class TakeByIdsException extends InvalidDataAccessResourceUsageException {
 
     private static final long serialVersionUID = 1L;
-    private TakeByIdResult[] _results;
+    private final TakeByIdResult[] _results;
     
     public TakeByIdsException(com.gigaspaces.client.TakeByIdsException cause, ExceptionTranslator exceptionTranslator) {
         super(cause.getMessage(), cause);
@@ -75,28 +75,26 @@ public class TakeByIdsException extends InvalidDataAccessResourceUsageException 
             NOT_FOUND
         }
         
-        private ReadTakeByIdResult _result;
-        private TakeByIdResultType _resultType;
-        private ExceptionTranslator _exceptionTranslator;
+        private final ReadTakeByIdResult _result;
+        private final TakeByIdResultType _resultType;
+        private final Throwable _error;
         
         protected TakeByIdResult(ReadTakeByIdResult result, ExceptionTranslator exceptionTranslator) {
             _result = result;
             if (_result.isError()) {
-                _resultType = TakeByIdResultType.ERROR;                
+                _resultType = TakeByIdResultType.ERROR;
+                _error = exceptionTranslator.translate(result.getError());
             } else {
                 _resultType = (_result.getObject() == null)? TakeByIdResultType.NOT_FOUND : TakeByIdResultType.OBJECT;
+                _error = null;
             }
-            _exceptionTranslator = exceptionTranslator;
         }
                 
         /**
          * @return On error returns the exception that occurred, otherwise null.
          */
         public Throwable getError() {
-            if (_result.getError() == null) {
-                return null;
-            }
-            return _exceptionTranslator.translate(_result.getError());
+            return _error;
         }
 
         /**
