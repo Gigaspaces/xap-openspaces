@@ -80,7 +80,23 @@ public class LookupJiniTxManagerConfigurer {
         lookupJiniTransactionManager.setLeaseRenewalConfig(leaseRenewalConfig);
         return this;
     }
+    
+    /**
+     * @see LookupJiniTransactionManager#setGroups(String[])
+     */
+    public LookupJiniTxManagerConfigurer lookupGroups(String... lookupGroups){
+        lookupJiniTransactionManager.setGroups(lookupGroups);
+        return this;
+    }
 
+    /**
+     * @see LookupJiniTransactionManager#setLocators(String[])
+     */
+    public LookupJiniTxManagerConfigurer lookupLocators(String... lookupLocators){
+        lookupJiniTransactionManager.setLocators(lookupLocators);
+        return this;
+    }
+    
     public PlatformTransactionManager transactionManager() throws Exception {
         if (!initialized) {
             lookupJiniTransactionManager.afterPropertiesSet();
