@@ -60,7 +60,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
             ((ServiceClassLoader) childAppContextClassLoader).setLibPath(serviceClassLoader.getLibPath());
             ((ServiceClassLoader) childAppContextClassLoader).setSlashPath(serviceClassLoader.getSlashPath());
         } else {
-            logger.warn("Can't handle class loader [" + classLoader + "], refreshing is disabled");
+            logger.warn("Can't handle class loader [" + classLoader + "], context refreshing requires the service grid class loader or the url class loader. Context refreshing is disabled.");
             childAppContextClassLoader = classLoader;
         }
         ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
