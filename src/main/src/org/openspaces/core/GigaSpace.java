@@ -32,6 +32,7 @@ import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultsReducer;
 import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.TakeByIdsResult;
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.query.ISpaceQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
@@ -2171,4 +2172,20 @@ public interface GigaSpace {
      * @return The executor builder.
      */
     <T extends Serializable, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer);
+
+    /**
+     * Gets the space type descriptor of the specified type. 
+     * @param typeName Name of type.
+     * @return Type descriptor of the type, if available (if not, returns null).
+     * @since 8.0
+     */
+    SpaceTypeDescriptor getTypeDescriptor(String typeName);
+
+    /**
+     * Gets the space type descriptor of the specified type. 
+     * @param type Java class.
+     * @return Type descriptor of the type, if available (if not, returns null).
+     * @since 8.0
+     */
+    SpaceTypeDescriptor getTypeDescriptor(Class<?> type);
 }

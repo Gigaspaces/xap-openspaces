@@ -27,6 +27,7 @@ import com.gigaspaces.client.ReadByIdsResultImpl;
 import com.gigaspaces.client.TakeByIdsResultImpl;
 import com.gigaspaces.internal.client.QueryResultType;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.query.ISpaceQuery;
 
 import com.j_spaces.core.IJSpace;
@@ -956,4 +957,22 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public SpaceTypeDescriptor getTypeDescriptor(String typeName)
+    {
+        try {
+            return space.getSpaceTypeDescriptor(typeName);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    public SpaceTypeDescriptor getTypeDescriptor(Class<?> type)
+    {
+        try {
+            if (type == null)
+                throw new IllegalArgumentException("Argument cannot be null - 'type'.");
+            return space.getSpaceTypeDescriptor(type.getName());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    } 
 }
