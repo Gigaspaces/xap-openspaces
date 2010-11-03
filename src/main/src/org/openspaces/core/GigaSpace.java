@@ -93,19 +93,34 @@ public interface GigaSpace {
     IJSpace getSpace();
 
     /**
-     * Returns a clustered view of the {@link org.openspaces.core.GigaSpace} if this is a GigaSpace
-     * that worked directly against a cluster member. If this is an already clustered view, will
-     * return the same instance being used to issue this call. 
+     * Returns a clustered view of this {@link org.openspaces.core.GigaSpace} instance.
      * 
-     * <p>In other words:
-     *
-     * <pre>GigaSpace nonClusteredViewOfGigaSpace= ... // acquire nonclustered view of a clustered space
+     * <pre>
+     * GigaSpace gigaSpace = new GigaSpaceConfigurer(space).clustered(true).gigaSpace();
+     * </pre>
+     * 
+     * <p>
+     * If this instance is already a clustered view (was initially constructed using the clustered
+     * flag), will return the same instance being used to issue the call.
+     * <p>
+     * If this is a GigaSpace that works directly with a cluster member, will return a clustered
+     * view (as if it was constructed with the clustered flag set). Note that this method might
+     * return different instances when being called by different threads.
+     * <p>
+     * 
+     * <pre>
+     * GigaSpace nonClusteredViewOfGigaSpace= ... // acquire non-clustered view of a clustered space
      * GigaSpace space=nonClusteredViewofGigaSpace.getClustered();
-     * // space != nonClusteredViewOfSpace</pre>
-     *
-     * <pre>GigaSpace clusteredViewOfGigaSpace= ... // acquire nonclustered view of a clustered space
+     * // space != nonClusteredViewOfSpace
+     * </pre>
+     * 
+     * <pre>
+     * GigaSpace clusteredViewOfGigaSpace= ... // acquire clustered view of a clustered space
      * GigaSpace space=clusteredViewofGigaSpace.getClustered();
-     * // space == clusteredViewOfSpace</pre>
+     * // space == clusteredViewOfSpace
+     * </pre>
+     * 
+     * @see GigaSpaceConfigurer#clustered(boolean)
      */
     GigaSpace getClustered();
 

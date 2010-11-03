@@ -172,13 +172,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (this.space.isClustered()) {
             clusteredGigaSpace = this;
         } else {
+            DefaultGigaSpace newClusteredGigaSpace = null;
             try {
-                clusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), txProvider, exTranslator, defaultIsolationLevel);
-                clusteredGigaSpace.setDefaultReadTimeout(defaultReadTimeout);
-                clusteredGigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
-                clusteredGigaSpace.setDefaultWriteLease(defaultWriteLease);
+                newClusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), txProvider, exTranslator, defaultIsolationLevel);
+                newClusteredGigaSpace.setDefaultReadTimeout(defaultReadTimeout);
+                newClusteredGigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
+                newClusteredGigaSpace.setDefaultWriteLease(defaultWriteLease);
             } catch (Exception e) {
                 throw new InvalidDataAccessApiUsageException("Failed to get clustered Space from actual space", e);
+            }
+            //GS-8287: try to assign the created single clustered GigaSpace instance to the volatile reference
+            //but avoid locking at creation - we don't promise a single instance being returned. 
+            if (clusteredGigaSpace != null) {
+                clusteredGigaSpace = newClusteredGigaSpace;
             }
         }
         return this.clusteredGigaSpace;
