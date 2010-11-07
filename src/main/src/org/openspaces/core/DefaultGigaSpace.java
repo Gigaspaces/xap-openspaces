@@ -183,7 +183,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             }
             //GS-8287: try to assign the created single clustered GigaSpace instance to the volatile reference
             //but avoid locking at creation - we don't promise a single instance being returned. 
-            if (clusteredGigaSpace != null) {
+            if (clusteredGigaSpace == null) {
                 clusteredGigaSpace = newClusteredGigaSpace;
             }
         }
