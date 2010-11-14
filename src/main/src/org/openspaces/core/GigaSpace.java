@@ -34,6 +34,7 @@ import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.query.ISpaceQuery;
+import com.gigaspaces.query.QueryResultType;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.TakeModifiers;
@@ -150,6 +151,12 @@ public interface GigaSpace {
      */
     int getModifiersForIsolationLevel();
 
+    
+    /**
+     * Gets the query result type of query operations performed on this GigaSpace instance.
+     */
+    QueryResultType getQueryResultType();
+    
     /**
      * Cleans this space. The side-effects of cleaning the space are:
      * <ul>

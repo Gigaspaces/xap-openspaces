@@ -29,6 +29,7 @@ import com.gigaspaces.internal.client.QueryResultTypeInternal;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.query.ISpaceQuery;
+import com.gigaspaces.query.QueryResultType;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
@@ -81,12 +82,13 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     final private ExceptionTranslator exTranslator;
 
+    final private QueryResultType queryResultType;
+
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
     private long defaultTakeTimeout = JavaSpace.NO_WAIT;
 
     private long defaultWriteLease = Lease.FOREVER;
-
 
     private int defaultIsolationLevel;
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
@@ -103,12 +105,14 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      * @param defaultIsolationLevel The default isolation level for read operations without modifiers. Maps to
      *                              {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}
      *                              levels values.
+     * @param queryResultType       The type of results for query operations.                            
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
-                            int defaultIsolationLevel) {
+            int defaultIsolationLevel, QueryResultType queryResultType) {
         this.space = (ISpaceProxy) space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
+        this.queryResultType = queryResultType != QueryResultType.NOT_SET ? queryResultType : QueryResultType.OBJECT;
         // set the default read take modifiers according to the default isolation level
         switch (defaultIsolationLevel) {
             case TransactionDefinition.ISOLATION_DEFAULT:
@@ -126,6 +130,13 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             case TransactionDefinition.ISOLATION_SERIALIZABLE:
                 throw new IllegalArgumentException("GigaSpace does not support serializable isolation level");
         }
+    }
+    
+    private DefaultGigaSpace(IJSpace space, DefaultGigaSpace other) {
+        this(space, other.txProvider, other.exTranslator, other.defaultIsolationLevel, other.queryResultType);
+        setDefaultReadTimeout(other.defaultReadTimeout);
+        setDefaultTakeTimeout(other.defaultTakeTimeout);
+        setDefaultWriteLease(other.defaultWriteLease);
     }
 
     public void setName(String name) {
@@ -174,10 +185,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } else {
             DefaultGigaSpace newClusteredGigaSpace = null;
             try {
-                newClusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), txProvider, exTranslator, defaultIsolationLevel);
-                newClusteredGigaSpace.setDefaultReadTimeout(defaultReadTimeout);
-                newClusteredGigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
-                newClusteredGigaSpace.setDefaultWriteLease(defaultWriteLease);
+                newClusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), this);
             } catch (Exception e) {
                 throw new InvalidDataAccessApiUsageException("Failed to get clustered Space from actual space", e);
             }
@@ -834,6 +842,12 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } else {
             throw new IllegalArgumentException("GigaSpaces does not support isolation level [" + isolationLevel + "]");
         }
+    }
+    
+    /** {@inheritDoc} */
+    public QueryResultType getQueryResultType()
+    {
+        return queryResultType;
     }
 
     @Override
