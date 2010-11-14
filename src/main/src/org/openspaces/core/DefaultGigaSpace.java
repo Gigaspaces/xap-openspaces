@@ -83,6 +83,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     final private ExceptionTranslator exTranslator;
 
     final private QueryResultType queryResultType;
+    final private QueryResultTypeInternal queryResultTypeInternal;
 
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
@@ -113,6 +114,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         this.queryResultType = queryResultType != QueryResultType.NOT_SET ? queryResultType : QueryResultType.OBJECT;
+        this.queryResultTypeInternal = getQueryResultTypeInternal(this.queryResultType);
         // set the default read take modifiers according to the default isolation level
         switch (defaultIsolationLevel) {
             case TransactionDefinition.ISOLATION_DEFAULT:
@@ -137,6 +139,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         setDefaultReadTimeout(other.defaultReadTimeout);
         setDefaultTakeTimeout(other.defaultTakeTimeout);
         setDefaultWriteLease(other.defaultWriteLease);
+    }
+    
+    private static QueryResultTypeInternal getQueryResultTypeInternal(QueryResultType queryResultType) {
+        switch (queryResultType)
+        {
+            case OBJECT: return QueryResultTypeInternal.OBJECT;
+            case DOCUMENT: return QueryResultTypeInternal.DOCUMENT_ENTRY;
+            default: throw new IllegalArgumentException("Unsupported QueryResultType: " + queryResultType);
+        }
     }
 
     public void setName(String name) {
@@ -265,7 +276,28 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
-            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, false, QueryResultTypeInternal.OBJECT);
+            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, false, queryResultTypeInternal);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> T readById(String typeName, Object id) {
+        return readById(typeName, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readById(String typeName, Object id, Object routing) {
+        return readById(typeName, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readById(String typeName, Object id, Object routing, long timeout) {
+        return readById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T readById(String typeName, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.readById(typeName, id, routing, getCurrentTransaction(), timeout, modifiers, false, queryResultTypeInternal);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -378,7 +410,28 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
-            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.OBJECT);
+            return (T) space.readById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, queryResultTypeInternal);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    public <T> T readIfExistsById(String typeName, Object id) {
+        return readIfExistsById(typeName, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readIfExistsById(String typeName, Object id, Object routing) {
+        return readIfExistsById(typeName, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout) {
+        return readIfExistsById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.readById(typeName, id, routing, getCurrentTransaction(), timeout, modifiers, true, queryResultTypeInternal);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -459,7 +512,27 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
-            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, false, QueryResultTypeInternal.OBJECT);
+            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, false, queryResultTypeInternal);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    public <T> T takeById(String typeName, Object id) {
+        return takeById(typeName, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeById(String typeName, Object id, Object routing) {
+        return takeById(typeName, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeById(String typeName, Object id, Object routing, long timeout) {
+        return takeById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T takeById(String typeName, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.takeById(typeName, id, routing, getCurrentTransaction(), timeout, modifiers, false, queryResultTypeInternal);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -572,7 +645,28 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
-            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.OBJECT);
+            return (T) space.takeById(clazz.getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, queryResultTypeInternal);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    public <T> T takeIfExistsById(String typeName, Object id) {
+        return takeIfExistsById(typeName, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExistsById(String typeName, Object id, Object routing) {
+        return takeIfExistsById(typeName, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout) {
+        return takeIfExistsById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) {
+        try {
+            return (T) space.takeById(typeName, id, routing, getCurrentTransaction(), timeout, modifiers, true, queryResultTypeInternal);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -872,7 +966,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) {
         try {
-            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultTypeInternal.OBJECT, false));
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -881,7 +975,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) {
         try {
-            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultTypeInternal.OBJECT, false));
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -890,7 +984,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
         try {
-            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultTypeInternal.OBJECT, false));
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -899,7 +993,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
         try {
-            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultTypeInternal.OBJECT, false));
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -908,7 +1002,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing) {
         try {
-            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultTypeInternal.OBJECT, false));
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -917,16 +1011,70 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings) {
         try {
-            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultTypeInternal.OBJECT, false));
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids) {
+        try {
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(typeName, ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }    
     
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, int modifiers) {
+        try {
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(typeName, ids, null, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object routing, int modifiers) {
+        try {
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(typeName, ids, routing, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object[] routings, int modifiers) {
+        try {
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(typeName, ids, routings, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object routing) {
+        try {
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(typeName, ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object[] routings) {
+        try {
+            return new ReadByIdsResultImpl<T>((T[]) space.readByIds(typeName, ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) {
         try {
-            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultTypeInternal.OBJECT, false));
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, null, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -935,7 +1083,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
         try {
-            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultTypeInternal.OBJECT, false));
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routing, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -944,7 +1092,61 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
         try {
-            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultTypeInternal.OBJECT, false));
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routings, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids) {
+        try {
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(typeName, ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object routing) {
+        try {
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(typeName, ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object[] routings) {
+        try {
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(typeName, ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, int modifiers) {
+        try {
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(typeName, ids, null, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object routing, int modifiers) {
+        try {
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(typeName, ids, routing, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object[] routings, int modifiers) {
+        try {
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(typeName, ids, routings, getCurrentTransaction(), modifiers, queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -953,7 +1155,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) {
         try {
-            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultTypeInternal.OBJECT, false));
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, null, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -962,7 +1164,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing) {
         try {
-            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultTypeInternal.OBJECT, false));
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routing, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -971,7 +1173,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings) {
         try {
-            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), QueryResultTypeInternal.OBJECT, false));
+            return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(clazz.getName(), ids, routings, getCurrentTransaction(), getModifiersForIsolationLevel(), queryResultTypeInternal, false));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

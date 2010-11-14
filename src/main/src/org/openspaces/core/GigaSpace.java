@@ -341,6 +341,62 @@ public interface GigaSpace {
     <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
     /**
+     * Read an object from the space matching its id and type. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(String typeName, Object id) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(String typeName, Object id, Object routing) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param typeName  The class of the entry
+     * @param id        The id of the entry
+     * @param routing   The routing value
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read any matching object from the space, blocking until one exists. Return
      * <code>null</code> if the timeout expires.
      *
@@ -773,6 +829,78 @@ public interface GigaSpace {
     <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
     /**
+     * Read an object from the space matching its id and type. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>Matching and timeouts are done as in
+     * <code>readById</code>, except that blocking in this call is done only if
+     * necessary to wait for transactional state to settle.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #readById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readIfExistsById(String typeName, Object id) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>Matching and timeouts are done as in
+     * <code>readById</code>, except that blocking in this call is done only if
+     * necessary to wait for transactional state to settle.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readIfExistsById(String typeName, Object id, Object routing) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Matching and timeouts are done as in
+     * <code>readById</code>, except that blocking in this call is done only if
+     * necessary to wait for transactional state to settle.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
+
+    /**
+     * Read an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Matching and timeouts are done as in
+     * <code>readById</code>, except that blocking in this call is done only if
+     * necessary to wait for transactional state to settle.
+     *
+     * @param typeName  The type of the entry
+     * @param id        The id of the entry
+     * @param routing   The routing value
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read any matching object from the space, returning <code>null</code> if
      * there currently is none. Matching and timeouts are done as in
      * <code>read</code>, except that blocking in this call is done only if
@@ -1080,14 +1208,114 @@ public interface GigaSpace {
      * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
-     * @param clazz     The class type.
+     * @param clazz         The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
      */
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
-            
+
+    /**
+     * Read objects from the space matching their IDs and the specified type.
+     *
+     * <p>Note, if the space is partitioned and the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.
+     *
+     * @param typeName      The name of type.
+     * @param ids   The object IDs array.
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids) throws DataAccessException;
+
+    /**
+     * Read objects from the space matching their IDs and the specified type, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     *
+     * <p>Note, if the space is partitioned and the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.     
+     * 
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param typeName      The name of type.
+     * @param ids       The object IDs array.
+     * @param modifiers The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, int modifiers) throws DataAccessException;
+    
+    
+    /**
+     * Read objects from the space matching their IDs, the specified type and routing key.
+     * 
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
+     * to all of the partitions.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object routingKey) throws DataAccessException;
+    
+    /**
+     * Read objects from the space matching their IDs, the specified type and routing key, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * 
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
+     * to all of the partitions.
+     * 
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @param modifiers     The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
+        
+    /**
+     * Read objects from the space matching their IDs, the specified type and the routing keys.
+     * 
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
+     *
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object[] routingKeys) throws DataAccessException;       
+    
+    /**
+     * Read objects from the space matching their IDs, the specified type and the routing keys, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * 
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
+     * 
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The objects\ IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a ReadByIdsResult containing the matched results.
+     */
+    <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
+
     /**
      * Take (remove) objects from the space matching their IDs and the specified class.
      * 
@@ -1186,7 +1414,106 @@ public interface GigaSpace {
      * @return a TakeByIdsResult containing the matched results.
      */
     <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
+
+    /**
+     * Take (remove) objects from the space matching their IDs and the specified type.
+     * 
+     * <p>Note, if the space is partitioned, or the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.
+     *
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @return a TakeByIdsResult containing the matched results.
+     */
+    <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids) throws DataAccessException;
+
+    /**
+     * Take (remove) objects from the space matching their IDs and the specified type, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * 
+     * <p>Note, if the space is partitioned, or the Class defines a specific property
+     * for its routing value (which means that the ID property is not used for routing),
+     * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
+     * can be used to specify the routing explicitly.     
+     *
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param modifiers     The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a TakeByIdsResult containing the matched results.
+     */
+    <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) objects from the space matching their IDs, the specified type and routing key.
+     * 
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
+     * to all of the partitions.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @return a TakeByIdsResult containing the matched results.
+     */
+    <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object routingKey) throws DataAccessException;
+
+    /**
+     * Take (remove) objects from the space matching their IDs, the specified type and routing key, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * 
+     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
+     * to all of the partitions.
+     *
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param routingKey    The routing of the provided object IDs.
+     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a TakeByIdsResult containing the matched results.
+     */
+    <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
+        
+    /**
+     * Take (remove) objects from the space matching their IDs, the specified type and the routing keys.
+     * 
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The object IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @return a TakeByIdsResult containing the matched results.
+     */
+    <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object[] routingKeys) throws DataAccessException;
     
+    /**
+     * Take (remove) objects from the space matching their IDs, the specified type and the routing keys, with the
+     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * 
+     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
+     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
+     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
+     * all of the partitions. 
+     *
+     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * the results are always ordered in correlation with the input IDs array.
+     * 
+     * @param typeName      The name of type.
+     * @param ids           The objects\ IDs array.
+     * @param routingKeys   The object routing keys array.
+     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @return a TakeByIdsResult containing the matched results.
+     */
+    <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
+
     /**
      * Take (remove) an object from the space matching its id and the class. Returns
      * <code>null</code> if there is no match.
@@ -1242,6 +1569,62 @@ public interface GigaSpace {
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      */
     <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id and type. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(String typeName, Object id) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(String typeName, Object id, Object routing) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * @param typeName  The type of the entry
+     * @param id        The id of the entry
+     * @param routing   The routing value
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -1628,6 +2011,74 @@ public interface GigaSpace {
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      */
     <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id and type. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>Matching and timeouts are done as in <code>takeById</code>, except that blocking in this
+     * call is done only if necessary to wait for transactional state to settle.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * <p>Note, if the space is partitioned, and the Entry has a specific property
+     * for its routing value, the operation will broadcast to all partitions. The
+     * {@link #takeById(Class, Object, Object)} can be used to specify the routing.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeIfExistsById(String typeName, Object id) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match.
+     *
+     * <p>Matching and timeouts are done as in <code>takeById</code>, except that blocking in this
+     * call is done only if necessary to wait for transactional state to settle.
+     *
+     * <p>The timeout is the default timeout this interface is configured with
+     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeIfExistsById(String typeName, Object id, Object routing) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Matching and timeouts are done as in <code>takeById</code>, except that blocking in this
+     * call is done only if necessary to wait for transactional state to settle.
+     *
+     * @param typeName The type of the entry
+     * @param id       The id of the entry
+     * @param routing  The routing value
+     * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) an object from the space matching its id, type and the routing value. Returns
+     * <code>null</code> if there is no match within the specified timeout.
+     *
+     * <p>Matching and timeouts are done as in <code>takeById</code>, except that blocking in this
+     * call is done only if necessary to wait for transactional state to settle.
+     *
+     * @param typeName  The type of the entry
+     * @param id        The id of the entry
+     * @param routing   The routing value
+     * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     */
+    <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if
