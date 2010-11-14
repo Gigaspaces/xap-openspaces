@@ -282,16 +282,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readById(String typeName, Object id) {
-        return readById(typeName, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
+        return (T)readById(typeName, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readById(String typeName, Object id, Object routing) {
-        return readById(typeName, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
+        return (T)readById(typeName, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readById(String typeName, Object id, Object routing, long timeout) {
-        return readById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+        return (T)readById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
@@ -416,16 +419,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public <T> T readIfExistsById(String typeName, Object id) {
-        return readIfExistsById(typeName, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
+        return (T)readIfExistsById(typeName, id, null, defaultReadTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readIfExistsById(String typeName, Object id, Object routing) {
-        return readIfExistsById(typeName, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
+        return (T)readIfExistsById(typeName, id, routing, defaultReadTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout) {
-        return readIfExistsById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+        return (T)readIfExistsById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
@@ -517,16 +523,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    @SuppressWarnings("unchecked")
     public <T> T takeById(String typeName, Object id) {
-        return takeById(typeName, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
+        return (T)takeById(typeName, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeById(String typeName, Object id, Object routing) {
-        return takeById(typeName, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
+        return (T)takeById(typeName, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeById(String typeName, Object id, Object routing, long timeout) {
-        return takeById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+        return (T)takeById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
@@ -651,16 +660,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeIfExistsById(String typeName, Object id) {
-        return takeIfExistsById(typeName, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
+        return (T)takeIfExistsById(typeName, id, null, defaultTakeTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeIfExistsById(String typeName, Object id, Object routing) {
-        return takeIfExistsById(typeName, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
+        return (T)takeIfExistsById(typeName, id, routing, defaultTakeTimeout, getModifiersForIsolationLevel());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout) {
-        return takeIfExistsById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
+        return (T)takeIfExistsById(typeName, id, routing, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
