@@ -18,7 +18,6 @@ package org.openspaces.core;
 
 import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.gigaspaces.query.QueryResultType;
 import com.j_spaces.core.IJSpace;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
@@ -123,8 +122,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
     
-    private QueryResultType queryResultType = QueryResultType.NOT_SET;
-
     private String beanName;
 
     private DefaultGigaSpace gigaSpace;
@@ -232,17 +229,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     }
 
     /**
-     * 
-     * @param queryResultType
-     */
-    public void setQueryResultType(QueryResultType queryResultType)
-    {
-        if (queryResultType == null)
-            throw new IllegalArgumentException("Argument cannot be null - 'queryResultType'.");
-        this.queryResultType = queryResultType;
-    }
-    
-    /**
      * <p>Set the transaction manager to enable transactional operations. Can be <code>null</code>
      * if transactional support is not required or the default space is used as a transactional context.
      */
@@ -291,7 +277,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             }
             txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
         }
-        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel, queryResultType);
+        gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);
