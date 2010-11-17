@@ -34,6 +34,8 @@ import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.query.ISpaceQuery;
+import com.gigaspaces.query.IdQuery;
+import com.gigaspaces.query.IdsQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.TakeModifiers;
@@ -347,6 +349,7 @@ public interface GigaSpace {
      * @param typeName The type of the entry
      * @param id       The id of the entry
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readById(String typeName, Object id) throws DataAccessException;
 
@@ -361,6 +364,7 @@ public interface GigaSpace {
      * @param id       The id of the entry
      * @param routing  The routing value
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readById(String typeName, Object id, Object routing) throws DataAccessException;
 
@@ -373,6 +377,7 @@ public interface GigaSpace {
      * @param routing  The routing value
      * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
 
@@ -386,9 +391,12 @@ public interface GigaSpace {
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
      * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
+    <T> T readById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+    
     /**
      * Read any matching object from the space, blocking until one exists. Return
      * <code>null</code> if the timeout expires.
@@ -839,6 +847,7 @@ public interface GigaSpace {
      * @param typeName The type of the entry
      * @param id       The id of the entry
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readIfExistsById(String typeName, Object id) throws DataAccessException;
 
@@ -857,6 +866,7 @@ public interface GigaSpace {
      * @param id       The id of the entry
      * @param routing  The routing value
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readIfExistsById(String typeName, Object id, Object routing) throws DataAccessException;
 
@@ -873,6 +883,7 @@ public interface GigaSpace {
      * @param routing  The routing value
      * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
 
@@ -890,9 +901,12 @@ public interface GigaSpace {
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
      * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T readIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
 
+    <T> T readIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+    
     /**
      * Read any matching object from the space, returning <code>null</code> if
      * there currently is none. Matching and timeouts are done as in
@@ -1220,6 +1234,7 @@ public interface GigaSpace {
      * @param typeName      The name of type.
      * @param ids   The object IDs array.
      * @return a ReadByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids) throws DataAccessException;
 
@@ -1239,6 +1254,7 @@ public interface GigaSpace {
      * @param ids       The object IDs array.
      * @param modifiers The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, int modifiers) throws DataAccessException;
     
@@ -1253,6 +1269,7 @@ public interface GigaSpace {
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
      * @return a ReadByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object routingKey) throws DataAccessException;
     
@@ -1271,6 +1288,7 @@ public interface GigaSpace {
      * @param routingKey    The routing of the provided object IDs.
      * @param modifiers     The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
         
@@ -1286,6 +1304,7 @@ public interface GigaSpace {
      * @param ids           The object IDs array.
      * @param routingKeys   The object routing keys array.
      * @return a ReadByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object[] routingKeys) throws DataAccessException;       
     
@@ -1306,8 +1325,11 @@ public interface GigaSpace {
      * @param routingKeys   The object routing keys array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(String typeName, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
+
+    <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) objects from the space matching their IDs and the specified class.
@@ -1419,6 +1441,7 @@ public interface GigaSpace {
      * @param typeName      The name of type.
      * @param ids           The object IDs array.
      * @return a TakeByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids) throws DataAccessException;
 
@@ -1438,6 +1461,7 @@ public interface GigaSpace {
      * @param ids           The object IDs array.
      * @param modifiers     The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a TakeByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, int modifiers) throws DataAccessException;
 
@@ -1451,6 +1475,7 @@ public interface GigaSpace {
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
      * @return a TakeByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object routingKey) throws DataAccessException;
 
@@ -1469,6 +1494,7 @@ public interface GigaSpace {
      * @param routingKey    The routing of the provided object IDs.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a TakeByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
         
@@ -1484,6 +1510,7 @@ public interface GigaSpace {
      * @param ids           The object IDs array.
      * @param routingKeys   The object routing keys array.
      * @return a TakeByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object[] routingKeys) throws DataAccessException;
     
@@ -1504,8 +1531,11 @@ public interface GigaSpace {
      * @param routingKeys   The object routing keys array.
      * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
      * @return a TakeByIdsResult containing the matched results.
+     * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(String typeName, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
+
+    <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id and the class. Returns
@@ -1577,6 +1607,7 @@ public interface GigaSpace {
      * @param typeName The type of the entry
      * @param id       The id of the entry
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeById(String typeName, Object id) throws DataAccessException;
 
@@ -1591,6 +1622,7 @@ public interface GigaSpace {
      * @param id       The id of the entry
      * @param routing  The routing value
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeById(String typeName, Object id, Object routing) throws DataAccessException;
 
@@ -1603,6 +1635,7 @@ public interface GigaSpace {
      * @param routing  The routing value
      * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
 
@@ -1616,8 +1649,11 @@ public interface GigaSpace {
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
      * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    <T> T takeById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -2022,6 +2058,7 @@ public interface GigaSpace {
      * @param typeName The type of the entry
      * @param id       The id of the entry
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeIfExistsById(String typeName, Object id) throws DataAccessException;
 
@@ -2039,6 +2076,7 @@ public interface GigaSpace {
      * @param id       The id of the entry
      * @param routing  The routing value
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeIfExistsById(String typeName, Object id, Object routing) throws DataAccessException;
 
@@ -2054,6 +2092,7 @@ public interface GigaSpace {
      * @param routing  The routing value
      * @param timeout  The timeout value to wait for a matching entry if it does not exists within the space
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout) throws DataAccessException;
 
@@ -2070,8 +2109,11 @@ public interface GigaSpace {
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
      * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 8.0
      */
     <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    <T> T takeIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if

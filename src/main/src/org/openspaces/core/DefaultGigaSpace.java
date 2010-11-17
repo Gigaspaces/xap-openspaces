@@ -29,6 +29,9 @@ import com.gigaspaces.internal.client.QueryResultTypeInternal;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.query.ISpaceQuery;
+import com.gigaspaces.query.IdQuery;
+import com.gigaspaces.query.IdsQuery;
+import com.gigaspaces.query.QueryResultType;
 
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
@@ -290,6 +293,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T readById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException {
+        try {
+            return (T) space.readById(query.getTypeName(), query.getId(), query.getRouting(), getCurrentTransaction(), timeout, modifiers, false, toInternal(query.getQueryResultType()));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
 
     public <T> T read(T template) throws DataAccessException {
         return read(template, defaultReadTimeout);
@@ -427,6 +439,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T readIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException {
+        try {
+            return (T) space.readById(query.getTypeName(), query.getId(), query.getRouting(), getCurrentTransaction(), timeout, modifiers, true, toInternal(query.getQueryResultType()));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
 
     public <T> T readIfExists(T template) throws DataAccessException {
         return readIfExists(template, defaultReadTimeout);
@@ -527,6 +548,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeById(String typeName, Object id, Object routing, long timeout, int modifiers) {
         try {
             return (T) space.takeById(typeName, id, routing, getCurrentTransaction(), timeout, modifiers, false, QueryResultTypeInternal.NOT_SET);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T takeById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException {
+        try {
+            return (T) space.takeById(query.getTypeName(), query.getId(), query.getRouting(), getCurrentTransaction(), timeout, modifiers, false, toInternal(query.getQueryResultType()));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -664,6 +694,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeIfExistsById(String typeName, Object id, Object routing, long timeout, int modifiers) {
         try {
             return (T) space.takeById(typeName, id, routing, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.NOT_SET);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T takeIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException {
+        try {
+            return (T) space.takeById(query.getTypeName(), query.getId(), query.getRouting(), getCurrentTransaction(), timeout, modifiers, true, toInternal(query.getQueryResultType()));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1061,6 +1100,18 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query, int modifiers) throws DataAccessException {
+        try {
+            if (query.getRouting() != null)
+                return new ReadByIdsResultImpl<T>((T[]) space.readByIds(query.getTypeName(), query.getIds(), query.getRouting(), getCurrentTransaction(), getModifiersForIsolationLevel(), toInternal(query.getQueryResultType()), false));
+            else
+                return new ReadByIdsResultImpl<T>((T[]) space.readByIds(query.getTypeName(), query.getIds(), query.getRoutings(), getCurrentTransaction(), getModifiersForIsolationLevel(), toInternal(query.getQueryResultType()), false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) {
@@ -1142,6 +1193,18 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query, int modifiers) throws DataAccessException {
+        try {
+            if (query.getRouting() != null)
+                return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(query.getTypeName(), query.getIds(), query.getRouting(), getCurrentTransaction(), modifiers, toInternal(query.getQueryResultType()), false));
+            else
+                return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(query.getTypeName(), query.getIds(), query.getRoutings(), getCurrentTransaction(), modifiers, toInternal(query.getQueryResultType()), false));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) {
@@ -1188,4 +1251,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     } 
+    
+    private static QueryResultTypeInternal toInternal(QueryResultType queryResultType) {
+        if (queryResultType == null)
+            return null;
+        if (queryResultType == QueryResultType.NOT_SET)
+            return QueryResultTypeInternal.NOT_SET;
+        if (queryResultType == QueryResultType.OBJECT)
+            return QueryResultTypeInternal.OBJECT;
+        if (queryResultType == QueryResultType.DOCUMENT)
+            return QueryResultTypeInternal.DOCUMENT_ENTRY;
+        
+        throw new IllegalArgumentException("Unsupported query result type: " + queryResultType);
+    }
 }
