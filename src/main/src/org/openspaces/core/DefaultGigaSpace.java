@@ -84,6 +84,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     final private ExceptionTranslator exTranslator;
 
+    final private GigaSpaceTypeManager typeManager;
+
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
     private long defaultTakeTimeout = JavaSpace.NO_WAIT;
@@ -112,6 +114,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         this.space = (ISpaceProxy) space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
+        this.typeManager = new DefaultGigaSpaceTypeManager(this.space, this.exTranslator);
+        
         // set the default read take modifiers according to the default isolation level
         switch (defaultIsolationLevel) {
             case TransactionDefinition.ISOLATION_DEFAULT:
@@ -1125,6 +1129,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public GigaSpaceTypeManager getTypeManager()
+    {
+        return typeManager;
+    }
+    
     public SpaceTypeDescriptor getTypeDescriptor(String typeName)
     {
         try {
