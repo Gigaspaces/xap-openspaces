@@ -83,7 +83,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         
         Element documentClassElem = DomUtils.getChildElementByTagName(element, "document-class");
         if (documentClassElem != null) {
-            String className =documentClassElem.getNodeValue();
+            String className =documentClassElem.getTextContent();
            
             builder.addPropertyValue("documentClass", className);
         }
