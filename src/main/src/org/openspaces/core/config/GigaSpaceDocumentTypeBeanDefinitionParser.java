@@ -55,7 +55,6 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
                 continue;
             }
             String propertyName = extractPropertyName(name);
-            System.out.println(name + " " + propertyName);
             Assert.state(StringUtils.hasText(propertyName),
                 "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
             
