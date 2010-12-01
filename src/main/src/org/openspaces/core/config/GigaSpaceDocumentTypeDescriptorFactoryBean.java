@@ -1,7 +1,5 @@
 package org.openspaces.core.config;
 
-import java.util.List;
-
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -63,14 +61,20 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean  implements FactoryBean<
     }
 
     public void setIdProperty(SpaceIdProperty idProperty) {
-         typeDescriptorBuilder.setIdProperty(idProperty.getPropertyName(), idProperty.isAutoGenerate(),idProperty.getIndex());
+        if(idProperty.getIndex() == null)
+            typeDescriptorBuilder.setIdProperty(idProperty.getPropertyName(), idProperty.isAutoGenerate());
+        else
+            typeDescriptorBuilder.setIdProperty(idProperty.getPropertyName(), idProperty.isAutoGenerate(),idProperty.getIndex());
     }
 
     public void setRoutingProperty(SpaceRoutingProperty routingProperty) {
-         typeDescriptorBuilder.setRoutingProperty(routingProperty.getPropertyName(),routingProperty.getIndex());
+        if(routingProperty.getIndex() == null)
+            typeDescriptorBuilder.setRoutingProperty(routingProperty.getPropertyName());
+        else
+            typeDescriptorBuilder.setRoutingProperty(routingProperty.getPropertyName(), routingProperty.getIndex());
     }
 
-    public void setIndexes(List indexes)
+    public void setIndexes(SpaceIndex... indexes)
     {
         for (Object index : indexes) {
             
@@ -86,7 +90,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean  implements FactoryBean<
             }
             else
             {
-                throw new IllegalArgumentException("Illegal index type");
+                throw new IllegalArgumentException("Illegal index type " + index);
             }
         }
     }

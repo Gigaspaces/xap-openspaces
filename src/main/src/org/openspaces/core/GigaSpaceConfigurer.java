@@ -16,6 +16,7 @@
 
 package org.openspaces.core;
 
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.space.SpaceConfigurer;
@@ -121,6 +122,13 @@ public class GigaSpaceConfigurer {
      */
     public GigaSpaceConfigurer transactionManager(PlatformTransactionManager transactionManager) {
         gigaSpaceFactoryBean.setTransactionManager(transactionManager);
+        return this;
+    }
+    /**
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setSpaceTypes(SpaceTypeDescriptor...)
+     */
+    public GigaSpaceConfigurer spaceTypes(SpaceTypeDescriptor...typeDescriptors) {
+        gigaSpaceFactoryBean.setSpaceTypes(typeDescriptors);
         return this;
     }
 

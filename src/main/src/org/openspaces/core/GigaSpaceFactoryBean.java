@@ -18,6 +18,7 @@ package org.openspaces.core;
 
 import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.j_spaces.core.IJSpace;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
@@ -113,6 +114,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     private PlatformTransactionManager transactionManager;
 
     private Boolean clustered;
+
+    private SpaceTypeDescriptor[] typeDescriptors;
 
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
@@ -241,6 +244,13 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     }
 
     /**
+     * Inject a list of space types.
+     */
+    public void setSpaceTypes(SpaceTypeDescriptor[] typeDescriptors) {
+        this.typeDescriptors = typeDescriptors;
+    }
+
+    /**
      * Constructs the {@link org.openspaces.core.GigaSpace} instance using the
      * {@link org.openspaces.core.DefaultGigaSpace} implementation. Uses the clustered flag to
      * get a cluster member directly (if set to <code>false</code>) and applies the different
@@ -282,6 +292,14 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);
         gigaSpace.setName(beanName == null ? space.getName() : beanName);
+        
+        if(typeDescriptors != null)
+        {
+            for (int i = 0; i < typeDescriptors.length; i++) {
+
+                gigaSpace.getTypeManager().registerTypeDescriptor(typeDescriptors[i]);
+            }
+        }
     }
 
     /**

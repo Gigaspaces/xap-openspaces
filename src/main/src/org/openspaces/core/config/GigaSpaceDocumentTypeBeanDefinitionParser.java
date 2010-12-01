@@ -16,7 +16,7 @@
 
 package org.openspaces.core.config;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -60,10 +60,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             
             if(name.equals("type-name"))
                 typeName = attribute.getValue();
-            
-            if(propertyName.equals("super"))
-                superType = attribute.getValue();
-            
+              
             if(propertyName.equals("replicable"))
                 builder.addPropertyValue(propertyName,attribute.getValue());
             
@@ -88,14 +85,14 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             builder.addPropertyValue("documentClass", className);
         }
 
-        List<SpaceIndex> indexes = new LinkedList<SpaceIndex>();
+        HashMap<String,SpaceIndex> indexes = new HashMap<String,SpaceIndex>();
         
         List<Element> indexedElements = DomUtils.getChildElementsByTagName(element, "basic-index");
 
         for (int i = 0; i < indexedElements.size(); i++) {
             String indexPropertyPath = indexedElements.get(i).getAttribute("path");
             if (StringUtils.hasText(indexPropertyPath)) {
-                indexes.add(new BasicIndex(indexPropertyPath));
+                indexes.put(indexPropertyPath,new BasicIndex(indexPropertyPath));
             }
            
         }
@@ -104,18 +101,17 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         for (int i = 0; i < indexedElements.size(); i++) {
             String indexPropertyPath = indexedElements.get(i).getAttribute("path");
             if (StringUtils.hasText(indexPropertyPath)) {
-                indexes.add(new ExtendedIndex(indexPropertyPath));
+                indexes.put(indexPropertyPath,new ExtendedIndex(indexPropertyPath));
             }
             
         }
         
-        builder.addPropertyValue("indexes", indexes);
+        builder.addPropertyValue("indexes", indexes.values().toArray());
         
         Element idElem = DomUtils.getChildElementByTagName(element, "id");
         if (idElem != null) {
             String idPropertyName =idElem.getAttribute("property");
             String idAutogenerate =idElem.getAttribute("auto-generate");
-            String index =idElem.getAttribute("index");
             
             SpaceIdProperty idProperty= new SpaceIdProperty();
             idProperty.setPropertyName(idPropertyName);
@@ -123,11 +119,8 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             if(StringUtils.hasText(idAutogenerate))
                 idProperty.setAutoGenerate(Boolean.parseBoolean(idAutogenerate));
             
-            
-            if(StringUtils.hasText(index))
-                idProperty.setIndex(SpaceIndexType.valueOf(index.toUpperCase()));
-            else
-                idProperty.setIndex(SpaceIndexType.BASIC);
+            if(indexes.containsKey(idPropertyName))
+                idProperty.setIndex(SpaceIndexType.NONE);
             
             builder.addPropertyValue("idProperty", idProperty);
         }
@@ -135,15 +128,13 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         Element routingElem = DomUtils.getChildElementByTagName(element, "routing");
         if (routingElem != null) {
             String propertyName =idElem.getAttribute("property");
-            String index =idElem.getAttribute("index");
             
             SpaceRoutingProperty routing= new SpaceRoutingProperty();
             routing.setPropertyName(propertyName);
             
-            if(StringUtils.hasText(index))
-                routing.setIndex(SpaceIndexType.valueOf(index.toUpperCase()));
-            else
-                routing.setIndex(SpaceIndexType.BASIC);
+            if(indexes.containsKey(propertyName))
+                routing.setIndex(SpaceIndexType.NONE);
+         
             
             builder.addPropertyValue("routingProperty", routing);
         }

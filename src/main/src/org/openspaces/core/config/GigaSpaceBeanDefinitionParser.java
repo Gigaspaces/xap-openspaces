@@ -16,12 +16,17 @@
 
 package org.openspaces.core.config;
 
+import java.util.List;
+
 import org.openspaces.core.GigaSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -43,7 +48,9 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
         return GigaSpaceFactoryBean.class;
     }
 
-    protected void doParse(Element element, BeanDefinitionBuilder builder) {
+    @Override
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+
         NamedNodeMap attributes = element.getAttributes();
         for (int x = 0; x < attributes.getLength(); x++) {
             Attr attribute = (Attr) attributes.item(x);
@@ -70,6 +77,15 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
                 "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
             builder.addPropertyValue(propertyName, attribute.getValue());
         }
+        
+        List<Element> documentTypeElements = DomUtils.getChildElementsByTagName(element, "document-type");
+        ManagedList list = new ManagedList();
+        for (Element ele : documentTypeElements) {
+            list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition()));
+        }
+        
+        builder.addPropertyValue("spaceTypes", list);
+
     }
 
     protected String extractPropertyName(String attributeName) {

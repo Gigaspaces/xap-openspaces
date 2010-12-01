@@ -677,6 +677,20 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+					     <xsd:element ref="document-type">
+					       <xsd:annotation>
+					            <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
+					                Defines a single document type for the space
+					            </xsd:documentation>
+					            <xsd:appinfo>
+					                 <tool:annotation kind="ref">
+					                    <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
+					                </tool:annotation>
+					            </xsd:appinfo>
+					        </xsd:annotation>
+					    </xsd:element>
+                    </xsd:sequence>
                     <xsd:attribute name="space" type="spaceRefType" use="required">
                         <xsd:annotation>
                             <xsd:documentation source="java:com.j_spaces.core.IJSpace">
@@ -1587,24 +1601,24 @@
 					    </xsd:complexType>
                        </xsd:element>
                        
-                   		<xsd:element name="basic-index"  minOccurs="0">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 Basic equality index definition.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                         <xsd:complexType>
-					        <xsd:attribute name="path" type="xsd:string" use="required">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                The index path.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-					    </xsd:complexType>
+                   		<xsd:element name="basic-index"  minOccurs="0" maxOccurs="unbounded">
+	                         <xsd:annotation>
+	                             <xsd:documentation>
+	                                 Basic equality index definition.
+	                             </xsd:documentation>
+	                         </xsd:annotation>
+	                         <xsd:complexType>
+						        <xsd:attribute name="path" type="xsd:string" use="required">
+						            <xsd:annotation>
+						                <xsd:documentation>
+						                The index path.
+						                </xsd:documentation>
+						            </xsd:annotation>
+						        </xsd:attribute>
+						    </xsd:complexType>
 					    </xsd:element>
                    	
-                   		<xsd:element name="extended-index"  minOccurs="0">
+                   		<xsd:element name="extended-index"  minOccurs="0" maxOccurs="unbounded">
                          <xsd:annotation>
                              <xsd:documentation>
                                  Basic equality index definition.
@@ -1620,7 +1634,7 @@
 					        </xsd:attribute>
 					    </xsd:complexType>
                        </xsd:element>
-                   		<xsd:element name="document-class"  minOccurs="0">
+                   		<xsd:element name="document-class"  minOccurs="0" maxOccurs="1">
                          <xsd:annotation>
                              <xsd:documentation>
                                  Wrapper class for the document.
@@ -1636,39 +1650,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-
-  					<xsd:attribute name="super" use="optional">
-                        <xsd:annotation>
-                            <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
-                                The reference to the super type bean definition.
-                            </xsd:documentation>
-                            <xsd:appinfo>
-                                <tool:annotation kind="ref">
-                                    <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
-                                </tool:annotation>
-                            </xsd:appinfo>
-	                    </xsd:annotation>
-						<xsd:simpleType>
-							<xsd:annotation>
-								<xsd:appinfo>
-									<tool:annotation kind="ref">
-										<tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor" />
-									</tool:annotation>
-								</xsd:appinfo>
-							</xsd:annotation>
-							<xsd:union memberTypes="xsd:string" />
-						</xsd:simpleType>
-                    </xsd:attribute>
-                    
-                      <xsd:attribute name="replicable" type="xsd:boolean" use="optional">
+                    <xsd:attribute name="replicable" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Indicator whether this type is replicable or not.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                              
-                    
                      <xsd:attribute name="optimistic-lock" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -1676,7 +1664,6 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    
                      <xsd:attribute name="fifo-support" type="xsd:string" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -1688,7 +1675,4 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-  
-    
-    
 </xsd:schema>
