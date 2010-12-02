@@ -22,6 +22,9 @@ public class StringProperties {
         return this;
     }
     
+    public String get(String key) {
+        return properties.get(key);
+    }
     
     public String get(String key, String defaultValue) {
         String value = properties.get(key);
@@ -88,4 +91,13 @@ public class StringProperties {
    public void putMap(String keyPrefix, Map<String,String> value) {
        StringPropertiesUtils.putMap(properties,keyPrefix,value);
    }
+
+   public void clear() {
+       this.properties.clear();
+   }
+   
+   public void putAll(Map<String, String> properties) {
+       this.properties.putAll(properties);
+   }
+
 }
