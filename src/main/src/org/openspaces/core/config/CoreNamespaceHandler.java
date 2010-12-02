@@ -55,6 +55,6 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("local-cache-support", new MapLocalCacheSettingsBeanDefinitionParser());
         registerBeanDefinitionParser("giga-map", new GigaMapBeanDefinitionParser());
         registerBeanDefinitionParser("annotation-support", new AnnotationSupportBeanDefinitionParser());
-        registerBeanDefinitionParser("document-type", new GigaSpaceDocumentTypeBeanDefinitionParser());
+        registerBeanDefinitionParser("space-type", new GigaSpaceDocumentTypeBeanDefinitionParser());
     }
 }

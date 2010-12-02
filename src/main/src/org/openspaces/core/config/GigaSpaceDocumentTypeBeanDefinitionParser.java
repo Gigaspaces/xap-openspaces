@@ -33,7 +33,7 @@ import org.w3c.dom.NamedNodeMap;
 import com.gigaspaces.metadata.index.SpaceIndexType;
 
 /**
- * Defines document-type tag parsing
+ * Defines space-type tag parsing
  * @author anna
  */
 public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {

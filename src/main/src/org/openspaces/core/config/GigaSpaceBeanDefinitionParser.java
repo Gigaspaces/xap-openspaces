@@ -78,7 +78,7 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             builder.addPropertyValue(propertyName, attribute.getValue());
         }
         
-        List<Element> documentTypeElements = DomUtils.getChildElementsByTagName(element, "document-type");
+        List<Element> documentTypeElements = DomUtils.getChildElementsByTagName(element, "space-type");
         ManagedList list = new ManagedList();
         for (Element ele : documentTypeElements) {
             list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition()));

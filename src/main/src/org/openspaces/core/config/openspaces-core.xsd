@@ -678,7 +678,7 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
                     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-					     <xsd:element ref="document-type">
+					     <xsd:element ref="space-type">
 					       <xsd:annotation>
 					            <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
 					                Defines a single document type for the space
@@ -1546,7 +1546,7 @@
     
     
     
-    <xsd:element name="document-type">
+    <xsd:element name="space-type">
        <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.config.GigaSpaceDocumentTypeDescriptorFactoryBean">
                 Defines a custom space type
