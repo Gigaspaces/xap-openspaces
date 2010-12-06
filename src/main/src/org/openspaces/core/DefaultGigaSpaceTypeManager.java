@@ -2,8 +2,8 @@ package org.openspaces.core;
 
 import org.openspaces.core.exception.ExceptionTranslator;
 
-import com.gigaspaces.document.SpaceDocument;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.internal.metadata.ITypeDesc;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 
 /**
@@ -25,7 +25,7 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
     public SpaceTypeDescriptor getTypeDescriptor(String typeName)
     {
         try {
-            return space.getSpaceTypeDescriptor(typeName);
+            return space.getTypeDescriptor(typeName);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -35,7 +35,7 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
         try {
             if (type == null)
                 throw new IllegalArgumentException("Argument cannot be null - 'type'.");
-            return space.getSpaceTypeDescriptor(type.getName());
+            return space.getTypeDescriptor(type.getName());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -46,7 +46,7 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
         try {
             if (typeDescriptor == null)
                 throw new IllegalArgumentException("Argument cannot be null - 'typeDescriptor'.");
-            space.snapshot(new SpaceDocument(typeDescriptor));
+            space.registerTypeDescriptor((ITypeDesc) typeDescriptor);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
