@@ -23,7 +23,11 @@ public class StringProperties {
     }
     
     public String get(String key) {
-        return properties.get(key);
+        String value = properties.get(key);
+        if (value == null) {
+            throw new IllegalArgumentException("null value for " + key + " property");
+        }
+        return value;
     }
     
     public String get(String key, String defaultValue) {
