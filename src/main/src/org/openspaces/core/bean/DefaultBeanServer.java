@@ -6,6 +6,9 @@ import java.util.Map;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.bean.BeanAlreadyExistsException;
+import org.openspaces.admin.bean.BeanConfigurationException;
+import org.openspaces.admin.bean.BeanException;
+import org.openspaces.admin.bean.BeanInitializationException;
 import org.openspaces.admin.bean.BeanNotFoundException;
 import org.openspaces.admin.bean.BeanPropertiesManager;
 
@@ -41,7 +44,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanPropertiesManager 
         }
     }
 
-    public void enableBean(String bean) throws BeanNotFoundException {
+    public void enableBean(String bean) throws BeanNotFoundException, BeanConfigurationException, BeanInitializationException {
         if (!beanProperties.containsKey(bean)) {
             throw new BeanNotFoundException("Failed to enable bean [" + bean + "] - doesn't exist.");
         }
@@ -50,15 +53,21 @@ public class DefaultBeanServer<T extends Bean> implements BeanPropertiesManager 
             return; // idempotent - already enabled just return
         }
 
-        T beanBean = newInstance(bean);
-        enabledBeans.put(bean, beanBean);
+        T beanInstance = newInstance(bean);
+        enabledBeans.put(bean, beanInstance);
 
         // TODO - due to sharing of statistics monitor, need to have reference counter for
         // start/stop monitor calls.
         // until we do, we will create a different admin object for each bean.
-        beanBean.setAdmin(admin);
-        beanBean.setProperties(beanProperties.get(bean));
-        beanBean.afterPropertiesSet();
+        beanInstance.setAdmin(admin);
+        beanInstance.setProperties(beanProperties.get(bean));
+        try {
+            beanInstance.afterPropertiesSet();
+        } catch (BeanException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BeanException("Failed to enabled bean ["+bean+"]", e);
+        }
     }
 
     public void disableBean(String bean) throws BeanNotFoundException {
@@ -67,7 +76,11 @@ public class DefaultBeanServer<T extends Bean> implements BeanPropertiesManager 
         }
         if (enabledBeans.containsKey(bean)) {
             T beanBean = enabledBeans.remove(bean);
-            beanBean.destroy();
+            try {
+                beanBean.destroy();
+            }catch (Exception e) {
+                //TODO log it!
+            }
         }
     }
 
@@ -102,7 +115,11 @@ public class DefaultBeanServer<T extends Bean> implements BeanPropertiesManager 
     public void disableAllBeans() {
         for (Iterator<T> iter = enabledBeans.values().iterator(); iter.hasNext();) {
             T beanBean = iter.next();
-            beanBean.destroy();
+            try {
+                beanBean.destroy();
+            }catch (Exception e) {
+                //TODO log it!
+            }
             iter.remove();
         }
     }
