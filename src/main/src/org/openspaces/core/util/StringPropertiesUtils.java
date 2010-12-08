@@ -5,11 +5,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringPropertiesUtils {
     
@@ -20,9 +24,14 @@ public class StringPropertiesUtils {
     }
     
     public static Map<String,String> load(InputStream in) throws IOException {
+        
+        Properties properties = new Properties();
+        properties.load(in);
+        return convertPropertiesToMapStringString(properties);
+    }
+
+    public static Map<String, String> convertPropertiesToMapStringString(Properties properties2) {
         Map<String,String> properties = new HashMap<String,String>();
-        Properties properties2 = new Properties();
-        properties2.load(in);
         for ( Object key : properties2.keySet()) {
             properties.put(key.toString(), properties2.get(key).toString());
         }
@@ -120,6 +129,70 @@ public class StringPropertiesUtils {
         String value = properties.get(key);
         if (value != null) {
             array = value.split(java.util.regex.Pattern.quote(separator));
+        }
+        return array;
+    }
+
+    /**
+     * Concatenates the specified array into a combined string using the space separator
+     * and puts the result as a value into the specified properties with the specified key.
+     * If the values in the array contains whitespace it is enclosed with " or ' characters
+     */
+    public static void putArgumentsArray(Map<String,String> properties, String key, String[] array) {
+        StringBuilder concat = new StringBuilder();
+        for (int i = 0 ; i < array.length ; i++) {
+            String value = array[i];
+            if (value != null && value.length() > 0) {
+                if (value.contains(" ")) {
+                    if (value.startsWith("\"") && value.endsWith("\"")) {
+                        if (value.substring(1,value.length()-1).contains("\"")) {
+                            throw new IllegalArgumentException("Argument " + value + " contains both a whitespace and a \" character.");
+                        }
+                    }
+                    else if (value.startsWith("'") && value.endsWith("'")) {
+                        if (value.substring(1,value.length()-1).contains("'")) {
+                            throw new IllegalArgumentException("Argument " + value + " contains both a whitespace and a ' character.");
+                        }
+                    }
+                    else if (!value.contains("\"")) {
+                        value = "\"" + value + "\"";
+                    }
+                    else if (!value.contains("'")) {
+                        value = "'" + value + "'";
+                    }
+                    else {
+                        throw new IllegalArgumentException("Argument " + value + " contains both a whitespace and \" and '");
+                    }
+                }
+                concat.append(value);
+                if (i < array.length-1) {
+                    concat.append(' ');
+                }
+            }
+        }
+        properties.put(key, concat.toString());
+    }
+    
+    public static String[] getArgumentsArray(Map<String,String> properties, String key, String[] defaultValue) {
+        String[] array = defaultValue;
+        String value = properties.get(key);
+        if (value != null) {
+            List<String> matchList = new ArrayList<String>();
+            Pattern regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+            Matcher regexMatcher = regex.matcher(value);
+            while (regexMatcher.find()) {
+                if (regexMatcher.group(1) != null) {
+                    // Add double-quoted string without the quotes
+                    matchList.add(regexMatcher.group(1));
+                } else if (regexMatcher.group(2) != null) {
+                    // Add single-quoted string without the quotes
+                    matchList.add(regexMatcher.group(2));
+                } else {
+                    // Add unquoted word
+                    matchList.add(regexMatcher.group());
+                }
+           }
+           array = matchList.toArray(new String[matchList.size()]);
         }
         return array;
     }

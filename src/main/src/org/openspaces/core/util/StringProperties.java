@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class StringProperties {
     
@@ -11,6 +12,10 @@ public class StringProperties {
 
     public StringProperties() {
         this(new HashMap<String,String>());
+    }
+    
+    public StringProperties(Properties properties) {
+        this(StringPropertiesUtils.convertPropertiesToMapStringString(properties));
     }
     
     public StringProperties(Map<String,String> properties) {
@@ -94,6 +99,14 @@ public class StringProperties {
 
    public void putMap(String keyPrefix, Map<String,String> value) {
        StringPropertiesUtils.putMap(properties,keyPrefix,value);
+   }
+   
+   public void putArgumentsArray(String key, String[] value) {
+       StringPropertiesUtils.putArgumentsArray(properties, key, value);
+   }
+ 
+   public String[] getArgumentsArray(String key, String[] defaultValue) {
+       return StringPropertiesUtils.getArgumentsArray(properties, key, defaultValue);
    }
 
    public void clear() {
