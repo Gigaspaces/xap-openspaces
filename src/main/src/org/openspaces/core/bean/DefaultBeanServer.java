@@ -1,4 +1,4 @@
-package org.openspaces.admin.internal.bean;
+package org.openspaces.core.bean;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,13 +9,13 @@ import org.openspaces.admin.bean.BeanAlreadyExistsException;
 import org.openspaces.admin.bean.BeanNotFoundException;
 import org.openspaces.admin.bean.BeanPropertiesManager;
 
-public class DefaultBeanPropertiesManager<T extends Bean> implements BeanPropertiesManager {
+public class DefaultBeanServer<T extends Bean> implements BeanPropertiesManager {
 
     private final Map<String, Map<String, String>> beanProperties = new HashMap<String, Map<String, String>>();
     private final Map<String, T> enabledBeans = new HashMap<String, T>();
     private final Admin admin;
 
-    public DefaultBeanPropertiesManager(Admin admin) {
+    public DefaultBeanServer(Admin admin) {
         this.admin = admin;
     }
 

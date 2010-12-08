@@ -1,4 +1,4 @@
-package org.openspaces.admin.internal.bean;
+package org.openspaces.core.bean;
 
 import java.util.Map;
 
