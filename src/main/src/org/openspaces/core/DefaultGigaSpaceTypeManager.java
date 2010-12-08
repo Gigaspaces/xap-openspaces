@@ -2,9 +2,14 @@ package org.openspaces.core;
 
 import org.openspaces.core.exception.ExceptionTranslator;
 
+import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.internal.metadata.ITypeDesc;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
+import com.gigaspaces.metadata.index.AddIndexesResult;
+import com.gigaspaces.metadata.index.ISpaceIndex;
+import com.gigaspaces.metadata.index.SpaceIndex;
 
 /**
  * Default implementation of {@link GigaSpaceTypeManager}.
@@ -47,6 +52,36 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
             if (typeDescriptor == null)
                 throw new IllegalArgumentException("Argument cannot be null - 'typeDescriptor'.");
             space.registerTypeDescriptor((ITypeDesc) typeDescriptor);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    public AsyncFuture<AddIndexesResult> asyncAddIndex(String typeName, SpaceIndex index) {
+        return asyncAddIndexes(typeName, new SpaceIndex[] {index}, null);
+    }
+    public AsyncFuture<AddIndexesResult> asyncAddIndex(String typeName, SpaceIndex index,
+            AsyncFutureListener<AddIndexesResult> listener) {
+        return asyncAddIndexes(typeName, new SpaceIndex[] {index}, listener);
+    }
+    public AsyncFuture<AddIndexesResult> asyncAddIndexes(String typeName, SpaceIndex[] indexes,
+            AsyncFutureListener<AddIndexesResult> listener) {
+        try {
+            // Validate:
+            if (typeName == null || typeName.length() == 0)
+                throw new IllegalArgumentException("Argument cannot be null or empty - 'typeName'.");
+            if (indexes == null || indexes.length == 0)
+                throw new IllegalArgumentException("Argument cannot be null or empty - 'indexes'.");
+            // Convert indexes:
+            ISpaceIndex[] internalIndexes = new ISpaceIndex[indexes.length];
+            for (int i=0 ; i < indexes.length ; i++) {              
+                if (indexes[i] == null)
+                    throw new IllegalArgumentException("Index at position #" + i + " is null.");
+                if (!(indexes[i] instanceof ISpaceIndex))
+                    throw new IllegalArgumentException("Index at position #" + i + " is of an unsupported type - " + indexes[i].getClass().getName());
+                internalIndexes[i] = (ISpaceIndex) indexes[i];
+            }
+            // Execute:
+            return space.asyncAddIndexes(typeName, internalIndexes, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

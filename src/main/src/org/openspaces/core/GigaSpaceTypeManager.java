@@ -1,6 +1,10 @@
 package org.openspaces.core;
 
+import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
+import com.gigaspaces.metadata.index.AddIndexesResult;
+import com.gigaspaces.metadata.index.SpaceIndex;
 
 /**
  * 
@@ -28,4 +32,31 @@ public interface GigaSpaceTypeManager {
      * @param typeDescriptor
      */
     void registerTypeDescriptor(SpaceTypeDescriptor typeDescriptor);
+    
+    /**
+     * Adds the specified index to the specified type.
+     * 
+     * @param typeName Name of type to enhance.
+     * @param index Index to add.
+     * @return A Future to monitor completion of the operation, whose <code>get()</code> method will return the add index result upon completion.
+     */
+    AsyncFuture<AddIndexesResult> asyncAddIndex(String typeName , SpaceIndex index);
+    /**
+     * Adds the specified index to the specified type.
+     * 
+     * @param typeName Name of type to enhance.
+     * @param index Index to add.
+     * @param listener A listener to be notified when a result arrives
+     * @return A Future to monitor completion of the operation, whose <code>get()</code> method will return the add index result upon completion.
+     */
+    AsyncFuture<AddIndexesResult> asyncAddIndex(String typeName, SpaceIndex index, AsyncFutureListener<AddIndexesResult> listener);
+    /**
+     * Adds the specified indexes to the specified type.
+     * 
+     * @param typeName Name of type to enhance.
+     * @param indexes Indexes to add.
+     * @param listener A listener to be notified when a result arrives.
+     * @return A Future to monitor completion of the operation, whose <code>get()</code> method will return the add index result upon completion.
+     */
+    AsyncFuture<AddIndexesResult> asyncAddIndexes(String typeName, SpaceIndex[] indexes, AsyncFutureListener<AddIndexesResult> listener);
 }
