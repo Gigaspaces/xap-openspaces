@@ -77,7 +77,7 @@ public interface Bean {
 
     /**
      * Invoked by a bean factory after it has set all bean properties. This method allows the bean
-     * instance to perform initialization, which is only possible when all bean properties have been
+     * instance to perform non-blocking initialization, which is only possible when all bean properties have been
      * set and to throw an exception in the event of misconfiguration.
      * 
      * @throws Exception
