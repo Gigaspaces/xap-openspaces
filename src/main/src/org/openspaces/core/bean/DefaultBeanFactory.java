@@ -3,7 +3,7 @@ package org.openspaces.core.bean;
 import java.util.Map;
 
 import org.openspaces.admin.Admin;
-import org.openspaces.admin.bean.BeanNotFoundException;
+import org.openspaces.admin.bean.BeanConfigNotFoundException;
 
 public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
 
@@ -23,7 +23,7 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
 
             instance = clazz.newInstance();
         } catch (Exception e) {
-            throw new BeanNotFoundException("Failed to instantiate bean bean class [" + beanClassName + "]", e);
+            throw new BeanConfigNotFoundException("Failed to instantiate bean bean class [" + beanClassName + "]", e);
         }
         // TODO - due to sharing of statistics monitor, need to have reference counter for
         // start/stop monitor calls.

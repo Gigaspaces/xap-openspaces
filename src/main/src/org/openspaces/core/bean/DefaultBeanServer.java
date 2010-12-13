@@ -6,11 +6,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.Admin;
-import org.openspaces.admin.bean.BeanAlreadyExistsException;
+import org.openspaces.admin.bean.BeanConfigAlreadyExistsException;
 import org.openspaces.admin.bean.BeanConfigurationException;
-import org.openspaces.admin.bean.BeanException;
+import org.openspaces.admin.bean.BeanConfigException;
 import org.openspaces.admin.bean.BeanInitializationException;
-import org.openspaces.admin.bean.BeanNotFoundException;
+import org.openspaces.admin.bean.BeanConfigNotFoundException;
 
 public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
 
@@ -28,40 +28,40 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         this.beanFactory = beanFactory; 
     }
     
-    public void addBean(String bean, Map<String, String> properties) throws BeanAlreadyExistsException {
+    public void addConfig(String bean, Map<String, String> properties) throws BeanConfigAlreadyExistsException {
         synchronized(lock) {
 
             if (beanProperties.containsKey(bean)) {
-                throw new BeanAlreadyExistsException("Failed to add bean [" + bean + "] - already exists.");
+                throw new BeanConfigAlreadyExistsException("Failed to add bean [" + bean + "] - already exists.");
             }
             beanProperties.put(bean, properties);
         }
     }
 
-    public void setBean(String bean, Map<String, String> properties) throws BeanNotFoundException {
+    public void setConfig(String bean, Map<String, String> properties) throws BeanConfigNotFoundException {
         synchronized(lock) {
 
             if (!beanProperties.containsKey(bean)) {
-                throw new BeanNotFoundException("Failed to set bean [" + bean + "] - doesn't exist.");
+                throw new BeanConfigNotFoundException("Failed to set bean [" + bean + "] - doesn't exist.");
             }
 
             if (enabledBeans.containsKey(bean)) {
-                disableBean(bean);
+                disableConfig(bean);
                 beanProperties.put(bean, properties);
-                enableBean(bean);
+                enableConfig(bean);
             } else {
                 beanProperties.put(bean, properties);
             }
         }
     }
 
-    public void enableBean(final String bean) throws BeanNotFoundException, BeanConfigurationException, BeanInitializationException {
+    public void enableConfig(final String bean) throws BeanConfigNotFoundException, BeanConfigurationException, BeanInitializationException {
         synchronized(lock) {
 
             Map<String, String> properties = beanProperties.get(bean);
             
             if (properties == null) {
-                throw new BeanNotFoundException("Failed to enable bean [" + bean + "] - doesn't exist.");
+                throw new BeanConfigNotFoundException("Failed to enable bean [" + bean + "] - doesn't exist.");
             }
         
             if (enabledBeans.containsKey(bean)) {
@@ -74,18 +74,18 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
 
             try {
                 beanInstance.afterPropertiesSet();
-            } catch (BeanException e) {
+            } catch (BeanConfigException e) {
                 throw e;
             } catch (Exception e) {
-                throw new BeanException("Failed to enabled bean ["+bean+"]", e);
+                throw new BeanConfigException("Failed to enabled bean ["+bean+"]", e);
             }            
         }
     }
 
-    public void disableBean(String bean) throws BeanNotFoundException {
+    public void disableConfig(String bean) throws BeanConfigNotFoundException {
         synchronized(lock) {
             if (!beanProperties.containsKey(bean)) {
-                throw new BeanNotFoundException("Failed to disable bean [" + bean + "] - doesn't exist.");
+                throw new BeanConfigNotFoundException("Failed to disable bean [" + bean + "] - doesn't exist.");
             }
         
             final T instance = enabledBeans.remove(bean);
@@ -103,23 +103,23 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         }
     }
 
-    public void removeBean(String bean) throws BeanNotFoundException {
+    public void removeConfig(String bean) throws BeanConfigNotFoundException {
         synchronized(lock) {
             if (!beanProperties.containsKey(bean)) {
-                throw new BeanNotFoundException("Failed to remove bean [" + bean + "] - doesn't exist.");
+                throw new BeanConfigNotFoundException("Failed to remove bean [" + bean + "] - doesn't exist.");
             }
         
-            disableBean(bean);
+            disableConfig(bean);
             beanProperties.remove(bean);
         }
     }
 
-    public Map<String, String> getBean(String bean) throws BeanNotFoundException {
+    public Map<String, String> getConfig(String bean) throws BeanConfigNotFoundException {
      
         synchronized(lock) {
 
             if (!beanProperties.containsKey(bean)) {
-                throw new BeanNotFoundException("Failed to get bean [" + bean + "] - doesn't exist.");
+                throw new BeanConfigNotFoundException("Failed to get bean [" + bean + "] - doesn't exist.");
             }
     
             // clone to simulate serialization - client code can't influence contents of map directly.
