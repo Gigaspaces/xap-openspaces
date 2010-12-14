@@ -69,6 +69,19 @@ public class StringProperties {
         return StringPropertiesUtils.getLongIgnoreExceptions(properties, key, defaultValue);
     }
 
+    public StringProperties putDouble(String key, double value) {
+        StringPropertiesUtils.putDouble(properties,key,value);
+        return this;
+    }
+    
+    public double getDouble(String key, double defaultValue) throws NumberFormatException{
+        return StringPropertiesUtils.getDouble(properties, key, defaultValue);
+    }
+    
+    public double getDoubleIgnoreExceptions(String key, double defaultValue) {
+        return StringPropertiesUtils.getDoubleIgnoreExceptions(properties, key, defaultValue);
+    }
+    
     public String[] getArray(String key, String separator, String[] defaultValue) {
         return StringPropertiesUtils.getArray(properties, key, separator, defaultValue);
     }

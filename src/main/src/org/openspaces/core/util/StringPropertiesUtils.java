@@ -71,7 +71,7 @@ public class StringPropertiesUtils {
         return intValue;
     }
 
-    public static void putLong(Map<String,String> properties, String key, long value) throws NumberFormatException {
+    public static void putLong(Map<String,String> properties, String key, long value) {
         properties.put(key, String.valueOf(value));
     }
     
@@ -97,7 +97,34 @@ public class StringPropertiesUtils {
         }
         return longValue;
     }
+
+    public static void putDouble(Map<String,String> properties, String key, double value) {
+        properties.put(key, String.valueOf(value));
+    }
     
+    public static double getDouble(Map<String,String> properties, String key, double defaultValue) throws NumberFormatException {
+        
+        double doubleValue = defaultValue;
+        
+        Object value = properties.get(key);
+        if (value != null ) {
+            doubleValue = Double.valueOf(value.toString());
+        }
+    
+        return doubleValue;
+    }
+
+    public static double getDoubleIgnoreExceptions(Map<String,String> properties, String key, double defaultValue) {
+        double doubleValue = defaultValue;
+        try {
+            doubleValue = getDouble(properties, key, defaultValue);
+        }
+        catch (NumberFormatException e) {
+            //fallthrough
+        }
+        return doubleValue;
+    }
+
     /**
      * Concatenates the specified array into a combined string using the specified separator
      * and puts the result as a value into the specified properties with the specified key.

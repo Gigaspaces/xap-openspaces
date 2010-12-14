@@ -8,4 +8,5 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
     
     Map<String, T> getEnabledBeansInstances();
     
+    void destroy();
 }

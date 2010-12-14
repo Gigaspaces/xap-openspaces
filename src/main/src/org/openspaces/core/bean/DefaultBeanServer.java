@@ -157,4 +157,8 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         }
     }
 
+    public void destroy() {
+        disableAllBeans();
+    }
+
 }
