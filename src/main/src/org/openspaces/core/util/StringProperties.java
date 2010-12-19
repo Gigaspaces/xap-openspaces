@@ -130,4 +130,8 @@ public class StringProperties {
        this.properties.putAll(properties);
    }
 
+   public void remove(String key) {
+       this.properties.remove(key);
+   }
+
 }
