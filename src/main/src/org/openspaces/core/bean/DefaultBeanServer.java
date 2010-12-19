@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.Admin;
-import org.openspaces.admin.bean.BeanConfigAlreadyExistsException;
 import org.openspaces.admin.bean.BeanConfigNotFoundException;
 import org.openspaces.admin.bean.BeanConfigurationException;
 import org.openspaces.admin.bean.BeanInitializationException;
@@ -27,15 +26,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         this.beanFactory = beanFactory;
     }
 
-    public void addConfig(String beanClassName, Map<String, String> properties) throws BeanConfigAlreadyExistsException {
-
-        if (beanProperties.containsKey(beanClassName)) {
-            throw new BeanConfigAlreadyExistsException("Failed to add bean [" + beanClassName + "] since it already exists.");
-        }
-        beanProperties.put(beanClassName, properties);
-    }
-
-    public void setConfig(String beanClassName, Map<String, String> properties) throws EnabledBeanConfigCannotBeChangedException{
+    public void putConfig(String beanClassName, Map<String, String> properties) throws EnabledBeanConfigCannotBeChangedException{
 
         if (isBeanEnabled(beanClassName)) {
             throw new EnabledBeanConfigCannotBeChangedException("Cannot modify bean [" + beanClassName + "] configuration while it is enabled. Disable it first.");
@@ -89,11 +80,8 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         return beanProperties.remove(beanClassName) != null;
     }
 
-    public boolean isBeanEnabled(String beanClassName) throws BeanConfigNotFoundException {
-        
-        if (!beanProperties.containsKey(beanClassName)) {
-            throw new BeanConfigNotFoundException("Failed to check if bean [" + beanClassName +"] is enabled since it does not exist.");
-        }
+    public boolean isBeanEnabled(String beanClassName){
+      
         return enabledBeans.containsKey(beanClassName);
     }
 

@@ -33,19 +33,19 @@ import org.openspaces.admin.bean.BeanConfigPropertiesManager;
  * by a weakly typed String key-value pair property API (see {@link BeanConfigPropertiesManager}). These
  * properties are supplied upon the bean's construction (see {@link #setProperties(Map)}).
  * <p>
- * A request to add a bean (see {@link BeanConfigManager#addConfig(BeanConfig)}), will store the
+ * A request to add a bean (see {@link BeanConfigManager#putConfig2(BeanConfig)}), will store the
  * configuration properties at the server until the bean is enabled (or removed).
  * <p>
- * A request to enable a bean (see {@link BeanConfigManager#enableConfig(Class)}), will be accepted by
+ * A request to enable a bean (see {@link BeanConfigManager#enableBean(Class)}), will be accepted by
  * the bean factory - which initializes the bean, sets the properties and invokes a call to
  * {@link #afterPropertiesSet()}.
  * <p>
- * A request to disable a bean (see {@link BeanConfigManager#disableConfig(Class)}), will destroy the
+ * A request to disable a bean (see {@link BeanConfigManager#disableBean(Class)}), will destroy the
  * bean ({@link #destroy()}). The configuration properties will remain at the server until the bean
  * is completely removed (see {@link BeanConfigManager#removeConfig(Class)}).
  * <p>
  * A request to set a bean with different properties (see
- * {@link BeanConfigManager#setConfig(BeanConfig)}), will destroy the bean if it is already enabled,
+ * {@link BeanConfigManager#putConfig(BeanConfig)}), will destroy the bean if it is already enabled,
  * and re-enable it with the new configuration properties. If the bean wasn't enabled, the
  * properties are stored at the server until the bean is enabled (or removed).
  * 

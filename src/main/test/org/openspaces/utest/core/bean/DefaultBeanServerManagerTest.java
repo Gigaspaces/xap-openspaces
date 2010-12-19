@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import junit.framework.TestCase;
 
-import org.openspaces.admin.bean.BeanConfigAlreadyExistsException;
 import org.openspaces.admin.bean.BeanConfigNotFoundException;
 import org.openspaces.admin.bean.EnabledBeanConfigCannotBeChangedException;
 import org.openspaces.admin.internal.alerts.bean.AlertBean;
@@ -17,43 +16,22 @@ import org.openspaces.utest.admin.internal.admin.NullMockAdmin;
  */
 public class DefaultBeanServerManagerTest extends TestCase {
     
-    public void testAddBean() {
+    public void testPutConfig() {
         DefaultBeanServer<AlertBean> manager = new DefaultBeanServer<AlertBean>(new NullMockAdmin());
-        manager.addConfig("myBean", new HashMap<String, String>());
-        try {
-            manager.addConfig("myBean", new HashMap<String, String>());
-            fail("Should have thrown BeanAlreadyExistsException");
-        } catch (BeanConfigAlreadyExistsException e) {
-        }
-    }
-    
-    public void testSetBean() {
-        DefaultBeanServer<AlertBean> manager = new DefaultBeanServer<AlertBean>(new NullMockAdmin());
-        try {
-            manager.setConfig("myBean", new HashMap<String, String>());
-            fail("Should have thrown BeanNotFoundException");
-        } catch (BeanConfigNotFoundException e) {
-            
-        }
-        
-        manager.addConfig("myBean", new StringProperties().put("key", "value").getProperties());
-        manager.setConfig("myBean", new StringProperties(manager.getConfig("myBean")).put("secondKey", "secondValue").getProperties());
+        manager.putConfig("myBean", new HashMap<String, String>());
+        manager.putConfig("myBean", new StringProperties().put("key", "value").getProperties());
+        manager.putConfig("myBean", new StringProperties(manager.getConfig("myBean")).put("secondKey", "secondValue").getProperties());
 
         assertEquals("Expected myBean to exist in manager", 1, manager.getBeansClassNames().length);
         assertEquals("Expected myBean properties to exist in manager", 2, manager.getConfig("myBean").size());
     }
     
-    public void testRemoveBean() {
+    public void testRemoveConfig() {
         DefaultBeanServer<AlertBean> manager = new DefaultBeanServer<AlertBean>(new NullMockAdmin());
-        try {
-            manager.removeConfig("myBean");
-            fail("Should have thrown BeanNotFoundException");
-        } catch (BeanConfigNotFoundException e) {
-            
-        }
+        assertFalse(manager.removeConfig("myBean"));
         
-        manager.addConfig("myBean", new StringProperties().put("key", "value").getProperties());
-        manager.setConfig("myBean", new StringProperties(manager.getConfig("myBean")).put("secondKey", "secondValue").getProperties());
+        manager.putConfig("myBean", new StringProperties().put("key", "value").getProperties());
+        manager.putConfig("myBean", new StringProperties(manager.getConfig("myBean")).put("secondKey", "secondValue").getProperties());
 
         assertEquals("Expected myBean to exist in manager", 1, manager.getBeansClassNames().length);
         assertEquals("Expected myBean properties to exist in manager", 2, manager.getConfig("myBean").size());
@@ -76,7 +54,7 @@ public class DefaultBeanServerManagerTest extends TestCase {
         }
         
         String beanClassName = SimpleBean.class.getName();
-        manager.addConfig(beanClassName, new StringProperties().put("key", "value").getProperties());
+        manager.putConfig(beanClassName, new StringProperties().put("key", "value").getProperties());
         assertEquals("Expected zero enabled beans", 0, manager.getEnabledBeansClassNames().length);
         
         manager.enableBean(beanClassName);
@@ -85,14 +63,14 @@ public class DefaultBeanServerManagerTest extends TestCase {
         assertEquals("Expected bean properties to exist in manager", 1, manager.getConfig(beanClassName).size());
 
         manager.disableBean(beanClassName);
-        manager.setConfig(beanClassName, new StringProperties().put("new-key", "new-value").getProperties());
+        manager.putConfig(beanClassName, new StringProperties().put("new-key", "new-value").getProperties());
         manager.enableBean(beanClassName);
         assertEquals("Expected one enabled bean", 1, manager.getEnabledBeansClassNames().length);
         assertEquals("Expected one managed bean", 1, manager.getBeansClassNames().length);
         assertEquals("Expected bean properties to exist in manager", 1, manager.getConfig(beanClassName).size());
         assertEquals("Expected bean properties to be updated", "new-value", manager.getConfig(beanClassName).get("new-key"));
         
-        manager.addConfig("myBean", new StringProperties().put("key", "value").getProperties());
+        manager.putConfig("myBean", new StringProperties().put("key", "value").getProperties());
         assertEquals("Expected one enabled bean", 1, manager.getEnabledBeansClassNames().length);
         assertEquals("Expected two managed beans", 2, manager.getBeansClassNames().length);
     }
@@ -105,14 +83,14 @@ public class DefaultBeanServerManagerTest extends TestCase {
         } catch (BeanConfigNotFoundException e) {
         }
         
-        manager.addConfig(SimpleBean.class.getName(), new StringProperties().put("key", "value").getProperties());
+        manager.putConfig(SimpleBean.class.getName(), new StringProperties().put("key", "value").getProperties());
         assertEquals("Expected zero enabled beans", 0, manager.getEnabledBeansClassNames().length);
         
         manager.enableBean(SimpleBean.class.getName());
         assertEquals("Expected one enabled bean", 1, manager.getEnabledBeansClassNames().length);
         assertEquals("Expected one managed bean", 1, manager.getBeansClassNames().length);
         
-        manager.addConfig("myBean", new StringProperties().put("key", "value").getProperties());
+        manager.putConfig("myBean", new StringProperties().put("key", "value").getProperties());
         assertEquals("Expected one enabled bean", 1, manager.getEnabledBeansClassNames().length);
         assertEquals("Expected two managed beans", 2, manager.getBeansClassNames().length);
         
@@ -130,7 +108,7 @@ public class DefaultBeanServerManagerTest extends TestCase {
         DefaultBeanServer<AlertBean> manager = new DefaultBeanServer<AlertBean>(new NullMockAdmin());
         
         String beanClassName = SimpleBean.class.getName();
-        manager.addConfig(beanClassName, new StringProperties().put("key", "value").getProperties());
+        manager.putConfig(beanClassName, new StringProperties().put("key", "value").getProperties());
         manager.enableBean(beanClassName);
         manager.disableBean(beanClassName);
         manager.removeConfig(beanClassName);
@@ -142,7 +120,7 @@ public class DefaultBeanServerManagerTest extends TestCase {
         DefaultBeanServer<AlertBean> manager = new DefaultBeanServer<AlertBean>(new NullMockAdmin());
         
         String beanClassName = SimpleBean.class.getName();
-        manager.addConfig(beanClassName, new StringProperties().put("key", "value").getProperties());
+        manager.putConfig(beanClassName, new StringProperties().put("key", "value").getProperties());
         manager.enableBean(beanClassName);
         try { 
             manager.removeConfig(beanClassName);
@@ -155,9 +133,9 @@ public class DefaultBeanServerManagerTest extends TestCase {
     
     public void testDisableAllBeans() {
         DefaultBeanServer<AlertBean> manager = new DefaultBeanServer<AlertBean>(new NullMockAdmin());
-        manager.addConfig("myBean-1", new StringProperties().getProperties());
-        manager.addConfig(SimpleBean.class.getName(), new StringProperties().put("key", "value").getProperties());
-        manager.addConfig("myBean-2", new StringProperties().getProperties());
+        manager.putConfig("myBean-1", new StringProperties().getProperties());
+        manager.putConfig(SimpleBean.class.getName(), new StringProperties().put("key", "value").getProperties());
+        manager.putConfig("myBean-2", new StringProperties().getProperties());
         manager.enableBean(SimpleBean.class.getName());
         
         assertEquals("Expected three managed beans", 3, manager.getBeansClassNames().length);
