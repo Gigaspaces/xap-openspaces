@@ -16,8 +16,28 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public T create(String beanClassName, Map<String,String> properties) throws BeanConfigNotFoundException {
+    public T create(String beanClassName, Map<String,String> properties, BeanServer<T> beanServer) throws BeanConfigNotFoundException , BeanInitializationException{
     
+        T instance = createInstance(beanClassName, properties, beanServer);
+        
+        initInstance(beanClassName, instance);
+        
+        return instance;       
+    }
+
+    private void initInstance(String beanClassName, T instance) throws BeanInitializationException{
+        try {
+            instance.afterPropertiesSet();
+        } catch (BeanInitializationException e) {
+            throw e;
+        } catch (BeanConfigurationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BeanInitializationException(beanClassName + " initialization error",e);
+        }
+    }
+
+    protected T createInstance(String beanClassName, Map<String, String> properties, BeanServer<T> beanServer) {
         T instance = null;
         try {
             Class<T> clazz = 
@@ -32,17 +52,7 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
         // until we do, we will create a different admin object for each bean.
         instance.setAdmin(admin);
         instance.setProperties(properties);
-        
-        try {
-            instance.afterPropertiesSet();
-        } catch (BeanInitializationException e) {
-            throw e;
-        } catch (BeanConfigurationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new BeanInitializationException(beanClassName + " initialization error",e);
-        }
-        return instance;       
+        return instance;
     }
 
 }
