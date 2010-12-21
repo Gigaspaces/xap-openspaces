@@ -42,10 +42,10 @@ import org.openspaces.admin.bean.BeanConfigPropertiesManager;
  * <p>
  * A request to disable a bean (see {@link BeanConfigManager#disableBean(Class)}), will destroy the
  * bean ({@link #destroy()}). The configuration properties will remain at the server until the bean
- * is completely removed (see {@link BeanConfigManager#removeConfig(Class)}).
+ * is completely removed (see {@link BeanConfigManager#removeBeanConfig(Class)}).
  * <p>
  * A request to set a bean with different properties (see
- * {@link BeanConfigManager#putConfig(BeanConfig)}), will destroy the bean if it is already enabled,
+ * {@link BeanConfigManager#setBeanConfig(BeanConfig)}), will destroy the bean if it is already enabled,
  * and re-enable it with the new configuration properties. If the bean wasn't enabled, the
  * properties are stored at the server until the bean is enabled (or removed).
  * 

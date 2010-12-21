@@ -30,7 +30,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         this.beanFactory = beanFactory;
     }
 
-    public void putConfig(String beanClassName, Map<String, String> properties) throws EnabledBeanConfigCannotBeChangedException{
+    public void setBeanConfig(String beanClassName, Map<String, String> properties) throws EnabledBeanConfigCannotBeChangedException{
 
         if (isBeanEnabled(beanClassName)) {
             throw new EnabledBeanConfigCannotBeChangedException("Cannot modify bean [" + beanClassName + "] configuration while it is enabled. Disable it first.");
@@ -76,7 +76,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         }
     }
 
-    public boolean removeConfig(String beanClassName) throws BeanConfigNotFoundException {
+    public boolean removeBeanConfig(String beanClassName) throws BeanConfigNotFoundException {
         
         if (isBeanEnabled(beanClassName)) {
             throw new EnabledBeanConfigCannotBeChangedException("Cannot remove configuration of beanClassName " + beanClassName + " since it is enabled. disable it first.");
@@ -89,7 +89,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         return enabledBeans.containsKey(beanClassName);
     }
 
-    public Map<String, String> getConfig(String beanClassName) throws BeanConfigNotFoundException {
+    public Map<String, String> getBeanConfig(String beanClassName) throws BeanConfigNotFoundException {
 
         if (!beansProperties.containsKey(beanClassName)) {
             throw new BeanConfigNotFoundException("Failed to get bean [" + beanClassName + "] since it does not exist.");
@@ -169,7 +169,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         boolean noChangeRequired = false;
         if (beansClassNames.size() == 1) {
             beanClassName = beansClassNames.get(0);
-            beanProperties = getConfig(beanClassName);
+            beanProperties = getBeanConfig(beanClassName);
             noChangeRequired = 
                 newBeanClassName.equals(beanClassName) &&
                 newBeanProperties.equals(beanProperties);            
@@ -181,7 +181,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
                 disableBean(beanClassName);
             }
         
-            putConfig(newBeanClassName, newBeanProperties);
+            setBeanConfig(newBeanClassName, newBeanProperties);
             enableBean(newBeanClassName);
             if (getEnabledBeansClassNamesAssignableTo(interfaceClasses).size() == 0) {
                 throw new BeanConfigException(newBeanClassName + " does not implement any of the following: " + Arrays.toString(interfaceClasses)); 
