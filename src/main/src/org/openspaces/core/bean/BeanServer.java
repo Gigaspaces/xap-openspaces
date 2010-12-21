@@ -1,5 +1,6 @@
 package org.openspaces.core.bean;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspaces.admin.bean.BeanConfigException;
@@ -39,5 +40,5 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
      * @param interfaceClasses
      * @return the enabled bean that implements any one of the specified interfaces.
      */
-    T[] getEnabledBeanAssignableTo(Class<?>[] interfaceClasses);
+    List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses);
 }

@@ -201,12 +201,11 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         disableAllBeans();
     }
 
-    @SuppressWarnings("unchecked")
-    public T[] getEnabledBeanAssignableTo(Class<?>[] interfaceClasses) {
+    public List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses) {
         List<T> beanInstances = new ArrayList<T>();
         for (String beanClassName : getEnabledBeansClassNamesAssignableTo(interfaceClasses)) {
             beanInstances.add(this.enabledBeans.get(beanClassName));
         }
-        return (T[]) beanInstances.toArray();
+        return beanInstances;
     }
 }
