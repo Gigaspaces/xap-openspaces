@@ -133,5 +133,9 @@ public class StringProperties {
    public void remove(String key) {
        this.properties.remove(key);
    }
+   
+   public String toString() {
+       return StringPropertiesUtils.toString(properties);
+   }
 
 }

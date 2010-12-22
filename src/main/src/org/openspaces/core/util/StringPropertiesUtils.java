@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -287,6 +288,11 @@ public class StringPropertiesUtils {
           for (String key : value.keySet()) {
               properties.put(keyPrefix+key, value.get(key));
           }
+    }
+
+    public static String toString(Map<String, String> properties) {
+        //sort and print
+        return new TreeMap(properties).toString();
     }
 }
 
