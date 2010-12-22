@@ -46,8 +46,6 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         super.doParse(element, parserContext, builder);
         NamedNodeMap attributes = element.getAttributes();
         
-        String typeName = null;
-        String superType = null;
         for (int x = 0; x < attributes.getLength(); x++) {
             Attr attribute = (Attr) attributes.item(x);
             String name = attribute.getLocalName();
@@ -58,8 +56,8 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             Assert.state(StringUtils.hasText(propertyName),
                 "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
             
-            if(name.equals("type-name"))
-                typeName = attribute.getValue();
+            if(propertyName.equals("typeName"))
+                builder.addPropertyValue(propertyName,attribute.getValue());
               
             if(propertyName.equals("replicable"))
                 builder.addPropertyValue(propertyName,attribute.getValue());
@@ -71,12 +69,6 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
                 builder.addPropertyValue(propertyName,attribute.getValue());
             
         }
-        
-        
-        builder.addConstructorArgValue(typeName);
-        
-        if(StringUtils.hasText(superType))
-            builder.addConstructorArgReference(superType);
         
         Element documentClassElem = DomUtils.getChildElementByTagName(element, "document-class");
         if (documentClassElem != null) {
