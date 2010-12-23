@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.Admin;
-import org.openspaces.admin.bean.BeanConfigException;
 import org.openspaces.admin.bean.BeanConfigNotFoundException;
 import org.openspaces.admin.bean.BeanConfigurationException;
 import org.openspaces.admin.bean.BeanInitializationException;
@@ -49,10 +48,9 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         }
 
         if (!isBeanEnabled(beanClassName)) {
-            
-    
             final T beanInstance = beanFactory.create(beanClassName, properties, this);
             enabledBeans.put(beanClassName, beanInstance);
+            logger.info("Bean " + beanClassName + " enabled.");
         }
     }
 
@@ -71,6 +69,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
     private void disableBeanInternal(final T instance) {
         try {
             instance.destroy();
+            logger.info("Bean " + instance.getClass() + " disabled.");
         } catch (Exception e) {
             logger.error("Error destroying beanClassName " + instance.getClass().getName(), e);
         }
@@ -141,7 +140,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         return beanClassNames;
     }
 
-    public void replaceBeanAssignableTo(Class<?>[] interfaceClasses, String newBeanClassName, Map<String,String> newBeanProperties) {
+    public void replaceBeanAssignableTo(Class<?>[] interfaceClasses, String newBeanClassName, Map<String,String> newBeanProperties) throws BeanInitializationException {
         
         if (newBeanClassName == null) {
             throw new IllegalArgumentException("config.getBeanClassName() cannot be null.");
@@ -151,50 +150,96 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
             throw new IllegalArgumentException("config.getProperties() cannot be null.");
         }
         
-        List<String> beansClassNames = getEnabledBeansClassNamesAssignableTo(interfaceClasses);
+        List<String> enabledBeansClassNames ;
+        try {
+            
+            if (!isClassNameAssignableFrom(newBeanClassName, interfaceClasses)) {
+                throw new BeanConfigurationException(newBeanClassName + " does not implement any of the supplied classes " + Arrays.toString(interfaceClasses));
+            }
         
-        if (beansClassNames.size() > 1) {
+        enabledBeansClassNames = getEnabledBeansClassNamesAssignableTo(interfaceClasses);
+
+        if (enabledBeansClassNames.size() > 1) {
             throw new IllegalStateException(
                     "Calling replaceBeanAssignableTo assumes there is only one enabled bean assignable to " + 
                     Arrays.toString(interfaceClasses) + ". "+
-                    "Instead there are " + beansClassNames.size() + ": " + 
-                    Arrays.toString(beansClassNames.toArray(new String[]{})));
+                    "Instead there are " + enabledBeansClassNames.size() + ": " + 
+                    Arrays.toString(enabledBeansClassNames.toArray(new String[]{})));
         }
         
+        } catch (ClassNotFoundException e) {
+            throw new BeanConfigurationException("Problem creating new bean instance.",e);
+        }
+        
+        
         // old bean
-        String beanClassName = null;
+        String enabledBeanClassName = null;
         Map<String,String> beanProperties =null;
         
         // should we change the old bean with the new bean?
         boolean noChangeRequired = false;
-        if (beansClassNames.size() == 1) {
-            beanClassName = beansClassNames.get(0);
-            beanProperties = getBeanConfig(beanClassName);
+        if (enabledBeansClassNames.size() == 0) {
+            logger.info(
+                    "Request was made to enable bean instance " + newBeanClassName);
+        }
+        else {
+            enabledBeanClassName = enabledBeansClassNames.get(0);
+            beanProperties = getBeanConfig(enabledBeanClassName);
             noChangeRequired = 
-                newBeanClassName.equals(beanClassName) &&
-                newBeanProperties.equals(beanProperties);            
+                newBeanClassName.equals(enabledBeanClassName) &&
+                newBeanProperties.equals(beanProperties);
+            
+            if (logger.isInfoEnabled()) {
+                if (!newBeanClassName.equals(enabledBeanClassName)) {
+                    logger.info(
+                            "Request was made to replace enabled bean instance " + enabledBeanClassName + " "+
+                            "with " + newBeanClassName);
+                }
+                else if (!newBeanProperties.equals(beanProperties)) {
+                    logger.info(
+                            "Request was made to update enabled bean instance " + enabledBeanClassName + " "+
+                            "with new configuration.");
+                }
+                else {
+                    logger.info(
+                            "Request to update enabled bean instance " + enabledBeanClassName + " "+
+                            "is ignored since no configuration change detected.");
+                }
+            }
         }
         
         if (!noChangeRequired) {
     
-            if (beanClassName != null) {
-                disableBean(beanClassName);
+            if (enabledBeanClassName != null) {
+                disableBean(enabledBeanClassName);
             }
         
             setBeanConfig(newBeanClassName, newBeanProperties);
             enableBean(newBeanClassName);
-            if (getEnabledBeansClassNamesAssignableTo(interfaceClasses).size() == 0) {
-                throw new BeanConfigException(newBeanClassName + " does not implement any of the following: " + Arrays.toString(interfaceClasses)); 
-            }                
         }
     }
 
-    private List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] interfaceClasses) {
+    private List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] interfaceClasses) throws ClassNotFoundException {
         List<String> beansClassNames = new ArrayList<String>();
-        for (Class<?> interfaceClass : interfaceClasses) {
-            beansClassNames.addAll(getEnabledBeansClassNamesAssignableTo(interfaceClass));
+        
+        for (String beanClassName : this.enabledBeans.keySet()) {
+            if (isClassNameAssignableFrom(beanClassName, interfaceClasses)) {
+                beansClassNames.add(beanClassName);
+            }
         }
         return beansClassNames;
+   }
+
+    private boolean isClassNameAssignableFrom(String implementationClassName, Class<?>[] interfaceClassNames) throws ClassNotFoundException {
+        boolean classNameInstanceof = false;
+        for (Class<?> interfaceClass : interfaceClassNames) {
+            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(implementationClassName);
+            if (interfaceClass.isAssignableFrom(clazz)) {
+                classNameInstanceof = true;
+                break;
+            }
+        }
+        return classNameInstanceof;
     }
 
     public void destroy() {
@@ -203,8 +248,12 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
 
     public List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses) {
         List<T> beanInstances = new ArrayList<T>();
-        for (String beanClassName : getEnabledBeansClassNamesAssignableTo(interfaceClasses)) {
-            beanInstances.add(this.enabledBeans.get(beanClassName));
+        try {
+            for (String beanClassName : getEnabledBeansClassNamesAssignableTo(interfaceClasses)) {
+                beanInstances.add(this.enabledBeans.get(beanClassName));
+            }
+        } catch (ClassNotFoundException e) {
+            logger.error("Problem occured while scanning list of enabled containers", e);
         }
         return beanInstances;
     }
