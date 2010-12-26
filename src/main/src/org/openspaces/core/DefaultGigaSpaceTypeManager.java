@@ -7,7 +7,7 @@ import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.internal.metadata.ITypeDesc;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
-import com.gigaspaces.metadata.index.AddIndexesResult;
+import com.gigaspaces.metadata.index.AddTypeIndexesResult;
 import com.gigaspaces.metadata.index.ISpaceIndex;
 import com.gigaspaces.metadata.index.SpaceIndex;
 
@@ -56,15 +56,15 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
             throw exTranslator.translate(e);
         }
     }
-    public AsyncFuture<AddIndexesResult> asyncAddIndex(String typeName, SpaceIndex index) {
+    public AsyncFuture<AddTypeIndexesResult> asyncAddIndex(String typeName, SpaceIndex index) {
         return asyncAddIndexes(typeName, new SpaceIndex[] {index}, null);
     }
-    public AsyncFuture<AddIndexesResult> asyncAddIndex(String typeName, SpaceIndex index,
-            AsyncFutureListener<AddIndexesResult> listener) {
+    public AsyncFuture<AddTypeIndexesResult> asyncAddIndex(String typeName, SpaceIndex index,
+            AsyncFutureListener<AddTypeIndexesResult> listener) {
         return asyncAddIndexes(typeName, new SpaceIndex[] {index}, listener);
     }
-    public AsyncFuture<AddIndexesResult> asyncAddIndexes(String typeName, SpaceIndex[] indexes,
-            AsyncFutureListener<AddIndexesResult> listener) {
+    public AsyncFuture<AddTypeIndexesResult> asyncAddIndexes(String typeName, SpaceIndex[] indexes,
+            AsyncFutureListener<AddTypeIndexesResult> listener) {
         try {
             // Validate:
             if (typeName == null || typeName.length() == 0)
