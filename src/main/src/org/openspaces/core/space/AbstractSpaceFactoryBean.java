@@ -423,6 +423,10 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
             for (int i = 0; i < runtimeInfo.m_ClassNames.size(); i++) {
                 writer.println("Class [" + runtimeInfo.m_ClassNames.get(i) + "], Entries [" + runtimeInfo.m_NumOFEntries.get(i) + "], Templates [" + runtimeInfo.m_NumOFTemplates.get(i) + "]");
             }
+            
+            writer.println();
+            writer.println("===== REPLICATION INFO =====");
+            writer.println(admin.getReplicationDump());
             writer.println();
             writer.close();
         } catch (Exception e) {
