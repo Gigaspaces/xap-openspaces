@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 import org.openspaces.admin.bean.BeanConfigNotFoundException;
 import org.openspaces.admin.bean.EnabledBeanConfigCannotBeChangedException;
-import org.openspaces.admin.internal.alerts.bean.AlertBean;
+import org.openspaces.admin.internal.alert.bean.AlertBean;
 import org.openspaces.core.bean.DefaultBeanServer;
 import org.openspaces.core.util.StringProperties;
 import org.openspaces.utest.admin.internal.admin.NullMockAdmin;
