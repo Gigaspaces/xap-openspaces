@@ -28,11 +28,7 @@ public class StringProperties {
     }
     
     public String get(String key) {
-        String value = properties.get(key);
-        if (value == null) {
-            throw new IllegalArgumentException("null value for " + key + " property");
-        }
-        return value;
+        return properties.get(key);
     }
     
     public String get(String key, String defaultValue) {
@@ -134,7 +130,8 @@ public class StringProperties {
        this.properties.remove(key);
    }
    
-   public String toString() {
+   @Override
+public String toString() {
        return StringPropertiesUtils.toString(properties);
    }
 
