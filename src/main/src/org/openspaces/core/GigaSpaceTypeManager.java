@@ -7,6 +7,15 @@ import com.gigaspaces.metadata.index.AddTypeIndexesResult;
 import com.gigaspaces.metadata.index.SpaceIndex;
 
 /**
+ * Interface encapsulating operations for getting and managing space type descriptors.
+ * 
+ * Use {@link GigaSpace#getTypeManager()} to retrieve the type manager of a <code>GigaSpace</code> instance.
+ * 
+ *  @see org.openspaces.core.GigaSpace
+ *  @see com.gigaspaces.metadata.SpaceTypeDescriptor
+ *  @see com.gigaspaces.metadata.SpaceTypeDescriptorBuilder
+ *  @see com.gigaspaces.metadata.index.SpaceIndex
+ *  @see com.gigaspaces.metadata.index.SpaceIndexFactory
  * 
  * @author Niv Ingberg
  * @since 8.0

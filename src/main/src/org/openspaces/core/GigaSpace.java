@@ -2415,6 +2415,8 @@ public interface GigaSpace {
     /**
      * Gets the type manager of this GigaSpace instance.
      * 
+     * @see org.openspaces.core.GigaSpaceTypeManager
+     * 
      * @since 8.0
      */
     GigaSpaceTypeManager getTypeManager();
