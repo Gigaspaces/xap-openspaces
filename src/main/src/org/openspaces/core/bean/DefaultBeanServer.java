@@ -50,7 +50,9 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         if (!isBeanEnabled(beanClassName)) {
             final T beanInstance = beanFactory.create(beanClassName, properties, this);
             enabledBeans.put(beanClassName, beanInstance);
-            logger.info("Bean " + beanClassName + " enabled.");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Bean " + beanClassName + " enabled.");
+            }
         }
     }
 
@@ -69,7 +71,9 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
     private void disableBeanInternal(final T instance) {
         try {
             instance.destroy();
-            logger.info("Bean " + instance.getClass() + " disabled.");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Bean " + instance.getClass() + " disabled.");
+            }
         } catch (Exception e) {
             logger.error("Error destroying beanClassName " + instance.getClass().getName(), e);
         }
@@ -179,8 +183,9 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         // should we change the old bean with the new bean?
         boolean noChangeRequired = false;
         if (enabledBeansClassNames.size() == 0) {
-            logger.info(
-                    "Request was made to enable bean instance " + newBeanClassName);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Request was made to enable bean instance " + newBeanClassName);
+            }
         }
         else {
             enabledBeanClassName = enabledBeansClassNames.get(0);
@@ -189,19 +194,19 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
                 newBeanClassName.equals(enabledBeanClassName) &&
                 newBeanProperties.equals(beanProperties);
             
-            if (logger.isInfoEnabled()) {
+            if (logger.isDebugEnabled()) {
                 if (!newBeanClassName.equals(enabledBeanClassName)) {
-                    logger.info(
+                    logger.debug(
                             "Request was made to replace enabled bean instance " + enabledBeanClassName + " "+
                             "with " + newBeanClassName);
                 }
                 else if (!newBeanProperties.equals(beanProperties)) {
-                    logger.info(
+                    logger.debug(
                             "Request was made to update enabled bean instance " + enabledBeanClassName + " "+
                             "with new configuration.");
                 }
                 else {
-                    logger.info(
+                    logger.debug(
                             "Request to update enabled bean instance " + enabledBeanClassName + " "+
                             "is ignored since no configuration change detected.");
                 }
