@@ -16,21 +16,23 @@
 
 package org.openspaces.core.space;
 
-import com.gigaspaces.annotation.pojo.FifoSupport;
-import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
-import com.gigaspaces.datasource.ManagedDataSource;
-import com.gigaspaces.security.directory.UserDetails;
-import com.j_spaces.core.IJSpace;
-import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.space.filter.FilterProviderFactory;
-import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.space.filter.FilterProviderFactory;
+import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.springframework.util.StringUtils;
+
+import com.gigaspaces.annotation.pojo.FifoSupport;
+import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
+import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
+import com.gigaspaces.security.directory.UserDetails;
+import com.j_spaces.core.IJSpace;
 
 /**
  * A simple configurer helper to create {@link IJSpace} instances. The configurer wraps
@@ -60,6 +62,8 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     private Map<String, Object> parameters = new HashMap<String, Object>();
 
     private List<FilterProviderFactory> filterProviderFactories = new ArrayList<FilterProviderFactory>();
+
+    private List<SpaceTypeDescriptor> typeDescriptors = new ArrayList<SpaceTypeDescriptor>();
 
     public UrlSpaceConfigurer(String url) {
         this.urlSpaceFactoryBean = new UrlSpaceFactoryBean(url);
@@ -201,7 +205,16 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         filterProviderFactories.add(filterProviderFactory);
         return this;
     }
+    /**
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setSpaceTypes(org.openspaces.core.space.filter.FilterProviderFactory[])
+     */
+    public UrlSpaceConfigurer addSpaceType(SpaceTypeDescriptor spaceType) {
+        validate();
+        typeDescriptors .add(spaceType);
+        return this;
+    }
 
+ 
     /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setReplicationFilterProvider(org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory)
      */
@@ -297,6 +310,7 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
             urlSpaceFactoryBean.setProperties(properties);
             urlSpaceFactoryBean.setUrlProperties(urlProperties);
             urlSpaceFactoryBean.setFilterProviders(filterProviderFactories.toArray(new FilterProviderFactory[filterProviderFactories.size()]));
+            urlSpaceFactoryBean.setSpaceTypes(typeDescriptors.toArray(new SpaceTypeDescriptor[typeDescriptors.size()]));
             urlSpaceFactoryBean.afterPropertiesSet();
             space = (IJSpace) urlSpaceFactoryBean.getObject();
         }

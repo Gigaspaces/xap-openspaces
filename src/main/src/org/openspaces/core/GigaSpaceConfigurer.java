@@ -16,12 +16,12 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.metadata.SpaceTypeDescriptor;
-import com.j_spaces.core.IJSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.space.SpaceConfigurer;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import com.j_spaces.core.IJSpace;
 
 /**
  * A simple programmatic configurer for {@link org.openspaces.core.GigaSpace} instance wrapping
@@ -124,14 +124,7 @@ public class GigaSpaceConfigurer {
         gigaSpaceFactoryBean.setTransactionManager(transactionManager);
         return this;
     }
-    /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setSpaceTypes(SpaceTypeDescriptor...)
-     */
-    public GigaSpaceConfigurer spaceTypes(SpaceTypeDescriptor...typeDescriptors) {
-        gigaSpaceFactoryBean.setSpaceTypes(typeDescriptors);
-        return this;
-    }
-
+   
     /**
      * Creates a new {@link org.openspaces.core.GigaSpace} instance if non already created.
      */

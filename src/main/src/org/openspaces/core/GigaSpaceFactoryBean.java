@@ -16,12 +16,9 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.gigaspaces.metadata.SpaceTypeDescriptor;
-import com.j_spaces.core.IJSpace;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
@@ -37,6 +34,10 @@ import org.springframework.core.Constants;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
+
+import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.j_spaces.core.IJSpace;
 
 /**
  * <p>A factory bean creating {@link org.openspaces.core.GigaSpace GigaSpace} implementation.
@@ -114,8 +115,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     private PlatformTransactionManager transactionManager;
 
     private Boolean clustered;
-
-    private SpaceTypeDescriptor[] typeDescriptors;
 
     private long defaultReadTimeout = JavaSpace.NO_WAIT;
 
@@ -244,13 +243,6 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     }
 
     /**
-     * Inject a list of space types.
-     */
-    public void setSpaceTypes(SpaceTypeDescriptor[] typeDescriptors) {
-        this.typeDescriptors = typeDescriptors;
-    }
-
-    /**
      * Constructs the {@link org.openspaces.core.GigaSpace} instance using the
      * {@link org.openspaces.core.DefaultGigaSpace} implementation. Uses the clustered flag to
      * get a cluster member directly (if set to <code>false</code>) and applies the different
@@ -292,14 +284,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);
         gigaSpace.setName(beanName == null ? space.getName() : beanName);
-        
-        if(typeDescriptors != null)
-        {
-            for (int i = 0; i < typeDescriptors.length; i++) {
-
-                gigaSpace.getTypeManager().registerTypeDescriptor(typeDescriptors[i]);
-            }
-        }
+      
     }
 
     /**

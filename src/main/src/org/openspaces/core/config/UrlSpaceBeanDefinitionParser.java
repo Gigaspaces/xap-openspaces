@@ -160,5 +160,13 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         if (cachePolicy != null) {
             builder.addPropertyValue("cachePolicy", cachePolicy);
         }
+        
+        List<Element> documentTypeElements = DomUtils.getChildElementsByTagName(element, "space-type");
+        ManagedList typesList = new ManagedList();
+        for (Element ele : documentTypeElements) {
+            typesList.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition()));
+        }
+        
+        builder.addPropertyValue("spaceTypes", typesList);
     }
 }

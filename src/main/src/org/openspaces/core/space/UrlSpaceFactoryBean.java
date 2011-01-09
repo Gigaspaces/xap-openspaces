@@ -55,6 +55,7 @@ import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
@@ -121,6 +122,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private Boolean secured;
 
     private FilterProviderFactory[] filterProviders;
+   
+    private SpaceTypeDescriptor[] typeDescriptors;
 
     private ReplicationFilterProviderFactory replicationFilterProvider;
 
@@ -301,6 +304,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void setExternalDataSource(ManagedDataSource externalDataSource) {
         this.externalDataSource = externalDataSource;
     }
+    
+    /**
+     * Inject a list of space types.
+     */
+    public void setSpaceTypes(SpaceTypeDescriptor[] typeDescriptors) {
+        this.typeDescriptors = typeDescriptors;
+    }
 
     /**
      * Sets the cache policy that the space will use. If not set, will default to the one configured
@@ -450,6 +460,12 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 if (logger.isDebugEnabled()) {
                     logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
                 }
+            }
+            if (typeDescriptors != null) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("Space types can only be introduced on embedded Space");
+                }
+                props.put(Constants.Engine.SPACE_TYPES, typeDescriptors);
             }
 
             if (cachePolicy != null) {
