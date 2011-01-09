@@ -461,7 +461,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
                 }
             }
-            if (typeDescriptors != null) {
+            if (typeDescriptors != null && typeDescriptors.length >0 ) {
                 if (SpaceUtils.isRemoteProtocol(url)) {
                     throw new IllegalArgumentException("Space types can only be introduced on embedded Space");
                 }
