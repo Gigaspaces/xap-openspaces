@@ -41,7 +41,13 @@ public interface GigaSpaceTypeManager {
      * @param typeDescriptor
      */
     void registerTypeDescriptor(SpaceTypeDescriptor typeDescriptor);
-    
+
+    /**
+     * Creates a type descriptor for the specified type and registers it in the space.
+     * @param type
+     */
+    void registerTypeDescriptor(Class<?> type);
+
     /**
      * Adds the specified index to the specified type.
      * 

@@ -56,6 +56,18 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
             throw exTranslator.translate(e);
         }
     }
+    
+    public void registerTypeDescriptor(Class<?> type)
+    {
+        try {
+            if (type == null)
+                throw new IllegalArgumentException("Argument cannot be null - 'type'.");
+            space.registerTypeDescriptor(type);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     public AsyncFuture<AddTypeIndexesResult> asyncAddIndex(String typeName, SpaceIndex index) {
         return asyncAddIndexes(typeName, new SpaceIndex[] {index}, null);
     }
