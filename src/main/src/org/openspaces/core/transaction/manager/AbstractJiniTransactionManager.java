@@ -118,7 +118,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     /**
      * Sets an optional timeout when performing commit in milliseconds.
-     * Defaults to {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager#DEFAULT_TX_TIMEOUT}.
+     * Default: {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager#DEFAULT_TX_COMMIT_TIMEOUT}.
      */
     public void setCommitTimeout(Long commitTimeout) {
         this.commitTimeout = commitTimeout;
@@ -126,7 +126,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     /**
      * Sets an optional timeout when performing rollback/abort in milliseconds.
-     * Defaults to {@link Lease#FOREVER}.
+     * Default: {@link org.openspaces.core.transaction.manager.AbstractJiniTransactionManager#DEFAULT_TX_ROLLBACK_TIMEOUT}.
      */
     public void setRollbackTimeout(Long rollbackTimeout) {
         this.rollbackTimeout = rollbackTimeout;
