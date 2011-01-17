@@ -41,6 +41,9 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
     public void enableBean(final String beanClassName) 
         throws BeanConfigNotFoundException, BeanConfigurationException, BeanInitializationException {
         
+        if (beanClassName == null) {
+            throw new IllegalArgumentException ("beanClassName cannot be null");
+        }
         Map<String, String> properties = beansProperties.get(beanClassName);
 
         if (properties == null) {
