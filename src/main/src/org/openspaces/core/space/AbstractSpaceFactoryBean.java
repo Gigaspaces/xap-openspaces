@@ -89,6 +89,8 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     private String beanName;
 
     private ISpaceProxy space;
+    
+    private ISpaceProxy memberSpace;
 
     private ApplicationContext applicationContext;
 
@@ -174,6 +176,10 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
      */
     public synchronized void afterPropertiesSet() throws DataAccessException {
         this.space = (ISpaceProxy) doCreateSpace();
+        this.memberSpace = this.space;
+        if (space.isClustered()) {
+            memberSpace = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
+        }
         // apply security configuration if set, only for remote; Security is applied to embedded when space is created
         if (securityConfig != null && securityConfig.isFilled() && SpaceUtils.isRemoteProtocol(space)) {
             try {
@@ -259,8 +265,9 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
             if (applicationContext != null) {
                 SpaceInitializationIndicator.setInitializer();
                 try {
-                    applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(space, currentSpaceMode));
-                    applicationContext.publishEvent(new AfterSpaceModeChangeEvent(space, currentSpaceMode));
+                    
+                    applicationContext.publishEvent(new BeforeSpaceModeChangeEvent(memberSpace, currentSpaceMode));
+                    applicationContext.publishEvent(new AfterSpaceModeChangeEvent(memberSpace, currentSpaceMode));
 
                     if (currentSpaceMode == SpaceMode.BACKUP) {
                         fireSpaceBeforeBackupEvent();
@@ -354,7 +361,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
         if (applicationContext != null) {
             Map<String, SpaceBeforeBackupListener> beans = applicationContext.getBeansOfType(SpaceBeforeBackupListener.class);
             for (SpaceBeforeBackupListener listener : beans.values()) {
-                listener.onBeforeBackup(new BeforeSpaceModeChangeEvent(space, SpaceMode.BACKUP));
+                listener.onBeforeBackup(new BeforeSpaceModeChangeEvent(memberSpace, SpaceMode.BACKUP));
             }
         }
     }
@@ -367,7 +374,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
         if (applicationContext != null) {
             Map<String, SpaceAfterBackupListener> beans = applicationContext.getBeansOfType(SpaceAfterBackupListener.class);
             for (SpaceAfterBackupListener listener : beans.values()) {
-                listener.onAfterBackup(new AfterSpaceModeChangeEvent(space, SpaceMode.BACKUP));
+                listener.onAfterBackup(new AfterSpaceModeChangeEvent(memberSpace, SpaceMode.BACKUP));
             }
         }
     }
@@ -380,7 +387,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
         if (applicationContext != null) {
             Map<String, SpaceBeforePrimaryListener> beans = applicationContext.getBeansOfType(SpaceBeforePrimaryListener.class);
             for (SpaceBeforePrimaryListener listener : beans.values()) {
-                listener.onBeforePrimary(new BeforeSpaceModeChangeEvent(space, SpaceMode.PRIMARY));
+                listener.onBeforePrimary(new BeforeSpaceModeChangeEvent(memberSpace, SpaceMode.PRIMARY));
             }
         }
     }
@@ -393,7 +400,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
         if (applicationContext != null) {
             Map<String, SpaceAfterPrimaryListener> beans = applicationContext.getBeansOfType(SpaceAfterPrimaryListener.class);
             for (SpaceAfterPrimaryListener listener : beans.values()) {
-                listener.onAfterPrimary(new AfterSpaceModeChangeEvent(space, SpaceMode.PRIMARY));
+                listener.onAfterPrimary(new AfterSpaceModeChangeEvent(memberSpace, SpaceMode.PRIMARY));
             }
         }
     }
