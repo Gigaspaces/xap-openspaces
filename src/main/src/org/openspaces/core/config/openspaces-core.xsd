@@ -338,6 +338,94 @@
         </xsd:complexType>
     </xsd:element>
 
+   <xsd:element name="mirror">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
+                A space factory bean that creates a mirror space based on a url and additional settings.
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                        <xsd:element name="source-space" minOccurs="1" maxOccurs="1" >
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name of the source space that connects to this mirror.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="partitions" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The number of partitions the source space has.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="backups" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The number of backups each partition on the source space has.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="external-data-source" type="edsType" minOccurs="0" maxOccurs="1"  >
+					       <xsd:annotation>
+					           <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
+                                Allows to provide a Space external data source reference.
+                            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+                   </xsd:choice>
+                    <xsd:attribute name="url" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The url the space will be created with.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                  
+                    <xsd:attribute name="external-data-source" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
+                                Allows to provide a Space external data source reference.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.datasource.ManagedDataSource"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    
+                      <xsd:attribute name="operation-grouping" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The url the space will be created with.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                           <xsd:restriction base="xsd:string">
+                               <xsd:enumeration value="group-by-space-transaction"/>
+                               <xsd:enumeration value="group-by-replication-bulk"/>
+                           </xsd:restriction>
+                       </xsd:simpleType>
+                    </xsd:attribute>
+               
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    
     <xsd:element name="space-replication-filter">
         <xsd:annotation>
             <xsd:documentation
@@ -1406,6 +1494,16 @@
     </xsd:complexType>
 
     <xsd:complexType name="templateType">
+        <xsd:group ref="beans:collectionElements"/>
+        <xsd:attribute name="ref" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[
+    A short-cut alternative to a nested "<ref bean='...'/>".
+                ]]></xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="edsType">
         <xsd:group ref="beans:collectionElements"/>
         <xsd:attribute name="ref" type="xsd:string">
             <xsd:annotation>

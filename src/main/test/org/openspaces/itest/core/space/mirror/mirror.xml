@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:os-core="http://www.openspaces.org/schema/core"
+	xmlns:os-events="http://www.openspaces.org/schema/events"
+	xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
+
+	<bean id="propertiesConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+
+
+	<os-core:giga-space-context />
+	<os-core:giga-space-late-context />
+
+	<bean id="ds"
+		class="org.openspaces.itest.core.space.mirror.MockManagedDataSource" />
+		
+	<os-core:mirror id="mirror" url="/./mirror-service" external-data-source="ds" operation-grouping="group-by-replication-bulk">
+	    <os-core:source-space name="mySpace" partitions="2" backups="1"/>
+	
+	</os-core:mirror>
+
+
+	<os-core:giga-space id="gigaSpace" space="mirror" />
+
+</beans>
