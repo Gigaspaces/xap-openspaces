@@ -23,7 +23,6 @@ import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
 
-import com.gigaspaces.internal.metadata.converter.ConversionException;
 import com.gigaspaces.security.SecurityException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.CacheException;
@@ -116,8 +115,11 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new SpaceUnavailableException((com.j_spaces.core.exception.SpaceUnavailableException) e);
         }
 
-        if (e instanceof ConversionException) {
-            return new ObjectConversionException((ConversionException) e);
+        if (e instanceof com.gigaspaces.internal.metadata.converter.ConversionException) {
+            return new ObjectConversionException((com.gigaspaces.internal.metadata.converter.ConversionException) e);
+        }
+        if (e instanceof com.gigaspaces.metadata.SpaceMetadataException) {
+            return new SpaceMetadataException(e.getMessage(), e.getCause());
         }
 
         if (e instanceof com.gigaspaces.client.WriteMultipleException) {
