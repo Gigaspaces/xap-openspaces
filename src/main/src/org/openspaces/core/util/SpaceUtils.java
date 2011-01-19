@@ -80,13 +80,16 @@ public abstract class SpaceUtils {
     public static boolean isSameSpace(IJSpace space1, IJSpace space2) throws DataAccessException {
         ISpaceProxy space1Proxy = (ISpaceProxy) space1;
         ISpaceProxy space2Proxy = (ISpaceProxy) space2;
-        if ( space1Proxy.isClustered() == space2Proxy.isClustered()) {
+        if (!space1Proxy.isClustered() && !space2Proxy.isClustered()) {
             return space1.equals(space2);
         }
-        if (space1Proxy.isClustered()){
-            return getClusterMemberSpace(space1).equals(space2);
+        if (space1Proxy.isClustered() && space2Proxy.isClustered()) {
+            return space1.equals(space2);
         }
-        return space1.equals(getClusterMemberSpace(space2));
+        if (space1Proxy.isClustered() || space2Proxy.isClustered()) {
+            return getClusterMemberSpace(space1).equals(getClusterMemberSpace(space2));
+        }
+        return false;
     }
 
 }
