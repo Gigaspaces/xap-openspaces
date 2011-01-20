@@ -227,7 +227,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         }
     }
 
-    private List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] interfaceClasses) throws ClassNotFoundException {
+    public List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] interfaceClasses) throws ClassNotFoundException {
         List<String> beansClassNames = new ArrayList<String>();
         
         for (String beanClassName : this.enabledBeans.keySet()) {

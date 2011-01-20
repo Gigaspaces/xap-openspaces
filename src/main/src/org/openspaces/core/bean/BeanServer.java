@@ -35,10 +35,15 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
     void destroy();
 
     /**
-     * Assuming there is at most one enabled bean that implements one of the specified interfaces, 
-     * returns the enabled bean.
      * @param interfaceClasses
      * @return the enabled bean that implements any one of the specified interfaces.
      */
     List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses);
+
+    /**
+     * @param interfaceClasses
+     * @return the enabled bean class names that implements any one of the specified interfaces.
+     * @throws ClassNotFoundException 
+     */
+    List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] classes) throws ClassNotFoundException;
 }
