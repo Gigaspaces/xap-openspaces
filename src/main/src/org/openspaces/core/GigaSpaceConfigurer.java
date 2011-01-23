@@ -124,15 +124,23 @@ public class GigaSpaceConfigurer {
         gigaSpaceFactoryBean.setTransactionManager(transactionManager);
         return this;
     }
-   
+    
     /**
      * Creates a new {@link org.openspaces.core.GigaSpace} instance if non already created.
      */
-    public GigaSpace gigaSpace() {
+    public GigaSpace create() {
         if (gigaSpace == null) {
             gigaSpaceFactoryBean.afterPropertiesSet();
             gigaSpace = (GigaSpace) gigaSpaceFactoryBean.getObject();
         }
         return gigaSpace;
+    }
+   
+    /**
+     * Creates a new {@link org.openspaces.core.GigaSpace} instance if non already created.
+     * @see #create()
+     */
+    public GigaSpace gigaSpace() {
+        return create();
     }
 }
