@@ -55,19 +55,19 @@ public enum MemoryUnit {
      * Perform conversion based on given delta representing the
      * difference between units
      * @param delta the difference in index values of source and target units
-     * @param duration the duration
-     * @return converted duration or saturated value
+     * @param memory the memory
+     * @return converted memory or saturated value
      */
-    private static long doConvert(int delta, long duration) {
+    private static long doConvert(int delta, long memory) {
         if (delta == 0)
-            return duration;
+            return memory;
         if (delta < 0) 
-            return duration / multipliers[-delta];
-        if (duration > overflows[delta])
+            return memory / multipliers[-delta];
+        if (memory > overflows[delta])
             return Long.MAX_VALUE;
-        if (duration < -overflows[delta])
+        if (memory < -overflows[delta])
             return Long.MIN_VALUE;
-        return duration * multipliers[delta];
+        return memory * multipliers[delta];
     }
 
     /**
@@ -82,7 +82,7 @@ public enum MemoryUnit {
      *
      * @param memory capacity in the given <tt>unit</tt>
      * @param unit the unit of the <tt>memory</tt> argument
-     * @return the converted duration in this unit,
+     * @return the converted memory in this unit,
      * or <tt>Long.MIN_VALUE</tt> if conversion would negatively
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      */
@@ -91,9 +91,9 @@ public enum MemoryUnit {
     }
 
     /**
-     * Equivalent to <tt>BYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration,
+     * Equivalent to <tt>BYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Bytes
+     * @return the converted memory,
      * or <tt>Long.MIN_VALUE</tt> if conversion would negatively
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
@@ -111,9 +111,9 @@ public enum MemoryUnit {
     }
     
     /**
-     * Equivalent to <tt>KILOBYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration,
+     * Equivalent to <tt>KILOBYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Kilo Bytes
+     * @return the converted memory,
      * or <tt>Long.MIN_VALUE</tt> if conversion would negatively
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
@@ -127,9 +127,9 @@ public enum MemoryUnit {
     }
     
     /**
-     * Equivalent to <tt>MEGABYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration,
+     * Equivalent to <tt>MEGABYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Mega Bytes
+     * @return the converted memory,
      * or <tt>Long.MIN_VALUE</tt> if conversion would negatively
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
@@ -143,9 +143,9 @@ public enum MemoryUnit {
     }
     
     /**
-     * Equivalent to <tt>GIGABYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration.
+     * Equivalent to <tt>GIGABYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Giga Bytes
+     * @return the converted memory.
      * @see #convert
      */
     public long toGigaBytes(long memory) {
@@ -157,9 +157,9 @@ public enum MemoryUnit {
     }
     
     /**
-     * Equivalent to <tt>TERABYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration.
+     * Equivalent to <tt>TERABYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Tera Bytes
+     * @return the converted memory.
      * @see #convert
      */
     public long toTeraBytes(long memory) {
@@ -171,9 +171,9 @@ public enum MemoryUnit {
     }
     
     /**
-     * Equivalent to <tt>PETABYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration.
+     * Equivalent to <tt>PETABYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Peta Bytes
+     * @return the converted memory.
      * @see #convert
      */
     public long toPetaBytes(long memory) {
@@ -185,9 +185,9 @@ public enum MemoryUnit {
     }
     
     /**
-     * Equivalent to <tt>EXABYTES.convert(duration, this)</tt>.
-     * @param duration the duration
-     * @return the converted duration.
+     * Equivalent to <tt>EXABYTES.convert(memory, this)</tt>.
+     * @param memory the memory to convert to Exa Bytes
+     * @return the converted memory.
      * @see #convert
      */
     public long toExaBytes(long memory) {
