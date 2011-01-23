@@ -15,7 +15,6 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
         this.admin = admin;
     }
 
-    @SuppressWarnings("unchecked")
     public T create(String beanClassName, Map<String,String> properties, BeanServer<T> beanServer) throws BeanConfigNotFoundException , BeanInitializationException{
     
         T instance = createInstance(beanClassName, properties, beanServer);
@@ -37,6 +36,7 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected T createInstance(String beanClassName, Map<String, String> properties, BeanServer<T> beanServer) {
         T instance = null;
         try {
