@@ -30,43 +30,46 @@ import java.util.List;
  * A utility builder class for {@link com.j_spaces.core.client.GSIterator}. Allows to use method
  * chaining for simple configuration of an iterator and then call {@link #iterate()} to get the
  * actual iterator.
- *
- * <p>By default, when no template is added (using {@link #addTemplate(ISpaceQuery)} or
- * {@link #addTemplate(com.j_spaces.core.client.Query)}, a null template will be used to iterate
- * over all the content of the Space.
- *
- * <p>The iterator can iterate on entries currently in the space, future entries or both.
- * By default it will only iterate on future entries in the Space (entries that match the 
- * given template(s)). Use {@link #iteratorScope(IteratorScope)} to set the iterator's scope.
- *
- * <p>Lease for the iterator can be controlled using {@link #leaseDuration(long)}. A leased iterator
+ * 
+ * <p>
+ * By default, when no template is added (using {@link #addTemplate(ISpaceQuery)} or
+ * {@link #addTemplate(Object)}, a null template will be used to iterate over all the content of the
+ * Space.
+ * 
+ * <p>
+ * The iterator can iterate on entries currently in the space, future entries or both. By default it
+ * will only iterate on future entries in the Space (entries that match the given template(s)). Use
+ * {@link #iteratorScope(IteratorScope)} to set the iterator's scope.
+ * 
+ * <p>
+ * Lease for the iterator can be controlled using {@link #leaseDuration(long)}. A leased iterator
  * which expires is considered as <em>invalidated</em>. A canceled iterator is an exhausted iterator
  * and will have no more entities added to it. Calling <code>next</code> on an iterator with either
- * state always returns <code>null</code> or it may throw one of the allowed exceptions. In particular
- * <code>next(timeout)</code> may throw {@link java.rmi.NoSuchObjectException} to indicate that no entity
- * has been found during the allowed timeout. There is no guarantee that once <code>next(timeout)</code>
- * throws a <code>NoSuchObjectException</code>, or <code>next</code> returns <code>null</code>, all future
- * calls on that instance will do the same.
- *
- * <p>If there is a possibility that an iterator may become invalidated, it must
- * be leased. If there is no possibility that the iterator will become
- * invalidated, implementations should not lease it (i.e. use
- * {@link Lease#FOREVER}). If there is no further interest an iterator may
- * be <code>canceled</code>.
- *
- * <p>An active lease on an iterator serves as a hint to the space that the
- * client is still interested in matching entities, and as a hint to the
- * client that the iterator is still functioning. There are cases, however,
- * where this may not be possible in particular, it is not expected that
- * iteration will maintain across crashes. If the lease expires or is
- * canceled, the iterator is invalidated. Clients should <em>not</em>
- * assume that the resources associated with a leased match set will be freed
- * if the match set reaches the exhausted state, and should instead cancel
- * the lease.
- *
- * <p>The maximum number of entries to pull from the space can be controlled using {@link #bufferSize(int)}
- * and defaults to <code>100</code>.
- *
+ * state always returns <code>null</code> or it may throw one of the allowed exceptions. In
+ * particular <code>next(timeout)</code> may throw {@link java.rmi.NoSuchObjectException} to
+ * indicate that no entity has been found during the allowed timeout. There is no guarantee that
+ * once <code>next(timeout)</code> throws a <code>NoSuchObjectException</code>, or <code>next</code>
+ * returns <code>null</code>, all future calls on that instance will do the same.
+ * 
+ * <p>
+ * If there is a possibility that an iterator may become invalidated, it must be leased. If there is
+ * no possibility that the iterator will become invalidated, implementations should not lease it
+ * (i.e. use {@link Lease#FOREVER}). If there is no further interest an iterator may be
+ * <code>canceled</code>.
+ * 
+ * <p>
+ * An active lease on an iterator serves as a hint to the space that the client is still interested
+ * in matching entities, and as a hint to the client that the iterator is still functioning. There
+ * are cases, however, where this may not be possible in particular, it is not expected that
+ * iteration will maintain across crashes. If the lease expires or is canceled, the iterator is
+ * invalidated. Clients should <em>not</em> assume that the resources associated with a leased match
+ * set will be freed if the match set reaches the exhausted state, and should instead cancel the
+ * lease.
+ * 
+ * <p>
+ * The maximum number of entries to pull from the space can be controlled using
+ * {@link #bufferSize(int)} and defaults to <code>100</code>.
+ * 
  * @author kimchy
  * @see GigaSpace#iterator()
  */
