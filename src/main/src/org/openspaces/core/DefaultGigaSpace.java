@@ -106,7 +106,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      * @param defaultIsolationLevel The default isolation level for read operations without modifiers. Maps to
      *                              {@link org.springframework.transaction.TransactionDefinition#getIsolationLevel()}
      *                              levels values.
-     * @param queryResultType       The type of results for query operations.                            
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
             int defaultIsolationLevel) {
