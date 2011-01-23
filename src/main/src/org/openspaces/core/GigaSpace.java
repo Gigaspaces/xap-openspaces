@@ -2198,7 +2198,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
@@ -2222,7 +2222,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
@@ -2250,7 +2250,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
@@ -2278,7 +2278,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
@@ -2316,7 +2316,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
@@ -2347,7 +2347,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
@@ -2376,7 +2376,7 @@ public interface GigaSpace {
     //    * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
     //    * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
     //    * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-    //    * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+    //    * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
     //    * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
     //    * {@link org.springframework.context.ApplicationContextAware} are also available.
     //     *
@@ -2403,7 +2403,7 @@ public interface GigaSpace {
      * <p>Resource injection can be enabled by marking the task with {@link org.openspaces.core.executor.AutowireTask}
      * or with {@link org.openspaces.core.executor.AutowireTaskMarker}. Resources defined within processing unit
      * (space node) the task is executed on are accessible by using either the {@link org.springframework.beans.factory.annotation.Autowired} or
-     * {@link javax.annotation.Resource} annotations (assuming they are enabled using <code>context:annotation-config</code>).
+     * <tt>javax.annotation.Resource</tt> annotations (assuming they are enabled using <code>context:annotation-config</code>).
      * Bean life cycle methods, such as {@link org.openspaces.core.cluster.ClusterInfoAware} and
      * {@link org.springframework.context.ApplicationContextAware} are also available.
      *
