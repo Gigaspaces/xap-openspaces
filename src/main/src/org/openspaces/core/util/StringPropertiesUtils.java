@@ -133,7 +133,7 @@ public class StringPropertiesUtils {
      * @param properties
      * @param key
      * @param array
-     * @param seperator
+     * @param separator
      */
     public static void putArray(Map<String,String> properties, String key, String[] array, String separator) {
         StringBuilder concat = new StringBuilder();
