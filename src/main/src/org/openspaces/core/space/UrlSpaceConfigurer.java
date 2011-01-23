@@ -321,7 +321,7 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     /**
      * Creates or finds (if not already created) a new Space by calling
      * {@link UrlSpaceFactoryBean#afterPropertiesSet()}.
-     * @see {@link #create()}
+     * @see #create()
      */
     public IJSpace space() {
         return create();
