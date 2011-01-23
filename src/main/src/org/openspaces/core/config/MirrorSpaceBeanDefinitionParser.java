@@ -67,7 +67,7 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         //parse the operation-grouping attribute
         Properties properties = new Properties();
         String operationGrouping = element.getAttribute(OPERATION_GROUPING);
-        if (operationGrouping != null) {
+        if (StringUtils.hasLength(operationGrouping)) {
             properties.put(Constants.Mirror.FULL_MIRROR_SERVICE_OPERATION_GROUPING_TAG, operationGrouping);
         }
         
