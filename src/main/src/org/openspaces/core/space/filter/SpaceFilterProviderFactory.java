@@ -37,8 +37,7 @@ public class SpaceFilterProviderFactory extends AbstractFilterProviderFactoryBea
     private String[] operationCodesNames = new String[0];
 
     /**
-     * Returns a new filter provider based on the provided
-     * {@link #setFilter(com.j_spaces.core.filters.ISpaceFilter) filter} and operation
+     * Returns a new filter provider based on the provided {@link #setFilter(Object)} and operation
      * codes.
      */
     @Override
