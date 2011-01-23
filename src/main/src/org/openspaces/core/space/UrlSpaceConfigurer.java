@@ -55,15 +55,15 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
 
     private IJSpace space;
 
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
-    private Properties urlProperties = new Properties();
+    private final Properties urlProperties = new Properties();
 
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private final Map<String, Object> parameters = new HashMap<String, Object>();
 
-    private List<FilterProviderFactory> filterProviderFactories = new ArrayList<FilterProviderFactory>();
+    private final List<FilterProviderFactory> filterProviderFactories = new ArrayList<FilterProviderFactory>();
 
-    private List<SpaceTypeDescriptor> typeDescriptors = new ArrayList<SpaceTypeDescriptor>();
+    private final List<SpaceTypeDescriptor> typeDescriptors = new ArrayList<SpaceTypeDescriptor>();
 
     public UrlSpaceConfigurer(String url) {
         this.urlSpaceFactoryBean = new UrlSpaceFactoryBean(url);
@@ -206,7 +206,7 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
     /**
-     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setSpaceTypes(org.openspaces.core.space.filter.FilterProviderFactory[])
+     * @see org.openspaces.core.space.UrlSpaceFactoryBean#setSpaceTypes(SpaceTypeDescriptor[])
      */
     public UrlSpaceConfigurer addSpaceType(SpaceTypeDescriptor spaceType) {
         validate();
