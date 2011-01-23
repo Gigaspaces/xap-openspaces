@@ -52,34 +52,34 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
             if(_idProperty != null)
             {
                 if ( _idProperty.getIndex() == null)
-                    typeDescriptorBuilder.setIdProperty(_idProperty.getPropertyName(), _idProperty.isAutoGenerate());
+                    typeDescriptorBuilder.idProperty(_idProperty.getPropertyName(), _idProperty.isAutoGenerate());
                 else
-                    typeDescriptorBuilder.setIdProperty(_idProperty.getPropertyName(), _idProperty.isAutoGenerate(),
+                    typeDescriptorBuilder.idProperty(_idProperty.getPropertyName(), _idProperty.isAutoGenerate(),
                             _idProperty.getIndex());
             }
 
             if(_routingProperty != null)
             {
                 if (_routingProperty.getIndex() == null)
-                    typeDescriptorBuilder.setRoutingProperty(_routingProperty.getPropertyName());
+                    typeDescriptorBuilder.routingProperty(_routingProperty.getPropertyName());
                 else
-                    typeDescriptorBuilder.setRoutingProperty(_routingProperty.getPropertyName(),
+                    typeDescriptorBuilder.routingProperty(_routingProperty.getPropertyName(),
                             _routingProperty.getIndex());
             }
 
             if(_fifoSupport != null)
-                typeDescriptorBuilder.setFifoSupport(_fifoSupport);
+                typeDescriptorBuilder.fifoSupport(_fifoSupport);
             
             if(_supportsOptimisticLocking != null)
-                typeDescriptorBuilder.setSupportsOptimisticLocking(_supportsOptimisticLocking);
+                typeDescriptorBuilder.supportsOptimisticLocking(_supportsOptimisticLocking);
             
             if(_replicable != null)
-                typeDescriptorBuilder.setReplicable(_replicable);
+                typeDescriptorBuilder.replicable(_replicable);
             
             if(_documentWrapperClassName != null)
             {
                 Class<? extends SpaceDocument> documentWrapperClass = ClassLoaderHelper.loadClass(_documentWrapperClassName);
-                typeDescriptorBuilder.setDocumentWrapperClass(documentWrapperClass);
+                typeDescriptorBuilder.documentWrapperClass(documentWrapperClass);
             }
             
             if(_indexes != null)
