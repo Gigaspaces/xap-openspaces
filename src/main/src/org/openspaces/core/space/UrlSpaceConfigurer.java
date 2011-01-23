@@ -299,12 +299,13 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         urlSpaceFactoryBean.setPrimaryBackupListener(primaryBackupListener);
         return this;
     }
-
+    
+    
     /**
      * Creates or finds (if not already created) a new Space by calling
      * {@link UrlSpaceFactoryBean#afterPropertiesSet()}.
      */
-    public IJSpace space() {
+    public IJSpace create() {
         if (space == null) {
             urlSpaceFactoryBean.setParameters(parameters);
             urlSpaceFactoryBean.setProperties(properties);
@@ -315,6 +316,15 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
             space = (IJSpace) urlSpaceFactoryBean.getObject();
         }
         return space;
+    }
+
+    /**
+     * Creates or finds (if not already created) a new Space by calling
+     * {@link UrlSpaceFactoryBean#afterPropertiesSet()}.
+     * @see {@link #create()}
+     */
+    public IJSpace space() {
+        return create();
     }
 
     /**
