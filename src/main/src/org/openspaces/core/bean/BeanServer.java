@@ -24,7 +24,7 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
      * Assuming there is at most one enabled bean that implements one of the specified interfaces, 
      * puts the specified configuration and enables a new bean in its place. 
      * 
-     * @param interfaceClass - the interface that the new and old bean need to implement
+     * @param interfaceClasses - the interface that the new and old bean need to implement
      * @param newBeanConfig - the new bean configuration that is to replace the existing specified interface implementation.
      * 
      * @throws IllegalStateException - if more than one enabled bean implements any of the specified interfaces
@@ -35,15 +35,15 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
     void destroy();
 
     /**
-     * @param interfaceClasses
+     * @param interfaceClasses - the interface that the bean we are looking for needs to implement
      * @return the enabled bean that implements any one of the specified interfaces.
      */
     List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses);
 
     /**
-     * @param interfaceClasses
+     * @param interfaceClasses - the interface that the bean we are looking for needs to implement
      * @return the enabled bean class names that implements any one of the specified interfaces.
      * @throws ClassNotFoundException 
      */
-    List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] classes) throws ClassNotFoundException;
+    List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] interfaceClasses) throws ClassNotFoundException;
 }
