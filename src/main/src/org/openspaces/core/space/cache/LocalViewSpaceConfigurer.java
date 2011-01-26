@@ -77,7 +77,12 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
-    public IJSpace localView() {
+    /**
+     * Creates and returns a local cache according to the configured settings.
+     * @return A configured space.
+     * @since 8.0
+     */
+    public IJSpace create() {
         if (space == null) {
             localViewSpaceFactoryBean.setProperties(properties);
             localViewSpaceFactoryBean.setLocalViews(localViews);
@@ -86,12 +91,14 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         }
         return this.space;
     }
-
+    public IJSpace localView() {
+        return create();
+    }
     public void destroy() {
         localViewSpaceFactoryBean.destroy();
     }
 
     public IJSpace space() {
-        return localView();
+        return create();
     }
 }

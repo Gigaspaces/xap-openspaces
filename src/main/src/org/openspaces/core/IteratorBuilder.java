@@ -153,8 +153,9 @@ public class IteratorBuilder {
      * Returns a new {@link com.j_spaces.core.client.GSIterator} based on the builder
      * configuration. If no templates were added, a null template will be added which
      * will cause the iterator to iterate over all the entries in the Space.
+     * @since 8.0
      */
-    public GSIterator iterate() {
+    public GSIterator create() {
         if (templates.isEmpty()) {
             templates.add(null);
         }
@@ -163,5 +164,12 @@ public class IteratorBuilder {
         } catch (Exception e) {
             throw gigaSpace.getExceptionTranslator().translate(e);
         }
+    }
+
+    /**
+     * @see #create().
+     */
+    public GSIterator iterate() {
+        return create();
     }
 }

@@ -91,7 +91,12 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
-    public IJSpace localCache() {
+    /**
+     * Creates and returns a local cache according to the configured settings.
+     * @return A configured space.
+     * @since 8.0
+     */
+    public IJSpace create() {
         if (space == null) {
             localCacheSpaceFactoryBean.setProperties(properties);
             localCacheSpaceFactoryBean.afterPropertiesSet();
@@ -99,12 +104,15 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
         }
         return this.space;
     }
+    public IJSpace localCache() {
+        return create();
+    }
 
     public void destroy() {
         localCacheSpaceFactoryBean.destroy();
     }
 
     public IJSpace space() {
-        return localCache();
+        return create();
     }
 }
