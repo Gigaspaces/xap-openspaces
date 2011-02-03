@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.openspaces.core.space.UrlSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedProperties;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.Assert;
@@ -39,6 +40,7 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String DATA_SOURCE = "external-data-source";
     public static final String SOURCE_SPACE = "source-space";
     public static final String OPERATION_GROUPING = "operation-grouping";
+    public static final String PROPERTIES = "properties";
 
     @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
@@ -82,6 +84,17 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         
         builder.addPropertyValue("properties", properties);
         
+        Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
+        ManagedProperties spaceProps = new ManagedProperties();
+        if (propertiesEle != null) {
+             spaceProps = (ManagedProperties) parserContext.getDelegate().parsePropertyValue(propertiesEle,
+                    builder.getRawBeanDefinition(), "properties");
+             
+            spaceProps.setMergeEnabled(true);
+            builder.addPropertyValue("properties", spaceProps);
+
+        }
+        
         //check if external-data-source is defined in a nested bean
         Element edsEle = DomUtils.getChildElementByTagName(element, DATA_SOURCE);
         if (edsEle != null) {
@@ -92,6 +105,6 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
                             builder.getRawBeanDefinition(), "externalDataSource");
             builder.addPropertyValue("externalDataSource", eds);
         }
-               
+        
     }
 }

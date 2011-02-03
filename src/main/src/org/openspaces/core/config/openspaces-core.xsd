@@ -385,6 +385,30 @@
                             </xsd:documentation>
 					        </xsd:annotation>
 					    </xsd:element>
+					     <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the properties the IJSpace will be created with (same as parameters). Note,
+                                    this
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred
+                                    to as custom properties and allows for example to control the xpath injection to
+                                    space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
                    </xsd:choice>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>

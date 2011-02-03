@@ -18,9 +18,14 @@
 	<bean id="ds"
 		class="org.openspaces.itest.core.space.mirror.MockManagedDataSource" />
 		
-	<os-core:mirror id="mirror" url="/./mirror-service" external-data-source="ds" operation-grouping="group-by-replication-bulk">
+	<os-core:mirror id="mirror" url="/./mirror-service" external-data-source="ds" operation-grouping="group-by-space-transaction">
 	    <os-core:source-space name="mySpace" partitions="2" backups="1"/>
-	
+	    <os-core:properties>	
+	    	<props>
+	   			 <prop key="space-config.external-data-source.data-class">com.gigaspaces.internal.transport.EntryPacket</prop>
+	   		 </props>
+     	</os-core:properties>
+
 	</os-core:mirror>
 
 
