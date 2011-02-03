@@ -80,6 +80,10 @@ public abstract class SpaceUtils {
     public static boolean isSameSpace(IJSpace space1, IJSpace space2) throws DataAccessException {
         ISpaceProxy space1Proxy = (ISpaceProxy) space1;
         ISpaceProxy space2Proxy = (ISpaceProxy) space2;
+        //Make sure we do not consider an embedded and remote space equals at any scenario
+        if (space1Proxy.isEmbedded() != space2Proxy.isEmbedded()){
+            return false;
+        }        
         if (!space1Proxy.isClustered() && !space2Proxy.isClustered()) {
             return space1.equals(space2);
         }
