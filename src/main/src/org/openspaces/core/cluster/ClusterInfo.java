@@ -109,8 +109,12 @@ public class ClusterInfo implements Cloneable, Serializable {
     /**
      * Sets the instance id of the specific cluster member. Can have <code>null</code> value which
      * means that it was not set and should not be taken into account.
+     * @throws IllegalArgumentException if value not greater than zero.
      */
     public void setInstanceId(Integer instanceId) {
+        if (instanceId!=null && instanceId.intValue() < 1) {
+            throw new IllegalArgumentException("Cluster member instance-id should be greater than zero");
+        }
         this.instanceId = instanceId;
     }
 
@@ -125,8 +129,12 @@ public class ClusterInfo implements Cloneable, Serializable {
     /**
      * Sets the backup id of the specific cluster member. Can have <code>null</code> value which
      * means that it was not set and should not be taken into account.
+     * @throws IllegalArgumentException if value not greater than zero.
      */
     public void setBackupId(Integer backupId) {
+        if (backupId!=null && backupId.intValue() < 1) {
+            throw new IllegalArgumentException("Cluster member backup-id should be greater than zero");
+        }
         this.backupId = backupId;
     }
 
