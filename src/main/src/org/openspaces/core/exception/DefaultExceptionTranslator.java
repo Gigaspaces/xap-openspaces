@@ -43,12 +43,15 @@ import com.j_spaces.core.exception.ClosedResourceException;
 public class DefaultExceptionTranslator implements ExceptionTranslator {
 
     /**
-     * Translateds general JavaSpaces and Jini exceptions into a DataAccess exception.
+     * Translates general JavaSpaces and Jini exceptions into a DataAccess exception.
      */
     public DataAccessException translate(Throwable e) {
         DataAccessException dae = internalTranslate(e);
         if (dae != null) {
             return dae;
+        }
+        if (e instanceof RuntimeException) {
+            throw (RuntimeException)e;
         }
         return new UncategorizedSpaceException(e.getMessage(), e);
     }
