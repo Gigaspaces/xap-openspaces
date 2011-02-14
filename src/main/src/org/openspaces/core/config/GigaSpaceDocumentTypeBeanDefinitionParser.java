@@ -38,10 +38,12 @@ import com.gigaspaces.metadata.index.SpaceIndexType;
  */
 public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
+    @Override
     protected Class getBeanClass(Element element) {
         return GigaSpaceDocumentTypeDescriptorFactoryBean.class;
     }
 
+    @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         NamedNodeMap attributes = element.getAttributes();
@@ -102,16 +104,15 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         
         Element idElem = DomUtils.getChildElementByTagName(element, "id");
         if (idElem != null) {
-            String idPropertyName =idElem.getAttribute("property");
-            String idAutogenerate =idElem.getAttribute("auto-generate");
+            String propertyName =idElem.getAttribute("property");
+            String idAutogenerate = idElem.getAttribute("auto-generate");
             
             SpaceIdProperty idProperty= new SpaceIdProperty();
-            idProperty.setPropertyName(idPropertyName);
-            
-            if(StringUtils.hasText(idAutogenerate))
+            idProperty.setPropertyName(propertyName);            
+            if (StringUtils.hasText(idAutogenerate))
                 idProperty.setAutoGenerate(Boolean.parseBoolean(idAutogenerate));
             
-            if(indexes.containsKey(idPropertyName))
+            if (indexes.containsKey(propertyName))
                 idProperty.setIndex(SpaceIndexType.NONE);
             
             builder.addPropertyValue("idProperty", idProperty);
@@ -119,16 +120,15 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         
         Element routingElem = DomUtils.getChildElementByTagName(element, "routing");
         if (routingElem != null) {
-            String propertyName =idElem.getAttribute("property");
+            String propertyName = routingElem.getAttribute("property");
             
-            SpaceRoutingProperty routing= new SpaceRoutingProperty();
-            routing.setPropertyName(propertyName);
+            SpaceRoutingProperty routingProperty = new SpaceRoutingProperty();
+            routingProperty.setPropertyName(propertyName);
             
-            if(indexes.containsKey(propertyName))
-                routing.setIndex(SpaceIndexType.NONE);
-         
-            
-            builder.addPropertyValue("routingProperty", routing);
+            if (indexes.containsKey(propertyName))
+                routingProperty.setIndex(SpaceIndexType.NONE);
+                     
+            builder.addPropertyValue("routingProperty", routingProperty);
         }
     }
     private String extractPropertyName(String attributeName) {
