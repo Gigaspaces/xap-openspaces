@@ -199,8 +199,15 @@ public class ClusterInfo implements Cloneable, Serializable {
      * 6. NumberOfInstances=2, numberOfBackups=1, instanceId=2, backupId=1: 3.
      */
     public int getRunningNumber() {
-        if (getNumberOfInstances() == null || getNumberOfInstances() == 0) {
+        //Can have null value which means that it was not set and should not be taken into account.
+        if (getNumberOfInstances() == null) {
             return 0;
+        }
+        if (getNumberOfInstances() == 0) {
+            if (getInstanceId() != null) 
+                return getInstanceId(); //GS-8737: stateless pu deployed with zero instances but later incremented
+            else
+                return 0;
         }
         if (getInstanceId() == null || getInstanceId() == 0) {
             return 0;
