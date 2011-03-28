@@ -57,7 +57,7 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
         return results;
     }
 
-    private class TranslatedWriteResult implements IWriteResult {
+    private static class TranslatedWriteResult implements IWriteResult {
 
         private static final long serialVersionUID = 1L;
         private final IWriteResult result;
