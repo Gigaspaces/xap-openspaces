@@ -1152,7 +1152,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     private static QueryResultTypeInternal toInternal(QueryResultType queryResultType) {
         if (queryResultType == null)
             return null;
-        if (queryResultType == QueryResultType.NOT_SET)
+        if (queryResultType == QueryResultType.DEFAULT || queryResultType == QueryResultType.NOT_SET)
             return QueryResultTypeInternal.NOT_SET;
         if (queryResultType == QueryResultType.OBJECT)
             return QueryResultTypeInternal.OBJECT;
