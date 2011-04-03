@@ -218,12 +218,10 @@ class FilterOperationDelegateInvoker {
                 return null;
             }
         }
-        Object retVal;
         try {
-            retVal = entry.getObject(space);
+            return entry.getObject(space);
         } catch (UnusableEntryException e) {
             throw new FilterExecutionException("Failed to get object from entry [" + entry + "]", e);
         }
-        return retVal;
     }
 }

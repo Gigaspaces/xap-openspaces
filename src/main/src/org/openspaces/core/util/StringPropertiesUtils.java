@@ -33,8 +33,8 @@ public class StringPropertiesUtils {
 
     public static Map<String, String> convertPropertiesToMapStringString(Properties properties2) {
         Map<String,String> properties = new HashMap<String,String>();
-        for ( Object key : properties2.keySet()) {
-            properties.put(key.toString(), properties2.get(key).toString());
+        for ( Map.Entry<Object, Object> entry : properties2.entrySet()) {
+            properties.put(entry.getKey().toString(), entry.getValue().toString());
         }
         return properties;
     }
