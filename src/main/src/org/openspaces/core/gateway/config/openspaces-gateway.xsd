@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.openspaces.org/schema/core/gateway" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            xmlns:tool="http://www.springframework.org/schema/tool"
+            xmlns:os-core="http://www.openspaces.org/schema/core"
+            targetNamespace="http://www.openspaces.org/schema/core/gateway"
+            elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+    <xsd:import namespace="http://www.springframework.org/schema/tool"/>
+    <xsd:import namespace="http://www.openspaces.org/schema/core"/>
+
+    <xsd:element name="delegator">
+		<xsd:complexType>
+            <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+		    <xsd:sequence>
+		      <xsd:element name="delegation" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+				<xsd:attribute name="target" type="xsd:string" use="required" />
+				<xsd:attribute name="delegate-through" type="xsd:string" use="optional" />
+				</xsd:complexType>
+		      </xsd:element>
+		    </xsd:sequence>
+				<xsd:attribute name="local-gateway-name" type="xsd:string" use="required" />
+				<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="required" />
+				<xsd:attribute name="start-embedded-lus" type="xsd:boolean" default="true" use="optional" />
+          </xsd:extension>
+          </xsd:complexContent>
+		</xsd:complexType>
+    </xsd:element>
+    <xsd:element name="targets">
+		<xsd:complexType>
+            <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+		    <xsd:sequence>
+		      <xsd:element name="target" minOccurs="1" maxOccurs="unbounded">
+				<xsd:complexType>
+				<xsd:attribute name="name" type="xsd:string" use="required" />
+				</xsd:complexType>
+		      </xsd:element>
+		    </xsd:sequence>
+			<xsd:attribute name="local-gateway-name" type="xsd:string" use="required" />
+          </xsd:extension>
+          </xsd:complexContent>
+		</xsd:complexType>
+    </xsd:element>
+    <xsd:element name="lookups">
+		<xsd:complexType>
+            <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+		    <xsd:sequence>
+		      <xsd:element name="lookup" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+				<xsd:attribute name="gateway-name" type="xsd:string" use="required" />
+				<xsd:attribute name="host" type="xsd:string" use="required" />
+				<xsd:attribute name="lus-port" type="xsd:integer" use="required" />
+				<xsd:attribute name="lrmi-port" type="xsd:integer" use="optional" />
+				</xsd:complexType>
+		      </xsd:element>
+		    </xsd:sequence>
+			<xsd:attribute name="lookup-group" type="xsd:string" use="required" />
+          </xsd:extension>
+          </xsd:complexContent>
+		</xsd:complexType>
+    </xsd:element>
+    <xsd:element name="sink">   
+		<xsd:complexType>
+    	    <xsd:complexContent>
+        	<xsd:extension base="beans:identifiedType">
+        	<xsd:sequence>
+		    <xsd:element name="sources">
+				<xsd:complexType>
+		            <xsd:complexContent>
+		            <xsd:extension base="beans:identifiedType">
+				    <xsd:sequence>
+				      <xsd:element name="source" minOccurs="1" maxOccurs="unbounded">
+						<xsd:complexType>
+						<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+				      </xsd:element>
+				    </xsd:sequence>
+		          </xsd:extension>
+		          </xsd:complexContent>
+				</xsd:complexType>
+		    </xsd:element>
+   	    	</xsd:sequence>
+			<xsd:attribute name="local-gateway-name" type="xsd:string" use="required" />
+			<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="required" />
+			<xsd:attribute name="local-space-url" type="xsd:string" use="required" />
+			<xsd:attribute name="start-embedded-lus" type="xsd:boolean" default="true" />
+    	   	</xsd:extension>
+    	   	</xsd:complexContent>
+		</xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="gatewayLookupsRefType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <tool:annotation kind="ref">
+                    <tool:expected-type type="org.openspaces.core.gateway.GatewayLookupsFactoryBean" />
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+	</xsd:simpleType>
+</xsd:schema>

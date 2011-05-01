@@ -38,6 +38,7 @@ import org.openspaces.core.executor.TaskGigaSpaceAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.executor.support.DelegatingTask;
 import org.openspaces.core.executor.support.ProcessObjectsProvider;
+import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
@@ -131,12 +132,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private CachePolicy cachePolicy;
 
-    private final boolean enableExecutorInjection = true;
+    private GatewayTargetsFactoryBean gatewayTargets;
 
+    private final boolean enableExecutorInjection = true;
 
     private Properties beanLevelProperties;
 
     private ClusterInfo clusterInfo;
+    
 
     /**
      * Creates a new url space factory bean. The url parameters is requires so the
@@ -467,6 +470,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 }
                 props.put(Constants.Engine.SPACE_TYPES, typeDescriptors);
             }
+            
+            if (gatewayTargets != null) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("Gateway targets can only be used with an embedded Space");
+                }
+                props.put(Constants.Replication.REPLICATION_GATEWAYS, gatewayTargets.asGatewaysPolicy());
+            }
 
             if (cachePolicy != null) {
                 props.putAll(cachePolicy.toProps());
@@ -554,6 +564,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             return true;
         }
         return false;
+    }
+
+    public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
+        this.gatewayTargets = gatewayTargets;
+    }
+    
+    public GatewayTargetsFactoryBean getGatewayTargets() {
+        return gatewayTargets;
     }
 
     private class ExecutorFilterProviderFactory implements FilterProviderFactory {

@@ -46,6 +46,8 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
     public static final String PROPERTIES = "properties";
 
     public static final String URL_PROPERTIES = "url-properties";
+    
+    public static final String GATEWAY_TARGETS = "gateway-targets";
 
     @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
@@ -168,5 +170,10 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         }
         
         builder.addPropertyValue("spaceTypes", typesList);
+        
+        String gatewayTargetsRef = element.getAttribute(GATEWAY_TARGETS);
+        if (StringUtils.hasLength(gatewayTargetsRef))
+            builder.addPropertyReference("gatewayTargets", gatewayTargetsRef);
+        
     }
 }
