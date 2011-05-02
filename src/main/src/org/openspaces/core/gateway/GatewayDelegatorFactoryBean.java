@@ -12,7 +12,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupPa
  * A gateway delegator factory bean for creating a {@link ReplicationConnectionDelegatorContainer}.
  * 
  * @author Idan Moyal
- * @since 8.0.2
+ * @since 8.0.3
  *
  */
 public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean {

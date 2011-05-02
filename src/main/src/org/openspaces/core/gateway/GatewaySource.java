@@ -1,9 +1,10 @@
 package org.openspaces.core.gateway;
 
 /**
+ * Holds gateway source configuration. 
  * 
  * @author Idan Moyal
- * @since 8.0.2
+ * @since 8.0.3
  *
  */
 public class GatewaySource {
@@ -14,6 +15,9 @@ public class GatewaySource {
         this.name = gatewaySourceName;
     }
 
+    /**
+     * @return Gateway's source name used for identification.
+     */
     public String getName() {
         return name;
     }

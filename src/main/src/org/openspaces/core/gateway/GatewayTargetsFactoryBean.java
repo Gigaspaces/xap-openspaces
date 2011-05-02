@@ -4,9 +4,10 @@ import com.j_spaces.core.cluster.gateway.GatewayPolicy;
 import com.j_spaces.core.cluster.gateway.GatewaysPolicy;
 
 /**
- * 
+ * A factory bean for creating a {@link GatewaysPolicy} instance.
+ *  
  * @author Idan Moyal
- * @since 8.0.2
+ * @since 8.0.3
  *
  */
 public class GatewayTargetsFactoryBean {
@@ -17,20 +18,39 @@ public class GatewayTargetsFactoryBean {
     public GatewayTargetsFactoryBean() {
     }
 
+    /**
+     * Sets the local gateway name used for identification.
+     * @param localGatewayName The local gateway name.
+     */
     public void setLocalGatewayName(String localGatewayName) {
         this.localGatewayName = localGatewayName;
     }
+    
+    /**
+     * @return The local gateway name used for identification.
+     */
     public String getLocalGatewayName() {
         return localGatewayName;
     }
     
+    /**
+     * @return {@link GatewayTarget}s configuration as array.
+     */
     public GatewayTarget[] getGatewayTargets() {
         return gatewayTargets;
     }
+    
+    /**
+     * Sets the gateway targets configuration.
+     * @param gatewayTargets The gateway targets.
+     */
     public void setGatewayTargets(GatewayTarget[] gatewayTargets) {
         this.gatewayTargets = gatewayTargets;
     }
 
+    /**
+     * @return A new {@link GatewaysPolicy} instance using the bean's properties.
+     */
     public GatewaysPolicy asGatewaysPolicy() {
         GatewaysPolicy gatewaysPolicy = new GatewaysPolicy();
         gatewaysPolicy.setLocalSiteName(getLocalGatewayName());

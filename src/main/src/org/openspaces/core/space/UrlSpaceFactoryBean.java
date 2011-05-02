@@ -566,14 +566,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         return false;
     }
 
+    /**
+     * Sets the gateway replication targets to be used with the constructed space.
+     * @param gatewayTargets The gateway targets.
+     */
     public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
         this.gatewayTargets = gatewayTargets;
     }
     
-    public GatewayTargetsFactoryBean getGatewayTargets() {
-        return gatewayTargets;
-    }
-
     private class ExecutorFilterProviderFactory implements FilterProviderFactory {
 
         public FilterProvider getFilterProvider() {

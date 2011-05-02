@@ -21,7 +21,7 @@ import com.gigaspaces.lrmi.ProtocolAdapter;
  * @since 8.0.3
  *
  */
-public abstract class AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, ClusterInfoAware, ProcessingUnitInstanceAddedEventListener{
+public abstract class AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, ClusterInfoAware, ProcessingUnitInstanceAddedEventListener {
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -39,7 +39,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     public void setClusterInfo(ClusterInfo clusterInfo) {
         this.puName = clusterInfo.getName();
     }
-
+    
     /**
      * @return The component's local gateway name used for identifying the component.
      */
@@ -87,7 +87,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     public void setStartEmbeddedLus(boolean startEmbeddedLus) {
         this.startEmbeddedLus = startEmbeddedLus;
     }
-    
+
     /**
      * Gets whether this component containing processing unit instance should start and relocate it self to a new GSC if
      * the required ports for this processing unit in the currently deployed GSC are wrong.
@@ -105,8 +105,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     public void setRelocateIfWrongPorts(boolean relocateIfWrongPorts) {
         this.relocateIfWrongPorts = relocateIfWrongPorts;
     }
-    
-    
+
     public void afterPropertiesSet() throws Exception {
         //When puname is null, no relevant cluster info was injected, we are probably
         //inside integrated processing unit container so we cannot move this pu anyway.
@@ -231,5 +230,5 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         }
 
     }
-
+    
 }

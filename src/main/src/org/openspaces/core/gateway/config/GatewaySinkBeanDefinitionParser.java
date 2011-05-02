@@ -12,9 +12,10 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
+ * A bean definition parser for {@link GatewaySinkFactoryBean}.
  * 
  * @author Idan Moyal
- * @since 8.0.2
+ * @since 8.0.3
  *
  */
 public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {

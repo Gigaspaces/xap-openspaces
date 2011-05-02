@@ -8,9 +8,11 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationGatewayConfig;
 
 /**
+ * A sink factory bean for creating a {@link LocalClusterReplicationGateway} which
+ * represents a gateway sink component.
  * 
- * @author idan
- * @since 8.0.2
+ * @author Idan Moyal
+ * @since 8.0.3
  *
  */
 public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean {
@@ -22,16 +24,32 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     public GatewaySinkFactoryBean() {
     }
 
+    /**
+     * @return The local space URL the sink component operates against.
+     */
     public String getLocalSpaceUrl() {
         return localSpaceUrl;
     }
+    
+    /**
+     * Sets the local space URL the sink component operates against.
+     * @param localSpaceUrl The local space URL.
+     */
     public void setLocalSpaceUrl(String localSpaceUrl) {
         this.localSpaceUrl = localSpaceUrl;
     }
     
+    /**
+     * @return The sink component's gateway replication sources.
+     */
     public GatewaySource[] getGatewaySources() {
         return gatewaySources;
     }
+    
+    /**
+     * Sets the sink component's gateway replication sources.
+     * @param gatewaySources The gateway replication sources.
+     */
     public void setGatewaySources(GatewaySource[] gatewaySources) {
         this.gatewaySources = gatewaySources;
     }
