@@ -162,7 +162,12 @@ public interface GigaSpace {
      *
      * @throws DataAccessException
      * @see com.j_spaces.core.IJSpace#clean()
+     * @deprecated Since 8.0.2. The processing unit instance that contain this space instance should be restarted instead, 
+     * or if the entire space was meant to be cleaned, the entire processing unit should be undeployed and redeployed.
+     * Using this method is strongly not recommended because it will not invoke any space mode change events registered components and
+     * it is not a cluster wide operation.
      */
+    @Deprecated
     void clean() throws DataAccessException;
 
     /**
