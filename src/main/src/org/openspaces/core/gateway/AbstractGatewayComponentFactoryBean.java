@@ -196,13 +196,22 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     }
     
     private void initNeededPorts() {
+        StringBuilder foundGateways = null;
         for (GatewayLookup gatewayLookup : getGatewayLookups().getGatewayLookups()) {
             if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())){
                 lrmiPort = gatewayLookup.getLrmiPort();
                 discoveryPort = gatewayLookup.getLusPort();
+                return;
             }
+            if (foundGateways == null) {
+                foundGateways = new StringBuilder("found gateways: [");
+                foundGateways.append(gatewayLookup.getGatewayName());                
+            }
+            foundGateways.append(", ");
+            foundGateways.append(gatewayLookup.getGatewayName());
         }
-        throw new IllegalArgumentException("Could not locate local gateway [" + getLocalGatewayName() + "] lookup parameters");
+        foundGateways.append("]");
+        throw new IllegalArgumentException("Could not locate local gateway [" + getLocalGatewayName() + "] in lookup parameters - " + foundGateways.toString());
         
     }
     
