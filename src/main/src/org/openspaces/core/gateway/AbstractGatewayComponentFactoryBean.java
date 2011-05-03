@@ -35,6 +35,9 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private String puName;
     private boolean relocated;
     private Admin admin;
+    
+    private static final Object relocationDecisionLock = new Object();
+    private static boolean relocationInProgress = false;
 
     public void setClusterInfo(ClusterInfo clusterInfo) {
         this.puName = clusterInfo.getName();
@@ -109,20 +112,28 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     public void afterPropertiesSet() throws Exception {
         //When puname is null, no relevant cluster info was injected, we are probably
         //inside integrated processing unit container so we cannot move this pu anyway.
-        if (puName == null)
-            return;
-        //If this pu is not deployed in GSC with proper ports, start a gsc with proper ports and relocate it
-        if (!checkDeployedWithProperPorts())
-        {        
-            admin = new AdminFactory().create();
-            admin.getProcessingUnits()
-            .getProcessingUnitInstanceAdded()
-            .add(this);
-        }
-        else
+        if (puName != null)
         {
-            afterPropertiesSetImpl();
+            synchronized(relocationDecisionLock)
+            {
+                //If relocation is in progress, dont initialize this bean since the hosting pu instance is being relocated
+                if (relocationInProgress)
+                    return;
+    
+                if (!checkDeployedWithProperPorts())
+                {       
+                    //If this pu is not deployed in GSC with proper ports, start a gsc with proper ports and relocate it
+                    relocationInProgress = true;
+                    admin = new AdminFactory().create();
+                    admin.getProcessingUnits()
+                    .getProcessingUnitInstanceAdded()
+                    .add(this);
+                    return;
+                }            
+            }
         }
+        
+        afterPropertiesSetImpl();
     }
     
     protected abstract void afterPropertiesSetImpl();
