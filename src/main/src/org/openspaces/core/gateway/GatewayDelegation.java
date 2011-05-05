@@ -7,7 +7,7 @@ package org.openspaces.core.gateway;
  * {@link GatewayDelegation.getDelegateThrough} specifies the component name to delegate through.
  * 
  * @author Idan Moyal
- * @since 8.0.2
+ * @since 8.0.3
  *
  */
 public class GatewayDelegation {

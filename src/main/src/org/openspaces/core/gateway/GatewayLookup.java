@@ -4,7 +4,7 @@ package org.openspaces.core.gateway;
  * Holds information used for gateway lookup. 
  * 
  * @author Idan Moyal
- * @since 8.0.2
+ * @since 8.0.3
  *
  */
 public class GatewayLookup {
