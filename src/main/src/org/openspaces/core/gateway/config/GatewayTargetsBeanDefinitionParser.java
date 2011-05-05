@@ -22,6 +22,8 @@ public class GatewayTargetsBeanDefinitionParser extends AbstractSimpleBeanDefini
     public static final String LOCAL_GATEWAY_NAME = "local-gateway-name";
     public static final String TARGET_NAME = "name";
     
+    //TODO WAN: add gateway async replication related params (batch size, interval...)
+    
     @Override
     protected Class<GatewayTargetsFactoryBean> getBeanClass(Element element) {
         return GatewayTargetsFactoryBean.class;
