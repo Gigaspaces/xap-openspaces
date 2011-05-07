@@ -2168,7 +2168,8 @@ public interface GigaSpace {
      *         </ul>
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
-     */
+     * @since 8.0.3
+     */    
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
     
     /**
