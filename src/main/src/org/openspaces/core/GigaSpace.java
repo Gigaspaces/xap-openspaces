@@ -2143,6 +2143,35 @@ public interface GigaSpace {
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException;
     
     /**
+     * Writes the specified entries to this space.
+     * 
+     * Same as a single write but for a group of entities sharing the same transaction (if any),
+     * applied with the same specified operation modifier. 
+     * The semantics of a single write and a batch update are similar - the return 
+     * value for each corresponds to it's cell in the returned array.
+     * see <code>'returns'</code> for possible return values.
+     * 
+     * @param entries           the entries to write. 
+     * @param leases            the requested lease time per entry, in milliseconds
+     * @param updateModifiers   operation modifiers, values from {@link com.j_spaces.core.client.UpdateModifiers UpdateModifiers}.
+     *         
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
+     *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <ul>
+     *         <li>{@link LeaseContext#getObject()} returns:
+     *         <ul>
+     *         <li>null - on a successful write
+     *         <li>previous value - on successful update
+     *         </ul>
+     *         <li>or, OperationTimeoutException - thrown if timeout occurred
+     *         </ul>
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
+     */
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
+    
+    /**
      * @deprecated Use {@link #writeMultiple(Object[], long, int)} with {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} instead.
      */
     @Deprecated
