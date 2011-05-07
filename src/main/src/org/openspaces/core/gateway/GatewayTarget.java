@@ -1,7 +1,7 @@
 package org.openspaces.core.gateway;
 
+import com.gigaspaces.internal.cluster.node.impl.gateway.GatewayPolicy;
 import com.j_spaces.core.cluster.RedoLogCapacityExceededPolicy;
-import com.j_spaces.core.cluster.gateway.GatewayPolicy;
 
 /**
  * Holds gateway target configuration.

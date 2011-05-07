@@ -1,7 +1,7 @@
 package org.openspaces.core.gateway;
 
-import com.j_spaces.core.cluster.gateway.GatewayPolicy;
-import com.j_spaces.core.cluster.gateway.GatewaysPolicy;
+import com.gigaspaces.internal.cluster.node.impl.gateway.GatewayPolicy;
+import com.gigaspaces.internal.cluster.node.impl.gateway.GatewaysPolicy;
 
 /**
  * A factory bean for creating a {@link GatewaysPolicy} instance.
