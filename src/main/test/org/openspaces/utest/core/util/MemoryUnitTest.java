@@ -1,11 +1,11 @@
 package org.openspaces.utest.core.util;
 
-import static org.junit.Assert.assertEquals;
+import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.openspaces.core.util.MemoryUnit;
 
-public class MemoryUnitTest {
+public class MemoryUnitTest extends TestCase {
 
     private static final String[] postfixes = { 
         "b",
@@ -18,7 +18,7 @@ public class MemoryUnitTest {
     };
     
     @Test
-    public void bytesTest() {
+    public void testBytes() {
         assertEquals("b",MemoryUnit.BYTES.getPostfix());
         assertEquals(1,  MemoryUnit.BYTES.convert("1"));
         assertEquals(1,  MemoryUnit.BYTES.convert("1b"),1);
@@ -39,7 +39,7 @@ public class MemoryUnitTest {
     }
     
     @Test
-    public void kilobytesTest() {
+    public void testKilobytes() {
         assertEquals("k",MemoryUnit.KILOBYTES.getPostfix());
         assertEquals(MemoryUnit.toKiloBytes("1k"),1);
         assertEquals(0       ,MemoryUnit.KILOBYTES.convert("1"));
@@ -52,7 +52,7 @@ public class MemoryUnitTest {
     }
     
     @Test
-    public void megabytesTest() {
+    public void testMegabytes() {
         assertEquals("m",MemoryUnit.MEGABYTES.getPostfix());
         assertEquals(MemoryUnit.toMegaBytes("1m"),1);
         assertEquals(0       ,MemoryUnit.MEGABYTES.convert("1"));
@@ -65,7 +65,7 @@ public class MemoryUnitTest {
     }
     
     @Test
-    public void gigabytesTest() {
+    public void testGigabytes() {
         assertEquals("g",MemoryUnit.GIGABYTES.getPostfix());
         assertEquals(MemoryUnit.toGigaBytes("1g"),1);
         assertEquals(0       ,MemoryUnit.GIGABYTES.convert("1"));
@@ -78,7 +78,7 @@ public class MemoryUnitTest {
     }
     
     @Test
-    public void terabytesTest() {
+    public void testTerabytes() {
         assertEquals("t",MemoryUnit.TERABYTES.getPostfix());
         assertEquals(MemoryUnit.toTeraBytes("1t"),1);
         assertEquals(0       ,MemoryUnit.TERABYTES.convert("1"));
@@ -91,7 +91,7 @@ public class MemoryUnitTest {
     }
     
     @Test
-    public void petabytesTest() {
+    public void testPetabytes() {
         assertEquals("p",MemoryUnit.PETABYTES.getPostfix());
         assertEquals(MemoryUnit.toPetaBytes("1p"),1);
         assertEquals(0       ,MemoryUnit.PETABYTES.convert("1"));
@@ -104,7 +104,7 @@ public class MemoryUnitTest {
     }
     
     @Test
-    public void exabytesTest() {
+    public void testExabytes() {
         assertEquals("e",MemoryUnit.EXABYTES.getPostfix());
         assertEquals(MemoryUnit.toExaBytes("1e"),1);
         assertEquals(0       ,MemoryUnit.EXABYTES.convert("1"));

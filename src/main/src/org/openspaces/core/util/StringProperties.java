@@ -130,9 +130,18 @@ public class StringProperties {
        this.properties.remove(key);
    }
    
+   public void putKeyValuePairs(String key, Map<String, String> value, String pairSeperator, String keyValueSeperator) {
+       StringPropertiesUtils.putKeyValuePairs(properties, key, value, pairSeperator, keyValueSeperator);
+   }
+
+   public Map<String,String> getKeyValuePairs(String key, String pairSeperator, String keyValueSeperator, Map<String, String> defaultValue ) {
+       return StringPropertiesUtils.getKeyValuePairs(properties, key, pairSeperator, keyValueSeperator, defaultValue);
+   }
+   
    @Override
-public String toString() {
+   public String toString() {
        return StringPropertiesUtils.toString(properties);
    }
+
 
 }

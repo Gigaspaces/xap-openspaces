@@ -1,26 +1,26 @@
 package org.openspaces.utest.core.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.*;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openspaces.core.util.StringPropertiesUtils;
 
-public class StringPropertiesUtilsTest {
+import edu.emory.mathcs.backport.java.util.Arrays;
+
+public class StringPropertiesUtilsTest extends TestCase {
+
 
     private final String key = "key";
     private final String missingkey = "missingkey";
     private Map<String,String> map;
     
     @Before
-    public void setup() {
+    @Override
+    public void setUp() {
         map = new HashMap<String,String>();
     }
     
@@ -53,26 +53,38 @@ public class StringPropertiesUtilsTest {
         assertEquals(1,StringPropertiesUtils.getInteger(map, missingkey, 1));
     }
     
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void testIntegerOverflowError() {
-        StringPropertiesUtils.putLong(map,key,Long.MAX_VALUE);
-        StringPropertiesUtils.getInteger(map, key, 0);
-        fail();
+        try {
+            StringPropertiesUtils.putLong(map,key,Long.MAX_VALUE);
+            StringPropertiesUtils.getInteger(map, key, 0);
+            fail();
+        } catch(NumberFormatException e) {
+            /*expected result*/
+        }
     }
     
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void testIntegerUnderflowError() {
+        try {
         StringPropertiesUtils.putLong(map,key,Long.MIN_VALUE);
         StringPropertiesUtils.getInteger(map, key, 0);
         fail();
+        } catch(NumberFormatException e) {
+            /*expected result*/
+        }
     }
     
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void testIntegerParsingError() {
-        map.put(key, "notaninteger");
-        assertEquals(1,StringPropertiesUtils.getIntegerIgnoreExceptions(map, key, 1));
-        StringPropertiesUtils.getInteger(map, key, 0);
-        fail();
+        try {
+            map.put(key, "notaninteger");
+            assertEquals(1,StringPropertiesUtils.getIntegerIgnoreExceptions(map, key, 1));
+            StringPropertiesUtils.getInteger(map, key, 0);
+            fail();
+        } catch(NumberFormatException e) {
+            /*expected result*/
+        }
     }
     
     @Test
@@ -82,12 +94,16 @@ public class StringPropertiesUtilsTest {
         assertEquals(1,StringPropertiesUtils.getInteger(map, missingkey, 1));
     }
     
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void testLongParsingError() {
+        try {
         map.put(key, "notaninteger");
         assertEquals(1,StringPropertiesUtils.getLongIgnoreExceptions(map, key, 1));
         StringPropertiesUtils.getLong(map, key, 0);
         fail();
+        } catch(NumberFormatException e) {
+            /*expected result*/
+        }
     }
     
     @Test
@@ -102,14 +118,19 @@ public class StringPropertiesUtilsTest {
     public void testArray() {
         String[] inner = new String[] { "a","b","c"};
         StringPropertiesUtils.putArray(map, key, inner," ");
-        assertArrayEquals(inner,StringPropertiesUtils.getArray(map, key, " ", new String[]{}));
-        assertArrayEquals(new String[]{},StringPropertiesUtils.getArray(map, missingkey, " ", new String[]{}));
+        assertEquals(Arrays.asList(inner),Arrays.asList(StringPropertiesUtils.getArray(map, key, " ", new String[]{})));
+        assertEquals(0,StringPropertiesUtils.getArray(map, missingkey, " ", new String[]{}).length);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testArrayIllegalArgument() {
-        StringPropertiesUtils.putArray(map, key, new String[] { "a b","c"}," ");
-        fail();
+        try {
+            StringPropertiesUtils.putArray(map, key, new String[] { "a b","c"}," ");
+            fail();
+        }
+        catch(IllegalArgumentException e) {
+            /*expected result*/
+        }
     }
     
     @Test
@@ -117,19 +138,39 @@ public class StringPropertiesUtilsTest {
         String[] inner = new String[]   {"a b", "'b c'","\"c d\"", "\"'d e'\"", "'\"e f\"'"};
         String[] expected= new String[] {"a b",  "b c" ,  "c d"  ,   "'d e'"  ,  "\"e f\""};
         StringPropertiesUtils.putArgumentsArray(map, key, inner);
-        assertArrayEquals(expected,StringPropertiesUtils.getArgumentsArray(map, key, new String[]{}));
-        assertArrayEquals(new String[]{},StringPropertiesUtils.getArgumentsArray(map, missingkey, new String[]{}));
+        assertEquals(Arrays.asList(expected),
+                     Arrays.asList(StringPropertiesUtils.getArgumentsArray(map, key, new String[]{})));
+        assertEquals(0,StringPropertiesUtils.getArgumentsArray(map, missingkey, new String[]{}).length);
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testArgumentsArrayIllegalArgument() {
-        StringPropertiesUtils.putArray(map, key, new String[] { "'a' b'"}," ");
-        fail();
+        try {
+            StringPropertiesUtils.putArray(map, key, new String[] { "'a' b'"}," ");
+            fail();
+        }
+        catch(IllegalArgumentException e) {
+            /*expected result*/
+        }
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testArgumentsArrayIllegalArgument2() {
-        StringPropertiesUtils.putArray(map, key, new String[] { "\"a\" b\""}," ");
-        fail();
+        try {
+            StringPropertiesUtils.putArray(map, key, new String[] { "\"a\" b\""}," ");
+            fail();
+        }
+        catch(IllegalArgumentException e) {
+            /*expected result*/
+        }
+    }
+    
+    public void testKeyValuePairs() {
+        Map<String, String> inner = new HashMap<String,String>();
+        inner.put("a","1");
+        inner.put("b","2");
+        inner.put("c","x=3");
+        StringPropertiesUtils.putKeyValuePairs(map, key, inner, ",", "=");
+        assertEquals(inner, StringPropertiesUtils.getKeyValuePairs(map, key, ",", "=", new HashMap<String,String>()));
     }
 }
