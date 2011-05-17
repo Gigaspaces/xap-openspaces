@@ -143,5 +143,15 @@ public class StringProperties {
        return StringPropertiesUtils.toString(properties);
    }
 
+   @Override
+   public boolean equals(Object other) {
+       return other instanceof StringProperties &&
+              this.properties.equals(((StringProperties)other).properties);
+   }
+   
+   @Override
+   public int hashCode() {
+       return this.properties.hashCode();
+   }
 
 }

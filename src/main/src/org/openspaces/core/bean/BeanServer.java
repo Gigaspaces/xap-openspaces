@@ -38,7 +38,7 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
      * @param interfaceClasses - the interface that the bean we are looking for needs to implement
      * @return the enabled bean that implements any one of the specified interfaces.
      */
-    List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses);
+    List<T> getEnabledBeansAssignableTo(Class<?>[] interfaceClasses);
 
     /**
      * @param interfaceClasses - the interface that the bean we are looking for needs to implement

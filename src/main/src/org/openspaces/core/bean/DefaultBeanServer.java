@@ -254,7 +254,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         disableAllBeans();
     }
 
-    public List<T> getEnabledBeanAssignableTo(Class<?>[] interfaceClasses) {
+    public List<T> getEnabledBeansAssignableTo(Class<?>[] interfaceClasses) {
         List<T> beanInstances = new ArrayList<T>();
         try {
             for (String beanClassName : getEnabledBeansClassNamesAssignableTo(interfaceClasses)) {
