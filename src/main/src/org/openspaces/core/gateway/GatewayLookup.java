@@ -11,8 +11,8 @@ public class GatewayLookup {
 
     private String gatewayName;
     private String host;
-    private int lusPort;
-    private int lrmiPort;
+    private String discoveryPort;
+    private String lrmiPort;
     
     public GatewayLookup() {
     }
@@ -50,23 +50,22 @@ public class GatewayLookup {
     /**
      * @return The gateway's lookup LUS port (Component's discovery port).
      */
-    //TODO WAN: rename to discovery port
-    public int getLusPort() {
-        return lusPort;
+    public String getDiscoveryPort() {
+        return discoveryPort;
     }
     
     /**
      * Sets the gateway's lookup LUS port (Component's discovery port).
      * @param lusPort
      */
-    public void setLusPort(int lusPort) {
-        this.lusPort = lusPort;
+    public void setDiscoveryPort(String discoveryPort) {
+        this.discoveryPort = discoveryPort;
     }
     
     /**
      * @return The gateway's lookup LRMI port (Component's communication port).
      */
-    public int getLrmiPort() {
+    public String getLrmiPort() {
         return lrmiPort;
     }
     
@@ -74,7 +73,7 @@ public class GatewayLookup {
      * Sets the gateway's lookup LRMI port (Component's communication port).
      * @param lrmiPort The LRMI port.
      */
-    public void setLrmiPort(int lrmiPort) {
+    public void setLrmiPort(String lrmiPort) {
         this.lrmiPort = lrmiPort;
     }
     

@@ -15,6 +15,8 @@ public class GatewayDelegation {
     private String target;
     private String delegateThrough;
 
+    public GatewayDelegation() {
+    }
     public GatewayDelegation(String target, String delegateThrough) {
         this.target = target;
         this.delegateThrough = delegateThrough;
@@ -33,5 +35,23 @@ public class GatewayDelegation {
     public String getDelegateThrough() {
         return delegateThrough;
     }
+    
+    /**
+     * Sets the delegation target name.
+     * @param target The delegation target name.
+     */
+    public void setTarget(String target) {
+        this.target = target;
+    }
+    
+    /**
+     * Sets the name of the component the delegation will be made through.
+     * @param delegateThrough The component name to delegate through.
+     */
+    public void setDelegateThrough(String delegateThrough) {
+        this.delegateThrough = delegateThrough;
+    }
+    
+    
     
 }

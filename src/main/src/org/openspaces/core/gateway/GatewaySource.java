@@ -11,6 +11,8 @@ public class GatewaySource {
 
     private String name;
     
+    public GatewaySource() {
+    }
     public GatewaySource(String gatewaySourceName) {
         this.name = gatewaySourceName;
     }
@@ -20,6 +22,14 @@ public class GatewaySource {
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * Sets the gateway's source name used for identification.
+     * @param name The gateway's source name.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

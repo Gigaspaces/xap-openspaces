@@ -1,5 +1,7 @@
 package org.openspaces.core.gateway;
 
+import java.util.List;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -18,7 +20,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupPa
 public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean {
 
     private ReplicationConnectionDelegatorContainer replicationConnectiondelegatorContainer;
-    private GatewayDelegation[] gatewayDelegations;
+    private List<GatewayDelegation> gatewayDelegations;
     
     public GatewayDelegatorFactoryBean() {
     }
@@ -26,7 +28,7 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
     /**
      * @return Gateway delegator factory bean's delegations as a {@link GatewayDelegation} array. 
      */
-    public GatewayDelegation[] getGatewayDelegations() {
+    public List<GatewayDelegation> getGatewayDelegations() {
         return gatewayDelegations;
     }
     
@@ -34,7 +36,7 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
      * Sets the gateway delegations for the configured {@link ReplicationConnectionDelegatorContainer}.
      * @param gatewayDelegations {@link GatewayDelegation}s array.
      */
-    public void setGatewayDelegations(GatewayDelegation[] gatewayDelegations) {
+    public void setGatewayDelegations(List<GatewayDelegation> gatewayDelegations) {
         this.gatewayDelegations = gatewayDelegations;
     }
 

@@ -2,13 +2,11 @@ package org.openspaces.core.gateway.config;
 
 import java.util.List;
 
-import org.openspaces.core.gateway.GatewayLookup;
 import org.openspaces.core.gateway.GatewayLookupsFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -36,30 +34,11 @@ public class GatewayLookupsBeanDefinitionParser extends AbstractSimpleBeanDefini
         super.doParse(element, parserContext, builder);
         
         String lookupGroup = element.getAttribute(LOOKUP_GROUP);
-        builder.addPropertyValue("lookupGroup", lookupGroup);
-        
-        List<Element> gatewayLookupsElement = DomUtils.getChildElementsByTagName(element, "lookup");
-        GatewayLookup[] gatewayLookups = new GatewayLookup[gatewayLookupsElement.size()];
-        for (int i = 0; i < gatewayLookupsElement.size(); i++) {
-            gatewayLookups[i] = new GatewayLookup();
-            Element gatewayLookupElement = gatewayLookupsElement.get(i);
-            
-            String siteName = gatewayLookupElement.getAttribute(LOOKUP_GATEWAY_NAME);
-            gatewayLookups[i].setGatewayName(siteName);
-            
-            String host = gatewayLookupElement.getAttribute(LOOKUP_HOST);
-            gatewayLookups[i].setHost(host);
-            
-            String lusPort = gatewayLookupElement.getAttribute(LOOKUP_LUS_PORT);
-            if (StringUtils.hasLength(lusPort))
-                gatewayLookups[i].setLusPort(Integer.parseInt(lusPort));
-            
-            String lrmiPort = gatewayLookupElement.getAttribute(LOOKUP_LRMI_PORT);
-            if (StringUtils.hasLength(lrmiPort))
-                gatewayLookups[i].setLrmiPort(Integer.parseInt(lrmiPort));
-        }
-            
-        builder.addPropertyValue("gatewayLookups", gatewayLookups);
+        if (StringUtils.hasLength(lookupGroup))
+            builder.addPropertyValue("lookupGroup", lookupGroup);
+
+        List<?> lookups = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
+        builder.addPropertyValue("gatewayLookups", lookups);
     }
     
     

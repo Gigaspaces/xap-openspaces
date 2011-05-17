@@ -3,7 +3,6 @@ package org.openspaces.core.gateway.config;
 import java.util.List;
 
 import org.openspaces.core.gateway.GatewaySinkFactoryBean;
-import org.openspaces.core.gateway.GatewaySource;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -56,23 +55,10 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         if (StringUtils.hasLength(relocateIfWrongPorts))
             builder.addPropertyValue("relocateIfWrongPorts", Boolean.parseBoolean(relocateIfWrongPorts));
         
-        List<Element> gatewaySourcesElement = DomUtils.getChildElementsByTagName(element, "sources");        
-
-        if (gatewaySourcesElement != null && gatewaySourcesElement.size() > 0) {
-            List<Element> gatewaySourcesElements = DomUtils.getChildElementsByTagName(
-                    gatewaySourcesElement.get(0), "source");
-            if (gatewaySourcesElements != null) {
-                GatewaySource[] gatewaySources = new GatewaySource[gatewaySourcesElements.size()];
-                for (int i = 0; i < gatewaySourcesElements.size(); i++) {
-                    String gatewaySourceName = gatewaySourcesElements.get(i).getAttribute(GATEWAY_SOURCE_NAME);
-                    gatewaySources[i] = new GatewaySource(gatewaySourceName);
-                }
-                builder.addPropertyValue("gatewaySources", gatewaySources);
-            }
-        }
+        Element gatewaySourcesElement = DomUtils.getChildElementByTagName(element, "sources");        
+        List<?> sources = parserContext.getDelegate().parseListElement(gatewaySourcesElement, builder.getRawBeanDefinition());
+        builder.addPropertyValue("gatewaySources", sources);
         
     }
-    
-    
 
 }

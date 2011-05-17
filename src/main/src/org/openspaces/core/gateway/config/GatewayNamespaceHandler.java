@@ -13,9 +13,13 @@ public class GatewayNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("targets", new GatewayTargetsBeanDefinitionParser());
+        registerBeanDefinitionParser("target", new GatewayTargetBeanDefinitionParser());
         registerBeanDefinitionParser("lookups", new GatewayLookupsBeanDefinitionParser());
+        registerBeanDefinitionParser("lookup", new GatewayLookupBeanDefinitionParser());
         registerBeanDefinitionParser("sink", new GatewaySinkBeanDefinitionParser());
+        registerBeanDefinitionParser("source", new GatewaySourceBeanDefinitionParser());
         registerBeanDefinitionParser("delegator", new GatewayDelegatorBeanDefinitionParser());
+        registerBeanDefinitionParser("delegation", new GatewayDelegationBeanDefinitionParser());
     }
 
 }

@@ -12,13 +12,16 @@ import com.j_spaces.core.cluster.RedoLogCapacityExceededPolicy;
  */
 public class GatewayTarget {
 
-    private final String name;
+    private String name;
     private Integer bulkSize;
     private Long idleTimeThreshold;
     private Integer pendingOperationThreshold;
     private Long maxRedoLogCapacity;
     private RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded;
 
+    public GatewayTarget() {
+        
+    }
     public GatewayTarget(String name) {
         this.name = name;
     }
@@ -30,6 +33,13 @@ public class GatewayTarget {
         return name;
     }
 
+    /**
+     * Sets the gateway's target name used for identification.
+     * @param name The gateway name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
     /**
      * Sets the number of packets in each replication bulk sent to this gateway.
      * @param bulkSize number of packets in each replication bulk sent to this gateway.

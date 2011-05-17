@@ -55,8 +55,8 @@
 				<xsd:complexType>
 				<xsd:attribute name="gateway-name" type="xsd:string" use="required" />
 				<xsd:attribute name="host" type="xsd:string" use="required" />
-				<xsd:attribute name="lus-port" type="xsd:integer" use="required" />
-				<xsd:attribute name="lrmi-port" type="xsd:integer" use="optional" />
+				<xsd:attribute name="discovery-port" type="xsd:string" use="required" />
+				<xsd:attribute name="lrmi-port" type="xsd:string" use="optional" />
 				</xsd:complexType>
 		      </xsd:element>
 		    </xsd:sequence>

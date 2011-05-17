@@ -139,7 +139,6 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     protected abstract void afterPropertiesSetImpl();
 
     public void destroy() throws Exception {
-        
         destroyImpl();
         
         if (admin != null){
@@ -210,8 +209,8 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         StringBuilder foundGateways = null;
         for (GatewayLookup gatewayLookup : getGatewayLookups().getGatewayLookups()) {
             if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())){
-                lrmiPort = gatewayLookup.getLrmiPort();
-                discoveryPort = gatewayLookup.getLusPort();
+                lrmiPort = Integer.valueOf(gatewayLookup.getLrmiPort());
+                discoveryPort = Integer.valueOf(gatewayLookup.getDiscoveryPort());
                 return;
             }
             if (foundGateways == null) {

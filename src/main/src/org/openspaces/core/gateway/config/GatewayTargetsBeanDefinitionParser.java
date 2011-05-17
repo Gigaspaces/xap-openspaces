@@ -2,12 +2,10 @@ package org.openspaces.core.gateway.config;
 
 import java.util.List;
 
-import org.openspaces.core.gateway.GatewayTarget;
 import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -36,15 +34,8 @@ public class GatewayTargetsBeanDefinitionParser extends AbstractSimpleBeanDefini
         String localSiteName = element.getAttribute(LOCAL_GATEWAY_NAME);
         builder.addPropertyValue("localGatewayName", localSiteName);
         
-        List<Element> gatewayTargetsElement = DomUtils.getChildElementsByTagName(element, "target");
-        GatewayTarget[] gatewayTargets = new GatewayTarget[gatewayTargetsElement.size()];
-        for (int i = 0; i < gatewayTargetsElement.size(); i++) {
-            String targetName = gatewayTargetsElement.get(i).getAttribute(TARGET_NAME);
-            gatewayTargets[i] = new GatewayTarget(targetName);
-            
-        }
-            
-        builder.addPropertyValue("gatewayTargets", gatewayTargets);
+        List<?> targets = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
+        builder.addPropertyValue("gatewayTargets", targets);
     }
 
 }

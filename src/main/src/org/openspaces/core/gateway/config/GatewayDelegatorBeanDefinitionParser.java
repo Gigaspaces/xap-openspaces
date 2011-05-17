@@ -2,13 +2,11 @@ package org.openspaces.core.gateway.config;
 
 import java.util.List;
 
-import org.openspaces.core.gateway.GatewayDelegation;
 import org.openspaces.core.gateway.GatewayDelegatorFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -52,19 +50,9 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
         if (StringUtils.hasLength(relocateIfWrongPorts))
             builder.addPropertyValue("relocateIfWrongPorts", Boolean.parseBoolean(relocateIfWrongPorts));
 
-        List<Element> delegationElements = DomUtils.getChildElementsByTagName(element, "delegation");        
-
-        if (delegationElements != null) {
-            GatewayDelegation[] gatewayDelegations = new GatewayDelegation[delegationElements.size()];
-            for (int i = 0; i < delegationElements.size(); i++) {
-                String delegationTarget = delegationElements.get(i).getAttribute(DELEGATION_TARGET);
-                String delegationDelegateThrough = delegationElements.get(i).getAttribute(DELEGATION_DELEGATE_THROUGH);
-                gatewayDelegations[i] = new GatewayDelegation(delegationTarget, delegationDelegateThrough);
-            }
-            builder.addPropertyValue("gatewayDelegations", gatewayDelegations);
-        }
+        List<?> delegations = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
+        builder.addPropertyValue("gatewayDelegations", delegations);
         
     }
-    
 
 }

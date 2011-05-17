@@ -1,5 +1,7 @@
 package org.openspaces.core.gateway;
 
+import java.util.List;
+
 import net.jini.core.discovery.LookupLocator;
 
 import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupParameters;
@@ -15,7 +17,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupPa
 public class GatewayLookupsFactoryBean {
 
     private String lookupGroup;
-    private GatewayLookup[] gatewayLookups;
+    private List<GatewayLookup> gatewayLookups;
 
     public GatewayLookupsFactoryBean() {
     }
@@ -41,7 +43,7 @@ public class GatewayLookupsFactoryBean {
     /**
      * @return The gateway's associated lookups configuration as a {@link GatewayLookup}s array.
      */
-    public GatewayLookup[] getGatewayLookups() {
+    public List<GatewayLookup> getGatewayLookups() {
         return gatewayLookups;
     }
     
@@ -49,7 +51,7 @@ public class GatewayLookupsFactoryBean {
      * Sets the gateway's lookups configuration.
      * @param gatewayLookups The lookups configuration.
      */
-    public void setGatewayLookups(GatewayLookup[] gatewayLookups) {
+    public void setGatewayLookups(List<GatewayLookup> gatewayLookups) {
         this.gatewayLookups = gatewayLookups;
     }
     
@@ -60,9 +62,10 @@ public class GatewayLookupsFactoryBean {
         ReplicationLookupParameters parameters = new ReplicationLookupParameters();
         parameters.setLookupGroups(new String[] { lookupGroup });
         if (gatewayLookups != null) {
-            LookupLocator[] locators = new LookupLocator[gatewayLookups.length];
-            for (int i = 0; i < gatewayLookups.length; i++) {
-                locators[i] = new LookupLocator(gatewayLookups[i].getHost(), gatewayLookups[i].getLusPort());
+            LookupLocator[] locators = new LookupLocator[gatewayLookups.size()];
+            for (int i = 0; i < gatewayLookups.size(); i++) {
+                GatewayLookup gatewayLookup = gatewayLookups.get(i);
+                locators[i] = new LookupLocator(gatewayLookup.getHost(), Integer.valueOf(gatewayLookup.getDiscoveryPort()));
             }
             parameters.setLookupLocators(locators);
         }

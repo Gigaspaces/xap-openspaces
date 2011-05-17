@@ -1,5 +1,7 @@
 package org.openspaces.core.gateway;
 
+import java.util.List;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -18,7 +20,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
 public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean {
 
     private String localSpaceUrl;
-    private GatewaySource[] gatewaySources;
+    private List<GatewaySource> gatewaySources;
     private LocalClusterReplicationGateway localClusterReplicationGateway;
 
     public GatewaySinkFactoryBean() {
@@ -42,7 +44,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     /**
      * @return The sink component's gateway replication sources.
      */
-    public GatewaySource[] getGatewaySources() {
+    public List<GatewaySource> getGatewaySources() {
         return gatewaySources;
     }
     
@@ -50,7 +52,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
      * Sets the sink component's gateway replication sources.
      * @param gatewaySources The gateway replication sources.
      */
-    public void setGatewaySources(GatewaySource[] gatewaySources) {
+    public void setGatewaySources(List<GatewaySource> gatewaySources) {
         this.gatewaySources = gatewaySources;
     }
 
@@ -60,9 +62,9 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
         if (getGatewaySources() != null) {
-            String[] gatewaySourcesNames = new String[getGatewaySources().length];
-            for (int i = 0; i < getGatewaySources().length; i++) {
-                gatewaySourcesNames[i] = getGatewaySources()[i].getName();
+            String[] gatewaySourcesNames = new String[getGatewaySources().size()];
+            for (int i = 0; i < getGatewaySources().size(); i++) {
+                gatewaySourcesNames[i] = getGatewaySources().get(i).getName();
             }
             config.setSiteNames(gatewaySourcesNames);
             if (getGatewayLookups() == null)

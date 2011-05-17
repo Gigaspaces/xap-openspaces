@@ -1,5 +1,7 @@
 package org.openspaces.core.gateway;
 
+import java.util.List;
+
 import com.gigaspaces.internal.cluster.node.impl.gateway.GatewayPolicy;
 import com.gigaspaces.internal.cluster.node.impl.gateway.GatewaysPolicy;
 
@@ -13,7 +15,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.GatewaysPolicy;
 public class GatewayTargetsFactoryBean {
     
     private String localGatewayName;
-    private GatewayTarget[] gatewayTargets;
+    private List<GatewayTarget> gatewayTargets;
     
     public GatewayTargetsFactoryBean() {
     }
@@ -36,7 +38,7 @@ public class GatewayTargetsFactoryBean {
     /**
      * @return {@link GatewayTarget}s configuration as array.
      */
-    public GatewayTarget[] getGatewayTargets() {
+    public List<GatewayTarget> getGatewayTargets() {
         return gatewayTargets;
     }
     
@@ -44,7 +46,7 @@ public class GatewayTargetsFactoryBean {
      * Sets the gateway targets configuration.
      * @param gatewayTargets The gateway targets.
      */
-    public void setGatewayTargets(GatewayTarget[] gatewayTargets) {
+    public void setGatewayTargets(List<GatewayTarget> gatewayTargets) {
         this.gatewayTargets = gatewayTargets;
     }
 
@@ -55,9 +57,9 @@ public class GatewayTargetsFactoryBean {
         GatewaysPolicy gatewaysPolicy = new GatewaysPolicy();
         gatewaysPolicy.setLocalSiteName(getLocalGatewayName());
         if (gatewayTargets != null) {
-            GatewayPolicy[] policies = new GatewayPolicy[gatewayTargets.length];
-            for (int i = 0; i < gatewayTargets.length; i++) {
-                policies[i] = gatewayTargets[i].asGatewayPolicy();
+            GatewayPolicy[] policies = new GatewayPolicy[gatewayTargets.size()];
+            for (int i = 0; i < gatewayTargets.size(); i++) {
+                policies[i] = gatewayTargets.get(i).asGatewayPolicy();
             }
             gatewaysPolicy.setGatewayPolicies(policies);
         }
