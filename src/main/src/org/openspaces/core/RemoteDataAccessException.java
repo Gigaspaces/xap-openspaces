@@ -27,6 +27,8 @@ import java.rmi.RemoteException;
  */
 public class RemoteDataAccessException extends DataAccessException {
 
+    private static final long serialVersionUID = 558720637535974546L;
+
     private RemoteException e;
 
     public RemoteDataAccessException(RemoteException e) {

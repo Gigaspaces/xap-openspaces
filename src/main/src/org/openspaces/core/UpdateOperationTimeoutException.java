@@ -32,6 +32,8 @@ import org.springframework.dao.CannotAcquireLockException;
  */
 public class UpdateOperationTimeoutException extends CannotAcquireLockException {
 
+    private static final long serialVersionUID = 4041065346557282521L;
+
     public UpdateOperationTimeoutException(OperationTimeoutException e) {
         super(e.getMessage(), e);
     }

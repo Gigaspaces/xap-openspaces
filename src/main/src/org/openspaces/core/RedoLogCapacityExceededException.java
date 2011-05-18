@@ -10,6 +10,8 @@ package org.openspaces.core;
  */
 public class RedoLogCapacityExceededException extends ResourceCapacityExceededException {
 
+    private static final long serialVersionUID = 234800445050248452L;
+
     private final com.gigaspaces.cluster.replication.RedoLogCapacityExceededException e;
 
     public RedoLogCapacityExceededException(com.gigaspaces.cluster.replication.RedoLogCapacityExceededException e) {

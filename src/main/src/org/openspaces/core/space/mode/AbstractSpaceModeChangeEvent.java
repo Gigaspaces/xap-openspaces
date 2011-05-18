@@ -27,6 +27,8 @@ import org.springframework.context.ApplicationEvent;
  */
 public abstract class AbstractSpaceModeChangeEvent extends ApplicationEvent {
 
+    private static final long serialVersionUID = 6333546136563910455L;
+
     private SpaceMode spaceMode;
 
     /**

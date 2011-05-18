@@ -27,6 +27,8 @@ import org.springframework.dao.DataAccessException;
  */
 public class TransactionDataAccessException extends DataAccessException {
 
+    private static final long serialVersionUID = -6113375689076743832L;
+
     public TransactionDataAccessException(String msg) {
         super(msg);
     }

@@ -28,6 +28,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class ObjectConversionException extends InvalidDataAccessResourceUsageException {
 
+    private static final long serialVersionUID = 1406696928164962971L;
+
     public ObjectConversionException(ConversionException e) {
         super(e.getMessage(), e);
     }

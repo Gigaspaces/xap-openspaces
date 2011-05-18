@@ -26,6 +26,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class InvalidFifoOperationException extends InvalidDataAccessResourceUsageException {
 
+    private static final long serialVersionUID = -1795908876690221029L;
+
     public InvalidFifoOperationException(FifoOperationException e) {
         super(e.getMessage(), e);
     }

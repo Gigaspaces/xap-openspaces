@@ -31,6 +31,8 @@ public class SimpleIteratorTests extends TestCase {
     }
 
     public static class TestMessage implements Entry {
+        private static final long serialVersionUID = 4214004586339042525L;
+
         public Integer id;
     }
 }

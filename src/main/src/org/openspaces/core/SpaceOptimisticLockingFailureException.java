@@ -28,6 +28,8 @@ import org.springframework.dao.OptimisticLockingFailureException;
  */
 public class SpaceOptimisticLockingFailureException extends OptimisticLockingFailureException {
 
+    private static final long serialVersionUID = 2963324400567929826L;
+
     private EntryVersionConflictException e;
 
     public SpaceOptimisticLockingFailureException(EntryVersionConflictException e) {

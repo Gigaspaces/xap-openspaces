@@ -26,6 +26,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class EntrySerializationException extends InvalidDataAccessResourceUsageException {
 
+    private static final long serialVersionUID = -200863207916463960L;
+
     public EntrySerializationException(com.j_spaces.core.EntrySerializationException e) {
         super(e.getMessage(), e);
     }

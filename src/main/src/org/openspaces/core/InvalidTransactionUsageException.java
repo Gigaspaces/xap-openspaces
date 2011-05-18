@@ -26,6 +26,8 @@ import net.jini.core.transaction.TransactionException;
  */
 public class InvalidTransactionUsageException extends TransactionDataAccessException {
 
+    private static final long serialVersionUID = -2063417620859419314L;
+
     public InvalidTransactionUsageException(TransactionException e) {
         super(e);
     }

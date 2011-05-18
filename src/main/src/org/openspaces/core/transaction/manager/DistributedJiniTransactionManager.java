@@ -39,6 +39,8 @@ import java.net.URL;
  */
 public class DistributedJiniTransactionManager extends AbstractJiniTransactionManager implements DisposableBean {
 
+    private static final long serialVersionUID = 5766281396691553487L;
+
     private TxnManager impl;
 
     private TransactionManager proxy;

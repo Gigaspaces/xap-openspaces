@@ -33,6 +33,8 @@ import java.util.Collections;
  */
 public class BeanLevelProperties implements Serializable {
 
+    private static final long serialVersionUID = -5373882281270584863L;
+
     private Properties contextProperties = new Properties();
 
     private Map<String, Properties> beanProperties = new HashMap<String, Properties>();

@@ -34,6 +34,8 @@ import java.io.Serializable;
 public abstract class AbstractDelegatingDistributedTask<T extends Serializable, R> extends SimpleDelegatingTask<T>
         implements DistributedTask<T, R>, AsyncResultFilter<T> {
 
+    private static final long serialVersionUID = 8936434181366749219L;
+    
     private transient AsyncResultFilter<T> filter;
 
     protected AbstractDelegatingDistributedTask() {

@@ -23,6 +23,8 @@ package org.openspaces.core.executor.support;
  */
 public class NoResultsException extends Exception {
 
+    private static final long serialVersionUID = 2192604921668646280L;
+
     public NoResultsException(String message) {
         super(message);
     }

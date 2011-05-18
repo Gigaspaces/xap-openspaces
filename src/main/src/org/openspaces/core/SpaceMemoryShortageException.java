@@ -27,6 +27,8 @@ import com.j_spaces.core.MemoryShortageException;
  */
 public class SpaceMemoryShortageException extends ResourceCapacityExceededException {
 
+    private static final long serialVersionUID = 7772971816257691465L;
+
     private MemoryShortageException e;
 
     public SpaceMemoryShortageException(MemoryShortageException e) {

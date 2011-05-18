@@ -30,6 +30,8 @@ import java.util.List;
  */
 public class SimpleDelegatingDistributedTask<T extends Serializable, R> extends AbstractDelegatingDistributedTask<T, R> {
 
+    private static final long serialVersionUID = -48040005368590730L;
+
     protected SimpleDelegatingDistributedTask() {
         super();
     }

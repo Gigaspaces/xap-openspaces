@@ -25,6 +25,8 @@ import org.springframework.dao.DataAccessResourceFailureException;
  */
 public class CannotFindSpaceException extends DataAccessResourceFailureException {
 
+    private static final long serialVersionUID = 5692604156053227086L;
+
     public CannotFindSpaceException(String message, Throwable cause) {
         super(message, cause);
     }

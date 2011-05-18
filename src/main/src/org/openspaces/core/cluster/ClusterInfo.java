@@ -46,6 +46,8 @@ import java.io.Serializable;
  */
 public class ClusterInfo implements Cloneable, Serializable {
 
+    private static final long serialVersionUID = -128705742407213814L;
+
     private String schema;
 
     private Integer instanceId;

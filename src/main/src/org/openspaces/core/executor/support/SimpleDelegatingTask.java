@@ -31,6 +31,8 @@ import java.io.Serializable;
  */
 public class SimpleDelegatingTask<T extends Serializable> implements DelegatingTask<T>, TaskRoutingProvider {
 
+    private static final long serialVersionUID = -8905168049829612761L;
+
     private Task<T> task;
 
     protected SimpleDelegatingTask() {

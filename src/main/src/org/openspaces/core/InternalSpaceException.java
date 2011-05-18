@@ -26,6 +26,8 @@ import org.springframework.dao.DataAccessException;
  */
 public class InternalSpaceException extends DataAccessException {
 
+    private static final long serialVersionUID = -4486328522662794541L;
+
     private net.jini.space.InternalSpaceException e;
 
     public InternalSpaceException(net.jini.space.InternalSpaceException e) {

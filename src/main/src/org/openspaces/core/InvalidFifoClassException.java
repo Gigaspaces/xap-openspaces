@@ -31,6 +31,8 @@ import com.j_spaces.core.InvalidFifoTemplateException;
 @Deprecated
 public class InvalidFifoClassException extends InvalidFifoOperationException {
 
+    private static final long serialVersionUID = 1523791345410332721L;
+
     private com.j_spaces.core.InvalidFifoClassException e;
 
     public InvalidFifoClassException(com.j_spaces.core.InvalidFifoClassException e) {

@@ -25,6 +25,8 @@ package org.openspaces.core;
  */
 public class InvalidFifoTemplateException extends InvalidFifoOperationException {
 
+    private static final long serialVersionUID = -8375088583591987356L;
+
     private com.j_spaces.core.InvalidFifoTemplateException e;
 
     public InvalidFifoTemplateException(com.j_spaces.core.InvalidFifoTemplateException e) {

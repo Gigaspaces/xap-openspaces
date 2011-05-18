@@ -30,6 +30,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class QueryMultiplePartialFailureException extends InvalidDataAccessResourceUsageException {
 
+    private static final long serialVersionUID = -1462249730038320280L;
+
     private final Object[] results;
 
     private final Throwable[] causes;

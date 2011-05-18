@@ -25,6 +25,8 @@ import org.springframework.dao.DataAccessException;
  */
 public class SpaceUnavailableException extends DataAccessException {
 
+    private static final long serialVersionUID = -4458074369223363712L;
+
     public SpaceUnavailableException(com.j_spaces.core.exception.SpaceUnavailableException e) {
         super(e.getMessage(), e);
     }

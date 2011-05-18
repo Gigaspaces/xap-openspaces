@@ -11,6 +11,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  */
 public class BadSqlQueryException extends InvalidDataAccessResourceUsageException {
 
+    private static final long serialVersionUID = 2097131282296904506L;
+
     public BadSqlQueryException(SQLQueryException e) {
         super(e.getMessage(), e);
     }

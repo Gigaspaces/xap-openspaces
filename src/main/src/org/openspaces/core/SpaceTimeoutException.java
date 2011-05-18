@@ -25,6 +25,8 @@ import org.springframework.dao.DataAccessException;
  */
 public class SpaceTimeoutException extends DataAccessException {
 
+    private static final long serialVersionUID = -6455740849471228392L;
+
     public SpaceTimeoutException(String msg) {
         super(msg);
     }

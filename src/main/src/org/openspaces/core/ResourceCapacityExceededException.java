@@ -13,6 +13,8 @@ import org.springframework.dao.DataAccessException;
  */
 public class ResourceCapacityExceededException extends DataAccessException {
     
+    private static final long serialVersionUID = -6944733039412790229L;
+
     public ResourceCapacityExceededException(com.gigaspaces.client.ResourceCapacityExceededException e) {
         super(e.getMessage(), e);
     }

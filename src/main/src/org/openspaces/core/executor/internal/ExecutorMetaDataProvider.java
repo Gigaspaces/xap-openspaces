@@ -73,6 +73,8 @@ public class ExecutorMetaDataProvider {
 
     public static class FailedToExecuteRoutingMethodException extends DataAccessException {
 
+        private static final long serialVersionUID = -3598757232489798078L;
+
         public FailedToExecuteRoutingMethodException(String msg, Throwable cause) {
             super(msg, cause);
         }

@@ -25,6 +25,8 @@ import org.springframework.core.NestedRuntimeException;
  */
 public class FilterExecutionException extends NestedRuntimeException {
 
+    private static final long serialVersionUID = -1291118446669719067L;
+
     public FilterExecutionException(String msg) {
         super(msg);
     }

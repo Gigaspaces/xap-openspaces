@@ -27,6 +27,8 @@ import org.springframework.dao.DataAccessException;
  */
 public class SpaceClosedException extends DataAccessException {
 
+    private static final long serialVersionUID = -3994010234530007343L;
+
     public SpaceClosedException(ClosedResourceException e) {
         super(e.getMessage(), e);
     }

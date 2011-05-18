@@ -25,6 +25,8 @@ import net.jini.core.transaction.TransactionException;
  */
 public class InactiveTransactionException extends TransactionDataAccessException {
 
+    private static final long serialVersionUID = -2143596398922984453L;
+
     public InactiveTransactionException(com.j_spaces.core.TransactionNotActiveException e) {
         super(e.getMessage(), e);
     }
