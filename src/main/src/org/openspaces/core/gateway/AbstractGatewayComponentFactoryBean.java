@@ -140,11 +140,6 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
 
     public void destroy() throws Exception {
         destroyImpl();
-        
-        if (admin != null){
-            admin.close();
-            admin = null;
-        }
     }
 
     protected abstract void destroyImpl();
