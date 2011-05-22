@@ -40,37 +40,67 @@ public class GatewayTarget {
     public void setName(String name) {
         this.name = name;
     }
+
     /**
      * Sets the number of packets in each replication bulk sent to this gateway.
      * @param bulkSize number of packets in each replication bulk sent to this gateway.
      */
-    public void setBulkSize(int bulkSize) {
+    public void setBulkSize(Integer bulkSize) {
+        if (bulkSize != null && bulkSize < 0)
+            throw new IllegalArgumentException("bulkSize can't be negative.");
         this.bulkSize = bulkSize;
     }
     
     /**
-     * Sets the maximum time (in mili-seconds) pending replication packets should wait before being replicated if
-     * {@link #setPendingOperationThreshold(int)} has not been breached.
-     * @param idleTimeThreshold the maximum time (in mili-seconds).
+     * @return The number of packets in each replication bulk sent to this gateway
      */
-    public void setIdleTimeThreshold(long idleTimeThreshold) {
+    public Integer getBulkSize() {
+        return bulkSize;
+    }
+    
+    /**
+     * Sets the maximum time (in milliseconds) pending replication packets should wait before being replicated if
+     * {@link #setPendingOperationThreshold(Integer)} has not been breached.
+     * @param idleTimeThreshold the maximum time (in milliseconds).
+     */
+    public void setIdleTimeThreshold(Long idleTimeThreshold) {
+        if (idleTimeThreshold != null && idleTimeThreshold < 0)
+            throw new IllegalArgumentException("idleTimeThreshold can't be negative.");
         this.idleTimeThreshold = idleTimeThreshold;
+    }
+
+    /**
+     * @return The maximum time (in milliseconds) pending replication packets should wait before being replicated
+     * if {@link #setPendingOperationThreshold(Integer) has not been breached.
+     */
+    public Long getIdleTimeThreshold() {
+        return idleTimeThreshold;
     }
     
     /**
      * Sets the threshold count for pending replication packets that once reached, the packets will be replicated using the
-     * {@link #setBulkSize(int)}.
+     * {@link #setBulkSize(Integer)}.
      * @param pendingOperationThreshold the threshold count.
      * @see #setIdleTimeThreshold(long)
      */
-    public void setPendingOperationThreshold(int pendingOperationThreshold) {
+    public void setPendingOperationThreshold(Integer pendingOperationThreshold) {
+        if (pendingOperationThreshold != null && pendingOperationThreshold < 0)
+            throw new IllegalArgumentException("pendingOperationThreshold can't be negative.");
         this.pendingOperationThreshold = pendingOperationThreshold;
+    }
+    
+    /**
+     * @return The threshold count for pending replication packets that once reached, the packets will be replicated using
+     * the {@link #setBulkSize(Integer).
+     */
+    public Integer getPendingOperationThreshold() {
+        return pendingOperationThreshold;
     }
     
     /**
      * Sets unlimited replication redo log capacity for this gateway.
      */
-    public void setUnlimitedRedoLogCapacity(){
+    public void setUnlimitedRedoLogCapacity() {
         this.maxRedoLogCapacity = -1L;
     }
     
@@ -78,10 +108,17 @@ public class GatewayTarget {
      * Sets limited redo log capacity for this gateway
      * @param maxRedoLogCapacity redo log limit
      */
-    public void setMaxRedoLogCapacity(long maxRedoLogCapacity) {
-        if (maxRedoLogCapacity <=0)
-            throw new IllegalArgumentException("maxRedoLogCapacity must be larger than 0");
+    public void setMaxRedoLogCapacity(Long maxRedoLogCapacity) {
+        if (maxRedoLogCapacity != null && maxRedoLogCapacity <= 0)
+            throw new IllegalArgumentException("maxRedoLogCapacity must be larger than 0.");
         this.maxRedoLogCapacity = maxRedoLogCapacity;
+    }
+
+    /**
+     * @return The limited redo log capacity for this gateway.
+     */
+    public Long getMaxRedoLogCapacity() {
+        return maxRedoLogCapacity;
     }
     
     /**
@@ -92,7 +129,7 @@ public class GatewayTarget {
     public void setOnRedoLogCapacityExceeded(RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded) {
         this.onRedoLogCapacityExceeded = onRedoLogCapacityExceeded;
     }
-    
+
     /**
      * @return A new {@link GatewayPolicy} instance from the gateway target's properties.
      */

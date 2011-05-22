@@ -34,6 +34,8 @@ public class GatewayTargetsBeanDefinitionParser extends AbstractSimpleBeanDefini
         String localSiteName = element.getAttribute(LOCAL_GATEWAY_NAME);
         builder.addPropertyValue("localGatewayName", localSiteName);
         
+        GatewayTargetBeanDefinitionParser.parseGatewayTargetAttributes(element, builder);
+        
         List<?> targets = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
         builder.addPropertyValue("gatewayTargets", targets);
     }

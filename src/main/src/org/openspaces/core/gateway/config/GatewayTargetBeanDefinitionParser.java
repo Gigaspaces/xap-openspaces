@@ -15,7 +15,11 @@ import org.w3c.dom.Element;
  */
 public class GatewayTargetBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
     
-    public static final String TARGET_NAME = "name";
+    private static final String TARGET_NAME = "name";
+    private static final String BULK_SIZE = "bulk-size";
+    private static final String IDLE_TIME_THRESHOLD = "idle-time-threshold";
+    private static final String MAX_REDOLOG_CAPACITY = "max-redo-log-capacity";
+    private static final String PENDING_OPERATION_THRESHOLD = "pending-operation-threshold";
     
     @Override
     protected Class<GatewayTarget> getBeanClass(Element element) {
@@ -34,7 +38,32 @@ public class GatewayTargetBeanDefinitionParser extends AbstractSimpleBeanDefinit
         String targetName = element.getAttribute(TARGET_NAME);
         if (StringUtils.hasLength(targetName))
             builder.addPropertyValue("name", targetName);
-        
+
+        parseGatewayTargetAttributes(element, builder);
     }
 
+    /**
+     * Parse gateway target attributes.
+     * Relevant for 'gateway-targets' & 'gateway-target' elements.
+     * @param element The element to parse.
+     * @param builder The builder representing the output object.
+     */
+    static void parseGatewayTargetAttributes(Element element, BeanDefinitionBuilder builder) {
+        String bulkSize = element.getAttribute(BULK_SIZE);
+        if (StringUtils.hasLength(bulkSize))
+            builder.addPropertyValue("bulkSize", bulkSize);
+        
+        String idleTimeThreshold = element.getAttribute(IDLE_TIME_THRESHOLD);
+        if (StringUtils.hasText(idleTimeThreshold))
+            builder.addPropertyValue("idleTimeThreshold", idleTimeThreshold);
+        
+        String maxRedoLogCapacity = element.getAttribute(MAX_REDOLOG_CAPACITY);
+        if (StringUtils.hasText(maxRedoLogCapacity))
+            builder.addPropertyValue("maxRedoLogCapacity", maxRedoLogCapacity);
+        
+        String pendingOperationThreshold = element.getAttribute(PENDING_OPERATION_THRESHOLD);
+        if (StringUtils.hasText(pendingOperationThreshold))
+            builder.addPropertyValue("pendingOperationThreshold", pendingOperationThreshold);
+    }
+    
 }

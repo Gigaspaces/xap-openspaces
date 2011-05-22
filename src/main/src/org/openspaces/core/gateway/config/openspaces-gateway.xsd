@@ -38,10 +38,18 @@
 		      <xsd:element name="target" minOccurs="1" maxOccurs="unbounded">
 				<xsd:complexType>
 				<xsd:attribute name="name" type="xsd:string" use="required" />
+				<xsd:attribute name="bulk-size" type="xsd:string" />
+				<xsd:attribute name="idle-time-threshold" type="xsd:string" />
+				<xsd:attribute name="pending-operation-threshold" type="xsd:string" />
+				<xsd:attribute name="max-redo-log-capacity" type="xsd:string" />
 				</xsd:complexType>
 		      </xsd:element>
 		    </xsd:sequence>
 			<xsd:attribute name="local-gateway-name" type="xsd:string" use="required" />
+			<xsd:attribute name="bulk-size" type="xsd:string" />
+			<xsd:attribute name="idle-time-threshold" type="xsd:string" />
+			<xsd:attribute name="pending-operation-threshold" type="xsd:string" />
+			<xsd:attribute name="max-redo-log-capacity" type="xsd:string" />
           </xsd:extension>
           </xsd:complexContent>
 		</xsd:complexType>
