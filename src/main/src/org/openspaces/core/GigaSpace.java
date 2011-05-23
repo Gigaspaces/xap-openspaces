@@ -985,6 +985,26 @@ public interface GigaSpace {
      */
     <T> T readIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
+    
+    /**
+     * Read any matching entries from the space. Matching is done as in
+     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * unbounded array of matches. Returns an empty array if no match was found.
+     * Same as calling {@link #readMultiple(Object, int) readMultiple(template, Integer.MAX_VALUE)}.
+     *
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @return A copy of the entries read from the space.
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
+     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] readMultiple(T template) throws DataAccessException;
+    
+    
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
@@ -1923,6 +1943,24 @@ public interface GigaSpace {
      */
     <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
+    /**
+     * Takes (removes) all the entries matching the specified template from this
+     * space.
+     * Same as calling {@link #takeMultiple(Object, int) takeMultiple(template, Integer.MAX_VALUE)}.
+     *
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @return Removed matched entries from the space
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
+     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] takeMultiple(T template) throws DataAccessException;
+    
+    
     /**
      * Takes (removes) all the entries matching the specified template from this
      * space.

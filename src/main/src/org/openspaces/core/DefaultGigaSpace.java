@@ -475,6 +475,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> T[] readMultiple(T template) throws DataAccessException {
+        return readMultiple(template, Integer.MAX_VALUE);
+    }
+    
     public <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
     }
@@ -715,6 +719,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
+    }
+    
+    public <T> T[] takeMultiple(T template) throws DataAccessException {
+        return takeMultiple(template, Integer.MAX_VALUE);
     }
 
     @SuppressWarnings("unchecked")

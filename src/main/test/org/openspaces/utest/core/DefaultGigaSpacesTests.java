@@ -163,6 +163,21 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
 
         assertEquals(retVal, actualRetVal);
     }
+    
+    public void testReadMultipleNoLimitOperation() {
+        Object template = new Object();
+        Object[] retVal = new Object[] { new Object(), new Object(), new Object(), new Object()};
+
+        mockIJSpace.expects(once()).method("readMultiple").with(same(template), NULL, eq(Integer.MAX_VALUE),
+                eq(ReadModifiers.READ_COMMITTED)).will(returnValue(retVal));
+        mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
+
+        Object actualRetVal = gs.readMultiple(template);
+
+        assertEquals(retVal, actualRetVal);
+    }
 
     public void testTakeOperation() {
         Object template = new Object();
@@ -267,6 +282,18 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
 
         Object actualRetVal = gs.takeIfExists(template, 11l);
+
+        assertEquals(retVal, actualRetVal);
+    }
+    
+    public void testTakeMultipleNoLimit() {
+        Object template = new Object();
+        Object[] retVal = new Object[] { new Object(), new Object(), new Object(), new Object()};
+
+        mockIJSpace.expects(once()).method("takeMultiple").with(same(template), NULL, eq(Integer.MAX_VALUE)).will(returnValue(retVal));
+        mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+
+        Object actualRetVal = gs.takeMultiple(template);
 
         assertEquals(retVal, actualRetVal);
     }
