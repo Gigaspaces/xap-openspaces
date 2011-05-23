@@ -107,7 +107,6 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
         return gatewaysPolicy;
     }
 
-    @Override
     public void afterPropertiesSet() throws Exception {
         if (gatewayTargets != null) {
             // Set gateway targets properties (override if doesn't exist)
