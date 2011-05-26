@@ -17,6 +17,8 @@
 package org.openspaces.core;
 
 import com.gigaspaces.client.WriteMultipleException.IWriteResult;
+import com.j_spaces.core.LeaseContext;
+
 import net.jini.core.lease.Lease;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
@@ -82,6 +84,10 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
         public boolean isError() {
             return result.isError();
+        }
+
+        public LeaseContext<?> getLeaseContext() {
+            return result.getLeaseContext();
         }
     }
 }
