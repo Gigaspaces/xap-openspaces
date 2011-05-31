@@ -42,6 +42,7 @@
 				<xsd:attribute name="idle-time-threshold" type="xsd:string" />
 				<xsd:attribute name="pending-operation-threshold" type="xsd:string" />
 				<xsd:attribute name="max-redo-log-capacity" type="xsd:string" />
+				<xsd:attribute name="on-redo-log-capacity-exceeded" type="xsd:string" />
 				</xsd:complexType>
 		      </xsd:element>
 		    </xsd:sequence>
@@ -50,6 +51,14 @@
 			<xsd:attribute name="idle-time-threshold" type="xsd:string" />
 			<xsd:attribute name="pending-operation-threshold" type="xsd:string" />
 			<xsd:attribute name="max-redo-log-capacity" type="xsd:string" />
+			<xsd:attribute name="on-redo-log-capacity-exceeded">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="block-operations" />
+						<xsd:enumeration value="drop-oldest" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
           </xsd:extension>
           </xsd:complexContent>
 		</xsd:complexType>

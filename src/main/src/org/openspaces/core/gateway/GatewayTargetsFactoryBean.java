@@ -6,6 +6,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.gigaspaces.internal.cluster.node.impl.gateway.GatewayPolicy;
 import com.gigaspaces.internal.cluster.node.impl.gateway.GatewaysPolicy;
+import com.j_spaces.core.cluster.RedoLogCapacityExceededPolicy;
 
 /**
  * A factory bean for creating a {@link GatewaysPolicy} instance.
@@ -22,6 +23,7 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
     private Long idleTimeThreshold;
     private Integer pendingOperationThreshold;
     private Long maxRedoLogCapacity;
+    private RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded;
     
     public GatewayTargetsFactoryBean() {
     }
@@ -90,6 +92,15 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
     public void setMaxRedoLogCapacity(Long maxRedoLogCapacity) {
         this.maxRedoLogCapacity = maxRedoLogCapacity;
     }
+ 
+    /**
+     * Sets the behavior once the defined redo log capacity is exceeded, irrelevant if the capacity is unlimited.
+     * @see #setMaxRedoLogCapacity(long)
+     * @param onRedoLogCapacityExceeded
+     */
+    public void setOnRedoLogCapacityExceeded(RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded) {
+        this.onRedoLogCapacityExceeded = onRedoLogCapacityExceeded;
+    }
     
     /**
      * @return A new {@link GatewaysPolicy} instance using the bean's properties.
@@ -119,6 +130,8 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
                     gatewayTarget.setMaxRedoLogCapacity(maxRedoLogCapacity);
                 if (gatewayTarget.getPendingOperationThreshold() == null)
                     gatewayTarget.setPendingOperationThreshold(pendingOperationThreshold);
+                if (gatewayTarget.getOnRedoLogCapacityExceeded() == null)
+                    gatewayTarget.setOnRedoLogCapacityExceeded(onRedoLogCapacityExceeded);
             }
         }
     }

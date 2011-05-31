@@ -109,8 +109,8 @@ public class GatewayTarget {
      * @param maxRedoLogCapacity redo log limit
      */
     public void setMaxRedoLogCapacity(Long maxRedoLogCapacity) {
-        if (maxRedoLogCapacity != null && maxRedoLogCapacity <= 0)
-            throw new IllegalArgumentException("maxRedoLogCapacity must be larger than 0.");
+        if (maxRedoLogCapacity != null && maxRedoLogCapacity < -1)
+            throw new IllegalArgumentException("maxRedoLogCapacity must be larger than 0 or -1 for unlimited.");
         this.maxRedoLogCapacity = maxRedoLogCapacity;
     }
 
@@ -122,7 +122,7 @@ public class GatewayTarget {
     }
     
     /**
-     * Sets the behavior once the defined redo log capacity is exceeded, irrelevent if the capacity is unlimited.
+     * Sets the behavior once the defined redo log capacity is exceeded, irrelevant if the capacity is unlimited.
      * @see #setMaxRedoLogCapacity(long)
      * @param onRedoLogCapacityExceeded
      */
@@ -130,6 +130,13 @@ public class GatewayTarget {
         this.onRedoLogCapacityExceeded = onRedoLogCapacityExceeded;
     }
 
+    /**
+     * Sets limited redo log capacity for this gateway
+     * @param maxRedoLogCapacity redo log limit
+     */
+    public RedoLogCapacityExceededPolicy getOnRedoLogCapacityExceeded() {
+        return onRedoLogCapacityExceeded;
+    }
     /**
      * @return A new {@link GatewayPolicy} instance from the gateway target's properties.
      */

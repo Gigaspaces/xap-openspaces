@@ -7,6 +7,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
+import com.j_spaces.core.cluster.RedoLogCapacityExceededPolicy;
+
 /**
  * 
  * @author Idan Moyal
@@ -20,6 +22,7 @@ public class GatewayTargetBeanDefinitionParser extends AbstractSimpleBeanDefinit
     private static final String IDLE_TIME_THRESHOLD = "idle-time-threshold";
     private static final String MAX_REDOLOG_CAPACITY = "max-redo-log-capacity";
     private static final String PENDING_OPERATION_THRESHOLD = "pending-operation-threshold";
+    private static final String ON_REDOLOG_CAPACITY_EXCEEDED = "on-redo-log-capacity-exceeded";
     
     @Override
     protected Class<GatewayTarget> getBeanClass(Element element) {
@@ -64,6 +67,21 @@ public class GatewayTargetBeanDefinitionParser extends AbstractSimpleBeanDefinit
         String pendingOperationThreshold = element.getAttribute(PENDING_OPERATION_THRESHOLD);
         if (StringUtils.hasText(pendingOperationThreshold))
             builder.addPropertyValue("pendingOperationThreshold", pendingOperationThreshold);
+        
+        String onRedoLogCapacityExceeded = element.getAttribute(ON_REDOLOG_CAPACITY_EXCEEDED);
+        if (StringUtils.hasText(onRedoLogCapacityExceeded))
+            builder.addPropertyValue("onRedoLogCapacityExceeded", parseOnRedoLogCapacityExceededString(onRedoLogCapacityExceeded));
     }
+
+    private static RedoLogCapacityExceededPolicy parseOnRedoLogCapacityExceededString(String onRedoLogCapacityExceededString) {
+        final String DROP_OLDEST = "drop-oldest";
+        if (DROP_OLDEST.equals(onRedoLogCapacityExceededString))
+            return RedoLogCapacityExceededPolicy.DROP_OLDEST;
+        final String BLOCK_OPERATIONS = "block-operations";
+        if (BLOCK_OPERATIONS.equals(onRedoLogCapacityExceededString))
+            return RedoLogCapacityExceededPolicy.BLOCK_OPERATIONS;
+        throw new IllegalArgumentException("onRedoLogCapacityExceeded only accepts the following values: [" + DROP_OLDEST + ", " + BLOCK_OPERATIONS + "]");
+    }
+    
     
 }
