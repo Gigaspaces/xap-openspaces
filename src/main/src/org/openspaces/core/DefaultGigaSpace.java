@@ -185,7 +185,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (this.space.isClustered()) {
             clusteredGigaSpace = this;
         } else {
-            DefaultGigaSpace newClusteredGigaSpace = null;
+            final DefaultGigaSpace newClusteredGigaSpace;
             try {
                 newClusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), this);
             } catch (Exception e) {
