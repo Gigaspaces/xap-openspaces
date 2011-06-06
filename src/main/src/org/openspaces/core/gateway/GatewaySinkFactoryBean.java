@@ -6,11 +6,11 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupParameters;
-import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationGateway;
-import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationGatewayConfig;
+import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSink;
+import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 
 /**
- * A sink factory bean for creating a {@link LocalClusterReplicationGateway} which
+ * A sink factory bean for creating a {@link LocalClusterReplicationSink} which
  * represents a gateway sink component.
  * 
  * @author Idan Moyal
@@ -21,7 +21,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
 
     private String localSpaceUrl;
     private List<GatewaySource> gatewaySources;
-    private LocalClusterReplicationGateway localClusterReplicationGateway;
+    private LocalClusterReplicationSink localClusterReplicationGateway;
 
     public GatewaySinkFactoryBean() {
     }
@@ -58,7 +58,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
 
     @Override
     protected void afterPropertiesSetImpl(){
-        LocalClusterReplicationGatewayConfig config = new LocalClusterReplicationGatewayConfig(getLocalGatewayName());
+        LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
         if (getGatewaySources() != null) {
@@ -73,7 +73,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             config.setGatewayLookupParameters(lookupParameters);
         }
         // TODO WAN: add finder timeout
-        localClusterReplicationGateway = new LocalClusterReplicationGateway(config); 
+        localClusterReplicationGateway = new LocalClusterReplicationSink(config); 
     }
 
     @Override
