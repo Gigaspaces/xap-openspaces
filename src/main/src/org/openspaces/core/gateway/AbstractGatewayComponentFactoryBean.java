@@ -11,6 +11,8 @@ import org.openspaces.core.cluster.ClusterInfoAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import com.gigaspaces.internal.license.LicenseException;
+import com.gigaspaces.internal.license.LicenseManager;
 import com.gigaspaces.lrmi.ProtocolAdapter;
 
 /**
@@ -110,6 +112,15 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     }
 
     public void afterPropertiesSet() throws Exception {
+        
+        LicenseManager licenseManager = new LicenseManager();
+        licenseManager.verifyLicense();
+        
+        if (!licenseManager.isLicensedForWAN()) 
+        {
+            throw new LicenseException("This license does not permits GigaSpaces WAN module. Please contact support for more details: http://www.gigaspaces.com/supportcenter");
+        }
+        
         //When puname is null, no relevant cluster info was injected, we are probably
         //inside integrated processing unit container so we cannot move this pu anyway.
         if (puName != null)
