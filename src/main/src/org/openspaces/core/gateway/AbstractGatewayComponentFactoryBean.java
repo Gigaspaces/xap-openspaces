@@ -32,6 +32,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private boolean startEmbeddedLus = true;
     private boolean relocateIfWrongPorts = true;
     
+    // TODO WAN: rename lrmiPort to communicationPort (also in XSD, parser etc..)
     private int lrmiPort;
     private int discoveryPort;    
     private String puName;
@@ -191,22 +192,24 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             }
         }
 
-        final int currentDiscoPort = Integer.parseInt(
-                System.getProperty("com.sun.jini.reggie.initialUnicastDiscoveryPort", "0"));
+        if (startEmbeddedLus) {
+            final int currentDiscoPort = Integer.parseInt(
+                    System.getProperty("com.sun.jini.reggie.initialUnicastDiscoveryPort", "0"));
 
-        logger.info("Discovery port: " + currentDiscoPort + ", target Discovery port: " + discoveryPort);
-        if (currentDiscoPort != discoveryPort) {
-            if (isRelocateIfWrongPorts())
-            {
-                logger.info("This GSC is not running with the required Unicast Discovery port. Creating new GSC!");
-                if (!GatewayUtils.checkPortAvailable(discoveryPort)) {
-                    throw new IllegalArgumentException("The required discovery port for the new GSC(" + discoveryPort
-                            + ") is not available!");
+            logger.info("Discovery port: " + currentDiscoPort + ", target Discovery port: " + discoveryPort);
+            if (currentDiscoPort != discoveryPort) {
+                if (isRelocateIfWrongPorts())
+                {
+                    logger.info("This GSC is not running with the required Unicast Discovery port. Creating new GSC!");
+                    if (!GatewayUtils.checkPortAvailable(discoveryPort)) {
+                        throw new IllegalArgumentException("The required discovery port for the new GSC(" + discoveryPort
+                                + ") is not available!");
+                    }
+                    return false;
                 }
-                return false;
+                else
+                    logger.info("This GSC is not running with the required Unicast Discovery port. Relocate if wrong ports encountered is disabled.");
             }
-            else
-                logger.info("This GSC is not running with the required Unicast Discovery port. Relocate if wrong ports encountered is disabled.");
         }
         return true;
     }
@@ -246,7 +249,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
                 .getProcessingUnit().getName());
         if (this.puName.equals(processingUnitInstance
                 .getProcessingUnit().getName())) {
-            new GSCForkHandler(this.lrmiPort, this.discoveryPort, processingUnitInstance).movePuToAlternativeGSC();
+            new GSCForkHandler(this.lrmiPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance).movePuToAlternativeGSC();
             admin.getProcessingUnits().getProcessingUnitInstanceAdded().remove(this);
 
             admin.close();

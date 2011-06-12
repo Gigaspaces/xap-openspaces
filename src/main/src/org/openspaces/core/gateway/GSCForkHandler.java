@@ -37,19 +37,23 @@ public class GSCForkHandler {
 			LRMI_PORT_PROPERTY_TEMPLATE + " "
 					+ DISCOVERY_PORT_PROPERTY_TEMPLATE;
 
+    private final boolean startEmbeddedLus;
+
 	/****
 	 * 
 	 * Constructor.
 	 * @param admin An active Admin instance used to discover the GSA.
 	 * @param lrmiPort the target GSC port.
 	 * @param discoveryPort the target discovery port.
+	 * @param startEmbeddedLus 
 	 * @param pui the PU instance object of the current PU.  
 	 * @param useScript true if GSC should be created with script instead of GSA.
 	 */
 	public GSCForkHandler(int lrmiPort, int discoveryPort,
-			ProcessingUnitInstance pui) {
+			boolean startEmbeddedLus, ProcessingUnitInstance pui) {
 
 		this.lrmiPort = lrmiPort;
+        this.startEmbeddedLus = startEmbeddedLus;
 		this.pui = pui;
 		this.discoveryPort = discoveryPort;
 	}	
@@ -66,10 +70,10 @@ public class GSCForkHandler {
 
 	}
 
-	private String[] createGSCExtraCommandLineArguments(final int gscPort, final int discoveryPort) {
-		return new String[] {
-				createLrmiPortProperty(gscPort),
-				createDiscoveryPortProperty(discoveryPort) };
+	private String[] createGSCExtraCommandLineArguments() {	    
+        if (!startEmbeddedLus)
+            return new String[] { createLrmiPortProperty(lrmiPort) };
+        return new String[] { createLrmiPortProperty(lrmiPort), createDiscoveryPortProperty(discoveryPort) };
 	}
 
 	/***********
@@ -105,7 +109,7 @@ public class GSCForkHandler {
 
 		// set up the GSC parameters
 		final GridServiceContainerOptions gsco = new GridServiceContainerOptions();
-		final String[] props = createGSCExtraCommandLineArguments(lrmiPort, discoveryPort);
+		final String[] props = createGSCExtraCommandLineArguments();
 
 		for (final String prop : props) {
 			gsco.vmInputArgument(prop);
