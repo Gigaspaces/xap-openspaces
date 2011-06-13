@@ -1,7 +1,9 @@
 package org.openspaces.core.gateway;
 
 import java.util.List;
+import java.util.Map;
 
+import org.openspaces.pu.service.InvocableService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -17,11 +19,11 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
  * @since 8.0.3
  *
  */
-public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean {
+public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, InvocableService {
 
     private String localSpaceUrl;
     private List<GatewaySource> gatewaySources;
-    private LocalClusterReplicationSink localClusterReplicationGateway;
+    private LocalClusterReplicationSink localClusterReplicationSink;
 
     public GatewaySinkFactoryBean() {
     }
@@ -73,16 +75,31 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             config.setGatewayLookupParameters(lookupParameters);
         }
         // TODO WAN: add finder timeout
-        localClusterReplicationGateway = new LocalClusterReplicationSink(config); 
+        localClusterReplicationSink = new LocalClusterReplicationSink(config); 
     }
 
     @Override
     protected void destroyImpl() {
-        if (localClusterReplicationGateway != null) {
-            localClusterReplicationGateway.close();
-            localClusterReplicationGateway = null;
+        if (localClusterReplicationSink != null) {
+            localClusterReplicationSink.close();
+            localClusterReplicationSink = null;
         }
     }
 
-    
+    public Object invoke(Map<String, Object> namedArgs) {
+        if (namedArgs.containsKey("enableIncomingReplication"))
+        {
+            localClusterReplicationSink.enableIncomingReplication();
+            return null;
+        }
+        if (namedArgs.containsKey("bootstrapFromGateway"))
+        {
+            String bootstrapRemoteGatewayName = (String) namedArgs.get("bootstrapFromGateway");
+            String delegateThrough = (String) namedArgs.get("bootstrapDelegateThrough");
+            localClusterReplicationSink.bootstrapFromRemoteSink(bootstrapRemoteGatewayName, delegateThrough);
+            return null;
+        }   
+        
+        throw new UnsupportedOperationException("Only enableIncomingReplication and bootstrapFromGateway invocations are supported");
+    }    
 }
