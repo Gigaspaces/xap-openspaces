@@ -26,6 +26,7 @@
 				<xsd:attribute name="local-gateway-name" type="xsd:string" use="required" />
 				<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="required" />
 				<xsd:attribute name="start-embedded-lus" type="xsd:boolean" default="true" use="optional" />
+				<xsd:attribute name="relocate-if-wrong-ports" type="xsd:boolean" default="true" use="optional" />
           </xsd:extension>
           </xsd:complexContent>
 		</xsd:complexType>
@@ -77,7 +78,7 @@
 				</xsd:complexType>
 		      </xsd:element>
 		    </xsd:sequence>
-			<xsd:attribute name="lookup-group" type="xsd:string" use="required" />
+			<xsd:attribute name="lookup-group" type="xsd:string" use="optional" />
           </xsd:extension>
           </xsd:complexContent>
 		</xsd:complexType>
@@ -107,6 +108,8 @@
 			<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="required" />
 			<xsd:attribute name="local-space-url" type="xsd:string" use="required" />
 			<xsd:attribute name="start-embedded-lus" type="xsd:boolean" default="true" />
+			<xsd:attribute name="relocate-if-wrong-ports" type="xsd:boolean" default="true" use="optional" />
+			<xsd:attribute name="requires-bootstrap" type="xsd:boolean" default="false" use="optional" />
     	   	</xsd:extension>
     	   	</xsd:complexContent>
 		</xsd:complexType>
