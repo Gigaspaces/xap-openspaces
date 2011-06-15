@@ -24,6 +24,7 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
     public static final String RELOCATE_IF_WRONG_PORTS = "relocate-if-wrong-ports";
     public static final String DELEGATION_TARGET = "target";
     public static final String DELEGATION_DELEGATE_THROUGH = "delegate-through";
+    public static final String CUSTOM_JVM_PROPERTIES = "custom-jvm-properties";
     
     @Override
     protected Class<GatewayDelegatorFactoryBean> getBeanClass(Element element) {
@@ -50,6 +51,10 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
         if (StringUtils.hasLength(relocateIfWrongPorts))
             builder.addPropertyValue("relocateIfWrongPorts", Boolean.parseBoolean(relocateIfWrongPorts));
 
+        String customJvmProperties = element.getAttribute(CUSTOM_JVM_PROPERTIES);
+        if (StringUtils.hasLength(customJvmProperties))
+            builder.addPropertyValue("customJvmProperties", customJvmProperties);
+        
         List<?> delegations = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
         builder.addPropertyValue("gatewayDelegations", delegations);
         

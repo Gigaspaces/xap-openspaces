@@ -25,6 +25,8 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String START_EMBEDDED_LUS = "start-embedded-lus";
     public static final String RELOCATE_IF_WRONG_PORTS = "relocate-if-wrong-ports";
     public static final String GATEWAY_SOURCE_NAME = "name";
+    public static final String REQUIRES_BOOTSTRAP = "requires-bootstrap";
+    public static final String CUSTOM_JVM_PROPERTIES = "custom-jvm-properties";
     
     @Override
     protected Class<GatewaySinkFactoryBean> getBeanClass(Element element) {
@@ -54,6 +56,14 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         String relocateIfWrongPorts = element.getAttribute(RELOCATE_IF_WRONG_PORTS);
         if (StringUtils.hasLength(relocateIfWrongPorts))
             builder.addPropertyValue("relocateIfWrongPorts", Boolean.parseBoolean(relocateIfWrongPorts));
+        
+        String requiresBootstrap = element.getAttribute(REQUIRES_BOOTSTRAP);
+        if (StringUtils.hasLength(requiresBootstrap))
+            builder.addPropertyValue("requiresBootstrap", requiresBootstrap);
+
+        String customJvmProperties = element.getAttribute(CUSTOM_JVM_PROPERTIES);
+        if (StringUtils.hasLength(customJvmProperties))
+            builder.addPropertyValue("customJvmProperties", customJvmProperties);
         
         Element gatewaySourcesElement = DomUtils.getChildElementByTagName(element, "sources");        
         List<?> sources = parserContext.getDelegate().parseListElement(gatewaySourcesElement, builder.getRawBeanDefinition());

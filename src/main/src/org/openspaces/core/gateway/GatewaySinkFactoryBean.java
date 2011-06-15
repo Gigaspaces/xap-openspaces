@@ -24,6 +24,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private String localSpaceUrl;
     private List<GatewaySource> gatewaySources;
     private LocalClusterReplicationSink localClusterReplicationSink;
+    private boolean requiresBootstrap;
 
     public GatewaySinkFactoryBean() {
     }
@@ -58,11 +59,28 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         this.gatewaySources = gatewaySources;
     }
 
+    /**
+     * Sets whether bootstrap is required for the Sink component.
+     * @param requiresBootstrap true if bootstrap is required.
+     */
+    public void setRequiresBootstrap(boolean requiresBootstrap) {
+        this.requiresBootstrap = requiresBootstrap;
+    }
+
+    /**
+     * Gets whether bootstrap is required for the Sink component.
+     * @return true if bootstrap is required.
+     */
+    public boolean getRequiresBootstrap() {
+        return requiresBootstrap;
+    }
+    
     @Override
     protected void afterPropertiesSetImpl(){
         LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
+        config.setRequiresBootstrap(requiresBootstrap);
         if (getGatewaySources() != null) {
             String[] gatewaySourcesNames = new String[getGatewaySources().size()];
             for (int i = 0; i < getGatewaySources().size(); i++) {

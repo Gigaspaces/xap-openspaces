@@ -1,5 +1,8 @@
 package org.openspaces.core.gateway;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -8,6 +11,7 @@ import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceContainerOptions;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.springframework.util.StringUtils;
 
 /**
  * A class responsible for forking a new GSC for the WAN Gateway, and relocating
@@ -38,6 +42,7 @@ public class GSCForkHandler {
 					+ DISCOVERY_PORT_PROPERTY_TEMPLATE;
 
     private final boolean startEmbeddedLus;
+    private final String customJvmProperties;
 
 	/****
 	 * 
@@ -47,15 +52,17 @@ public class GSCForkHandler {
 	 * @param discoveryPort the target discovery port.
 	 * @param startEmbeddedLus 
 	 * @param pui the PU instance object of the current PU.  
+	 * @param customJvmProperties 
 	 * @param useScript true if GSC should be created with script instead of GSA.
 	 */
 	public GSCForkHandler(int lrmiPort, int discoveryPort,
-			boolean startEmbeddedLus, ProcessingUnitInstance pui) {
+			boolean startEmbeddedLus, ProcessingUnitInstance pui, String customJvmProperties) {
 
 		this.lrmiPort = lrmiPort;
         this.startEmbeddedLus = startEmbeddedLus;
 		this.pui = pui;
 		this.discoveryPort = discoveryPort;
+        this.customJvmProperties = customJvmProperties;
 	}	
 
 	private String createDiscoveryPortProperty(final int discoveryPort) {
@@ -70,10 +77,14 @@ public class GSCForkHandler {
 
 	}
 
-	private String[] createGSCExtraCommandLineArguments() {	    
-        if (!startEmbeddedLus)
-            return new String[] { createLrmiPortProperty(lrmiPort) };
-        return new String[] { createLrmiPortProperty(lrmiPort), createDiscoveryPortProperty(discoveryPort) };
+	private String[] createGSCExtraCommandLineArguments() {
+	    List<String> arguments = new LinkedList<String>();
+	    arguments.add(createLrmiPortProperty(lrmiPort));
+	    if (startEmbeddedLus)
+	        arguments.add(createDiscoveryPortProperty(discoveryPort));
+	    if (StringUtils.hasLength(customJvmProperties))
+	        arguments.addAll(Arrays.asList(customJvmProperties.split(" ")));
+        return arguments.toArray(new String[arguments.size()]);
 	}
 
 	/***********
@@ -114,6 +125,8 @@ public class GSCForkHandler {
 		for (final String prop : props) {
 			gsco.vmInputArgument(prop);
 		}
+		
+		logger.info("starting GSC with parameters: " + Arrays.toString(props));
 
 		// start the GSC
 		gsc = gsa.startGridServiceAndWait(gsco, ADMIN_GSC_STARTUP_TIMEOUT_SECS, TimeUnit.SECONDS);

@@ -369,6 +369,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)} by automatically translating
      * the cluster information into relevant Space url properties.
      */
+    @SuppressWarnings("deprecation")
     protected SpaceURL[] doGetSpaceUrls() throws DataAccessException {
         Assert.notNull(url, "url property is required");
 
@@ -471,13 +472,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(Constants.Engine.SPACE_TYPES, typeDescriptors);
             }
             
-            if (gatewayTargets != null) {
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("Gateway targets can only be used with an embedded Space");
-                }
-                props.put(Constants.Replication.REPLICATION_GATEWAYS, gatewayTargets.asGatewaysPolicy());
-            }
-
             if (cachePolicy != null) {
                 props.putAll(cachePolicy.toProps());
             }
@@ -536,10 +530,17 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(SpaceURL.SECURED, "true");
             }
 
+            if (gatewayTargets != null) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("Gateway targets can only be used with an embedded Space");
+                }
+                props.put(Constants.Replication.REPLICATION_GATEWAYS, gatewayTargets.asGatewaysPolicy());
+            }
+            
             if (logger.isDebugEnabled()) {
                 logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
             }
-
+            
             try {
                 spacesUrls[urlIndex] = SpaceURLParser.parseURL(url, props);
             } catch (MalformedURLException e) {

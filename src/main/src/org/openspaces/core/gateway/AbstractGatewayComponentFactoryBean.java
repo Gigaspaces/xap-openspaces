@@ -39,6 +39,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private boolean relocated;
     private Admin admin;
     
+    private static String customJvmProperties;
     private static final Object relocationDecisionLock = new Object();
     private static boolean relocationInProgress = false;
 
@@ -112,6 +113,16 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         this.relocateIfWrongPorts = relocateIfWrongPorts;
     }
 
+    public void setCustomJvmProperties(String jvmProperties) {
+        if (customJvmProperties != null)
+            throw new IllegalStateException("customJvmProperties has already been set");
+        customJvmProperties = jvmProperties;
+    }
+
+    public String getCustomJvmProperties() {
+        return customJvmProperties;
+    }
+    
     public void afterPropertiesSet() throws Exception {
         
         LicenseManager licenseManager = new LicenseManager();
@@ -233,7 +244,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         throw new IllegalArgumentException("Could not locate local gateway [" + getLocalGatewayName() + "] in lookup parameters - " + foundGateways.toString());
         
     }
-    
+
     /**
      * Invoked when a PUI is added. the implementation looks for a PUI with the specified name.
      * @param processingUnitInstance the added PUI.
@@ -249,7 +260,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
                 .getProcessingUnit().getName());
         if (this.puName.equals(processingUnitInstance
                 .getProcessingUnit().getName())) {
-            new GSCForkHandler(this.lrmiPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance).movePuToAlternativeGSC();
+            new GSCForkHandler(this.lrmiPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance, customJvmProperties).movePuToAlternativeGSC();
             admin.getProcessingUnits().getProcessingUnitInstanceAdded().remove(this);
 
             admin.close();
@@ -258,5 +269,5 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         }
 
     }
-    
+
 }
