@@ -146,9 +146,9 @@ public class GatewayTarget {
         if (bulkSize != null)
             policy.setBulkSize(bulkSize.intValue());
         if (idleTimeThreshold != null)
-            policy.setIntervalMilis(idleTimeThreshold.longValue());
+            policy.setIdleTimeThreshold(idleTimeThreshold.longValue());
         if (pendingOperationThreshold != null)
-            policy.setIntervalOperations(pendingOperationThreshold.intValue());
+            policy.setPendingOperationThreshold(pendingOperationThreshold.intValue());
         if (maxRedoLogCapacity != null)
             policy.setMaxRedoLogCapacity(maxRedoLogCapacity.longValue());
         if (onRedoLogCapacityExceeded != null)
