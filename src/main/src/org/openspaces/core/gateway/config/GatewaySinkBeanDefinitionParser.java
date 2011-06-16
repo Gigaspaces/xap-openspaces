@@ -27,6 +27,8 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String GATEWAY_SOURCE_NAME = "name";
     public static final String REQUIRES_BOOTSTRAP = "requires-bootstrap";
     public static final String CUSTOM_JVM_PROPERTIES = "custom-jvm-properties";
+    public static final String ERROR_HANDLING = "error-handling";
+    public static final String GATEWAY_SOURCES = "sources";
     
     @Override
     protected Class<GatewaySinkFactoryBean> getBeanClass(Element element) {
@@ -65,9 +67,16 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         if (StringUtils.hasLength(customJvmProperties))
             builder.addPropertyValue("customJvmProperties", customJvmProperties);
         
-        Element gatewaySourcesElement = DomUtils.getChildElementByTagName(element, "sources");        
+        Element gatewaySourcesElement = DomUtils.getChildElementByTagName(element, GATEWAY_SOURCES);        
         List<?> sources = parserContext.getDelegate().parseListElement(gatewaySourcesElement, builder.getRawBeanDefinition());
         builder.addPropertyValue("gatewaySources", sources);
+        
+        Element errorHandlingElement = DomUtils.getChildElementByTagName(element, ERROR_HANDLING);        
+        if (errorHandlingElement != null)
+        {
+            Object errorHandlingConfiguration = parserContext.getDelegate().parsePropertySubElement(errorHandlingElement, builder.getRawBeanDefinition());
+            builder.addPropertyValue("errorHandlingConfiguration", errorHandlingConfiguration);
+        }
         
     }
 

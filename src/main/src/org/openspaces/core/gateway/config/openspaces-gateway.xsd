@@ -89,21 +89,28 @@
     	    <xsd:complexContent>
         	<xsd:extension base="beans:identifiedType">
         	<xsd:sequence>
-		    <xsd:element name="sources">
-				<xsd:complexType>
-		            <xsd:complexContent>
-		            <xsd:extension base="beans:identifiedType">
-				    <xsd:sequence>
-				      <xsd:element name="source" minOccurs="1" maxOccurs="unbounded">
-						<xsd:complexType>
-						<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-				      </xsd:element>
-				    </xsd:sequence>
-		          </xsd:extension>
-		          </xsd:complexContent>
-				</xsd:complexType>
-		    </xsd:element>
+			    <xsd:element name="sources">
+					<xsd:complexType>
+			            <xsd:complexContent>
+			            <xsd:extension base="beans:identifiedType">
+					    <xsd:sequence>
+					      <xsd:element name="source" minOccurs="1" maxOccurs="unbounded">
+							<xsd:complexType>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+							</xsd:complexType>
+					      </xsd:element>
+					    </xsd:sequence>
+			          </xsd:extension>
+			          </xsd:complexContent>
+					</xsd:complexType>
+			    </xsd:element>
+			    <xsd:element name="error-handling" minOccurs="0" maxOccurs="1">
+			    	<xsd:complexType>
+				    	<xsd:attribute name="conflict-resolver" type="conflictResolverRefType" use="optional" />
+				    	<xsd:attribute name="max-retries-on-tx-lock" type="xsd:string" use="optional" />
+				    	<xsd:attribute name="tx-lock-retry-interval" type="xsd:string" use="optional" />
+			    	</xsd:complexType>
+			    </xsd:element>
    	    	</xsd:sequence>
 			<xsd:attribute name="local-gateway-name" type="xsd:string" use="required" />
 			<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="required" />
@@ -121,6 +128,16 @@
             <xsd:appinfo>
                 <tool:annotation kind="ref">
                     <tool:expected-type type="org.openspaces.core.gateway.GatewayLookupsFactoryBean" />
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+	</xsd:simpleType>
+	    <xsd:simpleType name="conflictResolverRefType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <tool:annotation kind="ref">
+	               <tool:expected-type type="com.gigaspaces.cluster.replication.gateway.ConflictResolver"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>

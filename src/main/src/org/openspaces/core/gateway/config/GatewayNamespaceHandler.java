@@ -20,6 +20,7 @@ public class GatewayNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("source", new GatewaySourceBeanDefinitionParser());
         registerBeanDefinitionParser("delegator", new GatewayDelegatorBeanDefinitionParser());
         registerBeanDefinitionParser("delegation", new GatewayDelegationBeanDefinitionParser());
+        registerBeanDefinitionParser("error-handling", new SinkErrorHandlingBeanDefinitionParser());
     }
 
 }

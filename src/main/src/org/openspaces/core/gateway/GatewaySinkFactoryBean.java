@@ -26,6 +26,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private List<GatewaySource> gatewaySources;
     private LocalClusterReplicationSink localClusterReplicationSink;
     private boolean requiresBootstrap;
+    private SinkErrorHandlingFactoryBean errorHandlingConfiguration;
 
     public GatewaySinkFactoryBean() {
     }
@@ -76,12 +77,29 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         return requiresBootstrap;
     }
     
+    /**
+     * Sets the error handling configuration instance for the Sink component.
+     * @param errorHandlingConfiguration The error handling configuration instance.
+     */
+    public void setErrorHandlingConfiguration(SinkErrorHandlingFactoryBean errorHandlingConfiguration) {
+        this.errorHandlingConfiguration = errorHandlingConfiguration;
+    }
+
+    /**
+     * Gets the error handling configuration instance defined for the Sink component.
+     * @return The error handling configuration instance.
+     */
+    public SinkErrorHandlingFactoryBean getErrorHandlingConfiguration() {
+        return errorHandlingConfiguration;
+    }
+
     @Override
     protected void afterPropertiesSetImpl(){
         LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
         config.setRequiresBootstrap(requiresBootstrap);
+        errorHandlingConfiguration.copyToSinkConfiguration(config);
         if (getGatewaySources() != null) {
             String[] gatewaySourcesNames = new String[getGatewaySources().size()];
             for (int i = 0; i < getGatewaySources().size(); i++) {
