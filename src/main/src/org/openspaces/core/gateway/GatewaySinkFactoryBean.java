@@ -8,6 +8,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupParameters;
+import com.gigaspaces.internal.cluster.node.impl.gateway.sink.BootstrapConfig;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSink;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 
@@ -113,10 +114,17 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         if (namedArgs.containsKey("bootstrapFromGateway"))
         {
             String bootstrapRemoteGatewayName = (String) namedArgs.get("bootstrapFromGateway");
-            String delegateThrough = (String) namedArgs.get("bootstrapDelegateThrough");
+            String delegateThrough = (String) namedArgs.get("bootstrapDelegateThroughGateway");
+            Integer bootstrapTimeoutInSeconds = (Integer) namedArgs.get("bootstrapTimeout");
             try 
             {
-                localClusterReplicationSink.bootstrapFromRemoteSink(bootstrapRemoteGatewayName, delegateThrough);
+                BootstrapConfig config = new BootstrapConfig(bootstrapRemoteGatewayName);
+                if (delegateThrough != null)
+                    config.setDelegateThroughGatewayName(delegateThrough);
+                if (bootstrapTimeoutInSeconds != null)
+                    config.setTimeout(bootstrapTimeoutInSeconds.intValue());
+                
+                localClusterReplicationSink.bootstrapFromRemoteSink(config);
             } catch (Exception e) {
                //TODO WAN: properly wrap this
                 throw new RuntimeException(e.getMessage(), e);
