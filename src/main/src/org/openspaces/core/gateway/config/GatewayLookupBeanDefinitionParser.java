@@ -19,7 +19,7 @@ public class GatewayLookupBeanDefinitionParser extends AbstractSimpleBeanDefinit
     public static final String LOOKUP_GATEWAY_NAME = "gateway-name";
     public static final String LOOKUP_HOST = "host";
     public static final String LOOKUP_DISCOVERY_PORT = "discovery-port";
-    public static final String LOOKUP_LRMI_PORT = "lrmi-port";
+    public static final String COMMUNICATION_PORT = "communication-port";
     
     @Override
     protected Class<GatewayLookup> getBeanClass(Element element) {
@@ -42,9 +42,9 @@ public class GatewayLookupBeanDefinitionParser extends AbstractSimpleBeanDefinit
         if (StringUtils.hasLength(discoveryPort))
             builder.addPropertyValue("discoveryPort", discoveryPort);
 
-        String lrmiPort = element.getAttribute(LOOKUP_LRMI_PORT);
+        String lrmiPort = element.getAttribute(COMMUNICATION_PORT);
         if (StringUtils.hasLength(lrmiPort))
-            builder.addPropertyValue("lrmiPort", lrmiPort);
+            builder.addPropertyValue("communicationPort", lrmiPort);
 
     }
     

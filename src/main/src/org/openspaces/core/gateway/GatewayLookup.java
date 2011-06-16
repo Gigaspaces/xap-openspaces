@@ -12,7 +12,7 @@ public class GatewayLookup {
     private String gatewayName;
     private String host;
     private String discoveryPort;
-    private String lrmiPort;
+    private String communicationPort;
     
     public GatewayLookup() {
     }
@@ -63,18 +63,18 @@ public class GatewayLookup {
     }
     
     /**
-     * @return The gateway's lookup LRMI port (Component's communication port).
+     * @return The gateway's lookup communication port (Component's communication port).
      */
-    public String getLrmiPort() {
-        return lrmiPort;
+    public String getCommunicationPort() {
+        return communicationPort;
     }
     
     /**
-     * Sets the gateway's lookup LRMI port (Component's communication port).
+     * Sets the gateway's lookup communication port (Component's communication port).
      * @param lrmiPort The LRMI port.
      */
-    public void setLrmiPort(String lrmiPort) {
-        this.lrmiPort = lrmiPort;
+    public void setCommunicationPort(String lrmiPort) {
+        this.communicationPort = lrmiPort;
     }
     
 }

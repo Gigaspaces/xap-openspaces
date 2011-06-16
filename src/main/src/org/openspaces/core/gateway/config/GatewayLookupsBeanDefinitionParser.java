@@ -18,11 +18,7 @@ import org.w3c.dom.Element;
  */
 public class GatewayLookupsBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
-    public static final String LOOKUP_GROUP = "lookup-group";
-    public static final String LOOKUP_GATEWAY_NAME = "gateway-name";
-    public static final String LOOKUP_HOST = "host";
-    public static final String LOOKUP_LUS_PORT = "lus-port";
-    public static final String LOOKUP_LRMI_PORT = "lrmi-port";
+    private static final String LOOKUP_GROUP = "lookup-group";
     
     @Override
     protected Class<GatewayLookupsFactoryBean> getBeanClass(Element element) {

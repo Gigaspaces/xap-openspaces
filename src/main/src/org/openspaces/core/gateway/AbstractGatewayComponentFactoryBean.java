@@ -32,8 +32,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private boolean startEmbeddedLus = true;
     private boolean relocateIfWrongPorts = true;
     
-    // TODO WAN: rename lrmiPort to communicationPort (also in XSD, parser etc..)
-    private int lrmiPort;
+    private int communicationPort;
     private int discoveryPort;    
     private String puName;
     private boolean relocated;
@@ -171,15 +170,15 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
 
         initNeededPorts();        
 
-        int currentLrmiPort = 0;
+        int currentCommunicationPort = 0;
         final ProtocolAdapter<?> port =
                 com.gigaspaces.lrmi.LRMIRuntime.getRuntime().getProtocolRegistry().get("NIO");
         if (port != null) {
-            currentLrmiPort = port.getPort();
+            currentCommunicationPort = port.getPort();
         }
-        logger.info("LRMI port: " + lrmiPort + ", target GSC port: " + lrmiPort);
+        logger.info("current communication port: " + currentCommunicationPort + ", target GSC port: " + communicationPort);
 
-        if (currentLrmiPort == 0) {
+        if (currentCommunicationPort == 0) {
             // LRMI layer not initialized yet - probably means that we are
             // running in the
             // IntegratedProcessingUnitContainer
@@ -187,19 +186,19 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             logger.info("Could not find the NIO protocol adapter. "
                     + "This is normal if running in an IntegratedProcessingUnitContainer");
         } else {
-            if (currentLrmiPort != lrmiPort) {
+            if (currentCommunicationPort != communicationPort) {
                 if (isRelocateIfWrongPorts())
                 {
-                    logger.info("This GSC is not running on the required LRMI port. Creating new GSC!");
+                    logger.info("This GSC is not running on the required communication port. Creating new GSC!");
                     // Must create new GSC and move this PU there.
-                    if (!GatewayUtils.checkPortAvailable(lrmiPort)) {
-                        throw new IllegalArgumentException("The required LRMI port for the new GSC(" + lrmiPort
+                    if (!GatewayUtils.checkPortAvailable(communicationPort)) {
+                        throw new IllegalArgumentException("The required communication port for the new GSC(" + communicationPort
                                 + ") is not available!");
                     }
                     return false;
                 }
                 else
-                    logger.info("This GSC is not running on the required LRMI port. Relocate if wrong ports encountered is disabled.");
+                    logger.info("This GSC is not running on the required communication port. Relocate if wrong ports encountered is disabled.");
             }
         }
 
@@ -229,7 +228,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         StringBuilder foundGateways = null;
         for (GatewayLookup gatewayLookup : getGatewayLookups().getGatewayLookups()) {
             if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())){
-                lrmiPort = Integer.valueOf(gatewayLookup.getLrmiPort());
+                communicationPort = Integer.valueOf(gatewayLookup.getCommunicationPort());
                 discoveryPort = Integer.valueOf(gatewayLookup.getDiscoveryPort());
                 return;
             }
@@ -260,7 +259,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
                 .getProcessingUnit().getName());
         if (this.puName.equals(processingUnitInstance
                 .getProcessingUnit().getName())) {
-            new GSCForkHandler(this.lrmiPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance, customJvmProperties).movePuToAlternativeGSC();
+            new GSCForkHandler(this.communicationPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance, customJvmProperties).movePuToAlternativeGSC();
             admin.getProcessingUnits().getProcessingUnitInstanceAdded().remove(this);
 
             admin.close();
