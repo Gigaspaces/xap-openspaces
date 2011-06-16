@@ -75,7 +75,7 @@
 				<xsd:attribute name="gateway-name" type="xsd:string" use="required" />
 				<xsd:attribute name="host" type="xsd:string" use="required" />
 				<xsd:attribute name="discovery-port" type="xsd:string" use="required" />
-				<xsd:attribute name="lrmi-port" type="xsd:string" use="optional" />
+				<xsd:attribute name="communication-port" type="xsd:string" use="optional" />
 				</xsd:complexType>
 		      </xsd:element>
 		    </xsd:sequence>
