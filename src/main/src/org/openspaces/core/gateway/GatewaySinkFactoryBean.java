@@ -114,7 +114,13 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         {
             String bootstrapRemoteGatewayName = (String) namedArgs.get("bootstrapFromGateway");
             String delegateThrough = (String) namedArgs.get("bootstrapDelegateThrough");
-            localClusterReplicationSink.bootstrapFromRemoteSink(bootstrapRemoteGatewayName, delegateThrough);
+            try 
+            {
+                localClusterReplicationSink.bootstrapFromRemoteSink(bootstrapRemoteGatewayName, delegateThrough);
+            } catch (Exception e) {
+               //TODO WAN: properly wrap this
+                throw new RuntimeException(e.getMessage(), e);
+            }
             return null;
         }   
         
