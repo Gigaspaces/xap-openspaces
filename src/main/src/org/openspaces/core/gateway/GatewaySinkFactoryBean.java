@@ -99,7 +99,8 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
         config.setRequiresBootstrap(requiresBootstrap);
-        errorHandlingConfiguration.copyToSinkConfiguration(config);
+        if (errorHandlingConfiguration != null)
+            errorHandlingConfiguration.copyToSinkConfiguration(config);
         if (getGatewaySources() != null) {
             String[] gatewaySourcesNames = new String[getGatewaySources().size()];
             for (int i = 0; i < getGatewaySources().size(); i++) {
