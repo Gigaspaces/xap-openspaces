@@ -255,7 +255,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
                     "processing unit instance has been moved and admin closed!");
             return;
         }
-        logger.info("PUI added to PU: " + processingUnitInstance
+        logger.debug("PUI added: " + processingUnitInstance
                 .getProcessingUnit().getName());
         if (this.puName.equals(processingUnitInstance
                 .getProcessingUnit().getName())) {
