@@ -1,5 +1,6 @@
 package org.openspaces.core.gateway;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,6 +155,10 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     }
 
     public ServiceDetails[] getServicesDetails() {
-        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName())};
+        LinkedList<String> sourceNames = new LinkedList<String>();
+        for (GatewaySource source : gatewaySources) {
+            sourceNames.add(source.getName());
+        }
+        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), sourceNames.toArray(new String[sourceNames.size()]), requiresBootstrap, localSpaceUrl)};
     }    
 }
