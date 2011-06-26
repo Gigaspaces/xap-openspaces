@@ -2,6 +2,9 @@ package org.openspaces.core.gateway;
 
 import java.util.List;
 
+import org.openspaces.admin.gateway.Delegator;
+import org.openspaces.pu.service.ServiceDetails;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -11,13 +14,13 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.delegator.ReplicationCo
 import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupParameters;
 
 /**
- * A gateway delegator factory bean for creating a {@link ReplicationConnectionDelegatorContainer}.
+ * A gateway delegator factory bean which acts as a {@link Delegator} component.
  * 
  * @author Idan Moyal
  * @since 8.0.3
  *
  */
-public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean {
+public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, ServiceDetailsProvider {
 
     private ReplicationConnectionDelegatorContainer replicationConnectiondelegatorContainer;
     private List<GatewayDelegation> gatewayDelegations;
@@ -51,8 +54,8 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
         if (gatewayDelegations != null) {
             for (GatewayDelegation delegation : gatewayDelegations) {
                 ReplicationDelegationConfig replicationRoutingConfig = new ReplicationDelegationConfig();
-                replicationRoutingConfig.setTargetName(delegation.getTarget());
-                replicationRoutingConfig.setDelegation(delegation.getDelegateThrough());
+                replicationRoutingConfig.setTargetName(delegation.getTargetGatewayName());
+                replicationRoutingConfig.setDelegation(delegation.getDelegateThroughGatewayName());
                 config.addDelegator(replicationRoutingConfig);
             }
         }
@@ -73,6 +76,10 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
             replicationConnectiondelegatorContainer.close();
             replicationConnectiondelegatorContainer = null;
         }
+    }
+
+    public ServiceDetails[] getServicesDetails() {
+        return new ServiceDetails[]{new GatewayDelegatorServiceDetails(getLocalGatewayName(), gatewayDelegations.toArray(new GatewayDelegation[gatewayDelegations.size()]))};
     }
 
 }

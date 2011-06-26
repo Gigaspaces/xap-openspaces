@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.openspaces.admin.gateway.Sink;
 import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -16,8 +17,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 
 /**
- * A sink factory bean for creating a {@link LocalClusterReplicationSink} which
- * represents a gateway sink component.
+ * A sink factory bean which acts as a {@link Sink} component.
  * 
  * @author Idan Moyal
  * @since 8.0.3
