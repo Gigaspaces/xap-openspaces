@@ -1,13 +1,9 @@
 package org.openspaces.core.gateway;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openspaces.admin.gateway.Sink;
 import org.openspaces.pu.service.InvocableService;
-import org.openspaces.pu.service.ServiceDetails;
-import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -17,13 +13,14 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 
 /**
- * A sink factory bean which acts as a {@link Sink} component.
+ * A sink factory bean for creating a {@link LocalClusterReplicationSink} which
+ * represents a gateway sink component.
  * 
  * @author Idan Moyal
  * @since 8.0.3
  *
  */
-public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, InvocableService, ServiceDetailsProvider {
+public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, InvocableService {
 
     private String localSpaceUrl;
     private List<GatewaySource> gatewaySources;
@@ -152,13 +149,5 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         }   
         
         throw new UnsupportedOperationException("Only enableIncomingReplication and bootstrapFromGateway invocations are supported");
-    }
-
-    public ServiceDetails[] getServicesDetails() {
-        LinkedList<String> sourceNames = new LinkedList<String>();
-        for (GatewaySource source : gatewaySources) {
-            sourceNames.add(source.getName());
-        }
-        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), sourceNames.toArray(new String[sourceNames.size()]), requiresBootstrap, localSpaceUrl)};
     }    
 }
