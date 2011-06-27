@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annoation marking a field of type {@link org.openspaces.core.GigaSpace} allowing for
+ * Annotation marking a field of type {@link org.openspaces.core.GigaSpace} allowing for
  * {@link org.openspaces.core.executor.Task} to be injected with the space it is executed on.
  *
  * @author kimchy
