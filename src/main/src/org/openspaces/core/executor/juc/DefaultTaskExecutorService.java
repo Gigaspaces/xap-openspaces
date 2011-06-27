@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * An implemenation of an {@link java.util.concurrent.ExecutorService} that uses the executors support
+ * An implementation of an {@link java.util.concurrent.ExecutorService} that uses the executors support
  * implemented in {@link org.openspaces.core.GigaSpace}.
  *
  * @author kimchy
