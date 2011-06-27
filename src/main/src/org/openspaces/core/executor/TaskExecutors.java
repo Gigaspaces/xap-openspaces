@@ -37,7 +37,7 @@ import java.util.concurrent.Callable;
 public class TaskExecutors {
 
     /**
-     * Construts a new {@link org.openspaces.core.executor.juc.DefaultTaskExecutorService} which is an executor
+     * Constructs a new {@link org.openspaces.core.executor.juc.DefaultTaskExecutorService} which is an executor
      * service that can execute tasks on top of the Space.
      */
     public static TaskExecutorService newExecutorService(GigaSpace gigaSpace) {
