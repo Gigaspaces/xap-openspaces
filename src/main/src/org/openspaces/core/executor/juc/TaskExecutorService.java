@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 /**
- * An exetend interface to {@link ExecutorService}.
+ * An extended interface to {@link ExecutorService}.
  *
  * @author kimchy
  */
