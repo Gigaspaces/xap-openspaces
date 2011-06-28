@@ -171,12 +171,12 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         if (namedArgs.containsKey("bootstrapFromGateway"))
         {
             String bootstrapRemoteGatewayName = (String) namedArgs.get("bootstrapFromGateway");
-            Integer bootstrapTimeoutInSeconds = (Integer) namedArgs.get("bootstrapTimeout");
+            Long bootstrapTimeoutInSeconds = (Long) namedArgs.get("bootstrapTimeout");
             try 
             {
                 BootstrapConfig config = new BootstrapConfig(bootstrapRemoteGatewayName);
                 if (bootstrapTimeoutInSeconds != null)
-                    config.setTimeout(bootstrapTimeoutInSeconds.intValue());
+                    config.setTimeout(bootstrapTimeoutInSeconds.longValue());
                 
                 localClusterReplicationSink.bootstrapFromRemoteSink(config);
             } catch (Exception e) {
