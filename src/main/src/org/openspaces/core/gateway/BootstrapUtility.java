@@ -31,7 +31,7 @@ public class BootstrapUtility {
         
         Map<String, Object> namedArgs = new HashMap<String, Object>();
         namedArgs.put("bootstrapFromGateway", sourceGatewayName);
-        namedArgs.put("bootstrapTimeout", timeUnit.toSeconds(timeout));
+        namedArgs.put("bootstrapTimeout", timeUnit.toMillis(timeout));
         Future<Object> future = ((InternalProcessingUnitInstance)processingUnitInstance).invoke("sink", namedArgs);
         future.get(timeout, timeUnit);
     }
