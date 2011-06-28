@@ -189,12 +189,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             if (currentCommunicationPort != communicationPort) {
                 if (isRelocateIfWrongPorts())
                 {
-                    logger.info("This GSC is not running on the required communication port. Creating new GSC!");
-                    // Must create new GSC and move this PU there.
-                    if (!GatewayUtils.checkPortAvailable(communicationPort)) {
-                        throw new IllegalArgumentException("The required communication port for the new GSC(" + communicationPort
-                                + ") is not available!");
-                    }
+                    logger.info("This GSC is not running on the required communication port. This instance will be relocated to GSC with required communication port.");
                     return false;
                 }
                 else
@@ -210,11 +205,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             if (currentDiscoPort != discoveryPort) {
                 if (isRelocateIfWrongPorts())
                 {
-                    logger.info("This GSC is not running with the required Unicast Discovery port. Creating new GSC!");
-                    if (!GatewayUtils.checkPortAvailable(discoveryPort)) {
-                        throw new IllegalArgumentException("The required discovery port for the new GSC(" + discoveryPort
-                                + ") is not available!");
-                    }
+                    logger.info("This GSC is not running with the required Unicast Discovery port. This instance will be relocated to GSC with required communication port.");
                     return false;
                 }
                 else

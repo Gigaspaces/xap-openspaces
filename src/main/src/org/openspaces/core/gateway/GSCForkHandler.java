@@ -3,6 +3,7 @@ package org.openspaces.core.gateway;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +24,9 @@ import org.springframework.util.StringUtils;
  * @since 8.0.3
  */
 public class GSCForkHandler {
-	private static final int ADMIN_GSC_STARTUP_TIMEOUT_SECS = 30;
+
+
+    private static final int ADMIN_GSC_STARTUP_TIMEOUT_SECS = 30;
 
 	protected final Log logger = LogFactory.getLog(AbstractGatewayComponentFactoryBean.class);
 
@@ -31,11 +34,13 @@ public class GSCForkHandler {
 	private final int lrmiPort;
 	private final int discoveryPort;
 
+	private static final String LRMI_PORT_SYSTEM_PROPERTY = "com.gs.transport_protocol.lrmi.bind-port";
 	private static final String LRMI_PORT_PROPERTY_TEMPLATE =
-			"-Dcom.gs.transport_protocol.lrmi.bind-port=<LRMI_PORT>";
+			"-D" + LRMI_PORT_SYSTEM_PROPERTY + "=<LRMI_PORT>";
 
+	private static final String DISCOVERY_PORT_SYSTEM_PROPERTY = "com.sun.jini.reggie.initialUnicastDiscoveryPort";
 	private static final String DISCOVERY_PORT_PROPERTY_TEMPLATE =
-			"-Dcom.sun.jini.reggie.initialUnicastDiscoveryPort=<DISCOVERY_PORT>";
+			"-D" + DISCOVERY_PORT_SYSTEM_PROPERTY + "=<DISCOVERY_PORT>";
 
 	public static final String AGENT_EXT_JAVA_OPTIONS =
 			LRMI_PORT_PROPERTY_TEMPLATE + " "
@@ -93,29 +98,65 @@ public class GSCForkHandler {
 	 */
 	public void movePuToAlternativeGSC() {
 
-		if (!GatewayUtils.checkPortAvailable(lrmiPort)) {
-			throw new IllegalArgumentException("The required LRMI port for the new GSC(" + lrmiPort + ") is not available!");
+        GridServiceContainer gsc = locateExistingGSCWithPorts();
+        if (gsc == null){
+    		if (!GatewayUtils.checkPortAvailable(lrmiPort)) {
+    			throw new IllegalArgumentException("The required communication port for the new GSC(" + lrmiPort + ") is not available!");
+    		}
+    		if (!GatewayUtils.checkPortAvailable(discoveryPort)) {
+                throw new IllegalArgumentException("The required discovery port for the new GSC(" + discoveryPort + ") is not available!");
+            }
+    
+    		GridServiceAgent gsa = null;
+    		logger.info("Looking up GSA on local machine");
+    		gsa = findLocalGSA();
+    		if(gsa == null) {
+    			logger.error("Could not find local GSA. Cannot start alternative GSC");
+    			throw new IllegalStateException("Could not find local GSA. Cannot start alternative GSC");
+    		}
+    
+            logger.info("Found local GSA - starting new GSC");
+            gsc = createGSCWithGsa(gsa);
+            logger.info("Created new GSC: " + gsc.getUid() + ", relocating this instance into it");
+        } else {
+            logger.info("Found existing GSC: " + gsc.getUid() + " with matching ports, relocating this instance into it");
 		}
-
-		GridServiceAgent gsa = null;
-		logger.info("Looking up GSA on local machine");
-		gsa = findLocalGSA();
-		if(gsa == null) {
-			logger.error("Could not find local GSA. Cannot start alternative GSC");
-			throw new IllegalStateException("Could not find local GSA. Cannot start alternative GSC");
-		}
-
-		GridServiceContainer gsc = null;
-
-		logger.info("Found local GSA - starting new GSC");
-		gsc = createGSCWithGsa(gsa);
-		logger.info("Created new GSC: " + gsc.getUid());
 
 		pui.relocateAndWait(gsc);
 
 	}
 
-	private GridServiceContainer createGSCWithGsa(final GridServiceAgent gsa) {
+	private GridServiceContainer locateExistingGSCWithPorts() {
+	    for (GridServiceContainer gsc : this.pui.getAdmin().getGridServiceContainers()) {
+            Map<String, String> systemProperties = gsc.getVirtualMachine().getDetails().getSystemProperties();
+            if (matchPorts(systemProperties))
+                return gsc;
+        } 
+	    return null;
+    }
+
+    private boolean matchPorts(Map<String, String> systemProperties) {
+        try
+        {            
+            String discoveryPortSetting = systemProperties.get(DISCOVERY_PORT_SYSTEM_PROPERTY);
+            if (discoveryPortSetting != null && Integer.parseInt(discoveryPortSetting) == discoveryPort)
+            {
+                String lrmiPortSettings = systemProperties.get(LRMI_PORT_SYSTEM_PROPERTY);
+                if (lrmiPortSettings != null && Integer.parseInt(lrmiPortSettings) == lrmiPort)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch(Exception e)
+        {
+            logger.warn("error while checking matching ports of gsc", e);
+            return false;
+        }
+    }
+
+    private GridServiceContainer createGSCWithGsa(final GridServiceAgent gsa) {
 		GridServiceContainer gsc;
 
 		// set up the GSC parameters
@@ -139,7 +180,7 @@ public class GSCForkHandler {
 						gridServiceContainer.getVirtualMachine()
 								.getDetails()
 								.getSystemProperties()
-								.get("com.gs.transport_protocol.lrmi.bind-port");
+								.get(LRMI_PORT_SYSTEM_PROPERTY);
 
 				if ((port != null) && port.equals(Integer.toString(lrmiPort))) {
 					gsc = gridServiceContainer;
