@@ -103,7 +103,7 @@ public class GSCForkHandler {
     		if (!GatewayUtils.checkPortAvailable(lrmiPort)) {
     			throw new IllegalArgumentException("The required communication port for the new GSC(" + lrmiPort + ") is not available!");
     		}
-    		if (!GatewayUtils.checkPortAvailable(discoveryPort)) {
+    		if (startEmbeddedLus && !GatewayUtils.checkPortAvailable(discoveryPort)) {
                 throw new IllegalArgumentException("The required discovery port for the new GSC(" + discoveryPort + ") is not available!");
             }
     
