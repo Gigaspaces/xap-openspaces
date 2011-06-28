@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.internal.pu.InternalProcessingUnitInstance;
@@ -27,7 +28,7 @@ public class BootstrapUtility {
      * @throws Exception
      */
     public static void bootstrap(Admin admin, String gatewaySinkPuName, String sourceGatewayName, long timeout, TimeUnit timeUnit) throws Exception{
-        ProcessingUnitInstance processingUnitInstance = locateSink(admin, gatewaySinkPuName);
+        ProcessingUnitInstance processingUnitInstance = locateSink(admin, gatewaySinkPuName, timeout, timeUnit);
         
         Map<String, Object> namedArgs = new HashMap<String, Object>();
         namedArgs.put("bootstrapFromGateway", sourceGatewayName);
@@ -40,16 +41,19 @@ public class BootstrapUtility {
      * Enables incoming replication to a gateway sink that require bootstrap but was not bootstrap yet.
      * @param admin admin of the service grid environment that contains the gateway sink processing unit
      * @param gatewaySinkPuName the name of the processing unit the gateway sink is deployed under
+     * @throws TimeoutException 
      */
-    public static void enableIncomingReplication(Admin admin, String gatewaySinkPuName){
-        ProcessingUnitInstance processingUnitInstance = locateSink(admin, gatewaySinkPuName);
+    public static void enableIncomingReplication(Admin admin, String gatewaySinkPuName, long timeout, TimeUnit timeUnit) throws TimeoutException{
+        ProcessingUnitInstance processingUnitInstance = locateSink(admin, gatewaySinkPuName, timeout, timeUnit);
         Map<String, Object> namedArgs = new HashMap<String, Object>();
         namedArgs.put("enableIncomingReplication", "");
         ((InternalProcessingUnitInstance)processingUnitInstance).invoke("sink", namedArgs);
     }
 
-    private static ProcessingUnitInstance locateSink(Admin admin, String gatewaySinkPuName) {
-        ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(gatewaySinkPuName);
+    private static ProcessingUnitInstance locateSink(Admin admin, String gatewaySinkPuName, long timeout, TimeUnit timeUnit) throws TimeoutException {
+        ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(gatewaySinkPuName, timeout, timeUnit);
+        if (processingUnit == null)
+            throw new TimeoutException("Could not locate gateway sink processing unit [" + gatewaySinkPuName + "] with the specified timeout [" + timeUnit.toMillis(timeout) + " milliseconds]");
         processingUnit.waitFor(1);
         
         ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
