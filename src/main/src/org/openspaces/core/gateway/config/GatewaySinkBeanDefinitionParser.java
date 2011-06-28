@@ -29,6 +29,8 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String CUSTOM_JVM_PROPERTIES = "custom-jvm-properties";
     public static final String ERROR_HANDLING = "error-handling";
     public static final String GATEWAY_SOURCES = "sources";
+    private static final String TRANSACTION_TIMEOUT = "tx-timeout";
+    private static final String LOOKUP_TIMEOUT = "local-space-lookup-timeout";
     
     @Override
     protected Class<GatewaySinkFactoryBean> getBeanClass(Element element) {
@@ -37,7 +39,6 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
         
         String localGateywayName = element.getAttribute(LOCAL_GATEWAY_NAME);
         if (StringUtils.hasLength(localGateywayName))
@@ -66,6 +67,14 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         String customJvmProperties = element.getAttribute(CUSTOM_JVM_PROPERTIES);
         if (StringUtils.hasLength(customJvmProperties))
             builder.addPropertyValue("customJvmProperties", customJvmProperties);
+
+        String transactionTimeout = element.getAttribute(TRANSACTION_TIMEOUT);
+        if (StringUtils.hasLength(transactionTimeout))
+            builder.addPropertyValue("transactionTimeout", transactionTimeout);
+
+        String localSpaceLookupTimeout = element.getAttribute(LOOKUP_TIMEOUT);
+        if (StringUtils.hasLength(localSpaceLookupTimeout))
+            builder.addPropertyValue("localSpaceLookupTimeout", localSpaceLookupTimeout);
         
         Element gatewaySourcesElement = DomUtils.getChildElementByTagName(element, GATEWAY_SOURCES);        
         List<?> sources = parserContext.getDelegate().parseListElement(gatewaySourcesElement, builder.getRawBeanDefinition());

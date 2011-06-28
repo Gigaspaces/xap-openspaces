@@ -27,6 +27,8 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private LocalClusterReplicationSink localClusterReplicationSink;
     private boolean requiresBootstrap;
     private SinkErrorHandlingFactoryBean errorHandlingConfiguration;
+    private Long transactionTimeout;
+    private Long localSpaceLookupTimeout;
 
     public GatewaySinkFactoryBean() {
     }
@@ -93,12 +95,48 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         return errorHandlingConfiguration;
     }
 
+    /**
+     * Gets the transaction timeout for the operations made by the Sink against the local cluster.
+     * @return The transaction timeout in milliseconds. 
+     */
+    public Long getTransactionTimeout() {
+        return transactionTimeout;
+    }
+
+    /**
+     * Sets the transaction timeout for the operations made by the Sink against the local cluster.
+     * @param transactionTimeout The transaction timeout in milliseconds.
+     */
+    public void setTransactionTimeout(Long transactionTimeout) {
+        this.transactionTimeout = transactionTimeout;
+    }
+
+    /**
+     * Sets the lookup timeout for finding the local cluster the Sink works against.
+     * @param lookupTimeout The lookup timeout in milliseconds.
+     */
+    public void setLocalSpaceLookupTimeout(Long lookupTimeout) {
+        this.localSpaceLookupTimeout = lookupTimeout;
+    }
+
+    /**
+     * Gets the lookup timeout for finding the local cluster the Sink works against.
+     * @return The lookup timeout in milliseconds.
+     */
+    public Long getLocalSpaceLookupTimeout() {
+        return localSpaceLookupTimeout;
+    }
+
     @Override
     protected void afterPropertiesSetImpl(){
         LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
         config.setRequiresBootstrap(requiresBootstrap);
+        if (transactionTimeout != null)
+            config.setTransactionTimeout(transactionTimeout.longValue());
+        if (localSpaceLookupTimeout != null)
+            config.setFindTimeout(localSpaceLookupTimeout.longValue());
         if (errorHandlingConfiguration != null)
             errorHandlingConfiguration.copyToSinkConfiguration(config);
         if (getGatewaySources() != null) {
