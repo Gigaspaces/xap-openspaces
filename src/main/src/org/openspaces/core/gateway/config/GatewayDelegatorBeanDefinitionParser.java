@@ -25,6 +25,7 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
     public static final String DELEGATION_TARGET = "target";
     public static final String DELEGATION_DELEGATE_THROUGH = "delegate-through";
     public static final String CUSTOM_JVM_PROPERTIES = "custom-jvm-properties";
+    private static final String COMMUNICATION_PORT = "communication-port";
     
     @Override
     protected Class<GatewayDelegatorFactoryBean> getBeanClass(Element element) {
@@ -54,6 +55,10 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
         String customJvmProperties = element.getAttribute(CUSTOM_JVM_PROPERTIES);
         if (StringUtils.hasLength(customJvmProperties))
             builder.addPropertyValue("customJvmProperties", customJvmProperties);
+
+        String communicationPort = element.getAttribute(COMMUNICATION_PORT);
+        if (StringUtils.hasLength(communicationPort))
+            builder.addPropertyValue("communicationPort", communicationPort);
         
         List<?> delegations = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
         builder.addPropertyValue("gatewayDelegations", delegations);

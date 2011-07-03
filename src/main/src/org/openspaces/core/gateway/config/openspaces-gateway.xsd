@@ -28,6 +28,7 @@
 				<xsd:attribute name="start-embedded-lus" type="xsd:boolean" default="true" use="optional" />
 				<xsd:attribute name="relocate-if-wrong-ports" type="xsd:boolean" default="true" use="optional" />
 				<xsd:attribute name="custom-jvm-properties" type="xsd:string" use="optional" />
+				<xsd:attribute name="communication-port" type="xsd:string" use="optional" />
           </xsd:extension>
           </xsd:complexContent>
 		</xsd:complexType>
@@ -121,6 +122,7 @@
 			<xsd:attribute name="custom-jvm-properties" type="xsd:string" use="optional" />
 			<xsd:attribute name="tx-timeout" type="xsd:string" use="optional" />
 			<xsd:attribute name="local-space-lookup-timeout" type="xsd:string" use="optional" />
+			<xsd:attribute name="communication-port" type="xsd:string" use="optional" />
     	   	</xsd:extension>
     	   	</xsd:complexContent>
 		</xsd:complexType>

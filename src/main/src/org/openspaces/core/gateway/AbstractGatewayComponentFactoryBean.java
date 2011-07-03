@@ -38,6 +38,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private String puName;
     private boolean relocated;
     private Admin admin;
+    private boolean communicationPortIsSet;
     
     private static String customJvmProperties;
     private static final Object relocationDecisionLock = new Object();
@@ -122,6 +123,23 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     public String getCustomJvmProperties() {
         return customJvmProperties;
     }
+    
+    /**
+     * @return The gateway component's communication port. 
+     */
+    public int getCommunicationPort() {
+        return communicationPort;
+    }
+
+    /**
+     * Sets the gateway component's communication port.
+     * @param communicationPort The communication port.
+     */
+    public void setCommunicationPort(int communicationPort) {
+        this.communicationPort = communicationPort;
+        communicationPortIsSet = true;
+    }
+    
     
     public void afterPropertiesSet() throws Exception {
         
@@ -219,8 +237,9 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private void initNeededPorts() {
         StringBuilder foundGateways = null;
         for (GatewayLookup gatewayLookup : getGatewayLookups().getGatewayLookups()) {
-            if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())){
-                communicationPort = StringUtils.hasLength(gatewayLookup.getCommunicationPort()) ? Integer.valueOf(gatewayLookup.getCommunicationPort()) : 0;
+            if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())) {
+                if (!communicationPortIsSet)
+                    communicationPort = StringUtils.hasLength(gatewayLookup.getCommunicationPort()) ? Integer.valueOf(gatewayLookup.getCommunicationPort()) : 0;
                 discoveryPort = Integer.valueOf(gatewayLookup.getDiscoveryPort());
                 return;
             }

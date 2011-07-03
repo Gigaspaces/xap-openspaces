@@ -31,6 +31,7 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String GATEWAY_SOURCES = "sources";
     private static final String TRANSACTION_TIMEOUT = "tx-timeout";
     private static final String LOOKUP_TIMEOUT = "local-space-lookup-timeout";
+    private static final String COMMUNICATION_PORT = "communication-port";
     
     @Override
     protected Class<GatewaySinkFactoryBean> getBeanClass(Element element) {
@@ -75,6 +76,10 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         String localSpaceLookupTimeout = element.getAttribute(LOOKUP_TIMEOUT);
         if (StringUtils.hasLength(localSpaceLookupTimeout))
             builder.addPropertyValue("localSpaceLookupTimeout", localSpaceLookupTimeout);
+
+        String communicationPort = element.getAttribute(COMMUNICATION_PORT);
+        if (StringUtils.hasLength(communicationPort))
+            builder.addPropertyValue("communicationPort", communicationPort);
         
         Element gatewaySourcesElement = DomUtils.getChildElementByTagName(element, GATEWAY_SOURCES);        
         List<?> sources = parserContext.getDelegate().parseListElement(gatewaySourcesElement, builder.getRawBeanDefinition());
