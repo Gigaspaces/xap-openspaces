@@ -1,6 +1,6 @@
 package org.openspaces.core.gateway;
 
-import com.gigaspaces.cluster.replication.gateway.ConflictResolver;
+import com.gigaspaces.cluster.replication.gateway.conflict.ConflictResolver;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 
 /**
