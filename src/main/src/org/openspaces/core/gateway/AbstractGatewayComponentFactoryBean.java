@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.gigaspaces.internal.license.LicenseException;
 import com.gigaspaces.internal.license.LicenseManager;
+import com.gigaspaces.internal.utils.StringUtils;
 import com.gigaspaces.lrmi.ProtocolAdapter;
 
 /**
@@ -186,7 +187,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             logger.info("Could not find the NIO protocol adapter. "
                     + "This is normal if running in an IntegratedProcessingUnitContainer");
         } else {
-            if (currentCommunicationPort != communicationPort) {
+            if (communicationPort != 0 && currentCommunicationPort != communicationPort) {
                 if (isRelocateIfWrongPorts())
                 {
                     logger.info("This GSC is not running on the required communication port. This instance will be relocated to GSC with required communication port.");
@@ -219,7 +220,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         StringBuilder foundGateways = null;
         for (GatewayLookup gatewayLookup : getGatewayLookups().getGatewayLookups()) {
             if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())){
-                communicationPort = Integer.valueOf(gatewayLookup.getCommunicationPort());
+                communicationPort = StringUtils.hasLength(gatewayLookup.getCommunicationPort()) ? Integer.valueOf(gatewayLookup.getCommunicationPort()) : 0;
                 discoveryPort = Integer.valueOf(gatewayLookup.getDiscoveryPort());
                 return;
             }

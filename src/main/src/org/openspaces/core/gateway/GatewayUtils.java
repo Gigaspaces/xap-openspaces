@@ -13,6 +13,8 @@ public class GatewayUtils {
      * @return true if available, false otherwise.
      */
     public static boolean checkPortAvailable(final int port) {
+        if (port == 0)
+            return true;
         ServerSocket sock = null;
 
         try {

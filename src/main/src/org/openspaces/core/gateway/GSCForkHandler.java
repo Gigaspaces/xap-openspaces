@@ -84,7 +84,8 @@ public class GSCForkHandler {
 
 	private String[] createGSCExtraCommandLineArguments() {
 	    List<String> arguments = new LinkedList<String>();
-	    arguments.add(createLrmiPortProperty(lrmiPort));
+	    if (lrmiPort != 0)
+	        arguments.add(createLrmiPortProperty(lrmiPort));
 	    if (startEmbeddedLus)
 	        arguments.add(createDiscoveryPortProperty(discoveryPort));
 	    if (StringUtils.hasLength(customJvmProperties))
@@ -141,6 +142,8 @@ public class GSCForkHandler {
             String discoveryPortSetting = systemProperties.get(DISCOVERY_PORT_SYSTEM_PROPERTY);
             if (discoveryPortSetting != null && Integer.parseInt(discoveryPortSetting) == discoveryPort)
             {
+                if (lrmiPort == 0)
+                    return true;
                 String lrmiPortSettings = systemProperties.get(LRMI_PORT_SYSTEM_PROPERTY);
                 if (lrmiPortSettings != null && Integer.parseInt(lrmiPortSettings) == lrmiPort)
                 {
@@ -176,16 +179,30 @@ public class GSCForkHandler {
 			// Admin API
 			final GridServiceContainer[] containers = gsa.getMachine().getGridServiceContainers().getContainers();
 			for (final GridServiceContainer gridServiceContainer : containers) {
-				final String port =
-						gridServiceContainer.getVirtualMachine()
-								.getDetails()
-								.getSystemProperties()
-								.get(LRMI_PORT_SYSTEM_PROPERTY);
+			    if (lrmiPort != 0)
+			    {
+    				final String port =
+    						gridServiceContainer.getVirtualMachine()
+    								.getDetails()
+    								.getSystemProperties()
+    								.get(LRMI_PORT_SYSTEM_PROPERTY);
+    
+    				if ((port != null) && port.equals(Integer.toString(lrmiPort))) {
+    					gsc = gridServiceContainer;
+    				}
+			    }
+			    else
+			    {
+			        final String port =
+                        gridServiceContainer.getVirtualMachine()
+                                .getDetails()
+                                .getSystemProperties()
+                                .get(DISCOVERY_PORT_SYSTEM_PROPERTY);
 
-				if ((port != null) && port.equals(Integer.toString(lrmiPort))) {
-					gsc = gridServiceContainer;
-				}
-
+                    if ((port != null) && port.equals(Integer.toString(discoveryPort))) {
+                        gsc = gridServiceContainer;
+                    }
+			    }
 			}
 		}
 
