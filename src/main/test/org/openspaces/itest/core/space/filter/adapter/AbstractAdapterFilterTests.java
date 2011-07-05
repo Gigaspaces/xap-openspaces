@@ -21,6 +21,9 @@ import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import net.jini.core.lease.Lease;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
+import org.openspaces.events.notify.SimpleNotifyEventListenerContainer;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
@@ -65,6 +68,32 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         gigaSpace.clear(null);
     }
 
+    public void testNotify() throws Exception {
+        SimpleNotifyEventListenerContainer notifyEventListenerContainer = new SimpleNotifyContainerConfigurer(gigaSpace)
+                .template(new Message())
+                .eventListenerAnnotation(new Object() {
+                    @SpaceDataEvent
+                    public void gotAnEvent(Message message) {
+                        System.out.println(message);
+                    }
+                }).notifyContainer();
+        notifyEventListenerContainer.start();
+        int size = simpleFilter.getLastExecutions().size();
+        assertEquals(1, size);
+        assertNull(((Message) simpleFilter.getLastExecutions().get(size - 1)[0]).getMessage());    //template
+        assertEquals("BEFORE_NOTIFY", simpleFilter.getLastExecutions().get(size - 1)[1]);
+        Message message = new Message(1);
+        message.setMessage("test");
+        gigaSpace.write(message);
+        Thread.sleep(5000);
+        size = simpleFilter.getLastExecutions().size();
+        assertEquals(4, size);   //beforeNotify + beforeWrite + beforeNotifyTrigger + afterNotifyTrigger
+        assertEquals("test", ((Message)simpleFilter.getLastExecutions().get(size - 2)[0]).getMessage());
+        assertEquals("BEFORE_NOTIFY_TRIGGER", simpleFilter.getLastExecutions().get(size - 2)[2]);
+        assertEquals("test",  ((Message)simpleFilter.getLastExecutions().get(size - 1)[0]).getMessage());
+        assertEquals("AFTER_NOTIFY_TRIGGER", simpleFilter.getLastExecutions().get(size - 1)[2]);
+    }
+
     public void testUpdate() {
         Message message = new Message(1);
         message.setMessage("test");
@@ -76,12 +105,15 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("test", ((Message) params[0]).getMessage());
         Message readMsg = gigaSpace.read(new Message("test"));
         readMsg.setData("2");
+        simpleFilter.clearExecutions();
         gigaSpace.write(readMsg, Lease.FOREVER, 0, UpdateModifiers.UPDATE_ONLY);
-        assertEquals(5, simpleFilter.getLastExecutions().size());
-        params = simpleFilter.getLastExecutions().get(simpleFilter.getLastExecutions().size()-1);
-        assertEquals(1, params.length);
+        assertEquals(2, simpleFilter.getLastExecutions().size());  //beforeUpdate+afterUpdate
+        params = simpleFilter.getLastExecutions().get(simpleFilter.getLastExecutions().size() - 1);
+        assertEquals(2, params.length);
         assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals("2", ((Message) params[0]).getData());
+        assertEquals("1", ((Message) params[0]).getData());
+        assertEquals("test", ((Message) params[1]).getMessage());
+        assertEquals("2", ((Message) params[1]).getData());
     }
 
     public void testRead() throws Exception {

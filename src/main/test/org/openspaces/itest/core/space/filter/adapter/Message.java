@@ -65,4 +65,13 @@ public class Message {
     public void setData(String data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", message='" + message + '\'' +
+                ", data='" + data + '\'' +
+                '}';
+    }
 }

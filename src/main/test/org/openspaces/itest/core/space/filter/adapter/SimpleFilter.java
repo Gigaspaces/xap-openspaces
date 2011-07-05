@@ -16,6 +16,7 @@
 
 package org.openspaces.itest.core.space.filter.adapter;
 
+import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceLateContext;
@@ -76,8 +77,7 @@ public class SimpleFilter {
 
     @AfterUpdate
     public void afterUpdate(Message beforeUpdate, Message afterUpdate) {
-        lastExecutions.add(new Object[]{beforeUpdate});
-        lastExecutions.add(new Object[]{afterUpdate});
+        lastExecutions.add(new Object[]{beforeUpdate, afterUpdate});
     }
 
     @BeforeRead
@@ -88,6 +88,22 @@ public class SimpleFilter {
     @BeforeTake
     public void beforeTake(Message entry, int operationCode) {
         lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @BeforeNotifyTrigger
+    public void beforeNotifyTrigger(Message entry, Message entry2, int opCode) {
+        lastExecutions.add(new Object[]{entry, entry2, FilterOperationCodes.operationCodeToString(opCode)});
+
+    }
+
+    @BeforeNotify
+    public void beforeNotify(Message entry, int opCode) {
+        lastExecutions.add(new Object[]{entry, FilterOperationCodes.operationCodeToString(opCode)});
+    }
+
+    @AfterNotifyTrigger
+    public void afterNotifyTrigger(Message entry, Message entry2, int opCode) {
+        lastExecutions.add(new Object[]{entry, entry2, FilterOperationCodes.operationCodeToString(opCode)});
     }
 
     public void clearExecutions() {
