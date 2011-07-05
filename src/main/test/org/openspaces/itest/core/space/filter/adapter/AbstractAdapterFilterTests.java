@@ -92,6 +92,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("BEFORE_NOTIFY_TRIGGER", simpleFilter.getLastExecutions().get(size - 2)[2]);
         assertEquals("test",  ((Message)simpleFilter.getLastExecutions().get(size - 1)[0]).getMessage());
         assertEquals("AFTER_NOTIFY_TRIGGER", simpleFilter.getLastExecutions().get(size - 1)[2]);
+        notifyEventListenerContainer.destroy();
     }
 
     public void testUpdate() {
