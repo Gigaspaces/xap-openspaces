@@ -19,12 +19,7 @@ package org.openspaces.itest.core.space.filter.adapter;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceLateContext;
-import org.openspaces.core.space.filter.AfterWrite;
-import org.openspaces.core.space.filter.BeforeRead;
-import org.openspaces.core.space.filter.BeforeTake;
-import org.openspaces.core.space.filter.BeforeWrite;
-import org.openspaces.core.space.filter.OnFilterClose;
-import org.openspaces.core.space.filter.OnFilterInit;
+import org.openspaces.core.space.filter.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,22 +61,33 @@ public class SimpleFilter {
 
     @BeforeWrite
     public void beforeWrite(Message entry) {
-        lastExecutions.add(new Object[] {entry});
+        lastExecutions.add(new Object[]{entry});
     }
 
     @AfterWrite
     public void afterWrite(Echo echo) {
-        lastExecutions.add(new Object[] {echo});
+        lastExecutions.add(new Object[]{echo});
+    }
+
+    @BeforeUpdate
+    public void beforeUpdate(Message entry) {
+        lastExecutions.add(new Object[]{entry});
+    }
+
+    @AfterUpdate
+    public void afterUpdate(Message beforeUpdate, Message afterUpdate) {
+        lastExecutions.add(new Object[]{beforeUpdate});
+        lastExecutions.add(new Object[]{afterUpdate});
     }
 
     @BeforeRead
     public void beforeRead(ISpaceFilterEntry entry) {
-        lastExecutions.add(new Object[] {entry});
+        lastExecutions.add(new Object[]{entry});
     }
 
     @BeforeTake
     public void beforeTake(Message entry, int operationCode) {
-        lastExecutions.add(new Object[] {entry, operationCode});
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     public void clearExecutions() {

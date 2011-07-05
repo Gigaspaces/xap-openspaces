@@ -16,8 +16,10 @@
 
 package org.openspaces.itest.core.space.filter.adapter;
 
+import com.j_spaces.core.client.UpdateModifiers;
 import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
+import net.jini.core.lease.Lease;
 import org.openspaces.core.GigaSpace;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -44,7 +46,8 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
     }
 
     public void testWrite() {
-        Message message = new Message("test");
+        Message message = new Message(1);
+        message.setMessage("test");
         gigaSpace.write(message);
         assertEquals(1, simpleFilter.getLastExecutions().size());
         Object[] params = simpleFilter.getLastExecutions().get(0);
@@ -59,19 +62,41 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         params = simpleFilter.getLastExecutions().get(0);
         assertEquals(1, params.length);
         assertEquals("test", ((Echo) params[0]).getMessage());
+        gigaSpace.clear(null);
+    }
+
+    public void testUpdate() {
+        Message message = new Message(1);
+        message.setMessage("test");
+        message.setData("1");
+        gigaSpace.write(message);
+        assertEquals(1, simpleFilter.getLastExecutions().size());
+        Object[] params = simpleFilter.getLastExecutions().get(0);
+        assertEquals(1, params.length);
+        assertEquals("test", ((Message) params[0]).getMessage());
+        Message readMsg = gigaSpace.read(new Message("test"));
+        readMsg.setData("2");
+        gigaSpace.write(readMsg, Lease.FOREVER, 0, UpdateModifiers.UPDATE_ONLY);
+        assertEquals(5, simpleFilter.getLastExecutions().size());
+        params = simpleFilter.getLastExecutions().get(simpleFilter.getLastExecutions().size()-1);
+        assertEquals(1, params.length);
+        assertEquals("test", ((Message) params[0]).getMessage());
+        assertEquals("2", ((Message) params[0]).getData());
     }
 
     public void testRead() throws Exception {
-        Message message = new Message("test");
+        Message message = new Message(1);
+        message.setMessage("test");
         gigaSpace.read(message);
         assertEquals(1, simpleFilter.getLastExecutions().size());
         Object[] params = simpleFilter.getLastExecutions().get(0);
         assertEquals(1, params.length);
-        assertEquals("test", ((Message)((ISpaceFilterEntry) params[0]).getObject(gigaSpace.getSpace())).getMessage());
+        assertEquals("test", ((Message) ((ISpaceFilterEntry) params[0]).getObject(gigaSpace.getSpace())).getMessage());
     }
 
     public void testTake() {
-        Message message = new Message("test");
+        Message message = new Message(1);
+        message.setMessage("test");
         gigaSpace.take(message);
         assertEquals(1, simpleFilter.getLastExecutions().size());
         Object[] params = simpleFilter.getLastExecutions().get(0);

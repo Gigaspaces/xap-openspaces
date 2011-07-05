@@ -17,6 +17,7 @@
 package org.openspaces.itest.core.space.filter.adapter;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
+import com.gigaspaces.annotation.pojo.SpaceId;
 
 /**
  * @author kimchy
@@ -24,14 +25,29 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 @SpaceClass
 public class Message {
 
+    private Integer id;
     private String message;
+    private String data;
 
     public Message() {
         
     }
 
+    public Message(Integer id) {
+        this.id = id;
+    }
+
     public Message(String message) {
         this.message = message;
+    }
+
+    @SpaceId
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getMessage() {
@@ -40,5 +56,13 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }
