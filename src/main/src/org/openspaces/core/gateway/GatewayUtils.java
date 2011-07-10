@@ -3,6 +3,11 @@ package org.openspaces.core.gateway;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.openspaces.admin.pu.ProcessingUnitType;
+import org.openspaces.pu.service.ServiceDetails;
+
 public class GatewayUtils {
     /***
      * Checks is a post is available on the current machine, using new
@@ -32,5 +37,33 @@ public class GatewayUtils {
                 }
             }
         }
-    }       
+    }      
+    
+    public static boolean isPuInstanceOfGateway(final String gatewayName, ProcessingUnitInstance processingUnitInstance) {
+        if (processingUnitInstance.getProcessingUnit().getType() == ProcessingUnitType.GATEWAY){
+            ServiceDetails[] serviceDetails = processingUnitInstance.getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
+            if (serviceDetails != null && serviceDetails.length > 0){
+                if (((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName().equals(gatewayName)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String extractGatewayNameIfExists(ProcessingUnit processingUnit) {
+        if (processingUnit.getType() != ProcessingUnitType.GATEWAY)
+            return null;
+        
+        ProcessingUnitInstance[] instances = processingUnit.getInstances();
+        if (instances == null || instances.length == 0)
+            return null;
+        
+        ProcessingUnitInstance instance = instances[0];
+        ServiceDetails[] serviceDetails = instance.getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
+        if (serviceDetails == null || serviceDetails.length == 0)
+            return null;
+        
+        return ((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName();
+    }
 }
