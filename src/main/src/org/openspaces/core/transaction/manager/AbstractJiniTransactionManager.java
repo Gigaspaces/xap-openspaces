@@ -16,8 +16,6 @@
 
 package org.openspaces.core.transaction.manager;
 
-import net.jini.config.Configuration;
-import net.jini.config.ConfigurationException;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.LeaseDeniedException;
@@ -162,9 +160,8 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         }
         if (leaseRenewalConfig != null) {
             leaseRenewalManagers = new LeaseRenewalManager[leaseRenewalConfig.getPoolSize()];
-            for (int i = 0; i < leaseRenewalConfig.getPoolSize(); i++) {
-                leaseRenewalManagers[i] = new LeaseRenewalManager(new RenewalConfiguration(leaseRenewalConfig.getRenewRTT()));
-            }
+            for (int i = 0; i < leaseRenewalConfig.getPoolSize(); i++)
+                leaseRenewalManagers[i] = new LeaseRenewalManager(leaseRenewalConfig.getRenewRTT(), 2, null);
             logger.debug(logMessage("Creatred transaction manager with lease renewal pool [" + leaseRenewalConfig.getPoolSize() + "] and RTT [" + leaseRenewalConfig.getRenewRTT() + "]"));
         }
     }
@@ -469,36 +466,6 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             return null;
         }
 
-    }
-
-    private static final class RenewalConfiguration implements Configuration {
-
-        private Long _configRTT;
-
-        public RenewalConfiguration(long renewRTT) {
-            _configRTT = renewRTT;
-        }
-
-        public Object getEntry(String component, String name, Class type) throws ConfigurationException {
-            return getEntry(component, name, type, -1l, null);
-        }
-
-        public Object getEntry(String component, String name, Class type,
-                               Object defaultValue) throws ConfigurationException {
-            return getEntry(component, name, type, defaultValue, null);
-        }
-
-        public Object getEntry(String component, String name, Class type,
-                               Object defaultValue, Object data) throws ConfigurationException {
-
-            if (!component.equals("net.jini.lease.LeaseRenewalManager"))
-                return defaultValue;
-            if (name.equals("roundTripTime"))
-                return _configRTT;   // renewalRTT
-            if (name.equals("renewBatchTimeWindow"))
-                return 2l;     // renewBatchTimeWindow
-            return defaultValue;
-        }
     }
 
     protected String logMessage(String message) {
