@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspaces.pu.service.InvocableService;
+import org.openspaces.pu.service.ServiceDetails;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -20,7 +22,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
  * @since 8.0.3
  *
  */
-public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, InvocableService {
+public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, InvocableService, ServiceDetailsProvider {
 
     private String localSpaceUrl;
     private List<GatewaySource> gatewaySources;
@@ -187,5 +189,9 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         }   
         
         throw new UnsupportedOperationException("Only enableIncomingReplication and bootstrapFromGateway invocations are supported");
+    }
+
+    public ServiceDetails[] getServicesDetails() {
+        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), gatewaySources.toArray(new String[gatewaySources.size()]), requiresBootstrap, getLocalSpaceUrl())};
     }    
 }

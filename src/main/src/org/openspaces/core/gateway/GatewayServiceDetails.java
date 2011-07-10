@@ -17,7 +17,7 @@ import com.gigaspaces.internal.io.IOUtils;
  */
 public class GatewayServiceDetails extends PlainServiceDetails {
     
-    private static final String SERVICE_TYPE = "gateway";
+    public static final String SERVICE_TYPE = "gateway";
 
     private static final long serialVersionUID = 1L;
     
