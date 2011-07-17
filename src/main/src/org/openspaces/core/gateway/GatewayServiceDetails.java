@@ -23,6 +23,10 @@ public class GatewayServiceDetails extends PlainServiceDetails {
     
     private String _localGatewayName;
 
+    public GatewayServiceDetails() {
+        super();
+    }
+    
     public GatewayServiceDetails(String id, String subserviceType, String description, String longDescription, String localGatewayName) {
         super(id, SERVICE_TYPE, subserviceType, description, longDescription);
         _localGatewayName = localGatewayName;
