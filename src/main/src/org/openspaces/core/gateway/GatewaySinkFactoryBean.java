@@ -192,6 +192,16 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     }
 
     public ServiceDetails[] getServicesDetails() {
-        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), gatewaySources.toArray(new String[gatewaySources.size()]), requiresBootstrap, getLocalSpaceUrl())};
+        String[] gatewaySourcesNames = null;
+        if (gatewaySources != null) {
+            gatewaySourcesNames = new String[gatewaySources.size()];
+            int index = 0;
+            for (GatewaySource gatewaySource : gatewaySources) {
+                gatewaySourcesNames[index++] = gatewaySource.getName();
+            }
+        } else {
+            gatewaySourcesNames = new String[0];
+        }
+        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), gatewaySourcesNames, requiresBootstrap, getLocalSpaceUrl())};
     }    
 }
