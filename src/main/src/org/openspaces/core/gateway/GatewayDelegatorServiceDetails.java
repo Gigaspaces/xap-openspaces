@@ -16,6 +16,12 @@ public class GatewayDelegatorServiceDetails extends GatewayServiceDetails {
     private static final long serialVersionUID = 1L;
     private GatewayDelegation[] _delegationTargets;
     
+    /**
+     * For {@link java.io.Externalizable}
+     */
+    public GatewayDelegatorServiceDetails() {
+    }
+    
     public GatewayDelegatorServiceDetails(String localGatewayName, GatewayDelegation[] gatewayDelegations) {
         super(localGatewayName + "-delegator", "gateway-delegator", "gateway delegator (" + localGatewayName + ")", "gateway delegator (" + localGatewayName + ")", localGatewayName);
         _delegationTargets = gatewayDelegations;
