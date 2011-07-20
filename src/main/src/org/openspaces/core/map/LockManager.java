@@ -187,12 +187,16 @@ public class LockManager {
         // now check globally
         Envelope ee = getTemplate(key, uid);
         try {
-            Object lockEntry = masterSpace.read(ee, null, 0, ReadModifiers.DIRTY_READ | ReadModifiers.MATCH_BY_ID);
-            if (lockEntry == null) {
+            Object lockEntry = masterSpace.readIfExists(ee, null, 0, ReadModifiers.MATCH_BY_ID);
+            if (lockEntry != null) { // released
                 return false;
             }
-        } catch (Exception e) {
+        } 
+        catch(EntryNotInSpaceException en){
             return false;
+        }
+        catch (Exception e) {
+            return true;
         } finally {
             releaseTemplate(ee);
         }
@@ -213,9 +217,9 @@ public class LockManager {
         }
 
         try {
-            tr.commit();
+            tr.abort();
         } catch (Exception e) {
-            logger.warn("Failed to commit transaction and unlocking the object, ignoring", e);
+            logger.warn("Failed to abort transaction and unlocking the object, ignoring", e);
         } finally {
             lockedUIDHashMap.remove(uid);
         }
