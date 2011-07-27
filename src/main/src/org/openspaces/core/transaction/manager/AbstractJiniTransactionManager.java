@@ -392,7 +392,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             return new RemoteAccessException("Lease denied", exception);
         }
 
-        if (exception instanceof TransactionException) {
+        if (exception instanceof TransactionException || exception instanceof net.jini.core.transaction.TransactionException) {
             return new TransactionSystemException(exception.getMessage(), exception);
         }
 
@@ -414,9 +414,17 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                     exception);
         }
 
-        return new TransactionException("unexpected exception ", exception) {
-            private static final long serialVersionUID = -2829436028739682240L;
-        };
+        return new UnexpectedTransactionException(exception);
+    }
+    
+    
+    public static class UnexpectedTransactionException extends TransactionException{
+        
+        private static final long serialVersionUID = 1L;
+
+        public UnexpectedTransactionException(Exception cause){
+            super("unexpected exception ", cause);
+        }
     }
 
     /**
