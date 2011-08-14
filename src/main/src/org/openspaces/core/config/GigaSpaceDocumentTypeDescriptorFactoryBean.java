@@ -78,6 +78,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
             
             if(_documentWrapperClassName != null)
             {
+                _documentWrapperClassName = _documentWrapperClassName.trim();
                 Class<? extends SpaceDocument> documentWrapperClass = ClassLoaderHelper.loadClass(_documentWrapperClassName);
                 typeDescriptorBuilder.documentWrapperClass(documentWrapperClass);
             }
