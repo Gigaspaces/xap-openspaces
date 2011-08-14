@@ -16,6 +16,7 @@
 
 package org.openspaces.core.config;
 
+import org.openspaces.core.transaction.config.DistributedTransactionProcessingConfigurationBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -56,5 +57,6 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("annotation-support", new AnnotationSupportBeanDefinitionParser());
         registerBeanDefinitionParser("space-type", new GigaSpaceDocumentTypeBeanDefinitionParser());
         registerBeanDefinitionParser("mirror", new MirrorSpaceBeanDefinitionParser());
+        registerBeanDefinitionParser("tx-support", new DistributedTransactionProcessingConfigurationBeanDefinitionParser());
     }
 }

@@ -3,6 +3,7 @@ package org.openspaces.core.gateway;
 import java.util.List;
 import java.util.Map;
 
+import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -31,6 +32,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private SinkErrorHandlingFactoryBean errorHandlingConfiguration;
     private Long transactionTimeout;
     private Long localSpaceLookupTimeout;
+    private DistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration;
 
     public GatewaySinkFactoryBean() {
     }
@@ -129,6 +131,22 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         return localSpaceLookupTimeout;
     }
 
+    /**
+     * Gets distributed transaction processing configuration for the Sink component.
+     * @return Distributed transaction processing configuration.
+     */
+    public DistributedTransactionProcessingConfigurationFactoryBean getDistributedTransactionProcessingConfiguration() {
+        return transactionProcessingConfiguration;
+    }
+    
+    /**
+     * Sets the distributed transaction processing configuration for the Sink component.
+     * @param transactionProcessingConfiguration The distributed transaction processing configuration to set.
+     */
+    public void setDistributedTransactionProcessingConfiguration(DistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration) {
+        this.transactionProcessingConfiguration = transactionProcessingConfiguration;
+    }
+    
     @Override
     protected void afterPropertiesSetImpl(){
         LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
@@ -152,6 +170,8 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             ReplicationLookupParameters lookupParameters = getGatewayLookups().asReplicationLookupParameters();
             config.setGatewayLookupParameters(lookupParameters);
         }
+        if (transactionProcessingConfiguration != null)
+            transactionProcessingConfiguration.copyParameters(config.getTransactionProcessingParameters());
         // TODO WAN: add finder timeout
         localClusterReplicationSink = new LocalClusterReplicationSink(config); 
     }
@@ -203,5 +223,6 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             gatewaySourcesNames = new String[0];
         }
         return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), gatewaySourcesNames, requiresBootstrap, getLocalSpaceUrl())};
-    }    
+    }
+    
 }

@@ -32,6 +32,7 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     private static final String TRANSACTION_TIMEOUT = "tx-timeout";
     private static final String LOOKUP_TIMEOUT = "local-space-lookup-timeout";
     private static final String COMMUNICATION_PORT = "communication-port";
+    private static final String TRANSACTION_SUPPORT = "tx-support";
     
     @Override
     protected Class<GatewaySinkFactoryBean> getBeanClass(Element element) {
@@ -90,6 +91,14 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         {
             Object errorHandlingConfiguration = parserContext.getDelegate().parsePropertySubElement(errorHandlingElement, builder.getRawBeanDefinition());
             builder.addPropertyValue("errorHandlingConfiguration", errorHandlingConfiguration);
+        }
+        
+        // Distributed transaction processing parameters (since 8.0.4)
+        final Element transactionProcessingConfigurationElement = DomUtils.getChildElementByTagName(element,
+                TRANSACTION_SUPPORT);
+        if (transactionProcessingConfigurationElement != null) {
+            Object transactionProcessingConfiguration = parserContext.getDelegate().parsePropertySubElement(transactionProcessingConfigurationElement, builder.getRawBeanDefinition());
+            builder.addPropertyValue("distributedTransactionProcessingConfiguration", transactionProcessingConfiguration);
         }
         
     }

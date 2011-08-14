@@ -421,6 +421,31 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
+					    <xsd:element name="tx-support" minOccurs="0" maxOccurs="1">
+					       	<xsd:annotation>
+					    		<xsd:documentation>
+					    			Configures distributed transaction processing configuration for the Mirror component. 
+								</xsd:documentation>
+					    	</xsd:annotation>
+					    	<xsd:complexType>
+						    	<xsd:attribute name="dist-tx-wait-timeout-millis" type="xsd:string" use="optional">
+							       	<xsd:annotation>
+							    		<xsd:documentation>
+											Sets the timeout (in milliseconds) for distributed transaction partial
+											participants commit.
+										</xsd:documentation>
+							    	</xsd:annotation>
+						    	</xsd:attribute>
+						    	<xsd:attribute name="dist-tx-wait-for-opers" type="xsd:string" use="optional">
+							       	<xsd:annotation>
+							    		<xsd:documentation>
+											Sets the number of operations to wait until distributed transaction
+											partial participants commit.
+										</xsd:documentation>
+							    	</xsd:annotation>
+						    	</xsd:attribute>
+					    	</xsd:complexType>
+					    </xsd:element>
                    </xsd:choice>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>

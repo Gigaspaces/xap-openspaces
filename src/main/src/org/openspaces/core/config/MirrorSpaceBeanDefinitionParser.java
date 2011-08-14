@@ -41,6 +41,7 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String SOURCE_SPACE = "source-space";
     public static final String OPERATION_GROUPING = "operation-grouping";
     public static final String PROPERTIES = "properties";
+    public static final String TRANSACTION_SUPPORT = "tx-support";
 
     @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
@@ -73,6 +74,7 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
             properties.put(Constants.Mirror.FULL_MIRROR_SERVICE_OPERATION_GROUPING_TAG, operationGrouping);
         }
         
+        
         //parse the source-space element
         Element sourceSpaceEle = DomUtils.getChildElementByTagName(element, SOURCE_SPACE);
         if (sourceSpaceEle != null) {
@@ -104,6 +106,14 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
             Object eds = parserContext.getDelegate().parsePropertyValue(edsEle,
                             builder.getRawBeanDefinition(), "externalDataSource");
             builder.addPropertyValue("externalDataSource", eds);
+        }
+        
+        // Distributed transaction processing parameters (since 8.0.4)
+        final Element transactionProcessingConfigurationElement = DomUtils.getChildElementByTagName(element,
+                TRANSACTION_SUPPORT);
+        if (transactionProcessingConfigurationElement != null) {
+            Object transactionProcessingConfiguration = parserContext.getDelegate().parsePropertySubElement(transactionProcessingConfigurationElement, builder.getRawBeanDefinition());
+            builder.addPropertyValue("distributedTransactionProcessingConfiguration", transactionProcessingConfiguration);
         }
         
     }

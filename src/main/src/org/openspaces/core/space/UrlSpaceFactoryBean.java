@@ -42,6 +42,7 @@ import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -133,6 +134,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private CachePolicy cachePolicy;
 
     private GatewayTargetsFactoryBean gatewayTargets;
+    
+    private DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration;
 
     private final boolean enableExecutorInjection = true;
 
@@ -537,6 +540,21 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(Constants.Replication.REPLICATION_GATEWAYS, gatewayTargets.asGatewaysPolicy());
             }
             
+            if (distributedTransactionProcessingConfiguration != null) {
+                if (SpaceUtils.isRemoteProtocol(url)) {
+                    throw new IllegalArgumentException("Distributed transaction processing configuration can only be used with an embedded Space");
+                }
+                if (schema == null || !schema.equalsIgnoreCase(Constants.Schemas.MIRROR_SCHEMA)) {
+                    throw new IllegalStateException("Distributed transaction processing configuration can only be set for a Mirror component");
+                }
+                if (distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout() != null)
+                    props.put(Constants.Mirror.FULL_MIRROR_DISTRIBUTED_TRANSACTION_TIMEOUT,
+                            distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout().toString());
+                if (distributedTransactionProcessingConfiguration.getDistributedTransactionWaitForOperations() != null)
+                    props.put(Constants.Mirror.FULL_MIRROR_DISTRIBUTED_TRANSACTION_WAIT_FOR_OPERATIONS,
+                            distributedTransactionProcessingConfiguration.getDistributedTransactionWaitForOperations().toString());
+            }
+            
             if (logger.isDebugEnabled()) {
                 logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
             }
@@ -574,7 +592,16 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
         this.gatewayTargets = gatewayTargets;
     }
-    
+
+    /**
+     * Sets the distributed transaction processing configuration for the Mirror component.
+     * @param transactionProcessingConfiguration The distributed transaction processing configuration to set.
+     */
+    public void setDistributedTransactionProcessingConfiguration(
+            DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
+        this.distributedTransactionProcessingConfiguration = distributedTransactionProcessingConfiguration;
+    }
+
     private class ExecutorFilterProviderFactory implements FilterProviderFactory {
 
         public FilterProvider getFilterProvider() {
