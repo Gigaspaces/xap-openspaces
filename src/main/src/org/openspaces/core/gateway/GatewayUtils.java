@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
-import org.openspaces.admin.pu.ProcessingUnitType;
 import org.openspaces.pu.service.ServiceDetails;
 
 public class GatewayUtils {
