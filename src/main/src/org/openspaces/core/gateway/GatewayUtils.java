@@ -40,36 +40,30 @@ public class GatewayUtils {
     }      
     
     public static boolean isPuInstanceOfGateway(final String gatewayName, ProcessingUnitInstance processingUnitInstance) {
-        if (processingUnitInstance.getProcessingUnit().getType() == ProcessingUnitType.GATEWAY){
-            ServiceDetails[] serviceDetails = processingUnitInstance.getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
-            if (serviceDetails != null && serviceDetails.length > 0){
-                if (((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName().equals(gatewayName)){
-                    return true;
-                }
+        ServiceDetails[] serviceDetails = processingUnitInstance.getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
+        if (serviceDetails != null && serviceDetails.length > 0){
+            if (((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName().equals(gatewayName)){
+                return true;
             }
         }
+        
         return false;
     }
     
     public static ProcessingUnitInstance extractInstanceIfPuOfGateway(String gatewayName, ProcessingUnit processingUnit) {
-        if (processingUnit.getType() == ProcessingUnitType.GATEWAY){
-            ProcessingUnitInstance[] instances = processingUnit.getInstances();
-            if (instances == null || instances.length == 0)
-                return null;
-            ServiceDetails[] serviceDetails = instances[0].getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
-            if (serviceDetails != null && serviceDetails.length > 0){
-                if (((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName().equals(gatewayName)){
-                    return instances[0];
-                }
+        ProcessingUnitInstance[] instances = processingUnit.getInstances();
+        if (instances == null || instances.length == 0)
+            return null;
+        ServiceDetails[] serviceDetails = instances[0].getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
+        if (serviceDetails != null && serviceDetails.length > 0){
+            if (((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName().equals(gatewayName)){
+                return instances[0];
             }
         }
         return null;
     }
 
     public static String extractGatewayNameIfExists(ProcessingUnit processingUnit) {
-        if (processingUnit.getType() != ProcessingUnitType.GATEWAY)
-            return null;
-        
         ProcessingUnitInstance[] instances = processingUnit.getInstances();
         if (instances == null || instances.length == 0)
             return null;
