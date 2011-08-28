@@ -120,6 +120,7 @@ public class LockManager {
                 throw new SpaceTimeoutException("Failed waiting for lock on key [" + key + "]");
             }
         } catch (EntryNotInSpaceException e) {
+            // TODO GS-9310: design and implement a solution for locking non-existent keys.
             map.put(key, EMPTY_LOCK_VALUE, tr, Integer.MAX_VALUE);
         } catch (SpaceTimeoutException e) {
             try {
@@ -217,9 +218,9 @@ public class LockManager {
         }
 
         try {
-            tr.abort();
+            tr.commit();
         } catch (Exception e) {
-            logger.warn("Failed to abort transaction and unlocking the object, ignoring", e);
+            logger.warn("Failed to commit transaction and unlocking the object, ignoring", e);
         } finally {
             lockedUIDHashMap.remove(uid);
         }
