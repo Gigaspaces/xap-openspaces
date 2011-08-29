@@ -492,6 +492,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> T[] readMultiple(ISpaceQuery<T> template) throws DataAccessException {
+        return readMultiple(template, Integer.MAX_VALUE);
+    }
+    
     public <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getModifiersForIsolationLevel());
     }
@@ -734,6 +738,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    public <T> T[] takeMultiple(ISpaceQuery<T> template) throws DataAccessException {
+            return takeMultiple(template, Integer.MAX_VALUE);
+    }
+    
     @SuppressWarnings("unchecked")
     public <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException {
         try {

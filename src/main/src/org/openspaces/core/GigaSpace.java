@@ -1025,17 +1025,30 @@ public interface GigaSpace {
      */
     <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException;
 
+    
+    /**
+     * Read any matching entries from the space. Matching is done as in
+     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * unbounded array of matches. Returns an
+     * empty array if no match was found.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.     
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
+     * @return A copy of the entries read from the space.
+     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] readMultiple(ISpaceQuery<T> template) throws DataAccessException;
+    
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
      *
-     * @param template   The template used for matching. Matching is done against
-     *                   the template with <code>null</code> fields being.
-     *                   wildcards ("match anything") other fields being values ("match
-     *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @throws DataAccessException In the event of a read error, DataAccessException will
@@ -1084,11 +1097,8 @@ public interface GigaSpace {
      * are used to define the behavior of a read operation.
      *
      * 
-     * @param template   The template used for matching. Matching is done against
-     *                   the template with <code>null</code> fields being.
-     *                   wildcards ("match anything") other fields being values ("match
-     *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.  
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
@@ -1983,11 +1993,22 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * @param template   The template used for matching. Matching is done against
-     *                   the template with <code>null</code> fields being.
-     *                   wildcards ("match anything") other fields being values ("match
-     *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.  
+     *                 
+     * @return Removed matched entries from the space
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
+     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     */
+    <T> T[] takeMultiple(ISpaceQuery<T> template) throws DataAccessException;
+    
+    /**
+     * Takes (removes) all the entries matching the specified template from this
+     * space.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.  
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
@@ -2021,12 +2042,8 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * 
-     * @param template   The template used for matching. Matching is done against
-     *                   the template with <code>null</code> fields being.
-     *                   wildcards ("match anything") other fields being values ("match
-     *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.  
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers one of {@link TakeModifiers}
