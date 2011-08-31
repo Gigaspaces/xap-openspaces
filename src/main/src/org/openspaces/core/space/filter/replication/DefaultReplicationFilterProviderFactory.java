@@ -45,6 +45,7 @@ public class DefaultReplicationFilterProviderFactory extends AbstractReplication
         this.outputFilter = outputFilter;
     }
 
+    @Override
     protected ReplicationFilterProvider doCreateReplicationFilterProvider() {
         if (inputFilter == null && outputFilter == null) {
             throw new IllegalArgumentException("Either input filter or output filter must be set");

@@ -108,6 +108,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     /**
      * Used to pass the {@link BeanLevelProperties} to the newly created application context.
      */
+    @Override
     public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
         this.beanLevelProperties = beanLevelProperties;
     }
@@ -115,6 +116,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
     /**
      * Used to pass {@link ClusterInfo} to the newly created application context.
      */
+    @Override
     public void setClusterInfo(ClusterInfo clusterInfo) {
         this.clusterInfo = clusterInfo;
     }
@@ -123,20 +125,24 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      * Injected by Spring and used as the parent application context for the newly created
      * application context.
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.parentApplicationContext = applicationContext;
     }
 
+    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         if (!activeWhenPrimary) {
             loadApplicationContext();
         }
     }
 
+    @Override
     public void destroy() throws Exception {
         closeApplicationContext();
     }
@@ -145,6 +151,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      * If {@link #setActiveWhenPrimary(boolean)} is set to <code>true</code> (the default) will
      * listens for {@link AfterSpaceModeChangeEvent} and load an application context if received.
      */
+    @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (activeWhenPrimary) {
             if (applicationEvent instanceof AfterSpaceModeChangeEvent) {

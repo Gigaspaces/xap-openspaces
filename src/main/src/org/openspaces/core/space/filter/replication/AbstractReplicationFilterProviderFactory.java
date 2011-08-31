@@ -42,6 +42,7 @@ public abstract class AbstractReplicationFilterProviderFactory implements Replic
         this.shutdownSpaceOnInitFailure = shutdownSpaceOnInitFailure;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         replicationFilterProvider = doCreateReplicationFilterProvider();
         replicationFilterProvider.setActiveWhenBackup(activeWhenBackup);
@@ -55,6 +56,7 @@ public abstract class AbstractReplicationFilterProviderFactory implements Replic
      */
     protected abstract ReplicationFilterProvider doCreateReplicationFilterProvider();
 
+    @Override
     public ReplicationFilterProvider getFilterProvider() {
         return this.replicationFilterProvider;
     }

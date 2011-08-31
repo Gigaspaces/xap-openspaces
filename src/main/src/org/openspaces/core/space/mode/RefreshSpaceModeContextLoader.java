@@ -36,11 +36,13 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
 
     private ClassLoader childAppContextClassLoader;
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         classLoader = Thread.currentThread().getContextClassLoader();
         super.afterPropertiesSet();
     }
 
+    @Override
     protected void loadApplicationContext() throws Exception {
         if (applicationContext != null) {
             return;
@@ -72,6 +74,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
         }
     }
 
+    @Override
     protected void closeApplicationContext() {
         ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(childAppContextClassLoader);
@@ -82,6 +85,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
         }
     }
 
+    @Override
     public void refresh() throws Exception {
         closeApplicationContext();
         loadApplicationContext();

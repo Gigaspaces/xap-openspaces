@@ -41,6 +41,7 @@ public class BeforeSpaceModeChangeEvent extends AbstractSpaceModeChangeEvent {
         super(space, spaceMode);
     }
 
+    @Override
     public String toString() {
         return "BeforeSpaceModeChangeEvent[" + getSpaceMode() + "], Space [" + getSpace() + "]";
     }

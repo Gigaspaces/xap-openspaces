@@ -103,6 +103,7 @@ public abstract class AbstractFilterProviderFactoryBean implements InitializingB
      * Sets the bean name thanks to Spring {@link org.springframework.beans.factory.BeanNameAware}.
      * Used as the filter name.
      */
+    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }
@@ -118,6 +119,7 @@ public abstract class AbstractFilterProviderFactoryBean implements InitializingB
      * <p>Note, subclasses will need to initialize the filter provider with the relevant
      * operation codes it will listen on.
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(filter, "filter property is required");
         this.filterProvider = doGetFilterProvider();
@@ -138,6 +140,7 @@ public abstract class AbstractFilterProviderFactoryBean implements InitializingB
      */
     protected abstract FilterProvider doGetFilterProvider() throws IllegalArgumentException;
 
+    @Override
     public FilterProvider getFilterProvider() {
         return this.filterProvider;
     }

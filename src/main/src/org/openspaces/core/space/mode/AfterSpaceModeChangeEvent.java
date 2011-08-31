@@ -41,6 +41,7 @@ public class AfterSpaceModeChangeEvent extends AbstractSpaceModeChangeEvent {
         super(space, spaceMode);
     }
 
+    @Override
     public String toString() {
         return "AfterSpaceModeChangeEvent[" + getSpaceMode() + "], Space [" + getSpace() + "]";
     }

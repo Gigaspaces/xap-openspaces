@@ -87,6 +87,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
      * If {@link #setInitMethod(java.lang.reflect.Method) initMethod} is supplied, will invoke it.
      * The method signature can have no parameters or can have a single {@link com.j_spaces.core.IJSpace}.
      */
+    @Override
     public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
         this.space = space;
         if (initMethod == null) {
@@ -109,6 +110,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
      * Fetch a {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} based on the operation
      * code. If found, delegates to its process method.
      */
+    @Override
     public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
         FilterOperationDelegateInvoker invoker = invokerLookup.get(operationCode);
         if (invoker != null) {
@@ -120,6 +122,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
      * Fetch a {@link org.openspaces.core.space.filter.FilterOperationDelegateInvoker} based on the operation
      * code. If found, delegates to its process method.
      */
+    @Override
     public void process(SpaceContext context, ISpaceFilterEntry[] entries, int operationCode) throws RuntimeException {
         FilterOperationDelegateInvoker invoker = invokerLookup.get(operationCode);
         if (invoker != null) {
@@ -131,6 +134,7 @@ public class FilterOperationDelegate implements ISpaceFilter {
      * If {@link #setCloseMethod(java.lang.reflect.Method) closeMethod} is supplied, will invoke it.
      * The method signature should have no parameters.
      */
+    @Override
     public void close() throws RuntimeException {
         if (closeMethod == null) {
             return;

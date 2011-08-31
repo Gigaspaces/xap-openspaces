@@ -50,9 +50,11 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
      * Creates an operation code to filter invoker map based on the {@link #getFilter()}
      * delegate and its annotated methods.
      */
+    @Override
     protected Map<Integer, FilterOperationDelegateInvoker> doGetInvokerLookup() {
         final Map<Integer, FilterOperationDelegateInvoker> invokerLookup = new HashMap<Integer, FilterOperationDelegateInvoker>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
+            @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 if (method.isAnnotationPresent(BeforeAuthentication.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_AUTHENTICATION);
@@ -122,9 +124,11 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
     /**
      * Returns the filter lifecycle method annotated with {@link OnFilterInit}.
      */
+    @Override
     protected Method doGetInitMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
+            @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 if (method.isAnnotationPresent(OnFilterInit.class)) {
                     ref.set(method);
@@ -137,9 +141,11 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
     /**
      * Returns the filter lifecycle method annotated with {@link OnFilterClose}.
      */
+    @Override
     protected Method doGetCloseMethod() {
         final AtomicReference<Method> ref = new AtomicReference<Method>();
         ReflectionUtils.doWithMethods(getFilter().getClass(), new ReflectionUtils.MethodCallback() {
+            @Override
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 if (method.isAnnotationPresent(OnFilterClose.class)) {
                     ref.set(method);
