@@ -20,11 +20,47 @@
 		<xsd:complexType>
             <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
-		    <xsd:sequence>
-		      <xsd:element name="delegation" minOccurs="1" maxOccurs="unbounded">
+		    <xsd:choice>
+				<xsd:element name="delegations" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+			            <xsd:complexContent>
+			            <xsd:extension base="beans:identifiedType">
+					    <xsd:choice>
+							<xsd:element name="delegation" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>
+										Specifies delegation to a target site with an option to delegate through
+										another site.
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:attribute name="target" type="xsd:string" use="required">
+										<xsd:annotation>
+											<xsd:documentation>
+												Specifies the gateway target name for a delegation.
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="delegate-through" type="xsd:string"
+										use="optional">
+										<xsd:annotation>
+											<xsd:documentation>
+												Specifies a gateway name to delegate through.
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+					    </xsd:choice>
+			          </xsd:extension>
+			          </xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>		  
+		      <xsd:element name="delegation" minOccurs="0" maxOccurs="unbounded">
 		      	<xsd:annotation>
 		      		<xsd:documentation>
 		      			Specifies delegation to a target site with an option to delegate through another site.
+		      			Deprecated since 8.0.4 - use delegations tag instead.
 		      		</xsd:documentation>
 		      	</xsd:annotation>
 				<xsd:complexType>
@@ -45,9 +81,11 @@
 				</xsd:complexType>
 			</xsd:element>
 			<xsd:element name="security" minOccurs="0" maxOccurs="1">
-				<documentation>
-					Security login information used for secured space authentication & performing admin operations by the Delegator component. 
-				</documentation>
+				<xsd:annotation>
+				<xsd:documentation>
+					Security login information used for secured space authentication and performing admin operations by the Delegator component. 
+				</xsd:documentation>
+				</xsd:annotation>
 				<xsd:complexType>
 					<xsd:attribute name="username" type="xsd:string">
 						<xsd:annotation>
@@ -66,13 +104,13 @@
 					<xsd:attribute name="user-details" type="xsd:string">
 						<xsd:annotation>
 							<xsd:documentation>
-								User details bean reference containing username & password used for authentication.
+								User details bean reference containing username and password used for authentication.
 							</xsd:documentation>
 						</xsd:annotation>												
 					</xsd:attribute>
 				</xsd:complexType>
 	        </xsd:element>		      
-		    </xsd:sequence>
+		    </xsd:choice>
 				<xsd:attribute name="local-gateway-name" type="xsd:string" use="required">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -120,7 +158,7 @@
 		<xsd:complexType>
             <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
-		    <xsd:sequence>
+		    <xsd:choice>
 		      <xsd:element name="target" minOccurs="1" maxOccurs="unbounded">
 				<xsd:complexType>
 				<xsd:attribute name="name" type="xsd:string" use="required">
@@ -174,7 +212,7 @@
 				</xsd:attribute>
 				</xsd:complexType>
 		      </xsd:element>
-		    </xsd:sequence>
+		    </xsd:choice>
 			<xsd:attribute name="local-gateway-name" type="xsd:string" use="required">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -244,7 +282,7 @@
 		<xsd:complexType>
             <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
-		    <xsd:sequence>
+		    <xsd:choice>
 		      <xsd:element name="lookup" minOccurs="0" maxOccurs="unbounded">
 				<xsd:complexType>
 				<xsd:attribute name="gateway-name" type="xsd:string" use="required">
@@ -277,7 +315,7 @@
 				</xsd:attribute>
 				</xsd:complexType>
 		      </xsd:element>
-		    </xsd:sequence>
+		    </xsd:choice>
 			<xsd:attribute name="lookup-group" type="xsd:string" use="optional" />
           </xsd:extension>
           </xsd:complexContent>
@@ -293,7 +331,7 @@
 		<xsd:complexType>
     	    <xsd:complexContent>
         	<xsd:extension base="beans:identifiedType">
-        	<xsd:sequence>
+        	<xsd:choice>
 			    <xsd:element name="sources">
 			    	<xsd:annotation>
 			    		<xsd:documentation>
@@ -303,7 +341,7 @@
 					<xsd:complexType>
 			            <xsd:complexContent>
 			            <xsd:extension base="beans:identifiedType">
-					    <xsd:sequence>
+					    <xsd:choice>
 					      <xsd:element name="source" minOccurs="1" maxOccurs="unbounded">
 					    	<xsd:annotation>
 					    		<xsd:documentation>
@@ -320,7 +358,7 @@
 							</xsd:attribute>
 							</xsd:complexType>
 					      </xsd:element>
-					    </xsd:sequence>
+					    </xsd:choice>
 			          </xsd:extension>
 			          </xsd:complexContent>
 					</xsd:complexType>
@@ -384,9 +422,11 @@
 			    	</xsd:complexType>
 			    </xsd:element>
 				<xsd:element name="security" minOccurs="0" maxOccurs="1">
-					<documentation>
-						Security login information used for secured space authentication & performing admin operations by the Sink component. 
-					</documentation>
+					<xsd:annotation>
+					<xsd:documentation>
+						Security login information used for secured space authentication and performing admin operations by the Sink component. 
+					</xsd:documentation>
+					</xsd:annotation>
 					<xsd:complexType>
 						<xsd:attribute name="username" type="xsd:string">
 							<xsd:annotation>
@@ -405,13 +445,13 @@
 						<xsd:attribute name="user-details" type="xsd:string">
 							<xsd:annotation>
 								<xsd:documentation>
-									User details bean reference containing username & password used for authentication.
+									User details bean reference containing username and password used for authentication.
 								</xsd:documentation>
 							</xsd:annotation>												
 						</xsd:attribute>
 					</xsd:complexType>
 		        </xsd:element>		      
-   	    	</xsd:sequence>
+   	    	</xsd:choice>
 			<xsd:attribute name="local-gateway-name" type="xsd:string" use="required">
 		       	<xsd:annotation>
 		    		<xsd:documentation>
