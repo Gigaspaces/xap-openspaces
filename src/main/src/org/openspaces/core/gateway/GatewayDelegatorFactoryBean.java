@@ -2,6 +2,7 @@ package org.openspaces.core.gateway;
 
 import java.util.List;
 
+import org.openspaces.core.space.SecurityConfig;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.DisposableBean;
@@ -15,7 +16,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupPa
 /**
  * A gateway delegator factory bean for creating a {@link ReplicationConnectionDelegatorContainer}.
  * 
- * @author Idan Moyal
+ * @author idan
  * @since 8.0.3
  *
  */
@@ -46,7 +47,7 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
      * Initializes a {@link ReplicationConnectionDelegatorContainer} using the provided bean's properties.
      */
     @Override
-    protected void afterPropertiesSetImpl() {
+    protected void afterPropertiesSetImpl(SecurityConfig securityConfig) {
         
         ReplicationConnectionDelegatorConfig config = new ReplicationConnectionDelegatorConfig(getLocalGatewayName());
         config.setStartLookupService(isStartEmbeddedLus());

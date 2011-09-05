@@ -3,6 +3,7 @@ package org.openspaces.core.gateway.config;
 import java.util.List;
 
 import org.openspaces.core.gateway.GatewaySinkFactoryBean;
+import org.openspaces.core.space.SecurityConfig;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -13,7 +14,7 @@ import org.w3c.dom.Element;
 /**
  * A bean definition parser for {@link GatewaySinkFactoryBean}.
  * 
- * @author Idan Moyal
+ * @author idan
  * @since 8.0.3
  *
  */
@@ -33,6 +34,10 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     private static final String LOOKUP_TIMEOUT = "local-space-lookup-timeout";
     private static final String COMMUNICATION_PORT = "communication-port";
     private static final String TRANSACTION_SUPPORT = "tx-support";
+    private static final String SECURITY = "security";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String USER_DETAILS = "user-details";
     
     @Override
     protected Class<GatewaySinkFactoryBean> getBeanClass(Element element) {
@@ -87,8 +92,7 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         builder.addPropertyValue("gatewaySources", sources);
         
         Element errorHandlingElement = DomUtils.getChildElementByTagName(element, ERROR_HANDLING);        
-        if (errorHandlingElement != null)
-        {
+        if (errorHandlingElement != null) {
             Object errorHandlingConfiguration = parserContext.getDelegate().parsePropertySubElement(errorHandlingElement, builder.getRawBeanDefinition());
             builder.addPropertyValue("errorHandlingConfiguration", errorHandlingConfiguration);
         }
@@ -99,6 +103,25 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
         if (transactionProcessingConfigurationElement != null) {
             Object transactionProcessingConfiguration = parserContext.getDelegate().parsePropertySubElement(transactionProcessingConfigurationElement, builder.getRawBeanDefinition());
             builder.addPropertyValue("distributedTransactionProcessingConfiguration", transactionProcessingConfiguration);
+        }
+        
+        // Security - since 8.0.4
+        final Element securityElement = DomUtils.getChildElementByTagName(element, SECURITY);
+        if (securityElement != null) {
+            final String username = securityElement.getAttribute(USERNAME);
+            final String password = securityElement.getAttribute(PASSWORD);
+            if (StringUtils.hasText(username)) {
+                SecurityConfig securityConfig = new SecurityConfig();
+                securityConfig.setUsername(username);
+                if (StringUtils.hasText(password)) {
+                    securityConfig.setPassword(password);
+                }
+                builder.addPropertyValue("securityConfig", securityConfig);
+            }
+            final String userDetailsRef = securityElement.getAttribute(USER_DETAILS);
+            if (StringUtils.hasText(userDetailsRef)) {
+                builder.addPropertyReference("userDetails", userDetailsRef);
+            }
         }
         
     }

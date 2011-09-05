@@ -3,6 +3,7 @@ package org.openspaces.core.gateway;
 import java.util.List;
 import java.util.Map;
 
+import org.openspaces.core.space.SecurityConfig;
 import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetails;
@@ -19,7 +20,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplic
  * A sink factory bean for creating a {@link LocalClusterReplicationSink} which
  * represents a gateway sink component.
  * 
- * @author Idan Moyal
+ * @author idan
  * @since 8.0.3
  *
  */
@@ -33,7 +34,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private Long transactionTimeout;
     private Long localSpaceLookupTimeout;
     private DistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration;
-
+    
     public GatewaySinkFactoryBean() {
     }
 
@@ -148,7 +149,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     }
     
     @Override
-    protected void afterPropertiesSetImpl(){
+    protected void afterPropertiesSetImpl(SecurityConfig securityConfig){
         LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
         config.setLocalClusterSpaceUrl(localSpaceUrl);
         config.setStartLookupService(isStartEmbeddedLus());
@@ -172,7 +173,8 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         }
         if (transactionProcessingConfiguration != null)
             transactionProcessingConfiguration.copyParameters(config.getTransactionProcessingParameters());
-        // TODO WAN: add finder timeout
+        if (securityConfig != null)
+            config.setUserDetails(securityConfig.toUserDetails());
         localClusterReplicationSink = new LocalClusterReplicationSink(config); 
     }
 

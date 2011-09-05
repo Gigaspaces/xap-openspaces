@@ -1,5 +1,8 @@
 package org.openspaces.core.gateway;
 
+import java.rmi.MarshalledObject;
+import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.Admin;
@@ -8,23 +11,28 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
+import org.openspaces.core.space.SecurityConfig;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import com.gigaspaces.internal.license.LicenseException;
 import com.gigaspaces.internal.license.LicenseManager;
 import com.gigaspaces.internal.utils.StringUtils;
 import com.gigaspaces.lrmi.ProtocolAdapter;
+import com.gigaspaces.security.directory.UserDetails;
+import com.j_spaces.core.Constants;
 
 /**
  * Base class for replication gateway components.
  * 
- * @author Idan Moyal
+ * @author idan
  * @author eitany
  * @since 8.0.3
  *
  */
-public abstract class AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, ClusterInfoAware, ProcessingUnitInstanceAddedEventListener {
+public abstract class AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, ClusterInfoAware, ProcessingUnitInstanceAddedEventListener, BeanLevelMergedPropertiesAware {
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -39,6 +47,9 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private boolean relocated;
     private Admin admin;
     private boolean communicationPortIsSet;
+
+    private SecurityConfig securityConfig;
+    private Properties beanLevelProperties;
     
     private static String customJvmProperties;
     private static final Object relocationDecisionLock = new Object();
@@ -140,6 +151,27 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         communicationPortIsSet = true;
     }
     
+    /**
+     * Sets the security configuration which holds login information for this component.
+     * @param securityConfig The security configuration to associate with this component.
+     */
+    public void setSecurityConfig(SecurityConfig securityConfig) {
+        this.securityConfig = securityConfig;
+    }
+
+    /**
+     * Initializes security configuration for this component with the provided {@link UserDetails} instance.
+     * For more information see {@link #setSecurityConfig(SecurityConfig)}.
+     * @param userDetails {@link UserDetails} instance to initialize security config with.
+     */
+    public void setUserDetails(UserDetails userDetails) {
+        this.securityConfig = new SecurityConfig(userDetails);
+    }
+    
+    @Override
+    public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
+        this.beanLevelProperties = beanLevelProperties;
+    }
     
     public void afterPropertiesSet() throws Exception {
         
@@ -149,6 +181,20 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         if (!licenseManager.isLicensedForWAN()) 
         {
             throw new LicenseException("This license does not permits GigaSpaces WAN module. Please contact support for more details: http://www.gigaspaces.com/supportcenter");
+        }
+        
+        // Security details provided on deployment
+        if (beanLevelProperties != null) {
+            MarshalledObject<?> userDetailsObj = (MarshalledObject<?>) beanLevelProperties.get(Constants.Security.USER_DETAILS);
+            if (userDetailsObj != null) {
+                try {
+                    setSecurityConfig(new SecurityConfig((UserDetails) userDetailsObj.get()));
+                } catch (Exception e) {
+                    throw new InvalidDataAccessResourceUsageException("Failed to deserialize security user details", e);
+                }
+            }
+            // Clear since contains security credentials
+            beanLevelProperties = null;
         }
         
         //When puname is null, no relevant cluster info was injected, we are probably
@@ -165,7 +211,11 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
                 {       
                     //If this pu is not deployed in GSC with proper ports, start a gsc with proper ports and relocate it
                     relocationInProgress = true;
-                    admin = new AdminFactory().create();
+                    final AdminFactory adminFactory = new AdminFactory();
+                    if (securityConfig != null) {
+                        adminFactory.userDetails(securityConfig.toUserDetails());
+                    }
+                    admin = adminFactory.create();
                     admin.getProcessingUnits()
                     .getProcessingUnitInstanceAdded()
                     .add(this);
@@ -174,10 +224,12 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             }
         }
         
-        afterPropertiesSetImpl();
+        final SecurityConfig transientSecurityConfig = securityConfig;
+        securityConfig = null;
+        afterPropertiesSetImpl(transientSecurityConfig);
     }
     
-    protected abstract void afterPropertiesSetImpl();
+    protected abstract void afterPropertiesSetImpl(SecurityConfig securityConfig);
 
     public void destroy() throws Exception {
         destroyImpl();

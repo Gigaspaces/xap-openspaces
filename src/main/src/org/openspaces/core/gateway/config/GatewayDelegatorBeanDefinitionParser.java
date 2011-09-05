@@ -3,16 +3,18 @@ package org.openspaces.core.gateway.config;
 import java.util.List;
 
 import org.openspaces.core.gateway.GatewayDelegatorFactoryBean;
+import org.openspaces.core.space.SecurityConfig;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
  * A bean definition parser for {@link GatewayDelegatorFactoryBean}.
  * 
- * @author Idan Moyal
+ * @author idan
  * @since 8.0.3
  *
  */
@@ -26,6 +28,12 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
     public static final String DELEGATION_DELEGATE_THROUGH = "delegate-through";
     public static final String CUSTOM_JVM_PROPERTIES = "custom-jvm-properties";
     private static final String COMMUNICATION_PORT = "communication-port";
+    private static final String DELEGATIONS = "delegations";
+    private static final String SECURITY = "security";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String USER_DETAILS = "user-details";
+    private static final String DELEGATION = "delegation";
     
     @Override
     protected Class<GatewayDelegatorFactoryBean> getBeanClass(Element element) {
@@ -34,7 +42,6 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
         
         String localGateywayName = element.getAttribute(LOCAL_GATEWAY_NAME);
         if (StringUtils.hasLength(localGateywayName))
@@ -59,10 +66,44 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
         String communicationPort = element.getAttribute(COMMUNICATION_PORT);
         if (StringUtils.hasLength(communicationPort))
             builder.addPropertyValue("communicationPort", communicationPort);
-        
-        List<?> delegations = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
-        builder.addPropertyValue("gatewayDelegations", delegations);
-        
+
+        // Security configuration - since 8.0.4
+        final Element securityElement = DomUtils.getChildElementByTagName(element, SECURITY);
+        if (securityElement != null) {
+            String username = securityElement.getAttribute(USERNAME);
+            String password = securityElement.getAttribute(PASSWORD);
+            if (StringUtils.hasText(username)) {
+                SecurityConfig securityConfig = new SecurityConfig();
+                securityConfig.setUsername(username);
+                if (StringUtils.hasText(password)) {
+                    securityConfig.setPassword(password);
+                }
+                builder.addPropertyValue("securityConfig", securityConfig);
+            }
+            String userDetailsRef = securityElement.getAttribute(USER_DETAILS);
+            if (StringUtils.hasText(userDetailsRef)) {
+                builder.addPropertyReference("userDetails", userDetailsRef);
+            }
+        }
+                
+        // Using security and delegation in the same level is not allowed
+        final Element deprecatedDelegationElement = DomUtils.getChildElementByTagName(element, DELEGATION);
+        if (deprecatedDelegationElement != null) {
+            if (securityElement != null)
+                throw new IllegalArgumentException("delegation element should be set within a delegations element");
+            final List<?> delegations = parserContext.getDelegate().parseListElement(element, builder.getRawBeanDefinition());
+            builder.addPropertyValue("gatewayDelegations", delegations);
+        }
+
+        // Delegations - since 8.0.4
+        final Element delegationsElement = DomUtils.getChildElementByTagName(element, DELEGATIONS);
+        if (delegationsElement != null) {
+            if (deprecatedDelegationElement != null)
+                throw new IllegalArgumentException("delegation should be set within a delegations element");
+            final List<?> gatewayDelegations = parserContext.getDelegate().parseListElement(delegationsElement, builder.getRawBeanDefinition());
+            builder.addPropertyValue("gatewayDelegations", gatewayDelegations);
+        }
+
     }
 
 }
