@@ -16,7 +16,7 @@
 
 package org.openspaces.core.transaction.manager;
 
-import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.cache.ISpaceCache;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.LocalTransactionManager;
 import net.jini.core.transaction.server.TransactionManager;
@@ -84,7 +84,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
             // not want to get the actual member (the cluster flag was set on the local cache already)
-            if (space instanceof ISpaceLocalCache) {
+            if (space instanceof ISpaceCache) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space");
                 }

@@ -16,7 +16,7 @@
 
 package org.openspaces.core.map;
 
-import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.cache.ISpaceCache;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.cache.map.MapCache;
@@ -113,7 +113,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
             // not want to get the actual member (the cluster flag was set on the local cache already)
-            if (space instanceof ISpaceLocalCache) {
+            if (space instanceof ISpaceCache) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");
                 }

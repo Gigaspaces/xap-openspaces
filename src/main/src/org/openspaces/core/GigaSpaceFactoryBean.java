@@ -35,7 +35,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
-import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.cache.ISpaceCache;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
 
@@ -254,7 +254,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
         if (clustered == null) {
             // in case the space is a local cache space, set the clustered flag to true since we do
             // not want to get the actual member (the cluster flag was set on the local cache already)
-            if (space instanceof ISpaceLocalCache) {
+            if (space instanceof ISpaceCache) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");
                 }

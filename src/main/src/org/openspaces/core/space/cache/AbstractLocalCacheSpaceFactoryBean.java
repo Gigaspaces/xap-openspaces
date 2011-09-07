@@ -16,7 +16,7 @@
 
 package org.openspaces.core.space.cache;
 
-import com.gigaspaces.internal.client.dcache.ISpaceLocalCache;
+import com.gigaspaces.internal.client.cache.ISpaceCache;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.FinderException;
 import com.j_spaces.core.client.SpaceFinder;
@@ -116,8 +116,8 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * Closes the local cache space
      */
     public void destroy() {
-        if (localCacheSpace instanceof ISpaceLocalCache) {
-            ((ISpaceLocalCache) localCacheSpace).close();
+        if (localCacheSpace instanceof ISpaceCache) {
+            ((ISpaceCache) localCacheSpace).close();
         }
     }
 
