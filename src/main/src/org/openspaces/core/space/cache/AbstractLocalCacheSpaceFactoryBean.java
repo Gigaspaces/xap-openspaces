@@ -89,8 +89,6 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * {@link #setSpace(IJSpace)} and a set of properties driving the actual local cache type based
      * on {@link #createCacheProperties()}. Additional properties are applied based on
      * {@link #setProperties(java.util.Properties)}.
-     *
-     * @see com.j_spaces.core.client.SpaceFinder#find(com.j_spaces.core.client.SpaceURL,com.j_spaces.core.IJSpace,com.sun.jini.start.LifeCycle)
      */
     public void afterPropertiesSet() {
         Assert.notNull(space, "space property must be set");
@@ -106,7 +104,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
         spaceUrl.getCustomProperties().putAll(props);
         prepareUrl(spaceUrl);
         try {
-            localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, props, null, null);
+            localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, props, null);
         } catch (FinderException e) {
             throw new CannotCreateSpaceException("Failed to create local cache space for space [" + space + "]", e);
         }
