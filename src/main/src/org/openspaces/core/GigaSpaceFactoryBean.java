@@ -161,8 +161,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     /**
      * <p>Sets the cluster flag controlling if this {@link org.openspaces.core.GigaSpace} will work with a clustered
      * view of the space or directly with a cluster member. By default if this flag is not set it will be set
-     * automatically by this factory. It will be set to <code>true</code> if the space is an embedded one AND
-     * the space is not a local cache proxy. It will be set to <code>false</code> otherwise (i.e. the space
+     * automatically by this factory. It will be set to <code>false</code> if the space is an embedded one AND
+     * the space is not a local cache proxy. It will be set to <code>true</code> otherwise (i.e. the space
      * is not an embedded space OR the space is a local cache proxy).
      *
      * @param clustered If the {@link org.openspaces.core.GigaSpace} is going to work with a clustered view of the
