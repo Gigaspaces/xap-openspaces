@@ -77,12 +77,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             if (e instanceof CacheTimeoutException) {
                 return new SpaceTimeoutException(e.getMessage(), e);
             }
-            Exception e1 = ((CacheException) e).getUnderlyingException();
-            if (e1 != null) {
-                return internalTranslate(e1);
-            } else {
-                return null;
-            }
+            Throwable cause = e.getCause();
+            if (cause != null)
+                return internalTranslate(cause);
+            return null;
         }
 
         if (e instanceof InterruptedException) {
