@@ -68,8 +68,14 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
                 if (method.isAnnotationPresent(BeforeRead.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_READ);
                 }
+                if (method.isAnnotationPresent(AfterRead.class)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_READ);
+                }
                 if (method.isAnnotationPresent(BeforeTake.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_TAKE);
+                }
+                if (method.isAnnotationPresent(AfterTake.class)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_TAKE);
                 }
                 if (method.isAnnotationPresent(BeforeNotify.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_NOTIFY);
@@ -115,6 +121,9 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
                 }
                 if (method.isAnnotationPresent(BeforeExecute.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_EXECUTE);
+                }
+                if (method.isAnnotationPresent(AfterExecute.class)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_EXECUTE);
                 }
             }
         });

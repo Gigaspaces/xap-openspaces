@@ -62,8 +62,12 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     private String beforeRead;
 
+    private String afterRead;
+
     private String beforeTake;
 
+    private String afterTake;
+    
     private String beforeNotify;
 
     private String beforeCleanSpace;
@@ -94,6 +98,7 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
 
     private String beforeExecute;
 
+    private String afterExecute;
     /**
      * Creates an operation code to filter invoker map based on the {@link #getFilter()}
      * delegate and the callbacks set on this factory.
@@ -116,8 +121,14 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeRead)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_READ);
                 }
+                if (ObjectUtils.nullSafeEquals(method.getName(), afterRead)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_READ);
+                }
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeTake)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_TAKE);
+                }
+                if (ObjectUtils.nullSafeEquals(method.getName(), afterTake)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_TAKE);
                 }
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeNotify)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_NOTIFY);
@@ -163,6 +174,9 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                 }
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeExecute)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_EXECUTE);
+                }
+                if (ObjectUtils.nullSafeEquals(method.getName(), afterExecute)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_EXECUTE);
                 }
             }
         }, new UniqueMethodFilter());
@@ -254,6 +268,14 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
     public void setBeforeRead(String beforeRead) {
         this.beforeRead = beforeRead;
     }
+    /**
+     * Filter callback after read operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_READ
+     */
+    public void setAfterRead(String afterRead) {
+        this.afterRead = afterRead;
+    }
 
     /**
      * Filter callback before take operation.
@@ -262,6 +284,14 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
      */
     public void setBeforeTake(String beforeTake) {
         this.beforeTake = beforeTake;
+    }
+    /**
+     * Filter callback after take operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_TAKE
+     */
+    public void setAfterTake(String afterTake) {
+        this.afterTake = afterTake;
     }
 
     /**
@@ -403,6 +433,15 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
         this.beforeExecute = beforeExecute;
     }
 
+    /**
+     * Filter callback after execute operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_EXECUTE
+     */
+    public void setAfterExecute(String afterExecute) {
+        this.afterExecute = afterExecute;
+    }
+    
     private static class UniqueMethodFilter implements ReflectionUtils.MethodFilter {
 
         private Set<String> processedMethods = new HashSet<String>();
