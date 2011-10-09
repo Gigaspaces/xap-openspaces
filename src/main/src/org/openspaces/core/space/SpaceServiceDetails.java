@@ -1,7 +1,7 @@
 package org.openspaces.core.space;
 
+import com.gigaspaces.internal.client.cache.localview.LocalViewContainer;
 import com.gigaspaces.internal.client.dcache.localcache.LocalCacheContainer;
-import com.gigaspaces.internal.client.dcache.localview.LocalViewContainer;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
