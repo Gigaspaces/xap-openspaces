@@ -656,7 +656,7 @@
                     <xsd:attribute name="after-read-multiple" type="xsd:string"/>
                     <xsd:attribute name="before-take-multiple" type="xsd:string"/>
                     <xsd:attribute name="after-take-multiple" type="xsd:string"/>
-                    <xsd:attribute name="before-notify-trigger" type="xsd:string"/>
+                    <xsd:attribute name="before-notify-trigger"  type="xsd:string"/>
                     <xsd:attribute name="after-notify-trigger" type="xsd:string"/>
                     <xsd:attribute name="before-all-notify-trigger" type="xsd:string"/>
                     <xsd:attribute name="after-all-notify-trigger" type="xsd:string"/>
