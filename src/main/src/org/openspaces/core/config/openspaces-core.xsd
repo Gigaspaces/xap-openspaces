@@ -645,7 +645,9 @@
                     <xsd:attribute name="before-write" type="xsd:string"/>
                     <xsd:attribute name="after-write" type="xsd:string"/>
                     <xsd:attribute name="before-read" type="xsd:string"/>
+                    <xsd:attribute name="after-read" type="xsd:string"/>
                     <xsd:attribute name="before-take" type="xsd:string"/>
+                    <xsd:attribute name="after-take" type="xsd:string"/>
                     <xsd:attribute name="before-notify" type="xsd:string"/>
                     <xsd:attribute name="before-clean-space" type="xsd:string"/>
                     <xsd:attribute name="before-update" type="xsd:string"/>
@@ -661,6 +663,7 @@
                     <xsd:attribute name="before-remove-by-lease" type="xsd:string"/>
                     <xsd:attribute name="after-remove-by-lease" type="xsd:string"/>
                     <xsd:attribute name="before-execute" type="xsd:string"/>
+                    <xsd:attribute name="after-execute" type="xsd:string"/>
                     <xsd:attribute name="before-authentication" type="xsd:string"/>
                 </xsd:extension>
             </xsd:complexContent>
