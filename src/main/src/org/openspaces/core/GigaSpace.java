@@ -1924,6 +1924,26 @@ public interface GigaSpace {
      * except that blocking in this call is done only if necessary to wait for transactional
      * state to settle.
      *
+     * @param template The template used for matching. Matching is done against
+     *                 the template with <code>null</code> fields being wildcards (
+     *                 "match anything") other fields being values ("match exactly
+     *                 on the serialized form").
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching entry. A timeout of
+     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                 time at all; this is equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.TakeModifiers}.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     */
+    <T> T takeIfExists(T template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space, returning <code>null</code> if
+     * there currently is none. Matching and timeouts are done as in <code>take</code>,
+     * except that blocking in this call is done only if necessary to wait for transactional
+     * state to settle.
+     *
      * <p>Note, the timeout is the default timeout this interface is configured with
      * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
      *
@@ -1952,6 +1972,25 @@ public interface GigaSpace {
      * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space, returning <code>null</code> if
+     * there currently is none. Matching and timeouts are done as in <code>take</code>,
+     * except that blocking in this call is done only if necessary to wait for transactional
+     * state to settle.
+     *
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout  How long the client is willing to wait for a
+     *                 transactionally proper matching entry. A timeout of
+     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                 time at all; this is equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link com.j_spaces.core.client.TakeModifiers}.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
+     */
+    <T> T takeIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Takes (removes) all the entries matching the specified template from this

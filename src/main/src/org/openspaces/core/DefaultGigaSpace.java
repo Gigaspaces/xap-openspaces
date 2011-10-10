@@ -700,31 +700,39 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> T takeIfExists(T template) throws DataAccessException {
-        return takeIfExists(template, defaultTakeTimeout);
+        return takeIfExists(template, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExists(T template, long timeout) throws DataAccessException {
+        return takeIfExists(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T takeIfExists(T template, long timeout) throws DataAccessException {
+    public <T> T takeIfExists(T template, long timeout, int modifiers) throws DataAccessException {
         try {
-            return (T) space.takeIfExists(template, getCurrentTransaction(), timeout);
+            return (T) space.take(template, getCurrentTransaction(), timeout, modifiers, true);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
 
     public <T> T takeIfExists(ISpaceQuery<T> template) throws DataAccessException {
-        return takeIfExists(template, defaultTakeTimeout);
+        return takeIfExists(template, defaultTakeTimeout, getModifiersForIsolationLevel());
+    }
+
+    public <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException {
+        return takeIfExists(template, timeout, getModifiersForIsolationLevel());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException {
+    public <T> T takeIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
         try {
-            return (T) space.takeIfExists(template, getCurrentTransaction(), timeout);
+            return (T) space.take(template, getCurrentTransaction(), timeout, modifiers, true);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     public <T> T[] takeMultiple(T template) throws DataAccessException {
         return takeMultiple(template, Integer.MAX_VALUE);
     }
