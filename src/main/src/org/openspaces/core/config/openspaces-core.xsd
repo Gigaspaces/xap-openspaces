@@ -571,11 +571,15 @@
                                             <xsd:enumeration value="before-write"/>
                                             <xsd:enumeration value="after-write"/>
                                             <xsd:enumeration value="before-read"/>
+                                            <xsd:enumeration value="after-read"/>
                                             <xsd:enumeration value="before-take"/>
+                                            <xsd:enumeration value="after-take"/>
                                             <xsd:enumeration value="before-notify"/>
                                             <xsd:enumeration value="before-clean-space"/>
                                             <xsd:enumeration value="before-update"/>
                                             <xsd:enumeration value="after-update"/>
+                                            <xsd:enumeration value="before-execute"/>
+                                            <xsd:enumeration value="after-execute"/>
                                             <xsd:enumeration value="before-read-multiple"/>
                                             <xsd:enumeration value="after-read-multiple"/>
                                             <xsd:enumeration value="before-take-multiple"/>
