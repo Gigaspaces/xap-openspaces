@@ -331,12 +331,12 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         params = simpleFilter.getLastExecutions().get(2);
         assertEquals(2, params.length);
         assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
+        assertTrue(params[1].equals(FilterOperationCodes.AFTER_WRITE) || params[1].equals(FilterOperationCodes.AFTER_READ));
 
         params = simpleFilter.getLastExecutions().get(3);
         assertEquals(2, params.length);
         assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(FilterOperationCodes.AFTER_READ, params[1]);
+         assertTrue(params[1].equals(FilterOperationCodes.AFTER_WRITE) || params[1].equals(FilterOperationCodes.AFTER_READ));
 
         gigaSpace.clear(null);
     }
