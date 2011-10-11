@@ -14,6 +14,8 @@
 
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
+    
+    <os-events:annotation-support/>
 
     <bean id="simpleFilterCode" class="org.openspaces.itest.core.space.filter.SimpleFilter"/>
     <bean id="simpleFilterCodeName" class="org.openspaces.itest.core.space.filter.SimpleFilter"/>
@@ -72,6 +74,8 @@
             <os-core:operation code-name="after-all-notify-trigger"/>
 <!--             <os-core:operation code-name="before-remove-by-lease"/> -->
 <!--             <os-core:operation code-name="after-remove-by-lease"/> -->
+<!-- 			<os-core:operation code-name="before-getAdmin"/> -->
+
             
         </os-core:space-filter>
     </os-core:space>
