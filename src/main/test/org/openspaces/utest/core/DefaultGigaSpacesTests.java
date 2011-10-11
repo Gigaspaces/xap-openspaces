@@ -246,9 +246,17 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("takeIfExists").with(same(template), NULL, eq(JavaSpace.NO_WAIT)).will(
-                returnValue(retVal));
+        Constraint[] constraints = new Constraint[] {
+                same(template),
+                NULL, 
+                eq(JavaSpace.NO_WAIT),
+                eq(ReadModifiers.READ_COMMITTED), 
+                eq(Boolean.TRUE)
+        };
+        mockIJSpace.expects(once()).method("take").with(constraints).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
 
         Object actualRetVal = gs.takeIfExists(template);
 
@@ -259,11 +267,17 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once())
-            .method("takeIfExists")
-            .with(same(template), NULL, eq(10l))
-            .will(returnValue(retVal));
+        Constraint[] constraints = new Constraint[] {
+                same(template), 
+                NULL, 
+                eq(10l),
+                eq(ReadModifiers.READ_COMMITTED), 
+                eq(Boolean.TRUE)
+        };
+        mockIJSpace.expects(once()).method("take").with(constraints).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
 
         gs.setDefaultTakeTimeout(10l);
         Object actualRetVal = gs.takeIfExists(template);
@@ -275,11 +289,18 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once())
-            .method("takeIfExists")
-            .with(same(template), NULL, eq(11l))
-            .will(returnValue(retVal));
+        Constraint[] constraints = new Constraint[] {
+                same(template), 
+                NULL, 
+                eq(11l),
+                eq(ReadModifiers.READ_COMMITTED), 
+                eq(Boolean.TRUE)
+        };
+
+        mockIJSpace.expects(once()).method("take").with(constraints).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
+        mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
+                returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
 
         Object actualRetVal = gs.takeIfExists(template, 11l);
 
