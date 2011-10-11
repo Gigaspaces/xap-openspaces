@@ -24,4 +24,8 @@
 
     <os-core:giga-space id="gigaSpace" space="space" />
 
+    <os-core:distributed-tx-manager id="mahaloTxManager" />
+
+    <os-core:giga-space id="txnGigaSpace" space="space" tx-manager="mahaloTxManager" />
+
 </beans>

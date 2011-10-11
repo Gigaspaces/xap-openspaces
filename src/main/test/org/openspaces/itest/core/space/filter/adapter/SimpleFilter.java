@@ -21,6 +21,7 @@ import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceLateContext;
 import org.openspaces.core.space.filter.*;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,13 @@ import java.util.List;
  */
 public class SimpleFilter {
 
-    @GigaSpaceLateContext
+    @GigaSpaceLateContext(name = "gigaSpace")
     GigaSpace gigaSpace;
+
+    @GigaSpaceLateContext(name = "txnGigaSpace")
+    GigaSpace txnGigaSpace;
+
+    PlatformTransactionManager mahaloTxManager;
 
     private List<Object[]> lastExecutions = new ArrayList<Object[]>();
 
@@ -61,33 +67,73 @@ public class SimpleFilter {
     }
 
     @BeforeWrite
-    public void beforeWrite(Message entry) {
-        lastExecutions.add(new Object[]{entry});
+    public void beforeWrite(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @AfterWrite
-    public void afterWrite(Echo echo) {
-        lastExecutions.add(new Object[]{echo});
+    public void afterWrite(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @BeforeUpdate
-    public void beforeUpdate(Message entry) {
-        lastExecutions.add(new Object[]{entry});
+    public void beforeUpdate(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @AfterUpdate
-    public void afterUpdate(Message beforeUpdate, Message afterUpdate) {
-        lastExecutions.add(new Object[]{beforeUpdate, afterUpdate});
+    public void afterUpdate(Message beforeUpdate, Message afterUpdate, int operationCode) {
+        lastExecutions.add(new Object[]{beforeUpdate, afterUpdate, operationCode});
     }
 
     @BeforeRead
-    public void beforeRead(ISpaceFilterEntry entry) {
-        lastExecutions.add(new Object[]{entry});
+    public void beforeRead(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @AfterRead
+    public void afterRead(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @BeforeReadMultiple
+    public void beforeReadMultiple(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @AfterReadMultiple
+    public void afterReadMultiple(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @BeforeTake
     public void beforeTake(Message entry, int operationCode) {
         lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @AfterTake
+    public void afterTake(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @BeforeTakeMultiple
+    public void beforeTakeMultiple(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @AfterTakeMultiple
+    public void afterTakeMultiple(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @AfterExecute
+    public void afterExecute(ISpaceFilterEntry entry) {
+        lastExecutions.add(new Object[]{entry});
+    }
+
+    @BeforeExecute
+    public void beforeExecute(ISpaceFilterEntry entry) {
+        lastExecutions.add(new Object[]{entry});
     }
 
     @BeforeNotifyTrigger
