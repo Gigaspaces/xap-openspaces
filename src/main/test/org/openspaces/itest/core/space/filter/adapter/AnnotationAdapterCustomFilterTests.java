@@ -19,7 +19,6 @@ package org.openspaces.itest.core.space.filter.adapter;
 import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import net.jini.core.entry.UnusableEntryException;
-import org.junit.Assert;
 import org.openspaces.core.GigaSpace;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -80,7 +79,7 @@ public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInject
         gigaSpace.write(message2);
         customFilter.clearExecutions();
 
-        Assert.assertNotNull(gigaSpace.read(new Message("test1")));
+        assertNotNull(gigaSpace.read(new Message("test1")));
 
         assertEquals(2, customFilter.getLastExecutions().size());
 
