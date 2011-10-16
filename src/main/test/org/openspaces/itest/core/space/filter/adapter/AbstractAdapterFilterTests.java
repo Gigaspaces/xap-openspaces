@@ -34,6 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -70,6 +71,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
     public void testWrite() {
         Message message = new Message(1);
         message.setMessage("test");
+        message.setData("testWrite");
         gigaSpace.write(message);
 
         assertEquals(2, simpleFilter.getLastExecutions().size());
@@ -104,36 +106,37 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
         Message message = new Message(1);
         message.setMessage("test");
+        message.setData("testNotify");
         gigaSpace.write(message);
         Thread.sleep(5000);
         size = simpleFilter.getLastExecutions().size();
         assertEquals(4, size);   //beforeWrite + beforeNotifyTrigger + afterNotifyTrigger
         Object[] params = simpleFilter.getLastExecutions().get(0);
         assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(FilterOperationCodes.BEFORE_WRITE, params[1]);
+        assertEquals(printList("testNotify", simpleFilter.getLastExecutions()), FilterOperationCodes.BEFORE_WRITE, params[1]);
 
         params = simpleFilter.getLastExecutions().get(1);
         assertEquals("test", ((Message) params[0]).getMessage());
         if (params.length == 2) {
-            assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
+            assertEquals(printList("testNotify", simpleFilter.getLastExecutions()), FilterOperationCodes.AFTER_WRITE, params[1]);
         } else {
             assertEquals(null, ((Message) params[1]).getMessage());
-            assertEquals("BEFORE_NOTIFY_TRIGGER", params[2]);
+            assertEquals(printList("testNotify", simpleFilter.getLastExecutions()), "BEFORE_NOTIFY_TRIGGER", params[2]);
         }
 
         params = simpleFilter.getLastExecutions().get(2);
         assertEquals("test", ((Message) params[0]).getMessage());
         if (params.length == 3) {
             assertEquals(null, ((Message) params[1]).getMessage());
-            assertEquals("BEFORE_NOTIFY_TRIGGER", params[2]);
-        }else{
+            assertEquals(printList("testNotify", simpleFilter.getLastExecutions()), "BEFORE_NOTIFY_TRIGGER", params[2]);
+        } else {
             assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
         }
 
         params = simpleFilter.getLastExecutions().get(3);
         assertEquals("test", ((Message) params[0]).getMessage());
         assertEquals(null, ((Message) params[1]).getMessage());
-        assertEquals("AFTER_NOTIFY_TRIGGER", params[2]);
+        assertEquals(printList("testNotify", simpleFilter.getLastExecutions()), "AFTER_NOTIFY_TRIGGER", params[2]);
 
         notifyEventListenerContainer.destroy();
         gigaSpace.clear(null);
@@ -305,6 +308,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
     public void testRead() throws Exception {
         Message message = new Message(1);
         message.setMessage("test");
+        message.setMessage("testRead");
         gigaSpace.write(message);
         simpleFilter.getLastExecutions().clear();
         gigaSpace.read(message);
@@ -336,6 +340,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         Thread.sleep(2000);
         Message message = new Message(1);
         message.setMessage("test");
+        message.setMessage("testReadWithTimeout");
         gigaSpace.write(message);
 
         Thread.sleep(5000);
@@ -367,6 +372,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
     public void testTake() {
         Message message = new Message(1);
         message.setMessage("test");
+        message.setData("testTake");
         gigaSpace.write(message);
         simpleFilter.clearExecutions();
         gigaSpace.take(message);
@@ -396,6 +402,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         Thread.sleep(2000);
         Message message = new Message(1);
         message.setMessage("test");
+        message.setData("testTakeWithTimeout");
         gigaSpace.write(message);
 
         Thread.sleep(2000);
@@ -443,6 +450,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
     public void testReadMultiple() throws Exception {
         Message message = new Message(1);
         message.setMessage("test1");
+        message.setData("testReadMultiple");
         gigaSpace.write(message);
 
         message = new Message(2);
@@ -477,6 +485,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
     public void testTakeMultiple() throws Exception {
         Message message = new Message(1);
         message.setMessage("test1");
+        message.setData("testTakeMultiple");
         gigaSpace.write(message);
 
         message = new Message(2);
@@ -524,5 +533,20 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         public String execute() throws Exception {
             return "return";
         }
+    }
+
+    String printList(String testName, List<Object[]> list) {
+        String str = "test name : " + testName + " \n";
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).length == 2) {
+                str += ((Message) list.get(i)[0]).getMessage() + " \n";
+                str += list.get(i)[1] + " \n";
+            } else {
+                str += ((Message) list.get(i)[0]).getMessage() + " \n";
+                str += ((Message) list.get(i)[1]).getMessage() + " \n";
+                str += list.get(i)[2] + " \n";
+            }
+        }
+        return str;
     }
 }
