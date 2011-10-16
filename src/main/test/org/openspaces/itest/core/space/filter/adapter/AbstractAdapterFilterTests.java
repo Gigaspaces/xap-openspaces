@@ -58,7 +58,8 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.clearExecutions();
     }
 
-    protected void onTearDown(){
+    protected void onTearDown() {
+        gigaSpace.clear(new Object());
         simpleFilter.clearExecutions();
     }
 
@@ -113,12 +114,21 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
 
         params = simpleFilter.getLastExecutions().get(1);
         assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
+        if (params.length == 2) {
+            assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
+        } else {
+            assertEquals(null, ((Message) params[1]).getMessage());
+            assertEquals("BEFORE_NOTIFY_TRIGGER", params[2]);
+        }
 
         params = simpleFilter.getLastExecutions().get(2);
         assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(null, ((Message) params[1]).getMessage());
-        assertEquals("BEFORE_NOTIFY_TRIGGER", params[2]);
+        if (params.length == 3) {
+            assertEquals(null, ((Message) params[1]).getMessage());
+            assertEquals("BEFORE_NOTIFY_TRIGGER", params[2]);
+        }else{
+            assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
+        }
 
         params = simpleFilter.getLastExecutions().get(3);
         assertEquals("test", ((Message) params[0]).getMessage());
@@ -298,13 +308,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         gigaSpace.write(message);
         simpleFilter.getLastExecutions().clear();
         gigaSpace.read(message);
-        //TODO removed after finding issue
-        System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        for(int i = 0;i < simpleFilter.getLastExecutions().size(); i++){
-            System.out.println(simpleFilter.getLastExecutions().get(0)[0]);
-            System.out.println(simpleFilter.getLastExecutions().get(0)[1]);
-        }
-        System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+
         assertEquals(2, simpleFilter.getLastExecutions().size());
         Object[] params = simpleFilter.getLastExecutions().get(0);
         assertEquals(2, params.length);
