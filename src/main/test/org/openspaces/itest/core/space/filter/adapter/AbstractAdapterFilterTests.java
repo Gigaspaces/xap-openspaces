@@ -58,6 +58,10 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.clearExecutions();
     }
 
+    protected void onTearDown(){
+        simpleFilter.clearExecutions();
+    }
+
     public void testOnInit() {
         assertTrue(simpleFilter.isOnInitCalled());
     }
@@ -80,7 +84,6 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
         gigaSpace.clear(null);
         simpleFilter.getLastExecutions().clear();
-        gigaSpace.clear(null);
     }
 
     public void testNotify() throws Exception {
@@ -124,6 +127,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
 
         notifyEventListenerContainer.destroy();
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testUpdate() {
@@ -152,6 +156,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("2", ((Message) params[1]).getData());
         assertEquals(FilterOperationCodes.AFTER_UPDATE, params[2]);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testUpdateOrWriteUpdateWithTimeout() {
@@ -180,6 +185,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("2", ((Message) params[1]).getData());
         assertEquals(FilterOperationCodes.AFTER_UPDATE, params[2]);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testUpdateOrWriteWriteWithTimeout() {
@@ -198,6 +204,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("1", ((Message) params[0]).getData());
         assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testUpdateOrWriteWithTimeoutWhenObjectIsMissing() throws Exception {
@@ -213,6 +220,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         TransactionStatus status = mahaloTxManager.getTransaction(definition);
         txnGigaSpace.read(message, 10000, ReadModifiers.EXCLUSIVE_READ_LOCK);
+        gigaSpace.clear(null);
         simpleFilter.clearExecutions();
 
         new Thread(new Runnable() {
@@ -239,6 +247,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("2", ((Message) params[1]).getData());
         assertEquals(FilterOperationCodes.AFTER_UPDATE, params[2]);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testUpdateWithTimeoutWhenObjectIsMissing() throws Exception {
@@ -254,6 +263,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         TransactionStatus status = mahaloTxManager.getTransaction(definition);
         txnGigaSpace.read(message, 10000, ReadModifiers.EXCLUSIVE_READ_LOCK);
+
         simpleFilter.clearExecutions();
 
         new Thread(new Runnable() {
@@ -279,6 +289,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("2", ((Message) params[1]).getData());
         assertEquals(FilterOperationCodes.AFTER_UPDATE, params[2]);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testRead() throws Exception {
@@ -306,6 +317,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals(FilterOperationCodes.AFTER_READ, params[1]);
 
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testReadWithTimeout() throws Exception {
@@ -342,9 +354,10 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         params = simpleFilter.getLastExecutions().get(3);
         assertEquals(2, params.length);
         assertEquals("test", ((Message) params[0]).getMessage());
-         assertTrue(params[1].equals(FilterOperationCodes.AFTER_WRITE) || params[1].equals(FilterOperationCodes.AFTER_READ));
+        assertTrue(params[1].equals(FilterOperationCodes.AFTER_WRITE) || params[1].equals(FilterOperationCodes.AFTER_READ));
 
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testTake() {
@@ -364,6 +377,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("test", ((Message) params[0]).getMessage());
         assertEquals(FilterOperationCodes.AFTER_TAKE, params[1]);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testTakeWithTimeout() throws Exception {
@@ -403,6 +417,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals(FilterOperationCodes.AFTER_TAKE, params[1]);
 
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testExecute() throws Exception {
@@ -418,6 +433,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals("return", ((ExecutionFilterEntry) params[0]).getObject(null));
         assertEquals(1, params.length);
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testReadMultiple() throws Exception {
@@ -451,6 +467,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals(FilterOperationCodes.AFTER_READ_MULTIPLE, params[1]);
 
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     public void testTakeMultiple() throws Exception {
@@ -483,6 +500,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals(FilterOperationCodes.AFTER_TAKE_MULTIPLE, params[1]);
 
         gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 
     private static class MyTask implements Task<String> {

@@ -39,7 +39,7 @@ public class SimpleFilter {
 
     PlatformTransactionManager mahaloTxManager;
 
-    private List<Object[]> lastExecutions = new ArrayList<Object[]>();
+    private static List<Object[]> lastExecutions = new ArrayList<Object[]>();
 
     private boolean onInitCalled;
     private boolean onCloseCalled;
@@ -89,11 +89,13 @@ public class SimpleFilter {
     @BeforeRead
     public void beforeRead(Message entry, int operationCode) {
         lastExecutions.add(new Object[]{entry, operationCode});
+        System.out.println("Inside beforeRead Filter entry:"+entry +" opCode: "+operationCode +" ThreadId: "+ Thread.currentThread().getId());
     }
 
     @AfterRead
     public void afterRead(Message entry, int operationCode) {
         lastExecutions.add(new Object[]{entry, operationCode});
+        System.out.println("Inside afterRead Filter entry:"+entry +" opCode: "+operationCode +" ThreadId: "+ Thread.currentThread().getId());
     }
 
     @BeforeReadMultiple
