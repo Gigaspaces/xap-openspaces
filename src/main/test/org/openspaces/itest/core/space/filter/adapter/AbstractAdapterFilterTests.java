@@ -99,6 +99,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
                     }
                 }).notifyContainer();
         notifyEventListenerContainer.start();
+        Thread.sleep(5000);
         int size = simpleFilter.getLastExecutions().size();
         assertEquals(1, size);
         assertNull(((Message) simpleFilter.getLastExecutions().get(size - 1)[0]).getMessage());    //template
