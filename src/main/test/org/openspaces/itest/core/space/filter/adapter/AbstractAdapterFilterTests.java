@@ -287,7 +287,11 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         gigaSpace.write(message);
         simpleFilter.getLastExecutions().clear();
         gigaSpace.read(message);
-
+        //TODO removed after finding issue
+        for(int i = 0;i < simpleFilter.getLastExecutions().size(); i++){
+            System.out.println(simpleFilter.getLastExecutions().get(0)[0]);
+            System.out.println(simpleFilter.getLastExecutions().get(0)[1]);
+        }
         assertEquals(2, simpleFilter.getLastExecutions().size());
         Object[] params = simpleFilter.getLastExecutions().get(0);
         assertEquals(2, params.length);
