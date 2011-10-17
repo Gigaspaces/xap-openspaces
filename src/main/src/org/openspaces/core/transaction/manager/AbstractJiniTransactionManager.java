@@ -161,7 +161,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
         if (leaseRenewalConfig != null) {
             leaseRenewalManagers = new LeaseRenewalManager[leaseRenewalConfig.getPoolSize()];
             for (int i = 0; i < leaseRenewalConfig.getPoolSize(); i++)
-                leaseRenewalManagers[i] = new LeaseRenewalManager(leaseRenewalConfig.getRenewRTT(), 2, null);
+                leaseRenewalManagers[i] = new LeaseRenewalManager(leaseRenewalConfig.getRenewRTT(), 2);
             logger.debug(logMessage("Creatred transaction manager with lease renewal pool [" + leaseRenewalConfig.getPoolSize() + "] and RTT [" + leaseRenewalConfig.getRenewRTT() + "]"));
         }
     }
