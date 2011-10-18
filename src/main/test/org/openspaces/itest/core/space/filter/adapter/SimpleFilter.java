@@ -155,4 +155,14 @@ public class SimpleFilter {
     public void clearExecutions() {
         this.lastExecutions.clear();
     }
+
+    @AfterRemoveByLease
+    public void afterRemoveByLease(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
+
+    @BeforeRemoveByLease
+    public void beforeRemoveByLease(Message entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
+    }
 }

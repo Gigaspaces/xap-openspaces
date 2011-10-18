@@ -18,6 +18,7 @@ package org.openspaces.itest.core.space.filter.adapter;
 
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 import com.gigaspaces.async.AsyncFuture;
+import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.core.client.UpdateModifiers;
 import com.j_spaces.core.filters.FilterOperationCodes;
@@ -525,5 +526,47 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         public String execute() throws Exception {
             return "return";
         }
+    }
+
+    public void testRemoveByLeaseCancel() throws Exception {
+        Message message = new Message(1);
+        message.setMessage("test");
+        LeaseContext<Message> lease = gigaSpace.write(message);
+        simpleFilter.clearExecutions();
+        lease.cancel();
+        assertEquals(2, simpleFilter.getLastExecutions().size());
+
+        Object[] params = simpleFilter.getLastExecutions().get(0);
+        assertEquals(2, params.length);
+        assertEquals("test", ((Message) params[0]).getMessage());
+        assertEquals(FilterOperationCodes.BEFORE_REMOVE, params[1]);
+
+        params = simpleFilter.getLastExecutions().get(1);
+        assertEquals(2, params.length);
+        assertEquals("test", ((Message) params[0]).getMessage());
+        assertEquals(FilterOperationCodes.AFTER_REMOVE, params[1]);
+        gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
+    }
+
+    public void testRemoveByLeaseExpiration() throws Exception {
+        Message message = new Message(1);
+        message.setMessage("test");
+        gigaSpace.write(message, 1000);
+        simpleFilter.clearExecutions();
+        Thread.sleep(20000);
+        assertEquals(2, simpleFilter.getLastExecutions().size());
+
+        Object[] params = simpleFilter.getLastExecutions().get(0);
+        assertEquals(2, params.length);
+        assertEquals("test", ((Message) params[0]).getMessage());
+        assertEquals(FilterOperationCodes.BEFORE_REMOVE, params[1]);
+
+        params = simpleFilter.getLastExecutions().get(1);
+        assertEquals(2, params.length);
+        assertEquals("test", ((Message) params[0]).getMessage());
+        assertEquals(FilterOperationCodes.AFTER_REMOVE, params[1]);
+        gigaSpace.clear(null);
+        simpleFilter.getLastExecutions().clear();
     }
 }
