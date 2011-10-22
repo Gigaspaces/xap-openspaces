@@ -18,13 +18,19 @@
     <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter"/>
 
     <os-core:space id="space" url="/./spaceAdapterSimpleFilterMethod" lookup-groups="${user.name}">
+		 <os-core:properties>
+            <props>
+                <prop key="space-config.lease_manager.expiration_time_interval">500</prop>
+            </props>
+        </os-core:properties>
         <os-core:method-adapter-filter filter-init="onInit" filter-close="onClose" before-write="beforeWrite"
                                        after-write="afterWrite" before-update="beforeUpdate" after-update="afterUpdate"
                                        before-read="beforeRead" after-read="afterRead" before-take="beforeTake" after-take="afterTake"
                                        before-notify="beforeNotify" before-execute="beforeExecute" after-execute="afterExecute"
                                        before-read-multiple="beforeReadMultiple" after-read-multiple="afterReadMultiple"
                                        before-take-multiple="beforeTakeMultiple" after-take-multiple="afterTakeMultiple"
-                                       before-notify-trigger="beforeNotifyTrigger" after-notify-trigger="afterNotifyTrigger">
+                                       before-notify-trigger="beforeNotifyTrigger" after-notify-trigger="afterNotifyTrigger"
+                                       before-remove-by-lease="beforeRemoveByLease" after-remove-by-lease="afterRemoveByLease">
             <os-core:filter ref="simpleFilter"/>
         </os-core:method-adapter-filter>
     </os-core:space>

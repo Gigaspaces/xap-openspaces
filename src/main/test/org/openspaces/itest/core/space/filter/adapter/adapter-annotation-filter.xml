@@ -13,19 +13,24 @@
 
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
-        
-    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter" />
+
+    <bean id="simpleFilter" class="org.openspaces.itest.core.space.filter.adapter.SimpleFilter"/>
 
     <os-core:space id="space" url="/./spaceAdapterSimpleFilterAnnotation" lookup-groups="${user.name}">
+        <os-core:properties>
+            <props>
+                <prop key="space-config.lease_manager.expiration_time_interval">500</prop>
+            </props>
+        </os-core:properties>
         <os-core:annotation-adapter-filter priority="2">
-            <os-core:filter ref="simpleFilter" />
+            <os-core:filter ref="simpleFilter"/>
         </os-core:annotation-adapter-filter>
     </os-core:space>
 
-    <os-core:giga-space id="gigaSpace" space="space" />
+    <os-core:giga-space id="gigaSpace" space="space"/>
 
-    <os-core:distributed-tx-manager id="mahaloTxManager" />
+    <os-core:distributed-tx-manager id="mahaloTxManager"/>
 
-    <os-core:giga-space id="txnGigaSpace" space="space" tx-manager="mahaloTxManager" />
+    <os-core:giga-space id="txnGigaSpace" space="space" tx-manager="mahaloTxManager"/>
 
 </beans>
