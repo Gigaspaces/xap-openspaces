@@ -17,13 +17,11 @@
 package org.openspaces.core.space.cache;
 
 import com.gigaspaces.internal.client.cache.ISpaceCache;
+import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.FinderException;
-import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openspaces.core.space.CannotCreateSpaceException;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceDetails;
@@ -43,7 +41,7 @@ import java.util.Properties;
  * <p>
  * Allows to set additional properties that further configure the local cache using
  * {@link #setProperties(Properties)}. Properties that control the nature of the local cache are
- * obtained using {@link #createCacheProperties()} callback.
+ * obtained using {@link #initCacheProperties()} callback.
  *
  * @author kimchy
  */
@@ -87,27 +85,27 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     /**
      * Constructs a new local cache {@link IJSpace} based on the master local cache set using
      * {@link #setSpace(IJSpace)} and a set of properties driving the actual local cache type based
-     * on {@link #createCacheProperties()}. Additional properties are applied based on
+     * on {@link #initCacheProperties()}. Additional properties are applied based on
      * {@link #setProperties(java.util.Properties)}.
      */
     public void afterPropertiesSet() {
-        Assert.notNull(space, "space property must be set");
-        IJSpace actualSpace = space;
-        Properties props = createCacheProperties();
-        props.put(SpaceURL.USE_LOCAL_CACHE, "true");
-        if (properties != null) {
+        Properties props = new Properties(); 
+        initCacheProperties(props);
+        if (properties != null)
             props.putAll(properties);
-        }
 
+        Assert.notNull(space, "space property must be set");
+        Assert.isInstanceOf(IDirectSpaceProxy.class, space, "unsupported space proxy class: " + space.getClass().getName());
+        localCacheSpace = createCache((IDirectSpaceProxy) space, props);
+    }
+
+    protected abstract IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props);
+    
+    protected SpaceURL createCacheUrl(Properties props) {
         SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
         spaceUrl.putAll(props);
         spaceUrl.getCustomProperties().putAll(props);
-        prepareUrl(spaceUrl);
-        try {
-            localCacheSpace = (IJSpace) SpaceFinder.find(spaceUrl, actualSpace, props, null);
-        } catch (FinderException e) {
-            throw new CannotCreateSpaceException("Failed to create local cache space for space [" + space + "]", e);
-        }
+        return spaceUrl;
     }
 
     /**
@@ -120,13 +118,10 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     }
 
     /**
-     * Subclasses should implement this method to return the properties relevant for the local
-     * concrete local cache implementation.
+     * Populates the properties required for space cache construction.
      */
-    protected abstract Properties createCacheProperties();
-
-    protected void prepareUrl(SpaceURL spaceURL) {
-        
+    protected void initCacheProperties(Properties props) {
+        props.put(SpaceURL.USE_LOCAL_CACHE, "true");
     }
 
     /**

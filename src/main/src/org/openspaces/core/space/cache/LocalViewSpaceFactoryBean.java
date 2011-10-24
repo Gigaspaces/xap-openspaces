@@ -16,8 +16,14 @@
 
 package org.openspaces.core.space.cache;
 
+import com.gigaspaces.internal.client.cache.SpaceCacheException;
+import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
+import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
+import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.view.View;
+
+import org.openspaces.core.space.CannotCreateSpaceException;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -49,22 +55,20 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         this.localViews = localViews;
     }
 
-    public void afterPropertiesSet() {
+    /**
+     * Creates the space view 
+     */
+    @Override
+    protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props) {
         Assert.notNull(localViews, "localViews must be set");
         Assert.isTrue(localViews.size() > 0, "At least one local view must be defined");
-        super.afterPropertiesSet();
-    }
 
-    /**
-     * Creates newly created properties that holds the views set using
-     * {@link #setLocalViews(java.util.List)} locaViews}.
-     */
-    protected Properties createCacheProperties() {
-        return new Properties();
-    }
-
-    @Override
-    protected void prepareUrl(SpaceURL spaceURL) {
-        spaceURL.getCustomProperties().put(SpaceURL.VIEWS, localViews.toArray(new View<?>[localViews.size()]));
+        SpaceURL spaceUrl = createCacheUrl(props);
+        spaceUrl.getCustomProperties().put(SpaceURL.VIEWS, localViews.toArray(new View<?>[localViews.size()]));
+        try {
+            return SpaceCacheFactory.createSpaceCache(remoteSpace, props, spaceUrl);
+        } catch (SpaceCacheException e) {
+            throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
+        }
     }
 }

@@ -16,10 +16,16 @@
 
 package org.openspaces.core.space.cache;
 
+import com.gigaspaces.internal.client.cache.SpaceCacheException;
+import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
+import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.Constants;
+import com.j_spaces.core.IJSpace;
 
 import java.util.Properties;
+
+import org.openspaces.core.space.CannotCreateSpaceException;
 
 /**
  * In some cases, the memory capacity of an individual application is not capable of holding all the
@@ -94,16 +100,26 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     }
 
     /**
-     * Returns newly created properties setting the {@link SpaceURL#LOCAL_CACHE_UPDATE_MODE} based
-     * on either {@link #setUpdateMode(int) localCacheUpdateMode} or
-     * {@link #setUpdateModeName(String) localCacheUpdateModeName}.
+     * Populates the properties required for local cache construction.
      */
-    protected Properties createCacheProperties() {
-        Properties props = new Properties();
+    @Override
+    protected void initCacheProperties(Properties props) {
+        super.initCacheProperties(props);
         props.put(SpaceURL.LOCAL_CACHE_UPDATE_MODE, Integer.toString(localCacheUpdateMode));
-        if (size != null) {
+        if (size != null)
             props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_SIZE_PROP, size.toString());
+    }
+    
+    /**
+     * Creates the local cache. 
+     */
+    @Override
+    protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props) {
+        SpaceURL spaceUrl = createCacheUrl(props);
+        try {
+            return SpaceCacheFactory.createSpaceCache(remoteSpace, props, spaceUrl);
+        } catch (SpaceCacheException e) {
+            throw new CannotCreateSpaceException("Failed to create local cache for space [" + remoteSpace + "]", e);
         }
-        return props;
     }
 }
