@@ -18,6 +18,7 @@ package org.openspaces.core.space.cache;
 
 import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
+import com.gigaspaces.internal.client.cache.localcache.LocalCacheConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.Constants;
@@ -116,8 +117,9 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     @Override
     protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props) {
         SpaceURL spaceUrl = createCacheUrl(props);
+        LocalCacheConfig config = new LocalCacheConfig(props, spaceUrl);
         try {
-            return SpaceCacheFactory.createSpaceCache(remoteSpace, props, spaceUrl);
+            return SpaceCacheFactory.createLocalCache(remoteSpace, config);
         } catch (SpaceCacheException e) {
             throw new CannotCreateSpaceException("Failed to create local cache for space [" + remoteSpace + "]", e);
         }
