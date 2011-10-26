@@ -89,6 +89,21 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         viewTemplates.add(template);
         return this;
     }
+    
+    public LocalViewSpaceConfigurer batchSize(int batchSize) {
+        localViewSpaceFactoryBean.setBatchSize(batchSize);
+        return this;
+    }
+
+    public LocalViewSpaceConfigurer batchTimeout(long batchTimeout) {
+        localViewSpaceFactoryBean.setBatchTimeout(batchTimeout);
+        return this;
+    }
+
+    public LocalViewSpaceConfigurer maxStaleDuration(long maxStaleDuration) {
+        localViewSpaceFactoryBean.setMaxStaleDuration(maxStaleDuration);
+        return this;
+    }
 
     /**
      * Creates and returns a local cache according to the configured settings.

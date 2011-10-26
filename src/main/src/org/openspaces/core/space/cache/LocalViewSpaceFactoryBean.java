@@ -49,13 +49,28 @@ import java.util.Properties;
 public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
 
     private List<Object> viewTemplates;
-
+    private Integer batchSize;
+    private Long batchTimeout;
+    private Long maxStaleDuration;
+    
     /**
      * Sets an array of filters/views that define what portion of the data from the master space
      * will be streamed to this local view.
      */
     public void setLocalViews(List<Object> viewTemplates) {
         this.viewTemplates = viewTemplates;
+    }
+    
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public void setBatchTimeout(long batchTimeout) {
+        this.batchTimeout = batchTimeout;
+    }
+
+    public void setMaxStaleDuration(long maxStaleDuration) {
+        this.maxStaleDuration = maxStaleDuration;
     }
 
     /**
@@ -69,9 +84,21 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         try {
             // TODO LV: Consider exposing SpaceViewType configuration. 
             if (SpaceCacheFactory.useNewSpaceView(remoteSpace, SpaceViewType.DEFAULT))
-                return SpaceCacheFactory.createSpaceView(remoteSpace, new SpaceViewConfig(props, spaceUrl, viewTemplates));
+            {
+                SpaceViewConfig config = new SpaceViewConfig(props, spaceUrl, viewTemplates);
+                if (this.batchSize != null)
+                    config.setBatchSize(this.batchSize);
+                if (this.batchTimeout != null)
+                    config.setBatchTimeout(this.batchTimeout);
+                if (this.maxStaleDuration != null)
+                    config.setMaxStaleDuration(this.maxStaleDuration);
+
+                return SpaceCacheFactory.createSpaceView(remoteSpace, config);
+            }
             else
+            {
                 return SpaceCacheFactory.createLocalView(remoteSpace, new LocalViewConfig(props, spaceUrl, viewTemplates));
+            }
         } catch (SpaceCacheException e) {
             throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
         }
