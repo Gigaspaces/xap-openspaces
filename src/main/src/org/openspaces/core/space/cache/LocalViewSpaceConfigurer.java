@@ -17,6 +17,7 @@
 package org.openspaces.core.space.cache;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.SQLQuery;
 import com.j_spaces.core.client.view.View;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
 
     private Properties properties = new Properties();
 
-    private List<View<?>> localViews = new ArrayList<View<?>>();
+    private List<Object> viewTemplates = new ArrayList<Object>();
 
     public LocalViewSpaceConfigurer(SpaceConfigurer spaceConfigurer) {
         this(spaceConfigurer.space());
@@ -72,8 +73,20 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
+    /**
+     * @deprecated since 8.0.5 - use {@link #addTemplate(SQLQuery)} instead.
+     */
+    @Deprecated 
     public LocalViewSpaceConfigurer addView(View view) {
-        localViews.add(view);
+        viewTemplates.add(view);
+        return this;
+    }
+
+    /**
+     * Adds a template to the view.
+     */
+    public LocalViewSpaceConfigurer addTemplate(SQLQuery template) {
+        viewTemplates.add(template);
         return this;
     }
 
@@ -85,7 +98,7 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
     public IJSpace create() {
         if (space == null) {
             localViewSpaceFactoryBean.setProperties(properties);
-            localViewSpaceFactoryBean.setLocalViews(localViews);
+            localViewSpaceFactoryBean.setLocalViews(viewTemplates);
             localViewSpaceFactoryBean.afterPropertiesSet();
             space = (IJSpace) localViewSpaceFactoryBean.getObject();
         }

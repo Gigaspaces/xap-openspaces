@@ -48,14 +48,14 @@ import java.util.Properties;
  */
 public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
 
-    private List<View<?>> localViews;
+    private List<Object> viewTemplates;
 
     /**
      * Sets an array of filters/views that define what portion of the data from the master space
      * will be streamed to this local view.
      */
-    public void setLocalViews(List<View<?>> localViews) {
-        this.localViews = localViews;
+    public void setLocalViews(List<Object> viewTemplates) {
+        this.viewTemplates = viewTemplates;
     }
 
     /**
@@ -63,9 +63,8 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
      */
     @Override
     protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl) {
-        Assert.notNull(localViews, "localViews must be set");
-        Assert.isTrue(localViews.size() > 0, "At least one local view must be defined");
-        View<?>[] viewTemplates = localViews.toArray(new View<?>[localViews.size()]);
+        Assert.notNull(viewTemplates, "localViews must be set");
+        Assert.isTrue(viewTemplates.size() > 0, "At least one local view must be defined");
         
         try {
             // TODO LV: Consider exposing SpaceViewType configuration. 
