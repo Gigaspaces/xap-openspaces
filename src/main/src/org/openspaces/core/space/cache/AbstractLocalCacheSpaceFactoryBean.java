@@ -89,25 +89,23 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * {@link #setProperties(java.util.Properties)}.
      */
     public void afterPropertiesSet() {
+        Assert.notNull(space, "space property must be set");
+        Assert.isInstanceOf(IDirectSpaceProxy.class, space, "unsupported space proxy class: " + space.getClass().getName());
+
         Properties props = new Properties(); 
         initCacheProperties(props);
         if (properties != null)
             props.putAll(properties);
 
-        Assert.notNull(space, "space property must be set");
-        Assert.isInstanceOf(IDirectSpaceProxy.class, space, "unsupported space proxy class: " + space.getClass().getName());
-        localCacheSpace = createCache((IDirectSpaceProxy) space, props);
-    }
-
-    protected abstract IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props);
-    
-    protected SpaceURL createCacheUrl(Properties props) {
         SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
         spaceUrl.putAll(props);
         spaceUrl.getCustomProperties().putAll(props);
-        return spaceUrl;
+        
+        localCacheSpace = createCache((IDirectSpaceProxy) space, props, spaceUrl);
     }
 
+    protected abstract IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl);
+    
     /**
      * Closes the local cache space
      */

@@ -115,8 +115,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      * Creates the local cache. 
      */
     @Override
-    protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props) {
-        SpaceURL spaceUrl = createCacheUrl(props);
+    protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl) {
         LocalCacheConfig config = new LocalCacheConfig(props, spaceUrl);
         try {
             return SpaceCacheFactory.createLocalCache(remoteSpace, config);
