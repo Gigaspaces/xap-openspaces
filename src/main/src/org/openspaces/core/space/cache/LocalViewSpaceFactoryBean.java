@@ -84,23 +84,26 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         try {
             // TODO LV: Consider exposing SpaceViewType configuration. 
             if (SpaceCacheFactory.useNewSpaceView(remoteSpace, SpaceViewType.DEFAULT))
-            {
-                SpaceViewConfig config = new SpaceViewConfig(props, spaceUrl, viewTemplates);
-                if (this.batchSize != null)
-                    config.setBatchSize(this.batchSize);
-                if (this.batchTimeout != null)
-                    config.setBatchTimeout(this.batchTimeout);
-                if (this.maxStaleDuration != null)
-                    config.setMaxStaleDuration(this.maxStaleDuration);
-
-                return SpaceCacheFactory.createSpaceView(remoteSpace, config);
-            }
+                return SpaceCacheFactory.createSpaceView(remoteSpace, createSpaceViewConfig(props, spaceUrl));
             else
-            {
-                return SpaceCacheFactory.createLocalView(remoteSpace, new LocalViewConfig(props, spaceUrl, viewTemplates));
-            }
+                return SpaceCacheFactory.createLocalView(remoteSpace, createLocalViewConfig(props, spaceUrl));
         } catch (SpaceCacheException e) {
             throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
         }
+    }
+
+    private SpaceViewConfig createSpaceViewConfig(Properties props, SpaceURL spaceUrl) {
+        SpaceViewConfig config = new SpaceViewConfig(props, spaceUrl, viewTemplates);
+        if (this.batchSize != null)
+            config.setBatchSize(this.batchSize);
+        if (this.batchTimeout != null)
+            config.setBatchTimeout(this.batchTimeout);
+        if (this.maxStaleDuration != null)
+            config.setMaxStaleDuration(this.maxStaleDuration);
+        return config;
+    }
+    
+    private LocalViewConfig createLocalViewConfig(Properties props, SpaceURL spaceUrl) {
+        return new LocalViewConfig(props, spaceUrl, viewTemplates);
     }
 }
