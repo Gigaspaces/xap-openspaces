@@ -24,7 +24,6 @@ import com.gigaspaces.internal.client.cache.spaceview.SpaceViewType;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.view.View;
 
 import org.openspaces.core.space.CannotCreateSpaceException;
 import org.springframework.util.Assert;
