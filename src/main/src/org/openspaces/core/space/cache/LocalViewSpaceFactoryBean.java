@@ -20,7 +20,6 @@ import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
 import com.gigaspaces.internal.client.cache.LocalViewType;
 import com.gigaspaces.internal.client.cache.localview.LocalViewConfig;
-import com.gigaspaces.internal.client.cache.spaceview.SpaceViewConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
@@ -92,17 +91,18 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         
         try {
             // TODO LV: Consider exposing SpaceViewType configuration. 
+            LocalViewConfig localViewConfig = createLocalViewConfig(props, spaceUrl);
             if (SpaceCacheFactory.useNewSpaceView(remoteSpace, this.localViewType))
-                return SpaceCacheFactory.createSpaceView(remoteSpace, createSpaceViewConfig(props, spaceUrl));
+                return SpaceCacheFactory.createSpaceView(remoteSpace, localViewConfig);
             else
-                return SpaceCacheFactory.createLocalView(remoteSpace, createLocalViewConfig(props, spaceUrl));
+                return SpaceCacheFactory.createLocalView(remoteSpace, localViewConfig);
         } catch (SpaceCacheException e) {
             throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
         }
     }
 
-    private SpaceViewConfig createSpaceViewConfig(Properties props, SpaceURL spaceUrl) {
-        SpaceViewConfig config = new SpaceViewConfig(props, spaceUrl, viewTemplates);
+    private LocalViewConfig createLocalViewConfig(Properties props, SpaceURL spaceUrl) {
+        LocalViewConfig config = new LocalViewConfig(props, spaceUrl, viewTemplates);
         if (this.batchSize != null)
             config.setBatchSize(this.batchSize);
         if (this.batchTimeout != null)
@@ -110,9 +110,5 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         if (this.maxStaleDuration != null)
             config.setMaxStaleDuration(this.maxStaleDuration);
         return config;
-    }
-    
-    private LocalViewConfig createLocalViewConfig(Properties props, SpaceURL spaceUrl) {
-        return new LocalViewConfig(props, spaceUrl, viewTemplates);
     }
 }
