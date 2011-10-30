@@ -47,7 +47,7 @@ import java.util.Properties;
  */
 public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
 
-    private List<Object> viewTemplates = new ArrayList<Object>();
+    private List<Object> viewTemplates;
     private Integer batchSize;
     private Long batchTimeout;
     private Long maxStaleDuration;
@@ -62,7 +62,9 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     }
     
     public void addViewTemplate(Object viewTemplate) {
-        viewTemplates.add(viewTemplate);
+        if (this.viewTemplates == null)
+            this.viewTemplates = new ArrayList<Object>();
+        this.viewTemplates.add(viewTemplate);
     }
     
     public void setBatchSize(int batchSize) {

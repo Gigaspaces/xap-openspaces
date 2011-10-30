@@ -72,6 +72,8 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     }
     
     public void addProperty(String name, String value) {
+        if (this.properties == null)
+            this.properties = new Properties();
         this.properties.setProperty(name, value);
     }
 
