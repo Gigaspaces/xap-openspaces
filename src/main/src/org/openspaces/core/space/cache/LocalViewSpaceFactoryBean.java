@@ -100,12 +100,9 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
 
     private LocalViewConfig createLocalViewConfig(Properties props, SpaceURL spaceUrl) {
         LocalViewConfig config = new LocalViewConfig(props, spaceUrl, this.localViewType, this.viewTemplates);
-        if (this.batchSize != null)
-            config.setBatchSize(this.batchSize);
-        if (this.batchTimeout != null)
-            config.setBatchTimeout(this.batchTimeout);
-        if (this.maxStaleDuration != null)
-            config.setMaxStaleDuration(this.maxStaleDuration);
+        config.setBatchSize(this.batchSize);
+        config.setBatchTimeout(this.batchTimeout);
+        config.setMaxStaleDuration(this.maxStaleDuration);
         return config;
     }
 }
