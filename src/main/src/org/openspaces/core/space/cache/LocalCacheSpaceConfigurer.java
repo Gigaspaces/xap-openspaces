@@ -18,8 +18,6 @@ package org.openspaces.core.space.cache;
 
 import com.j_spaces.core.IJSpace;
 
-import java.util.Properties;
-
 import org.openspaces.core.space.SpaceConfigurer;
 
 /**
@@ -52,8 +50,6 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
 
     private IJSpace space;
 
-    private Properties properties = new Properties();
-
     public LocalCacheSpaceConfigurer(SpaceConfigurer spaceConfigurer) {
         this(spaceConfigurer.space());
     }
@@ -67,7 +63,7 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
      * @see LocalCacheSpaceFactoryBean#setProperties(java.util.Properties)
      */
     public LocalCacheSpaceConfigurer addProperty(String name, String value) {
-        properties.setProperty(name, value);
+        localCacheSpaceFactoryBean.addProperty(name, value);
         return this;
     }
 
@@ -98,7 +94,6 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
      */
     public IJSpace create() {
         if (space == null) {
-            localCacheSpaceFactoryBean.setProperties(properties);
             localCacheSpaceFactoryBean.afterPropertiesSet();
             space = (IJSpace) localCacheSpaceFactoryBean.getObject();
         }

@@ -70,6 +70,10 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
+    
+    public void addProperty(String name, String value) {
+        this.properties.setProperty(name, value);
+    }
 
     /**
      * Spring callback that sets the bean name.

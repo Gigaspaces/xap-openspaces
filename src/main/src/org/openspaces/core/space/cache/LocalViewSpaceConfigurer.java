@@ -16,13 +16,10 @@
 
 package org.openspaces.core.space.cache;
 
+import com.gigaspaces.internal.client.cache.LocalViewType;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SQLQuery;
 import com.j_spaces.core.client.view.View;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 import org.openspaces.core.space.SpaceConfigurer;
 
@@ -52,10 +49,6 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
 
     private IJSpace space;
 
-    private Properties properties = new Properties();
-
-    private List<Object> viewTemplates = new ArrayList<Object>();
-
     public LocalViewSpaceConfigurer(SpaceConfigurer spaceConfigurer) {
         this(spaceConfigurer.space());
     }
@@ -69,7 +62,7 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
      * @see LocalViewSpaceFactoryBean#setProperties(java.util.Properties)
      */
     public LocalViewSpaceConfigurer addProperty(String name, String value) {
-        properties.setProperty(name, value);
+        localViewSpaceFactoryBean.addProperty(name, value);
         return this;
     }
 
@@ -78,23 +71,40 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
      */
     @Deprecated 
     public LocalViewSpaceConfigurer addView(View view) {
-        viewTemplates.add(view);
-        return this;
+        return addTemplate(view);
     }
 
     /**
      * Adds a template to the view.
+     * @since 8.0.5
      */
     public LocalViewSpaceConfigurer addTemplate(SQLQuery template) {
-        viewTemplates.add(template);
+        localViewSpaceFactoryBean.addViewTemplate(template);
         return this;
     }
     
+    /**
+     * Sets the type of local view to create.
+     * @since 8.0.5
+     */
+    public LocalViewSpaceConfigurer localViewType(LocalViewType localViewType) {
+        localViewSpaceFactoryBean.setLocalViewType(localViewType);
+        return this;
+    }
+
+    /**
+     * Sets the local view batch size.
+     * @since 8.0.5
+     */
     public LocalViewSpaceConfigurer batchSize(int batchSize) {
         localViewSpaceFactoryBean.setBatchSize(batchSize);
         return this;
     }
 
+    /**
+     * Sets the local view batch timeout (i.e. maximum time the server will batch entries before updating the client.
+     * @since 8.0.5
+     */
     public LocalViewSpaceConfigurer batchTimeout(long batchTimeout) {
         localViewSpaceFactoryBean.setBatchTimeout(batchTimeout);
         return this;
@@ -112,8 +122,6 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
      */
     public IJSpace create() {
         if (space == null) {
-            localViewSpaceFactoryBean.setProperties(properties);
-            localViewSpaceFactoryBean.setLocalViews(viewTemplates);
             localViewSpaceFactoryBean.afterPropertiesSet();
             space = (IJSpace) localViewSpaceFactoryBean.getObject();
         }

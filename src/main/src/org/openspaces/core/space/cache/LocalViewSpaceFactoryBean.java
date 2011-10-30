@@ -28,6 +28,7 @@ import com.j_spaces.core.client.SpaceURL;
 import org.openspaces.core.space.CannotCreateSpaceException;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -47,10 +48,11 @@ import java.util.Properties;
  */
 public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
 
-    private List<Object> viewTemplates;
+    private List<Object> viewTemplates = new ArrayList<Object>();
     private Integer batchSize;
     private Long batchTimeout;
     private Long maxStaleDuration;
+    private LocalViewType localViewType = LocalViewType.DEFAULT;
     
     /**
      * Sets an array of filters/views that define what portion of the data from the master space
@@ -58,6 +60,10 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
      */
     public void setLocalViews(List<Object> viewTemplates) {
         this.viewTemplates = viewTemplates;
+    }
+    
+    public void addViewTemplate(Object viewTemplate) {
+        viewTemplates.add(viewTemplate);
     }
     
     public void setBatchSize(int batchSize) {
@@ -71,6 +77,10 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     public void setMaxStaleDuration(long maxStaleDuration) {
         this.maxStaleDuration = maxStaleDuration;
     }
+    
+    public void setLocalViewType(LocalViewType localViewType) {
+        this.localViewType = localViewType;
+    }
 
     /**
      * Creates the space view 
@@ -82,7 +92,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         
         try {
             // TODO LV: Consider exposing SpaceViewType configuration. 
-            if (SpaceCacheFactory.useNewSpaceView(remoteSpace, LocalViewType.DEFAULT))
+            if (SpaceCacheFactory.useNewSpaceView(remoteSpace, this.localViewType))
                 return SpaceCacheFactory.createSpaceView(remoteSpace, createSpaceViewConfig(props, spaceUrl));
             else
                 return SpaceCacheFactory.createLocalView(remoteSpace, createLocalViewConfig(props, spaceUrl));
