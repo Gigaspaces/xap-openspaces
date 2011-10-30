@@ -92,19 +92,14 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         Assert.isTrue(viewTemplates.size() > 0, "At least one local view must be defined");
         
         try {
-            // TODO LV: Consider exposing SpaceViewType configuration. 
-            LocalViewConfig localViewConfig = createLocalViewConfig(props, spaceUrl);
-            if (SpaceCacheFactory.useNewSpaceView(remoteSpace, this.localViewType))
-                return SpaceCacheFactory.createSpaceView(remoteSpace, localViewConfig);
-            else
-                return SpaceCacheFactory.createLocalView(remoteSpace, localViewConfig);
+            return SpaceCacheFactory.createLocalView(remoteSpace, createLocalViewConfig(props, spaceUrl));
         } catch (SpaceCacheException e) {
             throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
         }
     }
 
     private LocalViewConfig createLocalViewConfig(Properties props, SpaceURL spaceUrl) {
-        LocalViewConfig config = new LocalViewConfig(props, spaceUrl, viewTemplates);
+        LocalViewConfig config = new LocalViewConfig(props, spaceUrl, this.localViewType, this.viewTemplates);
         if (this.batchSize != null)
             config.setBatchSize(this.batchSize);
         if (this.batchTimeout != null)
