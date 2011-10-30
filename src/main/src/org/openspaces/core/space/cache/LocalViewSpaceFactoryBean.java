@@ -18,9 +18,9 @@ package org.openspaces.core.space.cache;
 
 import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
+import com.gigaspaces.internal.client.cache.LocalViewType;
 import com.gigaspaces.internal.client.cache.localview.LocalViewConfig;
 import com.gigaspaces.internal.client.cache.spaceview.SpaceViewConfig;
-import com.gigaspaces.internal.client.cache.spaceview.SpaceViewType;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
@@ -82,7 +82,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         
         try {
             // TODO LV: Consider exposing SpaceViewType configuration. 
-            if (SpaceCacheFactory.useNewSpaceView(remoteSpace, SpaceViewType.DEFAULT))
+            if (SpaceCacheFactory.useNewSpaceView(remoteSpace, LocalViewType.DEFAULT))
                 return SpaceCacheFactory.createSpaceView(remoteSpace, createSpaceViewConfig(props, spaceUrl));
             else
                 return SpaceCacheFactory.createLocalView(remoteSpace, createLocalViewConfig(props, spaceUrl));
