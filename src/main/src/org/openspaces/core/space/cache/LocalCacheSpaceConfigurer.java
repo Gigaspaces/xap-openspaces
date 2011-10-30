@@ -71,11 +71,7 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
      * @see org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean#setUpdateModeName(String)
      */
     public LocalCacheSpaceConfigurer updateMode(UpdateMode mode) {
-        if (mode == UpdateMode.PULL) {
-            localCacheSpaceFactoryBean.setUpdateModeName(LocalCacheSpaceFactoryBean.LOCAL_CACHE_UPDATE_MODE_PULL);
-        } else if (mode == UpdateMode.PUSH) {
-            localCacheSpaceFactoryBean.setUpdateModeName(LocalCacheSpaceFactoryBean.LOCAL_CACHE_UPDATE_MODE_PUSH);
-        }
+        localCacheSpaceFactoryBean.setUpdateMode(mode);
         return this;
     }
 
