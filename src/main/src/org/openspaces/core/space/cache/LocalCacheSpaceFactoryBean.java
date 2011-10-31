@@ -22,7 +22,6 @@ import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
 import com.gigaspaces.internal.client.cache.localcache.LocalCacheConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 
 import org.openspaces.core.space.CannotCreateSpaceException;
@@ -87,7 +86,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      * Sets the local cache size.
      */
     public void setSize(int size) {
-        addProperty(Constants.CacheManager.FULL_CACHE_MANAGER_SIZE_PROP, Integer.toString(size));
+        this.config.setSize(size);
     }
 
     /**
