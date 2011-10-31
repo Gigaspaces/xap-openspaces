@@ -20,7 +20,6 @@ import com.gigaspaces.internal.client.cache.ISpaceCache;
 import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.SpaceURL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.SpaceServiceDetails;
@@ -92,11 +91,6 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     public void afterPropertiesSet() {
         validate();
 
-        SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
-        spaceUrl.putAll(getCacheConfig().getCustomProperties());
-        spaceUrl.getCustomProperties().putAll(getCacheConfig().getCustomProperties());
-        getCacheConfig().setRemoteSpaceUrl(spaceUrl);
-        
         localCacheSpace = createCache((IDirectSpaceProxy) space);
     }
 
