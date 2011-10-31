@@ -16,7 +16,6 @@
 
 package org.openspaces.core.space.cache;
 
-import com.gigaspaces.internal.client.cache.LocalViewType;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SQLQuery;
 import com.j_spaces.core.client.view.View;
@@ -83,15 +82,6 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
     
-    /**
-     * Sets the type of local view to create.
-     * @since 8.0.5
-     */
-    public LocalViewSpaceConfigurer localViewType(LocalViewType localViewType) {
-        localViewSpaceFactoryBean.setLocalViewType(localViewType);
-        return this;
-    }
-
     /**
      * Sets the local view batch size.
      * @since 8.0.5

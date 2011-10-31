@@ -19,7 +19,6 @@ package org.openspaces.core.space.cache;
 import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
 import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
-import com.gigaspaces.internal.client.cache.LocalViewType;
 import com.gigaspaces.internal.client.cache.localview.LocalViewConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
@@ -77,11 +76,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     public void setMaxStaleDuration(long maxStaleDuration) {
         config.setMaxStaleDuration(maxStaleDuration);
     }
-    
-    public void setLocalViewType(LocalViewType localViewType) {
-        config.setLocalViewType(localViewType);
-    }
-    
+        
     @Override
     protected SpaceCacheConfig getCacheConfig() {
         return this.config;
