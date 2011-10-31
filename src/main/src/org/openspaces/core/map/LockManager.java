@@ -23,6 +23,8 @@ import com.j_spaces.core.client.LocalTransactionManager;
 import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.map.Envelope;
 import com.j_spaces.map.IMap;
+import com.j_spaces.map.MapEntryFactory;
+
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
 import org.apache.commons.logging.Log;
@@ -82,7 +84,7 @@ public class LockManager {
 
         templatePool = new ArrayBlockingQueue<Envelope>(1000);
         for (int i = 0; i < 1000; i++) {
-            templatePool.add(new Envelope());
+            templatePool.add(MapEntryFactory.create());
         }
 
     }
@@ -245,7 +247,7 @@ public class LockManager {
         try {
             ee = templatePool.poll(100, TimeUnit.MILLISECONDS);
             if (ee == null) {
-                ee = new Envelope();
+                ee = MapEntryFactory.create();
             }
         } catch (InterruptedException e) {
             throw new DataAccessResourceFailureException("Failed to take resource from pool", e);
