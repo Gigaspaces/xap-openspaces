@@ -41,8 +41,7 @@ import java.util.Properties;
  *
  * <p>
  * Allows to set additional properties that further configure the local cache using
- * {@link #setProperties(Properties)}. Properties that control the nature of the local cache are
- * obtained using {@link #initCacheProperties()} callback.
+ * {@link #setProperties(Properties)}.
  *
  * @author kimchy
  */
@@ -51,9 +50,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     protected Log logger = LogFactory.getLog(this.getClass());
 
     private IJSpace space;
-
     private String beanName;
-
     private IJSpace localCacheSpace;
 
     /**
@@ -71,8 +68,6 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     }
     
     public void addProperty(String name, String value) {
-        if (getCacheConfig().getCustomProperties() == null)
-            getCacheConfig().setCustomProperties(new Properties());
         getCacheConfig().getCustomProperties().setProperty(name, value);
     }
 
@@ -97,15 +92,9 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     public void afterPropertiesSet() {
         validate();
 
-        Properties props = new Properties(); 
-        initCacheProperties(props);
-        if (getCacheConfig().getCustomProperties() != null)
-            props.putAll(getCacheConfig().getCustomProperties());
-        getCacheConfig().setCustomProperties(props);
-
         SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
-        spaceUrl.putAll(props);
-        spaceUrl.getCustomProperties().putAll(props);
+        spaceUrl.putAll(getCacheConfig().getCustomProperties());
+        spaceUrl.getCustomProperties().putAll(getCacheConfig().getCustomProperties());
         getCacheConfig().setRemoteSpaceUrl(spaceUrl);
         
         localCacheSpace = createCache((IDirectSpaceProxy) space);
@@ -127,13 +116,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
         Assert.notNull(space, "space property must be set");
         Assert.isInstanceOf(IDirectSpaceProxy.class, space, "unsupported space proxy class: " + space.getClass().getName());
     }
-    
-    /**
-     * Populates the properties required for space cache construction.
-     */
-    protected void initCacheProperties(Properties props) {
-    }
-    
+        
     protected abstract SpaceCacheConfig getCacheConfig();
 
     /**

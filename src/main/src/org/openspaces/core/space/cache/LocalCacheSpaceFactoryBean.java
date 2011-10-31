@@ -25,8 +25,6 @@ import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 
-import java.util.Properties;
-
 import org.openspaces.core.space.CannotCreateSpaceException;
 import org.openspaces.core.space.cache.LocalCacheSpaceConfigurer.UpdateMode;
 
@@ -56,7 +54,6 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     public static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
 
     private final LocalCacheConfig config;
-    private Integer size;
 
     public LocalCacheSpaceFactoryBean() {
     	this.config = new LocalCacheConfig();
@@ -90,7 +87,7 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      * Sets the local cache size.
      */
     public void setSize(int size) {
-        this.size = size;
+        addProperty(Constants.CacheManager.FULL_CACHE_MANAGER_SIZE_PROP, Integer.toString(size));
     }
 
     /**
@@ -110,16 +107,6 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
                     + "should be either '" + LOCAL_CACHE_UPDATE_MODE_PULL + "' or '" + LOCAL_CACHE_UPDATE_MODE_PUSH
                     + "'");
         }
-    }
-
-    /**
-     * Populates the properties required for local cache construction.
-     */
-    @Override
-    protected void initCacheProperties(Properties props) {
-        super.initCacheProperties(props);
-        if (size != null)
-            props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_SIZE_PROP, size.toString());
     }
     
     @Override
