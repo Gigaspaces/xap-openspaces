@@ -47,40 +47,39 @@ import java.util.Properties;
  */
 public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBean {
 
-    private List<Object> viewTemplates;
-    private Integer batchSize;
-    private Long batchTimeout;
-    private Long maxStaleDuration;
-    private LocalViewType localViewType = LocalViewType.DEFAULT;
+    private final LocalViewConfig config;
     
+    public LocalViewSpaceFactoryBean() {
+        this.config = new LocalViewConfig();
+    }
     /**
      * Sets an array of filters/views that define what portion of the data from the master space
      * will be streamed to this local view.
      */
     public void setLocalViews(List<Object> viewTemplates) {
-        this.viewTemplates = viewTemplates;
+        config.setViewTemplates(viewTemplates);
     }
     
     public void addViewTemplate(Object viewTemplate) {
-        if (this.viewTemplates == null)
-            this.viewTemplates = new ArrayList<Object>();
-        this.viewTemplates.add(viewTemplate);
+        if (this.config.getViewTemplates() == null)
+            this.config.setViewTemplates(new ArrayList<Object>());
+        this.config.getViewTemplates().add(viewTemplate);
     }
     
     public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
+        config.setBatchSize(batchSize);
     }
 
     public void setBatchTimeout(long batchTimeout) {
-        this.batchTimeout = batchTimeout;
+        config.setBatchTimeout(batchTimeout);
     }
 
     public void setMaxStaleDuration(long maxStaleDuration) {
-        this.maxStaleDuration = maxStaleDuration;
+        config.setMaxStaleDuration(maxStaleDuration);
     }
     
     public void setLocalViewType(LocalViewType localViewType) {
-        this.localViewType = localViewType;
+        config.setLocalViewType(localViewType);
     }
 
     /**
@@ -88,21 +87,15 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
      */
     @Override
     protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl) {
-        Assert.notNull(viewTemplates, "localViews must be set");
-        Assert.isTrue(viewTemplates.size() > 0, "At least one local view must be defined");
+        Assert.notNull(config.getViewTemplates(), "localViews must be set");
+        Assert.isTrue(config.getViewTemplates().size() > 0, "At least one local view must be defined");
+        config.setRemoteSpaceUrl(spaceUrl);
+        config.setCustomProperties(props);
         
         try {
-            return SpaceCacheFactory.createLocalView(remoteSpace, createLocalViewConfig(props, spaceUrl));
+            return SpaceCacheFactory.createLocalView(remoteSpace, config);
         } catch (SpaceCacheException e) {
             throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
         }
-    }
-
-    private LocalViewConfig createLocalViewConfig(Properties props, SpaceURL spaceUrl) {
-        LocalViewConfig config = new LocalViewConfig(props, spaceUrl, this.localViewType, this.viewTemplates);
-        config.setBatchSize(this.batchSize);
-        config.setBatchTimeout(this.batchTimeout);
-        config.setMaxStaleDuration(this.maxStaleDuration);
-        return config;
     }
 }
