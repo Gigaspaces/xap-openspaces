@@ -24,6 +24,7 @@ import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.map.Envelope;
 import com.j_spaces.map.IMap;
 import com.j_spaces.map.MapEntryFactory;
+import com.j_spaces.map.SpaceMapEntry;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
@@ -65,7 +66,7 @@ public class LockManager {
 
     private IJSpace masterSpace = null;
 
-    private BlockingQueue<Envelope> templatePool;
+    private BlockingQueue<SpaceMapEntry> templatePool;
 
     private LocalTransactionManager localTransactionManager;
 
@@ -82,7 +83,7 @@ public class LockManager {
             throw new CannotCreateTransactionException("Failed to obtain transaction lock manager", e);
         }
 
-        templatePool = new ArrayBlockingQueue<Envelope>(1000);
+        templatePool = new ArrayBlockingQueue<SpaceMapEntry>(1000);
         for (int i = 0; i < 1000; i++) {
             templatePool.add(MapEntryFactory.create());
         }
@@ -115,7 +116,7 @@ public class LockManager {
             }
         }
 
-        Envelope ee = getTemplate(key, uid);
+        SpaceMapEntry ee = getTemplate(key, uid);
         try {
             Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK | ReadModifiers.MATCH_BY_ID);
             if (retTake == null) {
@@ -188,7 +189,7 @@ public class LockManager {
             return true;
         }
         // now check globally
-        Envelope ee = getTemplate(key, uid);
+        SpaceMapEntry ee = getTemplate(key, uid);
         try {
             Object lockEntry = masterSpace.readIfExists(ee, null, 0, ReadModifiers.MATCH_BY_ID);
             if (lockEntry != null) { // released
@@ -242,8 +243,8 @@ public class LockManager {
         return ClientUIDHandler.createUIDFromName(key, Envelope.ENVELOPE_CLASS_NAME);
     }
 
-    private Envelope getTemplate(Object key, String uid) {
-        Envelope ee;
+    private SpaceMapEntry getTemplate(Object key, String uid) {
+    	SpaceMapEntry ee;
         try {
             ee = templatePool.poll(100, TimeUnit.MILLISECONDS);
             if (ee == null) {
@@ -258,7 +259,7 @@ public class LockManager {
         return ee;
     }
 
-    private void releaseTemplate(Envelope ee) {
+    private void releaseTemplate(SpaceMapEntry ee) {
         if (ee != null) {
             templatePool.offer(ee);
         }
