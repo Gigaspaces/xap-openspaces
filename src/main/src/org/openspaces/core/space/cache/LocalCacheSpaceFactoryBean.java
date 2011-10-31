@@ -16,6 +16,7 @@
 
 package org.openspaces.core.space.cache;
 
+import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
 import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
 import com.gigaspaces.internal.client.cache.localcache.LocalCacheConfig;
@@ -54,9 +55,12 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
 
     public static final String LOCAL_CACHE_UPDATE_MODE_PULL = "pull";
 
-    private UpdateMode localCacheUpdateMode;
-
+    private final LocalCacheConfig config;
     private Integer size;
+
+    public LocalCacheSpaceFactoryBean() {
+    	this.config = new LocalCacheConfig();
+    }
 
     /**
      * If set to {@link SpaceURL#UPDATE_MODE_PULL} (<code>1</code>) each update triggers an
@@ -72,14 +76,14 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      * @see #setUpdateModeName(String)
      */
     public void setUpdateMode(int localCacheUpdateMode) {
-        if (localCacheUpdateMode == SpaceURL.UPDATE_MODE_PULL)
-            this.localCacheUpdateMode = UpdateMode.PULL;
-        else if (localCacheUpdateMode == SpaceURL.UPDATE_MODE_PUSH)
-            this.localCacheUpdateMode = UpdateMode.PUSH;
+    	config.setUpdateMode(localCacheUpdateMode);
     }
 
     public void setUpdateMode(UpdateMode localCacheUpdateMode) {
-        this.localCacheUpdateMode = localCacheUpdateMode;
+    	if (localCacheUpdateMode == UpdateMode.PULL)
+            config.setUpdateMode(SpaceURL.UPDATE_MODE_PULL);
+    	else if (localCacheUpdateMode == UpdateMode.PUSH)
+            config.setUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
     }
 
     /**
@@ -98,9 +102,9 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
      */
     public void setUpdateModeName(String localCacheUpdateModeName) {
         if (LOCAL_CACHE_UPDATE_MODE_PULL.equalsIgnoreCase(localCacheUpdateModeName)) {
-            setUpdateMode(UpdateMode.PULL);
+            setUpdateMode(SpaceURL.UPDATE_MODE_PULL);
         } else if (LOCAL_CACHE_UPDATE_MODE_PUSH.equalsIgnoreCase(localCacheUpdateModeName)) {
-            setUpdateMode(UpdateMode.PUSH);
+            setUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
         } else {
             throw new IllegalArgumentException("Wrong localCacheUpdateModeName [" + localCacheUpdateModeName + "], "
                     + "should be either '" + LOCAL_CACHE_UPDATE_MODE_PULL + "' or '" + LOCAL_CACHE_UPDATE_MODE_PUSH
@@ -118,18 +122,16 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
             props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_SIZE_PROP, size.toString());
     }
     
+    @Override
+    protected SpaceCacheConfig getCacheConfig() {
+        return this.config;
+    }
+    
     /**
      * Creates the local cache. 
      */
     @Override
-    protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl) {
-        LocalCacheConfig config = new LocalCacheConfig(props, spaceUrl);
-        if (this.localCacheUpdateMode != null) {
-            if (this.localCacheUpdateMode == UpdateMode.PULL)
-                config.setUpdateMode(SpaceURL.UPDATE_MODE_PULL);
-            else if (this.localCacheUpdateMode == UpdateMode.PUSH)
-                config.setUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
-        }
+    protected IJSpace createCache(IDirectSpaceProxy remoteSpace) {
         try {
             return SpaceCacheFactory.createLocalCache(remoteSpace, config);
         } catch (SpaceCacheException e) {

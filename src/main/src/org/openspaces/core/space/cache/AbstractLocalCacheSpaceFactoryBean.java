@@ -17,6 +17,7 @@
 package org.openspaces.core.space.cache;
 
 import com.gigaspaces.internal.client.cache.ISpaceCache;
+import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
@@ -51,8 +52,6 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
 
     private IJSpace space;
 
-    private Properties properties;
-
     private String beanName;
 
     private IJSpace localCacheSpace;
@@ -68,13 +67,13 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * Sets additional properties for the local cache.
      */
     public void setProperties(Properties properties) {
-        this.properties = properties;
+        getCacheConfig().setCustomProperties(properties);
     }
     
     public void addProperty(String name, String value) {
-        if (this.properties == null)
-            this.properties = new Properties();
-        this.properties.setProperty(name, value);
+        if (getCacheConfig().getCustomProperties() == null)
+            getCacheConfig().setCustomProperties(new Properties());
+        getCacheConfig().getCustomProperties().setProperty(name, value);
     }
 
     /**
@@ -94,44 +93,54 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
      * on {@link #initCacheProperties()}. Additional properties are applied based on
      * {@link #setProperties(java.util.Properties)}.
      */
+    @Override
     public void afterPropertiesSet() {
-        Assert.notNull(space, "space property must be set");
-        Assert.isInstanceOf(IDirectSpaceProxy.class, space, "unsupported space proxy class: " + space.getClass().getName());
+        validate();
 
         Properties props = new Properties(); 
         initCacheProperties(props);
-        if (properties != null)
-            props.putAll(properties);
+        if (getCacheConfig().getCustomProperties() != null)
+            props.putAll(getCacheConfig().getCustomProperties());
+        getCacheConfig().setCustomProperties(props);
 
         SpaceURL spaceUrl = (SpaceURL) space.getFinderURL().clone();
         spaceUrl.putAll(props);
         spaceUrl.getCustomProperties().putAll(props);
+        getCacheConfig().setRemoteSpaceUrl(spaceUrl);
         
-        localCacheSpace = createCache((IDirectSpaceProxy) space, props, spaceUrl);
+        localCacheSpace = createCache((IDirectSpaceProxy) space);
     }
 
-    protected abstract IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl);
+    protected abstract IJSpace createCache(IDirectSpaceProxy remoteSpace);
     
     /**
      * Closes the local cache space
      */
+    @Override
     public void destroy() {
         if (localCacheSpace instanceof ISpaceCache) {
             ((ISpaceCache) localCacheSpace).close();
         }
     }
 
+    protected void validate() {
+        Assert.notNull(space, "space property must be set");
+        Assert.isInstanceOf(IDirectSpaceProxy.class, space, "unsupported space proxy class: " + space.getClass().getName());
+    }
+    
     /**
      * Populates the properties required for space cache construction.
      */
     protected void initCacheProperties(Properties props) {
-        props.put(SpaceURL.USE_LOCAL_CACHE, "true");
     }
+    
+    protected abstract SpaceCacheConfig getCacheConfig();
 
     /**
      * Returns an {@link com.j_spaces.core.IJSpace IJSpace} that is the local cache wrapping the
      * master proxy set using {@link #setSpace(com.j_spaces.core.IJSpace)}.
      */
+    @Override
     public Object getObject() {
         return this.localCacheSpace;
     }
@@ -139,6 +148,7 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     /**
      * Returns the type of the factory object.
      */
+    @Override
     public Class<? extends IJSpace> getObjectType() {
         return (localCacheSpace == null ? IJSpace.class : localCacheSpace.getClass());
     }
@@ -146,10 +156,12 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
     /**
      * Returns <code>true</code> since this bean is a singleton.
      */
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     public ServiceDetails[] getServicesDetails() {
         return new ServiceDetails[] {new SpaceServiceDetails(beanName, localCacheSpace)};
     }

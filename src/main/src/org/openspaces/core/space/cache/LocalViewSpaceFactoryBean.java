@@ -16,20 +16,19 @@
 
 package org.openspaces.core.space.cache;
 
+import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
 import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
 import com.gigaspaces.internal.client.cache.LocalViewType;
 import com.gigaspaces.internal.client.cache.localview.LocalViewConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.SpaceURL;
 
 import org.openspaces.core.space.CannotCreateSpaceException;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * The space local view proxy maintains a subset of the master space's data, allowing the client to
@@ -52,6 +51,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     public LocalViewSpaceFactoryBean() {
         this.config = new LocalViewConfig();
     }
+    
     /**
      * Sets an array of filters/views that define what portion of the data from the master space
      * will be streamed to this local view.
@@ -81,16 +81,25 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     public void setLocalViewType(LocalViewType localViewType) {
         config.setLocalViewType(localViewType);
     }
+    
+    @Override
+    protected SpaceCacheConfig getCacheConfig() {
+        return this.config;
+    }
+    
+    @Override
+    protected void validate() {
+        super.validate();
+        
+        Assert.notNull(config.getViewTemplates(), "localViews must be set");
+        Assert.isTrue(config.getViewTemplates().size() > 0, "At least one local view must be defined");
+    }
 
     /**
      * Creates the space view 
      */
     @Override
-    protected IJSpace createCache(IDirectSpaceProxy remoteSpace, Properties props, SpaceURL spaceUrl) {
-        Assert.notNull(config.getViewTemplates(), "localViews must be set");
-        Assert.isTrue(config.getViewTemplates().size() > 0, "At least one local view must be defined");
-        config.setRemoteSpaceUrl(spaceUrl);
-        config.setCustomProperties(props);
+    protected IJSpace createCache(IDirectSpaceProxy remoteSpace) {
         
         try {
             return SpaceCacheFactory.createLocalView(remoteSpace, config);
