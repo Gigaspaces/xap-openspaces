@@ -17,11 +17,9 @@
 package org.openspaces.core.map;
 
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.ClientUIDHandler;
 import com.j_spaces.core.client.EntryNotInSpaceException;
 import com.j_spaces.core.client.LocalTransactionManager;
 import com.j_spaces.core.client.ReadModifiers;
-import com.j_spaces.map.Envelope;
 import com.j_spaces.map.IMap;
 import com.j_spaces.map.MapEntryFactory;
 import com.j_spaces.map.SpaceMapEntry;
@@ -105,7 +103,7 @@ public class LockManager {
      */
     public LockHandle lock(Object key, long lockTimeToLive, long timeoutWaitingForLock) {
 
-        String uid = getUID(key);
+        String uid = MapEntryFactory.getUID(key);
         Transaction tr = null;
         try {
             tr = getTransaction(lockTimeToLive);
@@ -157,7 +155,7 @@ public class LockManager {
      * @param value The value to put after unlocking the key
      */
     public void putAndUnlock(Object key, Object value) {
-        String uid = getUID(key);
+        String uid = MapEntryFactory.getUID(key);
         Transaction tr = lockedUIDHashMap.get(uid);
 
         if (tr == null) {
@@ -183,7 +181,7 @@ public class LockManager {
      */
     public boolean islocked(Object key) {
         // first check locally
-        String uid = getUID(key);
+        String uid = MapEntryFactory.getUID(key);
         boolean locked = lockedUIDHashMap.containsKey(uid);
         if (locked) {
             return true;
@@ -213,7 +211,7 @@ public class LockManager {
      * @param key The key to unlock
      */
     public void unlock(Object key) {
-        String uid = getUID(key);
+        String uid = MapEntryFactory.getUID(key);
 
         Transaction tr = lockedUIDHashMap.get(uid);
         if (tr == null) {
@@ -237,10 +235,6 @@ public class LockManager {
             throw new CannotCreateTransactionException("Failed to create lock transaction", e);
         }
         return tCreated.transaction;
-    }
-
-    private String getUID(Object key) {
-        return ClientUIDHandler.createUIDFromName(key, Envelope.ENVELOPE_CLASS_NAME);
     }
 
     private SpaceMapEntry getTemplate(Object key, String uid) {
