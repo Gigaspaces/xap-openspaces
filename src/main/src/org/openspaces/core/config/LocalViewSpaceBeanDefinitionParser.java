@@ -20,6 +20,7 @@ import org.openspaces.core.space.cache.LocalViewSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -45,6 +46,15 @@ public class LocalViewSpaceBeanDefinitionParser extends AbstractLocalCacheSpaceB
             list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition(), null));
         }
         builder.addPropertyValue("localViews", list);
+        
+        String maxStaleDuration = element.getAttribute("max-stale-duration");
+        if (StringUtils.hasLength(maxStaleDuration))
+            builder.addPropertyValue("maxStaleDuration", Long.parseLong(maxStaleDuration));
+        String batchSize = element.getAttribute("batch-size");
+        if (StringUtils.hasLength(batchSize))
+            builder.addPropertyValue("batchSize", Integer.parseInt(batchSize));
+        String batchTimeout = element.getAttribute("batch-timeout");
+        if (StringUtils.hasLength(batchTimeout))
+            builder.addPropertyValue("batchTimeout", Long.parseLong(batchTimeout));
     }
-
 }

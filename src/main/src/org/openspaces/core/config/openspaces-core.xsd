@@ -826,6 +826,29 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="max-stale-duration" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The maximum disconnection time local view will tolerate. During that time the local view 
+                                will return the cached data, which might be stale. After that time the local view will 
+                                throw exception on read operations and attempt to reconnect at the background.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="batch-size" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                            	Determines the threshold batch size for synchronizing the local view. 
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="batch-timeout" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                            	Determines the threshold batch time for synchronizing the local view. 
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
