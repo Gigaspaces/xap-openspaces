@@ -14,66 +14,66 @@
  * limitations under the License.
  */
 
-package org.openspaces.itest.core.space.filter.security;
-
-import java.rmi.RemoteException;
-import java.util.Properties;
-
-import com.gigaspaces.security.SecurityException;
-import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.SecurityContext;
-import com.j_spaces.core.filters.FilterOperationCodes;
-
-import org.junit.Assert;
-import org.openspaces.core.GigaSpace;
-import org.openspaces.core.GigaSpaceConfigurer;
-import org.openspaces.core.space.SecurityConfig;
-import org.openspaces.core.space.UrlSpaceConfigurer;
-import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil;
-import org.openspaces.itest.core.space.filter.SimpleFilter;
-import org.openspaces.itest.core.space.filter.adapter.Message;
-import org.openspaces.security.spring.SpringSecurityManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-
-/**
- * @author kimchy
- */
-public class SecurityFilterTest extends AbstractDependencyInjectionSpringContextTests {
-
-    protected SecurityFilter securityFilterCodeName;
-    protected SecurityFilter securityFilterCode;
-    protected ProviderManager authenticationManager;
-    protected GigaSpace gigaSpace;
-    protected SecurityFilter[] filters = new SecurityFilter[2];
-    
-    public SecurityFilterTest() {
-        setPopulateProtectedVariables(true);
-    }
-
-    @Override
-    protected String[] getConfigLocations() {
-        Properties props = new Properties();
-        props.setProperty(SpringSecurityManager.SPRING_SECURITY_CONFIG_LOCATION, "classpath:/org/openspaces/itest/core/space/filter/security/in-memory-security-config.xml");
-        new SpringSecurityManager().init(props);
-        try {
-            super.onSetUp();
-        } catch (Exception e) {
-           Assert.assertFalse(true);
-        }
-        return new String[]{"/org/openspaces/itest/core/space/filter/security/securityFilter.xml"};                      
-    }
-  
-    public void beforeTest(){
-        filters[0] = securityFilterCodeName;
-        filters[1] = securityFilterCode;
-        
-//        gigaSpace.takeMultiple(new Message());
-        AllOperationsFilterUtil.restartStats(filters);
-        AllOperationsFilterUtil.initialAssert(securityFilterCodeName.getStats() , "simpleFilterCodeName"); 
-        AllOperationsFilterUtil.initialAssert(securityFilterCode.getStats() , "simpleFilterCode"); 
-    }
-    
+//package org.openspaces.itest.core.space.filter.security;
+//
+//import java.rmi.RemoteException;
+//import java.util.Properties;
+//
+//import com.gigaspaces.security.SecurityException;
+//import com.j_spaces.core.LeaseContext;
+//import com.j_spaces.core.SecurityContext;
+//import com.j_spaces.core.filters.FilterOperationCodes;
+//
+//import org.junit.Assert;
+//import org.openspaces.core.GigaSpace;
+//import org.openspaces.core.GigaSpaceConfigurer;
+//import org.openspaces.core.space.SecurityConfig;
+//import org.openspaces.core.space.UrlSpaceConfigurer;
+//import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil;
+//import org.openspaces.itest.core.space.filter.SimpleFilter;
+//import org.openspaces.itest.core.space.filter.adapter.Message;
+//import org.openspaces.security.spring.SpringSecurityManager;
+//import org.springframework.security.authentication.ProviderManager;
+//import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+//
+///**
+// * @author kimchy
+// */
+//public class SecurityFilterTest extends AbstractDependencyInjectionSpringContextTests {
+//
+//    protected SecurityFilter securityFilterCodeName;
+//    protected SecurityFilter securityFilterCode;
+//    protected ProviderManager authenticationManager;
+//    protected GigaSpace gigaSpace;
+//    protected SecurityFilter[] filters = new SecurityFilter[2];
+//    
+//    public SecurityFilterTest() {
+//        setPopulateProtectedVariables(true);
+//    }
+//
+//    @Override
+//    protected String[] getConfigLocations() {
+//        Properties props = new Properties();
+//        props.setProperty(SpringSecurityManager.SPRING_SECURITY_CONFIG_LOCATION, "classpath:/org/openspaces/itest/core/space/filter/security/in-memory-security-config.xml");
+//        new SpringSecurityManager().init(props);
+//        try {
+//            super.onSetUp();
+//        } catch (Exception e) {
+//           Assert.assertFalse(true);
+//        }
+//        return new String[]{"/org/openspaces/itest/core/space/filter/security/securityFilter.xml"};                      
+//    }
+//  
+//    public void beforeTest(){
+//        filters[0] = securityFilterCodeName;
+//        filters[1] = securityFilterCode;
+//        
+////        gigaSpace.takeMultiple(new Message());
+//        AllOperationsFilterUtil.restartStats(filters);
+//        AllOperationsFilterUtil.initialAssert(securityFilterCodeName.getStats() , "simpleFilterCodeName"); 
+//        AllOperationsFilterUtil.initialAssert(securityFilterCode.getStats() , "simpleFilterCode"); 
+//    }
+//    
 //    public void testWrite() throws SecurityException, RemoteException {
 //        beforeTest();
 //        Message message = new Message(1);
@@ -112,4 +112,4 @@ public class SecurityFilterTest extends AbstractDependencyInjectionSpringContext
 ////        AllOperationsFilterUtil.assertAfterAuthentication(securityFilterCodeName.getStats(), "securityFilterCodeName");
 //        
 //    }
-}
+//}
