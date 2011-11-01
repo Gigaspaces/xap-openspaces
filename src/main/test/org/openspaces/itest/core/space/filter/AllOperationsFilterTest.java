@@ -52,10 +52,11 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
     public void beforeTest(){       
         filters[0] = simpleFilterCodeName;
         filters[1] = simpleFilterCode;
+        
         gigaSpace.takeMultiple(new Message());
         AllOperationsFilterUtil.restartStats(filters);
-        AllOperationsFilterUtil.initialAssert(simpleFilterCodeName , "simpleFilterCodeName"); 
-        AllOperationsFilterUtil.initialAssert(simpleFilterCode , "simpleFilterCode"); 
+        AllOperationsFilterUtil.initialAssert(simpleFilterCodeName.getStats() , "simpleFilterCodeName"); 
+        AllOperationsFilterUtil.initialAssert(simpleFilterCode.getStats() , "simpleFilterCode"); 
     }
     
     public void testWrite(){
@@ -64,8 +65,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         
         LeaseContext<Message> lease = gigaSpace.write(message);
         assertNotNull(lease);
-        AllOperationsFilterUtil.assertAfterWrite(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterWrite(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterWrite(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterWrite(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
     public void testRead(){
@@ -77,8 +78,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         
         message = gigaSpace.read(message);
         assertNotNull(message);
-        AllOperationsFilterUtil.assertAfterRead(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterRead(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterRead(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterRead(simpleFilterCode.getStats() , "simpleFilterCode");
      }
     
     public void testTake(){ 
@@ -90,8 +91,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         
         Message takenMessage = gigaSpace.take(message);
         assertNotNull(takenMessage);
-        AllOperationsFilterUtil.assertAfterTake(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterTake(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterTake(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterTake(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
 
@@ -105,8 +106,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         message.setMessage("message");
         lease = gigaSpace.write(message, 1000 * 20, 0, UpdateModifiers.UPDATE_ONLY);
         assertNotNull(lease);
-        AllOperationsFilterUtil.assertAfterUpdate(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterUpdate(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterUpdate(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterUpdate(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
     public void testReadMultiple(){
@@ -120,8 +121,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         messages = gigaSpace.readMultiple(new Message() ,Integer.MAX_VALUE);
         assertNotSame(new Message[0], messages);
         assertEquals(2, messages.length);
-        AllOperationsFilterUtil.assertAfterReadMultiple(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterReadMultiple(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterReadMultiple(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterReadMultiple(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
     public void testTakeMultiple(){
@@ -135,8 +136,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         messages = gigaSpace.takeMultiple(new Message() ,Integer.MAX_VALUE);
         assertNotSame(new Message[0], messages);
         assertEquals(2, messages.length);
-        AllOperationsFilterUtil.assertAftertakeMultiple(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAftertakeMultiple(simpleFilterCode , "simpleFilterCode");    
+        AllOperationsFilterUtil.assertAfterTakeMultiple(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterTakeMultiple(simpleFilterCode.getStats() , "simpleFilterCode");    
     }
     
     public void testExecute() throws InterruptedException, ExecutionException{
@@ -144,8 +145,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         
         AsyncFuture<Integer> future = gigaSpace.execute(new MyTask());
         assertEquals(2, future.get().intValue());
-        AllOperationsFilterUtil.assertAfterExecute(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterExecute(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterExecute(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterExecute(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
     public void testNotify() throws InterruptedException, ExecutionException{
@@ -166,8 +167,8 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         LeaseContext<Message> lease = gigaSpace.write(message);
         assertNotNull(lease);        
         Thread.sleep(5000);
-        AllOperationsFilterUtil.assertAfterNotify(simpleFilterCodeName , "simpleFilterCodeName");
-        AllOperationsFilterUtil.assertAfterNotify(simpleFilterCode , "simpleFilterCode");
+        AllOperationsFilterUtil.assertAfterNotify(simpleFilterCodeName.getStats() , "simpleFilterCodeName");
+        AllOperationsFilterUtil.assertAfterNotify(simpleFilterCode.getStats() , "simpleFilterCode");
     }
    
 
