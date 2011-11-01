@@ -74,16 +74,16 @@ public class SecurityFilterTest extends AbstractDependencyInjectionSpringContext
         AllOperationsFilterUtil.initialAssert(securityFilterCode.getStats() , "simpleFilterCode"); 
     }
     
-    public void testWrite() throws SecurityException, RemoteException {
-        beforeTest();
-        Message message = new Message(1);
-        LeaseContext<Message> lease = gigaSpace.write(message);
-        assertNotNull(lease);
-        
-        AllOperationsFilterUtil.assertAfterWriteAuthentication(securityFilterCode.getStats(), "securityFilterCode");
-//        AllOperationsFilterUtil.assertAfterAuthentication(securityFilterCodeName.getStats(), "securityFilterCodeName");
-        
-    }
+//    public void testWrite() throws SecurityException, RemoteException {
+//        beforeTest();
+//        Message message = new Message(1);
+//        LeaseContext<Message> lease = gigaSpace.write(message);
+//        assertNotNull(lease);
+//        
+//        AllOperationsFilterUtil.assertAfterWriteAuthentication(securityFilterCode.getStats(), "securityFilterCode");
+////        AllOperationsFilterUtil.assertAfterAuthentication(securityFilterCodeName.getStats(), "securityFilterCodeName");
+//        
+//    }
 //    
 //    public void testRead() {    
 //        beforeTest();
