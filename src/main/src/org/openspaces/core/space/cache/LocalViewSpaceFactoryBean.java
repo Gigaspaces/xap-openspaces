@@ -17,8 +17,8 @@
 package org.openspaces.core.space.cache;
 
 import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
-import com.gigaspaces.internal.client.cache.SpaceCacheException;
 import com.gigaspaces.internal.client.cache.SpaceCacheFactory;
+import com.gigaspaces.internal.client.cache.SpaceCacheInitializationException;
 import com.gigaspaces.internal.client.cache.localview.LocalViewConfig;
 import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
 import com.j_spaces.core.IJSpace;
@@ -98,7 +98,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         
         try {
             return SpaceCacheFactory.createLocalView(remoteSpace, config);
-        } catch (SpaceCacheException e) {
+        } catch (SpaceCacheInitializationException e) {
             throw new CannotCreateSpaceException("Failed to create local view for space [" + remoteSpace + "]", e);
         }
     }
