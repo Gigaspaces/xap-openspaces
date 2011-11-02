@@ -91,7 +91,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     }
 
     /**
-     * Creates the space view 
+     * Creates the local view 
      */
     @Override
     protected IJSpace createCache(IDirectSpaceProxy remoteSpace) {
