@@ -84,6 +84,33 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
     }
 
     /**
+     * Sets the cache synchronization batch size.
+     * @since 8.0.5
+     */
+    public LocalCacheSpaceConfigurer batchSize(int batchSize) {
+        localCacheSpaceFactoryBean.setBatchSize(batchSize);
+        return this;
+    }
+
+    /**
+     * Sets the cache synchronization batch timeout (i.e. maximum time the server will batch entries before updating the client).
+     * @since 8.0.5
+     */
+    public LocalCacheSpaceConfigurer batchTimeout(long batchTimeout) {
+        localCacheSpaceFactoryBean.setBatchTimeout(batchTimeout);
+        return this;
+    }
+
+    /**
+     * Sets the maximum time to return cached results before switching to disconnected state.
+     * @since 8.0.5
+     */
+    public LocalCacheSpaceConfigurer maxDisconnectionDuration(long maxDisconnectionDuration) {
+        localCacheSpaceFactoryBean.setMaxDisconnectionDuration(maxDisconnectionDuration);
+        return this;
+    }
+
+    /**
      * Creates and returns a local cache according to the configured settings.
      * @return A configured space.
      * @since 8.0

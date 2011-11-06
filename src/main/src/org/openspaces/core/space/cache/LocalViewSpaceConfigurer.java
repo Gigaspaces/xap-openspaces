@@ -83,7 +83,7 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
     }
     
     /**
-     * Sets the local view batch size.
+     * Sets the cache synchronization batch size.
      * @since 8.0.5
      */
     public LocalViewSpaceConfigurer batchSize(int batchSize) {
@@ -92,7 +92,7 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
     }
 
     /**
-     * Sets the local view batch timeout (i.e. maximum time the server will batch entries before updating the client.
+     * Sets the cache synchronization batch timeout (i.e. maximum time the server will batch entries before updating the client).
      * @since 8.0.5
      */
     public LocalViewSpaceConfigurer batchTimeout(long batchTimeout) {
@@ -100,6 +100,10 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
+    /**
+     * Sets the maximum time to return cached results before switching to disconnected state.
+     * @since 8.0.5
+     */
     public LocalViewSpaceConfigurer maxDisconnectionDuration(long maxDisconnectionDuration) {
         localViewSpaceFactoryBean.setMaxDisconnectionDuration(maxDisconnectionDuration);
         return this;

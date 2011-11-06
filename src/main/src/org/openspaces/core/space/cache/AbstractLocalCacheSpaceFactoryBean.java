@@ -70,6 +70,18 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
         getCacheConfig().getCustomProperties().setProperty(name, value);
     }
 
+    public void setBatchSize(int batchSize) {
+        getCacheConfig().setBatchSize(batchSize);
+    }
+
+    public void setBatchTimeout(long batchTimeout) {
+        getCacheConfig().setBatchTimeout(batchTimeout);
+    }
+
+    public void setMaxDisconnectionDuration(long maxDisconnectionDuration) {
+        getCacheConfig().setMaxDisconnectionDuration(maxDisconnectionDuration);
+    }
+
     /**
      * Spring callback that sets the bean name.
      */

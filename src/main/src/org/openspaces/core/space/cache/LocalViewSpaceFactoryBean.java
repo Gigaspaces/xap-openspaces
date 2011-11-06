@@ -64,19 +64,7 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
             this.config.setViewTemplates(new ArrayList<Object>());
         this.config.getViewTemplates().add(viewTemplate);
     }
-    
-    public void setBatchSize(int batchSize) {
-        config.setBatchSize(batchSize);
-    }
-
-    public void setBatchTimeout(long batchTimeout) {
-        config.setBatchTimeout(batchTimeout);
-    }
-
-    public void setMaxDisconnectionDuration(long maxDisconnectionDuration) {
-        config.setMaxDisconnectionDuration(maxDisconnectionDuration);
-    }
-        
+            
     @Override
     protected SpaceCacheConfig getCacheConfig() {
         return this.config;
