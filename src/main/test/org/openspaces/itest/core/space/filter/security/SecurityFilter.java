@@ -21,6 +21,7 @@ import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.ISpaceFilter;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 
+import org.junit.Assert;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceLateContext;
 
@@ -32,7 +33,7 @@ import java.util.Map;
  */
 public class SecurityFilter implements ISpaceFilter {
 
-    private Map<Integer, Integer> stats = new HashMap<Integer, Integer>();
+    private static Map<Integer, Integer> stats = new HashMap<Integer, Integer>();
 
     @GigaSpaceLateContext
     GigaSpace gigaSpace;
@@ -42,6 +43,8 @@ public class SecurityFilter implements ISpaceFilter {
     }
 
     public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
+        if(operationCode == 6)
+            Assert.assertNotNull(context);
         Integer counter = stats.get(operationCode);
         if (counter == null) {
             counter = 1;
@@ -52,6 +55,8 @@ public class SecurityFilter implements ISpaceFilter {
     }
 
     public void process(SpaceContext context, ISpaceFilterEntry[] entries, int operationCode) throws RuntimeException {
+        if(operationCode == 6)
+            Assert.assertNotNull(context);
         Integer counter = stats.get(operationCode);
         if (counter == null) {
             counter = 1;

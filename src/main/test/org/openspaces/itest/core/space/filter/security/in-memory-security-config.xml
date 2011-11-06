@@ -18,7 +18,7 @@
 	<bean id="daoUserDetailsService" class="org.springframework.security.core.userdetails.memory.InMemoryDaoImpl">
 		<property name="userMap">
 			<value>
-				user = password, SpacePrivilege READ , SpacePrivilege WRITE, SpacePrivilege TAKE
+				user = password, SpacePrivilege READ , SpacePrivilege WRITE, SpacePrivilege TAKE , SpacePrivilege EXECUTE
 			</value>
 		</property>
 	</bean>
