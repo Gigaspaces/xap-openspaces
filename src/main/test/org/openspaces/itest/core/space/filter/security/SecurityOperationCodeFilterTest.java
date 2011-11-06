@@ -61,7 +61,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
 
     @Override
     protected String[] getConfigLocations() {
-        System.setProperty("com.gs.security.properties-file", "D:/workspace_XAP/openspaces/src/main/test/org/openspaces/itest/core/space/filter/security/spring-security.properties");
+        System.setProperty("com.gs.security.properties-file", "org/openspaces/itest/core/space/filter/security/spring-security.properties");
         return new String[]{"/org/openspaces/itest/core/space/filter/security/securityFilter.xml"};                      
     }
     
