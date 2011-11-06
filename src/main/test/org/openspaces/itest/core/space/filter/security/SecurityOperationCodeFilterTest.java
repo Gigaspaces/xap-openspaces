@@ -46,7 +46,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 /**
  * @author kimchy
  */
-public class SecurityFilterTest extends AbstractDependencyInjectionSpringContextTests {
+public class SecurityOperationCodeFilterTest extends AbstractDependencyInjectionSpringContextTests {
 
     protected SecurityFilter securityFilterCodeName;
     protected SecurityFilter securityFilterCode;
@@ -55,7 +55,7 @@ public class SecurityFilterTest extends AbstractDependencyInjectionSpringContext
     private SpringSecurityManager securityManager;
     protected SecurityFilter[] filters = new SecurityFilter[2];
     
-    public SecurityFilterTest() {
+    public SecurityOperationCodeFilterTest() {
         setPopulateProtectedVariables(true);
     }
 
