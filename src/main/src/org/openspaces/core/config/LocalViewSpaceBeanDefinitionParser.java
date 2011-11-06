@@ -47,9 +47,9 @@ public class LocalViewSpaceBeanDefinitionParser extends AbstractLocalCacheSpaceB
         }
         builder.addPropertyValue("localViews", list);
         
-        String maxStaleDuration = element.getAttribute("max-stale-duration");
-        if (StringUtils.hasLength(maxStaleDuration))
-            builder.addPropertyValue("maxStaleDuration", Long.parseLong(maxStaleDuration));
+        String maxDisconnectionDuration = element.getAttribute("max-disconnection-duration");
+        if (StringUtils.hasLength(maxDisconnectionDuration))
+            builder.addPropertyValue("maxDisconnectionDuration", Long.parseLong(maxDisconnectionDuration ));
         String batchSize = element.getAttribute("batch-size");
         if (StringUtils.hasLength(batchSize))
             builder.addPropertyValue("batchSize", Integer.parseInt(batchSize));

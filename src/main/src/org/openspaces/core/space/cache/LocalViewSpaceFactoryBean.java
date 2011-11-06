@@ -73,8 +73,8 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         config.setBatchTimeout(batchTimeout);
     }
 
-    public void setMaxStaleDuration(long maxStaleDuration) {
-        config.setMaxStaleDuration(maxStaleDuration);
+    public void setMaxDisconnectionDuration(long maxDisconnectionDuration) {
+        config.setMaxDisconnectionDuration(maxDisconnectionDuration);
     }
         
     @Override

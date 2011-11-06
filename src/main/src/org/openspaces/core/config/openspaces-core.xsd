@@ -826,12 +826,15 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="max-stale-duration" type="xsd:string">
+                    <xsd:attribute name="max-disconnection-duration" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                                The maximum disconnection time local view will tolerate. During that time the local view 
-                                will return the cached data, which might be stale. After that time the local view will 
-                                throw exception on read operations and attempt to reconnect at the background.
+                            	When the connection between a local view and remote master space is disrupted, 
+                            	the local view starts trying to reconnect with the remote space. If the 
+                            	disconnection duration exceeds the max-disconnection-duration, the local view 
+                            	enters a disconnected state, wherein each operation throws an exception stating 
+                            	the view is disconnected. When the connection to the remote master space is 
+                            	restored, the local view state will resume to a connected state.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>

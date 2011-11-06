@@ -100,8 +100,8 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
-    public LocalViewSpaceConfigurer maxStaleDuration(long maxStaleDuration) {
-        localViewSpaceFactoryBean.setMaxStaleDuration(maxStaleDuration);
+    public LocalViewSpaceConfigurer maxDisconnectionDuration(long maxDisconnectionDuration) {
+        localViewSpaceFactoryBean.setMaxDisconnectionDuration(maxDisconnectionDuration);
         return this;
     }
 
