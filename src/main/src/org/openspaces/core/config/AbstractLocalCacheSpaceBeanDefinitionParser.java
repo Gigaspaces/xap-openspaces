@@ -34,6 +34,7 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
 
     public static final String PROPERTIES = "properties";
 
+    @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         String space = element.getAttribute(SPACE);
@@ -47,5 +48,15 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
 
             builder.addPropertyValue("properties", properties);
         }
+        
+        String maxDisconnectionDuration = element.getAttribute("max-disconnection-duration");
+        if (StringUtils.hasLength(maxDisconnectionDuration))
+            builder.addPropertyValue("maxDisconnectionDuration", Long.parseLong(maxDisconnectionDuration ));
+        String batchSize = element.getAttribute("batch-size");
+        if (StringUtils.hasLength(batchSize))
+            builder.addPropertyValue("batchSize", Integer.parseInt(batchSize));
+        String batchTimeout = element.getAttribute("batch-timeout");
+        if (StringUtils.hasLength(batchTimeout))
+            builder.addPropertyValue("batchTimeout", Long.parseLong(batchTimeout));
     }
 }

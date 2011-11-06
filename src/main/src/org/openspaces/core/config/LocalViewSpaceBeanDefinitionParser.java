@@ -20,7 +20,6 @@ import org.openspaces.core.space.cache.LocalViewSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -33,10 +32,12 @@ import java.util.List;
  */
 public class LocalViewSpaceBeanDefinitionParser extends AbstractLocalCacheSpaceBeanDefinitionParser {
 
+    @Override
     protected Class<LocalViewSpaceFactoryBean> getBeanClass(Element element) {
         return LocalViewSpaceFactoryBean.class;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
@@ -45,16 +46,6 @@ public class LocalViewSpaceBeanDefinitionParser extends AbstractLocalCacheSpaceB
         for (Element ele : viewQueryElements) {
             list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition(), null));
         }
-        builder.addPropertyValue("localViews", list);
-        
-        String maxDisconnectionDuration = element.getAttribute("max-disconnection-duration");
-        if (StringUtils.hasLength(maxDisconnectionDuration))
-            builder.addPropertyValue("maxDisconnectionDuration", Long.parseLong(maxDisconnectionDuration ));
-        String batchSize = element.getAttribute("batch-size");
-        if (StringUtils.hasLength(batchSize))
-            builder.addPropertyValue("batchSize", Integer.parseInt(batchSize));
-        String batchTimeout = element.getAttribute("batch-timeout");
-        if (StringUtils.hasLength(batchTimeout))
-            builder.addPropertyValue("batchTimeout", Long.parseLong(batchTimeout));
+        builder.addPropertyValue("localViews", list);        
     }
 }

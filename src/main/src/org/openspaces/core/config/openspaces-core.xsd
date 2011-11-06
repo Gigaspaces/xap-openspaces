@@ -730,6 +730,32 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="max-disconnection-duration" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                            	When the connection between a local cache and remote master space is disrupted, 
+                            	the local cache starts trying to reconnect with the remote space. If the 
+                            	disconnection duration exceeds the max-disconnection-duration, the local cache 
+                            	enters a disconnected state, wherein each operation throws an exception stating 
+                            	the cache is disconnected. When the connection to the remote master space is 
+                            	restored, the local cache state will resume to a connected state.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="batch-size" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                            	Determines the threshold batch size for synchronizing the local cache. 
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="batch-timeout" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                            	Determines the threshold batch time for synchronizing the local cache. 
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="size" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
