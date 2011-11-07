@@ -71,6 +71,7 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
         return this.className;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         validate();
         if (getTemplate() != null) {
@@ -89,15 +90,18 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
         }
     }
 
+    @Override
     public Object getObject() throws Exception {
         return this.sqlQuery;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Class<SQLQuery> getObjectType() {
         return SQLQuery.class;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

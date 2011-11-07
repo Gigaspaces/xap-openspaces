@@ -29,7 +29,7 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         registerBeanDefinitionParser("space", new UrlSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("sql-query", new SQLQueryBeanDefinitionParser());
-        registerBeanDefinitionParser("view-query", new ViewQueryBeanDefinitionParser());
+        registerBeanDefinitionParser("view-query", new SQLQueryBeanDefinitionParser());
         registerBeanDefinitionParser("local-cache", new LocalCacheSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("local-view", new LocalViewSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("giga-space", new GigaSpaceBeanDefinitionParser());
