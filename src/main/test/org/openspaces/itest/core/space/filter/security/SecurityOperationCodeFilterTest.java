@@ -17,26 +17,14 @@
 package org.openspaces.itest.core.space.filter.security;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.security.SecurityException;
-import com.gigaspaces.security.directory.User;
-import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.SecurityContext;
 import com.j_spaces.core.client.UpdateModifiers;
-import com.j_spaces.core.filters.FilterOperationCodes;
-
-import org.junit.Assert;
 import org.openspaces.core.GigaSpace;
-import org.openspaces.core.GigaSpaceConfigurer;
-import org.openspaces.core.space.SecurityConfig;
-import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil;
-import org.openspaces.itest.core.space.filter.SimpleFilter;
 import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil.MyTask;
 import org.openspaces.itest.core.space.filter.adapter.Message;
 import org.openspaces.security.spring.SpringSecurityManager;
