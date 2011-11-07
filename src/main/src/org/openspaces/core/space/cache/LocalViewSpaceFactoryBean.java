@@ -55,14 +55,14 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
      * Sets an array of filters/views that define what portion of the data from the master space
      * will be streamed to this local view.
      */
-    public void setLocalViews(List<Object> viewTemplates) {
-        config.setViewTemplates(viewTemplates);
+    public void setLocalViews(List<Object> queries) {
+        config.setViewQueries(queries);
     }
     
-    public void addViewTemplate(Object viewTemplate) {
-        if (this.config.getViewTemplates() == null)
-            this.config.setViewTemplates(new ArrayList<Object>());
-        this.config.getViewTemplates().add(viewTemplate);
+    public void addViewQuery(Object query) {
+        if (this.config.getViewQueries() == null)
+            this.config.setViewQueries(new ArrayList<Object>());
+        this.config.getViewQueries().add(query);
     }
             
     @Override
@@ -74,8 +74,8 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
     protected void validate() {
         super.validate();
         
-        Assert.notNull(config.getViewTemplates(), "localViews must be set");
-        Assert.isTrue(config.getViewTemplates().size() > 0, "At least one local view must be defined");
+        Assert.notNull(config.getViewQueries(), "localViews must be set");
+        Assert.isTrue(config.getViewQueries().size() > 0, "At least one local view must be defined");
     }
 
     /**

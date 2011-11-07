@@ -66,19 +66,19 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
     }
 
     /**
-     * @deprecated since 8.0.5 - use {@link #addTemplate(SQLQuery)} instead.
+     * @deprecated since 8.0.5 - use {@link #addViewQuery(SQLQuery)} instead.
      */
     @Deprecated 
     public LocalViewSpaceConfigurer addView(View view) {
-        return addTemplate(view);
+        return addViewQuery(view);
     }
 
     /**
-     * Adds a template to the view.
+     * Adds a query to the view's criteria.
      * @since 8.0.5
      */
-    public LocalViewSpaceConfigurer addTemplate(SQLQuery template) {
-        localViewSpaceFactoryBean.addViewTemplate(template);
+    public LocalViewSpaceConfigurer addViewQuery(SQLQuery query) {
+        localViewSpaceFactoryBean.addViewQuery(query);
         return this;
     }
     
