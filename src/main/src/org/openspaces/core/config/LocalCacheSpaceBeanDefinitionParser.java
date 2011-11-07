@@ -42,6 +42,11 @@ public class LocalCacheSpaceBeanDefinitionParser extends AbstractLocalCacheSpace
             builder.addPropertyValue("updateModeName", updateMode);
         }
 
+        String maxTimeToLive = element.getAttribute("max-time-to-live");
+        if (StringUtils.hasLength(maxTimeToLive)) {
+            builder.addPropertyValue("maxTimeToLive", Long.parseLong(maxTimeToLive));
+        }
+
         String size = element.getAttribute("size");
         if (StringUtils.hasLength(size)) {
             builder.addPropertyValue("size", Integer.parseInt(size));

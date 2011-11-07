@@ -756,6 +756,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="max-time-to-live" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The maximum time (in milliseconds) an object will live in the local cache before being evicted.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="size" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -788,6 +795,15 @@
                                         <xsd:documentation>
                                             The master pushes the updates to the local cache, which holds a reference to
                                             the same updated object.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="NONE">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                        	The local cache will not register for master space updates - If an object 
+                                        	is changed in the master space, it will remain stale in the local cache 
+                                        	until its lease expires.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:enumeration>

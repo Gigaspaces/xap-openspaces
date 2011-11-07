@@ -42,6 +42,7 @@ import org.openspaces.core.space.SpaceConfigurer;
 public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
 
     public static enum UpdateMode {
+        NONE,
         PULL,
         PUSH
     }
@@ -75,6 +76,14 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
+    /**
+     * @see org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean#setMaxTimeToLive(long)
+     */
+    public LocalCacheSpaceConfigurer maxTimeToLive(long maxTimeToLive) {
+        localCacheSpaceFactoryBean.setMaxTimeToLive(maxTimeToLive);
+        return this;
+    }
+    
     /**
      * @see org.openspaces.core.space.cache.LocalCacheSpaceFactoryBean#setSize(int)
      */

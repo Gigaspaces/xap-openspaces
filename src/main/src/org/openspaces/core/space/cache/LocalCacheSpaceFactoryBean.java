@@ -76,17 +76,12 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
     }
 
     public void setUpdateMode(UpdateMode localCacheUpdateMode) {
-    	if (localCacheUpdateMode == UpdateMode.PULL)
+        if (localCacheUpdateMode == UpdateMode.NONE)
+            config.setUpdateMode(SpaceURL.UPDATE_MODE_NONE);
+        else if (localCacheUpdateMode == UpdateMode.PULL)
             config.setUpdateMode(SpaceURL.UPDATE_MODE_PULL);
     	else if (localCacheUpdateMode == UpdateMode.PUSH)
             config.setUpdateMode(SpaceURL.UPDATE_MODE_PUSH);
-    }
-
-    /**
-     * Sets the local cache size.
-     */
-    public void setSize(int size) {
-        this.config.setSize(size);
     }
 
     /**
@@ -108,6 +103,18 @@ public class LocalCacheSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBe
         }
     }
     
+    public void setMaxTimeToLive(long maxTimeToLive) {
+        this.config.setMaxTimeToLive(maxTimeToLive);
+    }
+
+    /**
+     * Sets the local cache size.
+     */
+    public void setSize(int size) {
+        this.config.setSize(size);
+    }
+
+
     @Override
     protected SpaceCacheConfig getCacheConfig() {
         return this.config;
