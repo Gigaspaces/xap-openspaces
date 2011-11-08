@@ -16,6 +16,7 @@
 
 package org.openspaces.itest.core.space.filter.adapter;
 
+import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import org.openspaces.core.GigaSpace;
@@ -59,7 +60,12 @@ public class CustomFilter {
     void onClose() {
         onCloseCalled = true;
     }
-
+    
+    @BeforeAuthentication
+    public void beforeAuthentication(SpaceContext context ,ISpaceFilterEntry entry, int operationCode) {
+        lastExecutions.add(new Object[]{context ,entry ,operationCode});
+    }
+    
     @BeforeWrite
     public void beforeWrite(ISpaceFilterEntry entry, int operationCode) {
         entry.setFieldValue("message", "changed at beforeWrite");
