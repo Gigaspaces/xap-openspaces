@@ -44,7 +44,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
     protected SecurityFilter[] filters = new SecurityFilter[2];
     
     public SecurityOperationCodeFilterTest() {
-        setPopulateProtectedVariables(true);
+        setPopulateProtectedVariables(true );
     }
 
     @Override
