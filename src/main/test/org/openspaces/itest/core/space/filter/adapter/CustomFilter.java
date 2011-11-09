@@ -39,6 +39,12 @@ public class CustomFilter {
     private boolean onInitCalled;
     private boolean onCloseCalled;
 
+    private boolean beforeAuthentication;
+
+    public boolean isBeforeAuthentication(){
+        return beforeAuthentication;
+    }
+
     public boolean isOnInitCalled() {
         return onInitCalled;
     }
@@ -62,13 +68,12 @@ public class CustomFilter {
     }
     
     @BeforeAuthentication
-    public void beforeAuthentication(SpaceContext context ,ISpaceFilterEntry entry, int operationCode) {
-        lastExecutions.add(new Object[]{context ,entry ,operationCode});
+    public void beforeAuthentication(SpaceContext context) {
+        beforeAuthentication = true;
     }
     
     @BeforeWrite
     public void beforeWrite(ISpaceFilterEntry entry, int operationCode) {
-        entry.setFieldValue("message", "changed at beforeWrite");
         lastExecutions.add(new Object[]{entry, operationCode});
     }
 
@@ -89,13 +94,11 @@ public class CustomFilter {
 
     @BeforeRead
     public void beforeRead(ISpaceFilterEntry entry, int operationCode) {
-        entry.setFieldValue("message", "test2");
         lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @AfterRead
     public void afterRead(ISpaceFilterEntry entry, int operationCode) {
-        entry.setFieldValue("message", "changed at afterRead");
         lastExecutions.add(new Object[]{entry, operationCode});
     }
 
@@ -130,13 +133,13 @@ public class CustomFilter {
     }
 
     @AfterExecute
-    public void afterExecute(ISpaceFilterEntry entry) {
-        lastExecutions.add(new Object[]{entry});
+    public void afterExecute(ISpaceFilterEntry entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @BeforeExecute
-    public void beforeExecute(ISpaceFilterEntry entry) {
-        lastExecutions.add(new Object[]{entry});
+    public void beforeExecute(ISpaceFilterEntry entry, int operationCode) {
+        lastExecutions.add(new Object[]{entry, operationCode});
     }
 
     @BeforeNotifyTrigger
