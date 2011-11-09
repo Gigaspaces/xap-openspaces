@@ -13,16 +13,22 @@
 
     <os-core:giga-space-context/>
     <os-core:giga-space-late-context/>
-        
-    <bean id="customFilter" class="org.openspaces.itest.core.space.filter.adapter.CustomFilter" />
 
-    <os-core:space id="space" url="/./spaceAdapterCustomFilterAnnotation" lookup-groups="${user.name}">
-        <os-core:security secured="true" username="user" password="password"/>
+    <bean id="customFilter" class="org.openspaces.itest.core.space.filter.adapter.CustomFilter"/>
+
+    <os-core:space id="embeddedSpace" url="/./spaceAdapterCustomFilterAnnotation" lookup-groups="${user.name}">
+        <os-core:security secured="true"/>
         <os-core:annotation-adapter-filter priority="2">
-            <os-core:filter ref="customFilter" />
+            <os-core:filter ref="customFilter"/>
         </os-core:annotation-adapter-filter>
     </os-core:space>
 
-    <os-core:giga-space id="gigaSpace" space="space" />
+    <os-core:giga-space id="embeddedGigaSpace" space="embeddedSpace"/>
+
+    <os-core:space id="space" url="jini://*/*/spaceAdapterCustomFilterAnnotation" lookup-groups="${user.name}">
+        <os-core:security username="user" password="password"/>
+    </os-core:space>
+
+    <os-core:giga-space id="gigaSpace" space="space"/>
 
 </beans>
