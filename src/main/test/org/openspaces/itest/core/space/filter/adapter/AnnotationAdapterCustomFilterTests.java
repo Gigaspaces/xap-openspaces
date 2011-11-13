@@ -58,14 +58,14 @@ public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInject
 
         Object[] params = customFilter.getLastExecutions().get(0);
         assertEquals(2, params.length);
-        assertEquals("changed at beforeWrite", ((Message)((ISpaceFilterEntry)params[0]).getObject(gigaSpace.getSpace())).getMessage());
+        assertEquals("test", ((Message)((ISpaceFilterEntry)params[0]).getObject(gigaSpace.getSpace())).getMessage());
         assertEquals(FilterOperationCodes.BEFORE_WRITE, params[1]);
 
         params = customFilter.getLastExecutions().get(1);
         assertEquals(2, params.length);
-        assertEquals("changed at beforeWrite", ((Message)((ISpaceFilterEntry)params[0]).getObject(gigaSpace.getSpace())).getMessage());
+        assertEquals("test", ((Message)((ISpaceFilterEntry)params[0]).getObject(gigaSpace.getSpace())).getMessage());
         assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
-        assertEquals("changed at beforeWrite", gigaSpace.readMultiple(new Message())[0].getMessage());
+        assertEquals("test", gigaSpace.readMultiple(new Message())[0].getMessage());
         gigaSpace.clear(null);
     }
 
@@ -79,7 +79,7 @@ public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInject
         gigaSpace.write(message2);
         customFilter.clearExecutions();
 
-        assertNotNull(gigaSpace.read(new Message("test1")));
+        assertNotNull(gigaSpace.read(new Message("test2")));
 
         assertEquals(2, customFilter.getLastExecutions().size());
 
@@ -90,7 +90,7 @@ public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInject
 
         params = customFilter.getLastExecutions().get(1);
         assertEquals(2, params.length);
-        assertEquals("changed at afterRead", ((Message)((ISpaceFilterEntry)params[0]).getObject(gigaSpace.getSpace())).getMessage());
+        assertEquals("test2", ((Message)((ISpaceFilterEntry)params[0]).getObject(gigaSpace.getSpace())).getMessage());
         assertEquals(FilterOperationCodes.AFTER_READ, params[1]);
         Message[] msgs = gigaSpace.readMultiple(new Message());
         for(Message m : msgs){
