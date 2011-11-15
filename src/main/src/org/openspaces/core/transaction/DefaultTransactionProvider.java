@@ -125,6 +125,15 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
             // Register and enlist a new XA resource with the transaction manager
             JtaTransactionManager jtaTransactionManager = (JtaTransactionManager) transactionManager;
+            javax.transaction.Transaction jtaTransaction = null;
+            try {
+                jtaTransaction = jtaTransactionManager.getTransactionManager().getTransaction();
+            } catch (Exception e) {
+                throw new TransactionDataAccessException("Failed to get JTA transaction", e);
+            }
+            if(jtaTransaction == null)
+                return null;
+
             LocalTransactionManager localTxManager;
             try {
                 localTxManager = (LocalTransactionManager) LocalTransactionManager.getInstance(space);
@@ -144,7 +153,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
             // enlist the Space xa resource with the current JTA transaction
             // we rely on the fact that this call will start the XA transaction
             try {
-                jtaTransactionManager.getTransactionManager().getTransaction().enlistResource(xaResourceSpace);
+                jtaTransaction.enlistResource(xaResourceSpace);
             } catch (Exception e) {
                 throw new TransactionDataAccessException("Failed to enlist xa resource [" + xaResourceSpace + "] with space [" + space + "]", e);
             }
