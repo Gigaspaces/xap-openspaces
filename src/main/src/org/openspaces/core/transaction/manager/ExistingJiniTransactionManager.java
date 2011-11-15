@@ -62,7 +62,7 @@ public class ExistingJiniTransactionManager {
             return false;
         }
         Transaction.Created txCreated = new Transaction.Created(transaction, null);
-        JiniTransactionHolder jiniHolder = new JiniTransactionHolder(txCreated, TransactionDefinition.ISOLATION_DEFAULT, null);
+        ExisitingJiniTransactionHolder jiniHolder = new ExisitingJiniTransactionHolder(txCreated, TransactionDefinition.ISOLATION_DEFAULT, null);
         jiniHolder.setTimeoutInSeconds(TransactionDefinition.TIMEOUT_DEFAULT);
         jiniHolder.setSynchronizedWithTransaction(true);
         jiniHolder.setDisableCommit(disableCommit);
@@ -78,7 +78,7 @@ public class ExistingJiniTransactionManager {
      *
      * @param jiniHolder     the transaction jini holder
      */
-    public static boolean bindExistingTransaction(JiniTransactionHolder jiniHolder) {
+    public static boolean bindExistingTransaction(ExisitingJiniTransactionHolder jiniHolder) {
         TransactionSynchronizationManager.bindResource(CONTEXT, jiniHolder);
         return true;
     }
@@ -86,7 +86,7 @@ public class ExistingJiniTransactionManager {
     /**
      * Unbinds the current on going bounded transaction from the thread context.
      */
-    public static JiniTransactionHolder unbindExistingTransaction() {
-        return ((JiniTransactionHolder)TransactionSynchronizationManager.unbindResource(CONTEXT));
+    public static ExisitingJiniTransactionHolder unbindExistingTransaction() {
+        return ((ExisitingJiniTransactionHolder)TransactionSynchronizationManager.unbindResource(CONTEXT));
     }
 }

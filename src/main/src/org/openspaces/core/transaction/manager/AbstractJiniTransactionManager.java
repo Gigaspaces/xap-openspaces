@@ -347,7 +347,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 logger.trace(logMessage("Removing per-thread Jini transaction for [" + getTransactionalContext() + "]"));
             }
             TransactionSynchronizationManager.unbindResource(getTransactionalContext());
-
+            
             // remove the lease from the lease renewal manager
             if (txObject.getJiniHolder().hasLeaseRenewalManager()) {
                 try {
@@ -371,15 +371,21 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
 
     @Override
     protected void doResume(Object transaction, Object suspendedResources) throws TransactionException {
-        JiniTransactionHolder jiniHolder = (JiniTransactionHolder) suspendedResources;
-        ExistingJiniTransactionManager.bindExistingTransaction(jiniHolder);
+        if(suspendedResources instanceof ExisitingJiniTransactionHolder)
+            ExistingJiniTransactionManager.bindExistingTransaction((ExisitingJiniTransactionHolder)suspendedResources);
+        else
+            TransactionSynchronizationManager.bindResource(getTransactionalContext(), (JiniTransactionHolder)suspendedResources);
     }
 
     @Override
     protected Object doSuspend(Object transaction) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         txObject.setJiniHolder(null, false);
-        return ExistingJiniTransactionManager.unbindExistingTransaction();
+        Object unbindResource = TransactionSynchronizationManager.unbindResourceIfPossible(getTransactionalContext());
+        if(unbindResource == null){
+            unbindResource = TransactionSynchronizationManager.unbindResource(ExistingJiniTransactionManager.CONTEXT);
+        }
+        return unbindResource;
     }
 
     @Override
