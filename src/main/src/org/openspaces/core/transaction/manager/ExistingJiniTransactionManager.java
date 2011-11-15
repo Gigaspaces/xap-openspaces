@@ -28,6 +28,10 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  *
  * @author kimchy
  */
+/**
+ * @author ester
+ *
+ */
 public class ExistingJiniTransactionManager {
 
     public static final String CONTEXT = "$existingTxContext";
@@ -63,7 +67,18 @@ public class ExistingJiniTransactionManager {
         jiniHolder.setSynchronizedWithTransaction(true);
         jiniHolder.setDisableCommit(disableCommit);
         jiniHolder.setDisableRollback(disableRollback);
-
+        return bindExistingTransaction(jiniHolder);
+    }
+    
+    /**
+     * Binds the provided jiniHolder which means that any operation under
+     * the current thread by {@link org.openspaces.core.GigaSpace} will be performed under it.
+     *    
+     * <p>Returns <code>true</code> if the transaction was bounded or not.
+     *
+     * @param jiniHolder     the transaction jini holder
+     */
+    public static boolean bindExistingTransaction(JiniTransactionHolder jiniHolder) {
         TransactionSynchronizationManager.bindResource(CONTEXT, jiniHolder);
         return true;
     }
@@ -71,7 +86,7 @@ public class ExistingJiniTransactionManager {
     /**
      * Unbinds the current on going bounded transaction from the thread context.
      */
-    public static void unbindExistingTransaction() {
-        TransactionSynchronizationManager.unbindResource(CONTEXT);
+    public static JiniTransactionHolder unbindExistingTransaction() {
+        return ((JiniTransactionHolder)TransactionSynchronizationManager.unbindResource(CONTEXT));
     }
 }

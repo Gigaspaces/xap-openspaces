@@ -372,14 +372,14 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     @Override
     protected void doResume(Object transaction, Object suspendedResources) throws TransactionException {
         JiniTransactionHolder jiniHolder = (JiniTransactionHolder) suspendedResources;
-        TransactionSynchronizationManager.bindResource(getTransactionalContext(), jiniHolder);
+        ExistingJiniTransactionManager.bindExistingTransaction(jiniHolder);
     }
 
     @Override
     protected Object doSuspend(Object transaction) throws TransactionException {
         JiniTransactionObject txObject = (JiniTransactionObject) transaction;
         txObject.setJiniHolder(null, false);
-        return TransactionSynchronizationManager.unbindResource(getTransactionalContext());
+        return ExistingJiniTransactionManager.unbindExistingTransaction();
     }
 
     @Override
