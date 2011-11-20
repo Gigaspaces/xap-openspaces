@@ -18,12 +18,14 @@ public class GatewaySinkServiceDetails extends GatewayServiceDetails {
     private boolean _requiresBootstrap;
     private String _localSpaceUrl;
     
+    public static final String SERVICE_SUB_TYPE = "gateway-sink";
+    
     public GatewaySinkServiceDetails() {
         super();
     }
     
     public GatewaySinkServiceDetails(String localGatewayName, String[] gatewaySourceNames, boolean requiresBootstrap, String localSpaceUrl) {
-        super(localGatewayName + "-sink", "gateway-sink", "gateway sink (" + localGatewayName + ")", "gateway sink (" + localGatewayName + ")", localGatewayName);
+        super(localGatewayName + "-sink", SERVICE_SUB_TYPE, "gateway sink (" + localGatewayName + ")", "gateway sink (" + localGatewayName + ")", localGatewayName);
         _gatewaySourceNames = gatewaySourceNames;
         _requiresBootstrap = requiresBootstrap;
         _localSpaceUrl = localSpaceUrl;
