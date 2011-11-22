@@ -160,8 +160,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
 
             // get the context transaction from the Space and nullify it. We will handle
             // the declarative transaction nature using Spring sync
-            Transaction.Created transaction = ((ISpaceProxy) space).getContextTransaction();
-            ((ISpaceProxy) space).setContextTansaction(null);
+            Transaction.Created transaction = ((ISpaceProxy) space).replaceContextTransaction(null);
 
             // register a marker sync object that acts as a placeholder for both the Space and the transaction
             TransactionSynchronizationManager.registerSynchronization(new SpaceAndTransactionSync(space, transaction));
