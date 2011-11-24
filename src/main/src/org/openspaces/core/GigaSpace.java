@@ -2267,47 +2267,6 @@ public interface GigaSpace {
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
     
     /**
-     * @deprecated Use {@link #writeMultiple(Object[], long, int)} with {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} instead.
-     */
-    @Deprecated
-    <T> Object[] updateMultiple(T[] entries, long[] leases) throws DataAccessException;
-
-    /**
-     * Same as a single update but for a group of entities sharing the same transaction (if any),
-     * applied with the same operation modifier (or default {@link com.j_spaces.core.client.Modifiers#NONE}).
-     * The semantics of a single update and a batch update are similar - the return
-     * value for each corresponds to it's cell in the returned array.
-     * see <code>'returns'</code> for possible return values.
-     *
-     * @param entries         the array of objects containing the new values,
-     *                        each entry must contain its UID.
-     * @param leases          The lease time of the updated objects, 0 means retain the original lease.
-     * @param updateModifiers operation modifiers, values from {@link com.j_spaces.core.client.UpdateModifiers UpdateModifiers}.
-     * @return array of objects which correspond to the input
-     *         entries array.
-     *         An object can be either one of:
-     *         <ul>
-     *         <li>an Entry, if the update was successful
-     *         <li><code>null</code> - if timeout occurred after waiting for a transactional proper matching entry
-     *         <li>an Exception object, in case of an exception
-     *         <ul>
-     *         <li>{@link org.openspaces.core.EntryNotInSpaceException} - in case the entry does not exist
-     *         <li>{@link org.openspaces.core.SpaceOptimisticLockingFailureException} - in case updating with non-latest version
-     *         </ul>
-     *         <li> when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
-     *         <ul>
-     *         <li><code>null</code> - if write was successful,
-     *         <li>previous value - on successful update, or
-     *         <li>an Exception Object, including OperationTimeoutException - thrown if timeout occurred.
-     *         </ul>
-     *         </ul>
-     * @throws DataAccessException         
-     * @deprecated Use {@link #writeMultiple(Object[], long, int)} instead.
-     */
-    @Deprecated
-    <T> Object[] updateMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
-
-    /**
      * Returns an iterator builder allowing to configure and create a {@link com.j_spaces.core.client.GSIterator}
      * over the Space.
      */
