@@ -16,6 +16,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.gigaspaces.internal.utils.StringUtils;
+
 public class StringPropertiesUtils {
     
     public static void store(Map<String,String> properties, OutputStream out, String comments) throws IOException {
@@ -299,35 +301,13 @@ public class StringPropertiesUtils {
             Map<String, String> properties, String key, Map<String, String> value,
             String pairSeperator, String keyValueSeperator) {
         
-        putArray(properties,key, convertKeyValuePairsToArray(value, keyValueSeperator), pairSeperator);
+        putArray(properties,key, StringUtils.convertKeyValuePairsToArray(value, keyValueSeperator), pairSeperator);
     }
 
-    private static String[] convertKeyValuePairsToArray(Map<String, String> value, String keyValueSeperator) {
-        final List<String> keyValuePairs = new ArrayList<String>();
-        for (final String pairkey : value.keySet()) {
-            final String pairvalue = value.get(pairkey);
-            if (pairkey.contains(keyValueSeperator)) {
-                throw new IllegalArgumentException("Key " + pairkey +" cannot contain seperator "+ keyValueSeperator);
-            }
-            keyValuePairs.add(pairkey+keyValueSeperator+pairvalue);
-        }
-        return keyValuePairs.toArray(new String[keyValuePairs.size()]);
-    }
-    
     public static Map<String,String> getKeyValuePairs(Map<String, String> properties, String key, String pairSeperator, String keyValueSeperator, Map<String,String> defaultValue) {
-        String[] pairs = getArray(properties, key, pairSeperator, convertKeyValuePairsToArray(defaultValue, keyValueSeperator));
-        return convertArrayToKeyValuePairs(pairs, keyValueSeperator);
+        String[] pairs = getArray(properties, key, pairSeperator, StringUtils.convertKeyValuePairsToArray(defaultValue, keyValueSeperator));
+        return StringUtils.convertArrayToKeyValuePairs(pairs, keyValueSeperator);
     }
 
-    private static Map<String, String> convertArrayToKeyValuePairs(String[] pairs, String keyValueSeperator) {
-        Map<String,String> value = new HashMap<String,String>();
-        for (String pair : pairs) {
-            int sepindex = pair.indexOf(keyValueSeperator);
-            String pairkey = pair.substring(0,sepindex);
-            String pairvalue = pair.substring(sepindex+1);
-            value.put(pairkey,pairvalue);
-        }
-        return value;
-    }
 }
 
