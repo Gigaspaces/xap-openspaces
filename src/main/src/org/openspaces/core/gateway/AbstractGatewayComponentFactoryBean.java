@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.internal.admin.InternalAdmin;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.openspaces.core.cluster.ClusterInfo;
@@ -44,7 +45,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private int communicationPort;
     private int discoveryPort;    
     private String puName;
-    private boolean relocated;
+    private boolean relocatingInvoked;
     private Admin admin;
     private boolean communicationPortIsSet;
 
@@ -233,6 +234,9 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
 
     public void destroy() throws Exception {
         destroyImpl();
+        if (admin != null) {
+            admin.close();
+        }
     }
 
     protected abstract void destroyImpl();
@@ -312,24 +316,22 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
      * @param processingUnitInstance the added PUI.
      */
     public synchronized void processingUnitInstanceAdded(final ProcessingUnitInstance processingUnitInstance) {
-        if (relocated) {
-            // This edge case seems to happen rarely - need to sort out why
-            logger.warn("PUI Added notification still active even though " +
-                    "processing unit instance has been moved and admin closed!");
-            return;
+        if (!relocatingInvoked) {
+            if (this.puName.equals(processingUnitInstance
+                    .getProcessingUnit().getName())) {
+                relocatingInvoked = true;
+                final GSCForkHandler gscForkHandler = new GSCForkHandler(this.communicationPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance, customJvmProperties);
+                //perform blocking operation on a non-event listener thread
+                ((InternalAdmin)admin).scheduleAdminOperation(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        gscForkHandler.movePuToAlternativeGSC();
+                        admin.close(); 
+                    }
+                });
+            }
         }
-        logger.debug("PUI added: " + processingUnitInstance
-                .getProcessingUnit().getName());
-        if (this.puName.equals(processingUnitInstance
-                .getProcessingUnit().getName())) {
-            new GSCForkHandler(this.communicationPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance, customJvmProperties).movePuToAlternativeGSC();
-            admin.getProcessingUnits().getProcessingUnitInstanceAdded().remove(this);
-
-            admin.close();
-            admin = null;
-            relocated = true;
-        }
-
     }
 
 }

@@ -26,9 +26,9 @@ import org.springframework.util.StringUtils;
 public class GSCForkHandler {
 
 
-    private static final int ADMIN_GSC_STARTUP_TIMEOUT_SECS = 30;
+    private static final int ADMIN_GSC_STARTUP_TIMEOUT_SECS = 600;
 
-	protected final Log logger = LogFactory.getLog(AbstractGatewayComponentFactoryBean.class);
+	protected final Log logger = LogFactory.getLog(GSCForkHandler.class);
 
 	private final ProcessingUnitInstance pui;
 	private final int lrmiPort;
@@ -123,7 +123,10 @@ public class GSCForkHandler {
             logger.info("Found existing GSC: " + gsc.getUid() + " with matching ports, relocating this instance into it");
 		}
 
-		pui.relocateAndWait(gsc);
+        logger.info("Relocating " + pui.getProcessingUnitInstanceName() +" to GSC uid=" + gsc.getUid() + " machine="+gsc.getMachine().getHostAddress()+" pid="+gsc.getVirtualMachine().getDetails().getPid());
+        pui.relocate(gsc);
+        
+
 
 	}
 
@@ -174,37 +177,6 @@ public class GSCForkHandler {
 
 		// start the GSC
 		gsc = gsa.startGridServiceAndWait(gsco, ADMIN_GSC_STARTUP_TIMEOUT_SECS, TimeUnit.SECONDS);
-		if (gsc == null) {
-			// Did not receive the GSC in the response. Double check in the
-			// Admin API
-			final GridServiceContainer[] containers = gsa.getMachine().getGridServiceContainers().getContainers();
-			for (final GridServiceContainer gridServiceContainer : containers) {
-			    if (lrmiPort != 0)
-			    {
-    				final String port =
-    						gridServiceContainer.getVirtualMachine()
-    								.getDetails()
-    								.getSystemProperties()
-    								.get(LRMI_PORT_SYSTEM_PROPERTY);
-    
-    				if ((port != null) && port.equals(Integer.toString(lrmiPort))) {
-    					gsc = gridServiceContainer;
-    				}
-			    }
-			    else
-			    {
-			        final String port =
-                        gridServiceContainer.getVirtualMachine()
-                                .getDetails()
-                                .getSystemProperties()
-                                .get(DISCOVERY_PORT_SYSTEM_PROPERTY);
-
-                    if ((port != null) && port.equals(Integer.toString(discoveryPort))) {
-                        gsc = gridServiceContainer;
-                    }
-			    }
-			}
-		}
 
 		if (gsc == null) {
 			throw new IllegalStateException("Failed to create new GSC for gateway");
