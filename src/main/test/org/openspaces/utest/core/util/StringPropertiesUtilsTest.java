@@ -1,5 +1,6 @@
 package org.openspaces.utest.core.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,8 +9,6 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.openspaces.core.util.StringPropertiesUtils;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class StringPropertiesUtilsTest extends TestCase {
 
