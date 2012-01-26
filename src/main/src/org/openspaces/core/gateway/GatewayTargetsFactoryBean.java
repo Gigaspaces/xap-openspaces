@@ -114,8 +114,25 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
                 policies[i] = gatewayTargets.get(i).asGatewayPolicy();
             }
             gatewaysPolicy.setGatewayPolicies(policies);
+            gatewaysPolicy.setDefaultGatewayPolicy(createDefaultGatewayPolicy());
         }
         return gatewaysPolicy;
+    }
+
+    private GatewayPolicy createDefaultGatewayPolicy() {
+        GatewayPolicy policy = new GatewayPolicy();
+        policy.setGatewayName("default");
+        if (bulkSize != null)
+            policy.setBulkSize(bulkSize.intValue());
+        if (idleTimeThreshold != null)
+            policy.setIdleTimeThreshold(idleTimeThreshold.longValue());
+        if (pendingOperationThreshold != null)
+            policy.setPendingOperationThreshold(pendingOperationThreshold.intValue());
+        if (maxRedoLogCapacity != null)
+            policy.setMaxRedoLogCapacity(maxRedoLogCapacity.longValue());
+        if (onRedoLogCapacityExceeded != null)
+            policy.setOnRedoLogCapacityExceeded(onRedoLogCapacityExceeded);
+        return policy;
     }
 
     public void afterPropertiesSet() throws Exception {

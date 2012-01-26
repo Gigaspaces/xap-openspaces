@@ -141,18 +141,36 @@ public class GatewayTarget {
      * @return A new {@link GatewayPolicy} instance from the gateway target's properties.
      */
     public GatewayPolicy asGatewayPolicy() {
+        return asGatewayPolicy(new GatewayPolicy());
+    }
+    
+    /**
+     * @return A new {@link GatewayPolicy} instance from the gateway target's properties, using provided default policy for properties which
+     * are not explicitly set by this instance.
+     */
+    public GatewayPolicy asGatewayPolicy(GatewayPolicy defaultGatewayPolicy) {
         GatewayPolicy policy = new GatewayPolicy();
         policy.setGatewayName(name);
         if (bulkSize != null)
             policy.setBulkSize(bulkSize.intValue());
+        else
+            policy.setBulkSize(defaultGatewayPolicy.getBulkSize());
         if (idleTimeThreshold != null)
             policy.setIdleTimeThreshold(idleTimeThreshold.longValue());
+        else
+            policy.setIdleTimeThreshold(defaultGatewayPolicy.getIdleTimeThreshold());
         if (pendingOperationThreshold != null)
             policy.setPendingOperationThreshold(pendingOperationThreshold.intValue());
+        else
+            policy.setPendingOperationThreshold(defaultGatewayPolicy.getPendingOperationThreshold());
         if (maxRedoLogCapacity != null)
             policy.setMaxRedoLogCapacity(maxRedoLogCapacity.longValue());
+        else
+            policy.setMaxRedoLogCapacity(defaultGatewayPolicy.getMaxRedoLogCapacity());
         if (onRedoLogCapacityExceeded != null)
             policy.setOnRedoLogCapacityExceeded(onRedoLogCapacityExceeded);
+        else
+            policy.setOnRedoLogCapacityExceeded(defaultGatewayPolicy.getOnRedoLogCapacityExceeded());
         return policy;
     }
     
