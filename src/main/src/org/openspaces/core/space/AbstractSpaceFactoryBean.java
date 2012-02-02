@@ -57,7 +57,6 @@ import com.j_spaces.core.IJSpaceContainer;
 import com.j_spaces.core.SpaceHealthStatus;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.SpaceRuntimeInfo;
-import com.j_spaces.core.client.LookupFinder;
 
 /**
  * Base class for most space factory beans responsible for creating/finding {@link IJSpace}
@@ -240,9 +239,6 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
         } finally {
             space = null;
         }
-
-        // close the lookup finder (cleans it). Will not be closed when running within the GSC since we want to share it
-        LookupFinder.close();
     }
 
     /**
