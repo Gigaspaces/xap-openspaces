@@ -866,7 +866,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
         try {
             Transaction tx = getCurrentTransaction();
-            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, wrapListener(listener, tx)), tx);
+            return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), routing, tx, wrapListener(listener, tx)), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -891,7 +891,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 if (optionalRouting != null) {
                     routing = optionalRouting;
                 }
-                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), tx, (AsyncFutureListener) null);
+                futures[i] = space.execute(new InternalSpaceTaskWrapper<T>(task, routing), routing, tx, (AsyncFutureListener) null);
             } catch (Exception e) {
                 throw exTranslator.translate(e);
             }
