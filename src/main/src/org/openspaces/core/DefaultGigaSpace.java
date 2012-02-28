@@ -866,8 +866,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
         try {
             Transaction tx = getCurrentTransaction();
-            if (routing == null && (!(task instanceof DistributedTask)))
-                throw new UnsupportedOperationException("Executing a non-distributed task without a routing value is not supported. Task class: " + task.getClass().getName());                    
             return wrapFuture(space.execute(new InternalSpaceTaskWrapper<T>(task, routing), routing, tx, wrapListener(listener, tx)), tx);
         } catch (Exception e) {
             throw exTranslator.translate(e);
