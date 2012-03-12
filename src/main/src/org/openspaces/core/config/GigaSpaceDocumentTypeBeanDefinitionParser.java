@@ -17,6 +17,7 @@
 package org.openspaces.core.config;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -30,6 +31,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
+import com.gigaspaces.metadata.StorageType;
 import com.gigaspaces.metadata.index.SpaceIndexType;
 
 /**
@@ -70,6 +72,8 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             if(propertyName.equals("fifoSupport"))
                 builder.addPropertyValue(propertyName,attribute.getValue());
             
+            if(propertyName.equals("storageType"))
+                builder.addPropertyValue(propertyName, Enum.valueOf(StorageType.class, attribute.getValue().toUpperCase()));
         }
         
         Element documentClassElem = DomUtils.getChildElementByTagName(element, "document-class");
@@ -101,7 +105,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         }
         
         builder.addPropertyValue("indexes", indexes.values().toArray());
-        
+
         Element idElem = DomUtils.getChildElementByTagName(element, "id");
         if (idElem != null) {
             String propertyName =idElem.getAttribute("property");
@@ -130,7 +134,25 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
                      
             builder.addPropertyValue("routingProperty", routingProperty);
         }
+        
+        Element fifoGroupingPropertyElem = DomUtils.getChildElementByTagName(element, "fifo-grouping-property");
+        if (fifoGroupingPropertyElem != null) {
+            String path = fifoGroupingPropertyElem.getAttribute("path");
+                     
+            builder.addPropertyValue("fifoGroupingPropertyPath", path);
+        }
+        
+        List<String> fifoGroupingIndexes = new LinkedList<String>();
+        List<Element> fifoGroupingIndexedElements = DomUtils.getChildElementsByTagName(element, "fifo-grouping-index");
+        for(int i=0; i < fifoGroupingIndexedElements.size(); i++) {
+            String path = fifoGroupingIndexedElements.get(i).getAttribute("path");
+            fifoGroupingIndexes.add(path);
+        }
+        
+        builder.addPropertyValue("fifoGroupingIndexesPaths", fifoGroupingIndexes);
+        
     }
+
     private String extractPropertyName(String attributeName) {
         return Conventions.attributeNameToPropertyName(attributeName);
     }

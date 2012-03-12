@@ -1858,7 +1858,7 @@
 					        </xsd:attribute>
 					    </xsd:complexType>
                        </xsd:element>
-                       
+					    
                    		<xsd:element name="basic-index"  minOccurs="0" maxOccurs="unbounded">
 	                         <xsd:annotation>
 	                             <xsd:documentation>
@@ -1892,6 +1892,7 @@
 					        </xsd:attribute>
 					    </xsd:complexType>
                        </xsd:element>
+                       
                    		<xsd:element name="document-class"  minOccurs="0" maxOccurs="1">
                          <xsd:annotation>
                              <xsd:documentation>
@@ -1899,15 +1900,51 @@
                              </xsd:documentation>
                          </xsd:annotation>
                        </xsd:element>
+                       
+                       <xsd:element name="fifo-grouping-property"  minOccurs="0" maxOccurs="1">
+                         <xsd:annotation>
+                             <xsd:documentation>
+                                 The fifo grouping property definition.
+                             </xsd:documentation>
+                         </xsd:annotation>
+                         <xsd:complexType>
+					        <xsd:attribute name="path" type="xsd:string" use="required">
+					            <xsd:annotation>
+					                <xsd:documentation>
+					                 Fifo grouping property path.
+					                </xsd:documentation>
+					            </xsd:annotation>
+					        </xsd:attribute>
+					    </xsd:complexType>
+                       </xsd:element>
+                       
+                       <xsd:element name="fifo-grouping-index"  minOccurs="0" maxOccurs="unbounded">
+	                         <xsd:annotation>
+	                             <xsd:documentation>
+	                                 Fifo grouping index definition.
+	                             </xsd:documentation>
+	                         </xsd:annotation>
+	                         <xsd:complexType>
+						        <xsd:attribute name="path" type="xsd:string" use="required">
+						            <xsd:annotation>
+						                <xsd:documentation>
+						                The fifo grouping index path.
+						                </xsd:documentation>
+						            </xsd:annotation>
+						        </xsd:attribute>
+						    </xsd:complexType>
+					    </xsd:element>
+					    
                     </xsd:sequence>
-
-                     <xsd:attribute name="type-name" type="xsd:string" use="required">
+					    
+					<xsd:attribute name="type-name" type="xsd:string" use="required">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The type name.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    
                     <xsd:attribute name="replicable" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -1915,6 +1952,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    
                      <xsd:attribute name="optimistic-lock" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -1922,6 +1960,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    
                      <xsd:attribute name="fifo-support" type="xsd:string" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -1929,6 +1968,28 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    
+                    <xsd:attribute name="storage-type" use="optional">
+						<xsd:annotation>
+							<xsd:documentation>
+								The storage type of the space-type
+							</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                         	<xsd:annotation>
+					        	<xsd:documentation>
+					        		Storage type possible types
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="default"/>
+    							<xsd:enumeration value="object"/>
+    							<xsd:enumeration value="binary"/>
+    							<xsd:enumeration value="compressed"/>
+  							</xsd:restriction>
+						</xsd:simpleType>
+                    </xsd:attribute>
+                    
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

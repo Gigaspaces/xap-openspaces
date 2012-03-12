@@ -1,5 +1,6 @@
 package org.openspaces.core.config;
 
+import java.util.Set;
 import java.util.SortedMap;
 
 import org.springframework.beans.factory.FactoryBean;
@@ -10,6 +11,7 @@ import com.gigaspaces.document.SpaceDocument;
 import com.gigaspaces.metadata.SpacePropertyDescriptor;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.metadata.SpaceTypeDescriptorBuilder;
+import com.gigaspaces.metadata.StorageType;
 import com.gigaspaces.metadata.index.SpaceIndexType;
 import com.j_spaces.kernel.ClassLoaderHelper;
 
@@ -26,6 +28,9 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
     private SpaceIndex[] _indexes;
     private SpaceRoutingProperty _routingProperty;
     private SpaceIdProperty _idProperty;
+    private StorageType _storageType;
+    private String _fifoGroupingPropertyPath;
+    private Set<String> _fifoGroupingIndexesPaths;
 
     private String _documentWrapperClassName;
 
@@ -98,6 +103,17 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
                     }
                 }
             }
+            
+            if(_storageType != null)
+                typeDescriptorBuilder.storageType(_storageType);
+            if(_fifoGroupingPropertyPath != null)
+                typeDescriptorBuilder.fifoGroupingProperty(_fifoGroupingPropertyPath);
+            if(_fifoGroupingIndexesPaths != null) {
+                for (String fifoGroupingIndexPath : _fifoGroupingIndexesPaths) {
+                    typeDescriptorBuilder.addFifoGroupingIndex(fifoGroupingIndexPath);
+                }
+            }
+            
             typeDescriptor = typeDescriptorBuilder.create();
         }
     }
@@ -136,7 +152,30 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
    
      public void setDocumentClass(String documentWrapperClassName) throws ClassNotFoundException {
         _documentWrapperClassName = documentWrapperClassName;
-    } 
-    
+    }
+
+    public StorageType getStorageType() {
+        return _storageType;
+    }
+
+    public void setStorageType(StorageType storageType) {
+        this._storageType = storageType;
+    }
+
+    public String getFifoGroupingPropertyPath() {
+        return _fifoGroupingPropertyPath;
+    }
+
+    public void setFifoGroupingPropertyPath(String fifoGroupingPropertyPath) {
+        this._fifoGroupingPropertyPath = fifoGroupingPropertyPath;
+    }
+
+    public Set<String> getFifoGroupingIndexesPaths() {
+        return _fifoGroupingIndexesPaths;
+    }
+
+    public void setFifoGroupingIndexesPaths(Set<String> fifoGroupingIndexesPaths) {
+        this._fifoGroupingIndexesPaths = fifoGroupingIndexesPaths;
+    }    
 
 }
