@@ -146,7 +146,7 @@ public class MapFactoryBean implements InitializingBean, FactoryBean, BeanNameAw
         }
         try {
             return new MapCache(getSpace(), localCacheSupport.isVersioned(), localCacheSupport.getLocalCacheUpdateMode(),
-                    localCacheSupport.getEvictionStrategy(), localCacheSupport.isUseMulticast(), localCacheSupport.isPutFirst(),
+                    localCacheSupport.getEvictionStrategy(), localCacheSupport.isPutFirst(),
                     localCacheSupport.getSizeLimit(), compression, spaceUrl.getURL());
         } catch (RemoteException e) {
             throw new CannotCreateSpaceException("Failed to creat map using space [" + getSpace() + "]", e);

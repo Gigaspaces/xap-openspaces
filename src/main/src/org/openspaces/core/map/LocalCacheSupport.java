@@ -37,8 +37,6 @@ public class LocalCacheSupport {
 
     private EvictionStrategy evictionStrategy;
 
-    private boolean useMulticast = false;
-
     private boolean putFirst = true;
 
     private int sizeLimit = 100000;
@@ -125,22 +123,6 @@ public class LocalCacheSupport {
                     + "should be either '" + LOCAL_CACHE_UPDATE_MODE_PULL + "' or '" + LOCAL_CACHE_UPDATE_MODE_PUSH
                     + "'");
         }
-    }
-
-    /**
-     * Local cache updates can be sent via unicast or multicast. When using multicast, make sure MulticastNotifyWorker
-     * as part of the space schema configuration is enabled. Default to <code>false</code>.
-     */
-    public void setUseMulticast(boolean useMulticast) {
-        this.useMulticast = useMulticast;
-    }
-
-    /**
-     * Local cache updates can be sent via unicast or multicast. When using multicast, make sure MulticastNotifyWorker
-     * as part of the space schema configuration is enabled. Default to <code>false</code>.
-     */
-    public boolean isUseMulticast() {
-        return useMulticast;
     }
 
     /**

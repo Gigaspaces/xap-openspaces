@@ -124,18 +124,6 @@ public class MapConfigurer {
 
     /**
      * @see org.openspaces.core.map.MapFactoryBean#setLocalCacheSupport(LocalCacheSupport)
-     * @see org.openspaces.core.map.LocalCacheSupport#setUseMulticast(boolean)
-     */
-    public MapConfigurer localCacheUseMulticast(boolean useMulticast) {
-        if (localCacheSupport == null) {
-            localCacheSupport = new LocalCacheSupport();
-        }
-        localCacheSupport.setUseMulticast(useMulticast);
-        return this;
-    }
-
-    /**
-     * @see org.openspaces.core.map.MapFactoryBean#setLocalCacheSupport(LocalCacheSupport)
      * @see org.openspaces.core.map.LocalCacheSupport#setPutFirst(boolean)
      */
     public MapConfigurer localCachePutFirst(boolean putFirst) {
