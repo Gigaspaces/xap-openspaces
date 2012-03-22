@@ -26,6 +26,8 @@ import com.j_spaces.map.SpaceMapEntry;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionFactory;
+import net.jini.core.transaction.server.TransactionManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.SpaceTimeoutException;
@@ -66,7 +68,7 @@ public class LockManager {
 
     private BlockingQueue<SpaceMapEntry> templatePool;
 
-    private LocalTransactionManager localTransactionManager;
+    private TransactionManager transactionManager;
 
 
     /**
@@ -76,7 +78,8 @@ public class LockManager {
         this.map = map;
         this.masterSpace = map.getMasterSpace();
         try {
-            localTransactionManager = (LocalTransactionManager) LocalTransactionManager.getInstance(masterSpace);
+            // TODO LTM: change to distributed transaction manager
+            transactionManager = LocalTransactionManager.getInstance(masterSpace);
         } catch (RemoteException e) {
             throw new CannotCreateTransactionException("Failed to obtain transaction lock manager", e);
         }
@@ -230,7 +233,7 @@ public class LockManager {
     private Transaction getTransaction(long timeout) throws CannotCreateTransactionException {
         Transaction.Created tCreated;
         try {
-            tCreated = TransactionFactory.create(localTransactionManager, timeout);
+            tCreated = TransactionFactory.create(transactionManager, timeout);
         } catch (Exception e) {
             throw new CannotCreateTransactionException("Failed to create lock transaction", e);
         }

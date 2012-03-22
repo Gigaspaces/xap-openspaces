@@ -110,6 +110,7 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
             space = (IJSpace) ((Advised) space).getTargetSource().getTarget();
         }
 
+        // TODO LTM: change to distirbuted transaction manager
         return LocalTransactionManager.getInstance(space);
     }
 
@@ -120,7 +121,8 @@ public class LocalJiniTransactionManager extends AbstractJiniTransactionManager 
     @Override
     public void destroy() throws Exception {
         super.destroy();
-        ((LocalTransactionManager) getTransactionManager()).destroy();
+        // TODO LTM: probably not a good idea to destroy single instance distributed transaction manager
+        //((LocalTransactionManager) getTransactionManager()).destroy();
     }
 
     @Override

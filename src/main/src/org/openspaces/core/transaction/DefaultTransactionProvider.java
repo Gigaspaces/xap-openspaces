@@ -21,6 +21,8 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.LocalTransactionManager;
 import com.j_spaces.core.client.XAResourceImpl;
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.server.TransactionManager;
+
 import org.openspaces.core.TransactionDataAccessException;
 import org.openspaces.core.transaction.manager.ExistingJiniTransactionManager;
 import org.openspaces.core.transaction.manager.JiniTransactionHolder;
@@ -134,13 +136,14 @@ public class DefaultTransactionProvider implements TransactionProvider {
             if(jtaTransaction == null)
                 return null;
 
-            LocalTransactionManager localTxManager;
+            TransactionManager distributedTxManager;
             try {
-                localTxManager = (LocalTransactionManager) LocalTransactionManager.getInstance(space);
+                // TODO LTM: change to distributed transaction manager
+                distributedTxManager = LocalTransactionManager.getInstance(space);
             } catch (RemoteException e) {
                 throw new TransactionDataAccessException("Failed to get local transaction manager for space [" + space + "]", e);
             }
-            XAResource xaResourceSpace = new XAResourceImpl(localTxManager, space);
+            XAResource xaResourceSpace = new XAResourceImpl(distributedTxManager, space);
             // set the default timeout to be the one specified on the JTA transaction manager
             if (jtaTransactionManager.getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                 try {
