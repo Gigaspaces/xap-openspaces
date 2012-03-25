@@ -189,4 +189,17 @@ public class StringPropertiesUtilsTest extends TestCase {
         StringPropertiesUtils.putKeyValuePairs(map, key, inner, ",", "=");
         assertEquals(inner, StringPropertiesUtils.getKeyValuePairs(map, key, ",", "=", new HashMap<String,String>()));
     }
+    
+    @Test
+    public void testMapWrapper() {
+        Map<String,String> objectProperties = new HashMap<String, String>();
+        objectProperties.put("foo", "bar");
+        
+        MapWrapperMock mapWrapper = new MapWrapperMock(objectProperties);
+        StringPropertiesUtils.putMapWrapperObject(map, key, objectProperties, mapWrapper.getClass());
+        MapWrapperMock recoveredMapWrapper = (MapWrapperMock) StringPropertiesUtils.getMapWrapperObject(map, key, null);
+        assertEquals(mapWrapper.getProperties(),recoveredMapWrapper.getProperties());
+        assertEquals(mapWrapper,recoveredMapWrapper);
+    }
+    
 }
