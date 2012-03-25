@@ -163,6 +163,16 @@ public class StringProperties {
        return StringPropertiesUtils.getMapWrapperObject(properties, key ,defaultValue);
    }
    
+   public void putStringWrapperObject(String key, Object value) {
+       StringPropertiesUtils.putStringWrapperObject(properties, key, value);
+       
+   }
+   
+   public Object getStringWrapperObject(String key, Object defaultValue) {
+       return StringPropertiesUtils.getStringWrapperObject(properties, key ,defaultValue);
+       
+   }
+   
    @Override
    public String toString() {
        return StringPropertiesUtils.toString(properties);
@@ -178,6 +188,7 @@ public class StringProperties {
    public int hashCode() {
        return this.properties.hashCode();
    }
+
 
 
 }

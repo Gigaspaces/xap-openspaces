@@ -198,8 +198,17 @@ public class StringPropertiesUtilsTest extends TestCase {
         MapWrapperMock mapWrapper = new MapWrapperMock(objectProperties);
         StringPropertiesUtils.putMapWrapperObject(map, key, objectProperties, mapWrapper.getClass());
         MapWrapperMock recoveredMapWrapper = (MapWrapperMock) StringPropertiesUtils.getMapWrapperObject(map, key, null);
+        assertNotNull(recoveredMapWrapper);
         assertEquals(mapWrapper.getProperties(),recoveredMapWrapper.getProperties());
         assertEquals(mapWrapper,recoveredMapWrapper);
     }
-    
+
+    @Test
+    public void testObject() {
+        Object stringWrapperObject = new Integer("1");
+        StringPropertiesUtils.putStringWrapperObject(map,key,stringWrapperObject);
+        Object recoveredStringWrapperObject = StringPropertiesUtils.getStringWrapperObject(map,key,null);
+        assertNotNull(recoveredStringWrapperObject);
+        assertEquals(stringWrapperObject,recoveredStringWrapperObject);
+    }
 }

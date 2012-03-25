@@ -333,19 +333,19 @@ public class StringPropertiesUtils {
      * Puts an object that has a constructor that accepts Map<String,String> as a single argument
      */
     public static void putMapWrapperObject(Map<String, String> properties, String key, Map<String, String> objectProperties, Class<?> clazz) {
-        properties.put(key, clazz.getName());
-        putMap(properties,key+".",objectProperties);
+        properties.put(key +".class", clazz.getName());
+        putMap(properties,key+".values.",objectProperties);
     }
 
     /**
-     * @param key
-     * @param defaultValue
+     * Gets an object that has a constructor that accepts Map<String,String> as a single argument
      */
     public static Object getMapWrapperObject(Map<String,String> properties, String key, Object defaultValue) {
         Object value = defaultValue;
-        String className = properties.get(key);
+        String className = properties.get(key +".class");
         if (className != null) {
-            Map<String,String> objectProperties = getMap(properties, key+".", new HashMap<String,String>());
+            Map<String,String> objectProperties = getMap(properties, key+".values.", new HashMap<String,String>());
+            if (objectProperties != null) {
             try {
                 Class<?> clazz = Class.forName(className);
                 value = clazz.getConstructor(Map.class).newInstance(objectProperties);
@@ -360,7 +360,44 @@ public class StringPropertiesUtils {
             } catch (ClassNotFoundException e) {
                 throw new AdminException("Failed to create object from properties",e);
             }
+            }
         }
+        return value;
+    }
+
+    /**
+     * Puts an object that has a constructor that accepts String as a single argument
+     */
+    public static void putStringWrapperObject(Map<String, String> properties, String key, Object value) {
+        properties.put(key +".class", value.getClass().getName());
+        properties.put(key +".value", value.toString());
+    }
+
+    /**
+     * Gets an object that has a constructor that accepts String as a single argument
+     */
+    public static Object getStringWrapperObject(Map<String, String> properties, String key, Object defaultValue) {
+        Object value = defaultValue;
+        String className = properties.get(key +".class");
+        if (className != null) {
+            String valueToString = properties.get(key +".value");
+            if (valueToString != null) {
+            try {
+                Class<?> clazz = Class.forName(className);
+                value = clazz.getConstructor(String.class).newInstance(valueToString);
+            } catch (InstantiationException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (IllegalAccessException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (InvocationTargetException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (NoSuchMethodException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (ClassNotFoundException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            }
+            }
+        }        
         return value;
     }
 }
