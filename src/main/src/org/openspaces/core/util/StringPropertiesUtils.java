@@ -333,6 +333,15 @@ public class StringPropertiesUtils {
      * Puts an object that has a constructor that accepts Map<String,String> as a single argument
      */
     public static void putMapWrapperObject(Map<String, String> properties, String key, Map<String, String> objectProperties, Class<?> clazz) {
+        try {
+            if (clazz.getConstructor(Map.class) == null) {
+                throw new IllegalArgumentException(key + " value type (" + clazz +") does not have a constructor that accepts a String");
+            }
+        } catch (SecurityException e) {
+            throw new AdminException("Failed to verify low threshold class type",e);
+        } catch (NoSuchMethodException e) {
+            throw new AdminException("Failed to verify low threshold class type",e);
+        }
         properties.put(key +".class", clazz.getName());
         putMap(properties,key+".values.",objectProperties);
     }
@@ -369,6 +378,15 @@ public class StringPropertiesUtils {
      * Puts an object that has a constructor that accepts String as a single argument
      */
     public static void putStringWrapperObject(Map<String, String> properties, String key, Object value) {
+        try {
+            if (value.getClass().getConstructor(String.class) == null) {
+                throw new IllegalArgumentException(key + " value type (" + value.getClass() +") does not have a constructor that accepts a String");
+            }
+        } catch (SecurityException e) {
+            throw new AdminException("Failed to verify low threshold class type",e);
+        } catch (NoSuchMethodException e) {
+            throw new AdminException("Failed to verify low threshold class type",e);
+        }
         properties.put(key +".class", value.getClass().getName());
         properties.put(key +".value", value.toString());
     }
