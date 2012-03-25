@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.openspaces.admin.AdminException;
 
 import com.gigaspaces.internal.utils.StringUtils;
 
@@ -326,5 +329,39 @@ public class StringPropertiesUtils {
         return StringUtils.convertArrayToKeyValuePairs(pairs, keyValueSeperator);
     }
 
+    /**
+     * Puts an object that has a constructor that accepts Map<String,String> as a single argument
+     */
+    public static void putMapWrapperObject(Map<String, String> properties, String key, Map<String, String> objectProperties, Class<?> clazz) {
+        properties.put(key, clazz.getName());
+        putMap(properties,key+".",objectProperties);
+    }
+
+    /**
+     * @param key
+     * @param defaultValue
+     */
+    public static Object getMapWrapperObject(Map<String,String> properties, String key, Object defaultValue) {
+        Object value = defaultValue;
+        String className = properties.get(key);
+        if (className != null) {
+            Map<String,String> objectProperties = getMap(properties, key+".", new HashMap<String,String>());
+            try {
+                Class<?> clazz = Class.forName(className);
+                value = clazz.getConstructor(Map.class).newInstance(objectProperties);
+            } catch (InstantiationException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (IllegalAccessException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (InvocationTargetException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (NoSuchMethodException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            } catch (ClassNotFoundException e) {
+                throw new AdminException("Failed to create object from properties",e);
+            }
+        }
+        return value;
+    }
 }
 

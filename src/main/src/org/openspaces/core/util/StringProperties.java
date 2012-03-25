@@ -155,6 +155,14 @@ public class StringProperties {
        return StringPropertiesUtils.getKeyValuePairs(properties, key, pairSeperator, keyValueSeperator, defaultValue);
    }
    
+   public void putMapWrapperObject(String key, Map<String, String> objectProperties, Class<?> clazz) {
+       StringPropertiesUtils.putMapWrapperObject(properties, key, objectProperties, clazz);
+   }
+
+   public Object getMapWrapperObject(String key, Object defaultValue) {
+       return StringPropertiesUtils.getMapWrapperObject(properties, key ,defaultValue);
+   }
+   
    @Override
    public String toString() {
        return StringPropertiesUtils.toString(properties);
@@ -170,5 +178,6 @@ public class StringProperties {
    public int hashCode() {
        return this.properties.hashCode();
    }
+
 
 }
