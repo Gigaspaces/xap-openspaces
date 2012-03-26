@@ -950,15 +950,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      */
     public int getModifiersForIsolationLevel() {
         int isolationLevel = txProvider.getCurrentTransactionIsolationLevel(this);
-        if (isolationLevel == TransactionDefinition.ISOLATION_DEFAULT) {
+        switch(isolationLevel){
+        case TransactionDefinition.ISOLATION_DEFAULT:
             return defaultIsolationLevel;
-        } else if (isolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED) {
+        case TransactionDefinition.ISOLATION_READ_UNCOMMITTED:
             return ReadModifiers.DIRTY_READ;
-        } else if (isolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED) {
+        case TransactionDefinition.ISOLATION_READ_COMMITTED:
             return ReadModifiers.READ_COMMITTED;
-        } else if (isolationLevel == TransactionDefinition.ISOLATION_REPEATABLE_READ) {
+        case TransactionDefinition.ISOLATION_REPEATABLE_READ:
             return ReadModifiers.REPEATABLE_READ;
-        } else {
+        default:
             throw new IllegalArgumentException("GigaSpaces does not support isolation level [" + isolationLevel + "]");
         }
     }
