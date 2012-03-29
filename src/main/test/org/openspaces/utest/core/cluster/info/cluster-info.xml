@@ -5,16 +5,15 @@
        xmlns:os-events="http://www.openspaces.org/schema/events"
        xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
-       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
-       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/9.0/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/9.0/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/9.0/remoting/openspaces-remoting.xsd">
 
     <os-core:annotation-support/>
     
     <bean id="clusterInfo" class="org.openspaces.core.cluster.ClusterInfo">
     	<property name="schema" value="a"/>
     	<property name="instanceId" value="1"/>
-    	<property name="backupId" value="0"/>
     	<property name="numberOfInstances" value="1"/>
     	<property name="numberOfBackups" value="0"/>
     	<property name="name" value="b"/>
