@@ -70,7 +70,7 @@ import com.j_spaces.core.client.TakeModifiers;
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.DefaultGigaSpace
- * @see org.springframework.dao.DataAccessException
+ * @see org.springframework.dao.DataAccessExceptionf
  */
 public interface GigaSpace {
 
