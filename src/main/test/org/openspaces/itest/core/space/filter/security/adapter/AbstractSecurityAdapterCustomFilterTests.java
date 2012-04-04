@@ -56,10 +56,6 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         assertTrue(customFilter.isOnInitCalled());
     }
 
-    public void testBeforeAuthenticate(){
-        assertTrue(customFilter.isBeforeAuthentication());
-    }
-
     public void testWrite() throws UnusableEntryException {
         Message message = new Message(1);
         message.setMessage("test");

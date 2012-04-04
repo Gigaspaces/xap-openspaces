@@ -70,7 +70,6 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         assertNotNull(lease);
         
         AllOperationsFilterUtil.assertAfterWriteWithAuthentication(securityFilterCode.getStats(), "securityFilterCode");
-//        AllOperationsFilterUtil.assertAfterWriteWithAuthentication(securityFilterCodeName.getStats(), "securityFilterCodeName");
     }
     
     public void testRead() {
@@ -83,7 +82,6 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         assertNotNull(message);
         
         AllOperationsFilterUtil.assertAfterReadWithAuthentication(securityFilterCode.getStats(), "securityFilterCode");
-//        AllOperationsFilterUtil.assertAfterReadWithAuthentication(securityFilterCodeName.getStats(), "securityFilterCodeName");     
     }
     
     public void testTake() {
@@ -96,7 +94,6 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         assertNotNull(message);
         
         AllOperationsFilterUtil.assertAfterTakeWithAuthentication(securityFilterCode.getStats(), "securityFilterCode");
-//        AllOperationsFilterUtil.assertAfterTakeWithAuthentication(securityFilterCodeName.getStats(), "securityFilterCodeName");   
     }
     
     public void testTakeMultiple(){
@@ -111,7 +108,6 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         assertNotSame(new Message[0], messages);
         assertEquals(2, messages.length);
         AllOperationsFilterUtil.assertAfterTakeMultipleWithAuthentication(securityFilterCode.getStats() , "simpleFilterCodeName");
-//        AllOperationsFilterUtil.assertAfterTakeMultipleWithAuthentication(securityFilterCodeName.getStats() , "simpleFilterCode");    
     }
     
     public void testExecute() throws InterruptedException, ExecutionException{
@@ -120,7 +116,6 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AsyncFuture<Integer> future = gigaSpace.execute(new MyTask());
         assertEquals(2, future.get().intValue());
         AllOperationsFilterUtil.assertAfterExecuteWithAuthentication(securityFilterCodeName.getStats() , "simpleFilterCodeName");
-//        AllOperationsFilterUtil.assertAfterExecuteWithAuthentication(securityFilterCode.getStats() , "simpleFilterCode");
     }
     
     public void testUpdate(){
@@ -134,6 +129,5 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         lease = gigaSpace.write(message, 1000 * 20, 0, UpdateModifiers.UPDATE_ONLY);
         assertNotNull(lease);
         AllOperationsFilterUtil.assertAfterUpdateWithAuthentication(securityFilterCodeName.getStats() , "simpleFilterCodeName");
-//        AllOperationsFilterUtil.assertAfterUpdateWithAuthentication(securityFilterCode.getStats() , "simpleFilterCode");
     }
 }

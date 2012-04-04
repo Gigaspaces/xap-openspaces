@@ -153,8 +153,6 @@ public class AllOperationsFilterUtil {
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-        Assert.assertNotNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
-        Assert.assertEquals(filterName , 1,stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION).intValue());
     }
     
     public static void assertAfterReadWithAuthentication(Map<Integer,Integer> stats , String filterName) {
@@ -182,8 +180,6 @@ public class AllOperationsFilterUtil {
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-        Assert.assertNotNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
-        Assert.assertEquals(filterName , 1,stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION).intValue());
     }
     
     public static void assertAfterTakeWithAuthentication(Map<Integer,Integer> stats , String filterName) {
@@ -211,9 +207,7 @@ public class AllOperationsFilterUtil {
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
-        Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE)); 
-        Assert.assertNotNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
-        Assert.assertEquals(filterName , 1,stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION).intValue());
+        Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
     }
     
     public static void assertAfterTakeMultipleWithAuthentication(Map<Integer, Integer> stats, String filterName) {
@@ -239,8 +233,6 @@ public class AllOperationsFilterUtil {
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_ALL_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
-        Assert.assertNotNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
-        Assert.assertEquals(filterName , 1,stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION).intValue());
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE)); 
         
@@ -271,9 +263,6 @@ public class AllOperationsFilterUtil {
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-        Assert.assertNotNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
-        Assert.assertEquals(filterName , 1,stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION).intValue());
-        
     }
     
     public static void assertAfterUpdateWithAuthentication(Map<Integer, Integer> stats, String filterName) {
@@ -301,9 +290,6 @@ public class AllOperationsFilterUtil {
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
         Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-        Assert.assertNotNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
-        Assert.assertEquals(filterName , 1,stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION).intValue());
-        
     }
 
     public static void assertAfterUpdate(Map<Integer,Integer> stats , String filterName) {
@@ -331,7 +317,6 @@ public class AllOperationsFilterUtil {
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
     }
     
     public static void assertAfterReadMultiple(Map<Integer,Integer> stats , String filterName) {
@@ -359,7 +344,6 @@ public class AllOperationsFilterUtil {
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
     }
 
     public static void assertAfterTake(Map<Integer,Integer> stats , String filterName) {
@@ -385,7 +369,6 @@ public class AllOperationsFilterUtil {
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_ALL_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));       
     }
@@ -413,7 +396,6 @@ public class AllOperationsFilterUtil {
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_ALL_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));             
     }
@@ -443,7 +425,6 @@ public class AllOperationsFilterUtil {
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
     }
 
     
@@ -476,8 +457,7 @@ public class AllOperationsFilterUtil {
             Assert.assertEquals(filterName , 1 , stats.get(FilterOperationCodes.BEFORE_ALL_NOTIFY_TRIGGER).intValue());
             Assert.assertEquals(filterName , 1 , stats.get(FilterOperationCodes.AFTER_ALL_NOTIFY_TRIGGER).intValue());
             Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_REMOVE));
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));      
-            Assert.assertNull(filterName , stats.get(FilterOperationCodes.BEFORE_AUTHENTICATION));
+            Assert.assertNull(filterName , stats.get(FilterOperationCodes.AFTER_REMOVE));
     }
     
     

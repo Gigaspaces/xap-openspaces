@@ -67,11 +67,6 @@ public class CustomFilter {
         onCloseCalled = true;
     }
     
-    @BeforeAuthentication
-    public void beforeAuthentication(SpaceContext context) {
-        beforeAuthentication = true;
-    }
-    
     @BeforeWrite
     public void beforeWrite(ISpaceFilterEntry entry, int operationCode) {
         lastExecutions.add(new Object[]{entry, operationCode});

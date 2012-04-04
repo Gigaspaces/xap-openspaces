@@ -30,8 +30,7 @@
                                        before-read-multiple="beforeReadMultiple" after-read-multiple="afterReadMultiple"
                                        before-take-multiple="beforeTakeMultiple" after-take-multiple="afterTakeMultiple"
                                        before-notify-trigger="beforeNotifyTrigger" after-notify-trigger="afterNotifyTrigger"
-                                       before-remove-by-lease="beforeRemoveByLease" after-remove-by-lease="afterRemoveByLease"
-                                       before-authentication="beforeAuthentication">
+                                       before-remove-by-lease="beforeRemoveByLease" after-remove-by-lease="afterRemoveByLease">
             <os-core:filter ref="customFilter"/>
         </os-core:method-adapter-filter>
     </os-core:space>
