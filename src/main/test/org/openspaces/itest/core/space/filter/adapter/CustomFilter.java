@@ -16,15 +16,33 @@
 
 package org.openspaces.itest.core.space.filter.adapter;
 
-import com.j_spaces.core.SpaceContext;
-import com.j_spaces.core.filters.FilterOperationCodes;
-import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
-import org.openspaces.core.GigaSpace;
-import org.openspaces.core.context.GigaSpaceLateContext;
-import org.openspaces.core.space.filter.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.openspaces.core.GigaSpace;
+import org.openspaces.core.context.GigaSpaceLateContext;
+import org.openspaces.core.space.filter.AfterExecute;
+import org.openspaces.core.space.filter.AfterNotifyTrigger;
+import org.openspaces.core.space.filter.AfterRead;
+import org.openspaces.core.space.filter.AfterReadMultiple;
+import org.openspaces.core.space.filter.AfterTake;
+import org.openspaces.core.space.filter.AfterTakeMultiple;
+import org.openspaces.core.space.filter.AfterUpdate;
+import org.openspaces.core.space.filter.AfterWrite;
+import org.openspaces.core.space.filter.BeforeExecute;
+import org.openspaces.core.space.filter.BeforeNotify;
+import org.openspaces.core.space.filter.BeforeNotifyTrigger;
+import org.openspaces.core.space.filter.BeforeRead;
+import org.openspaces.core.space.filter.BeforeReadMultiple;
+import org.openspaces.core.space.filter.BeforeTake;
+import org.openspaces.core.space.filter.BeforeTakeMultiple;
+import org.openspaces.core.space.filter.BeforeUpdate;
+import org.openspaces.core.space.filter.BeforeWrite;
+import org.openspaces.core.space.filter.OnFilterClose;
+import org.openspaces.core.space.filter.OnFilterInit;
+
+import com.j_spaces.core.filters.FilterOperationCodes;
+import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 
 /**
  * @author kimchy
