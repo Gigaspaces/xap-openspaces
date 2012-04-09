@@ -1095,16 +1095,7 @@
                                             </xsd:enumeration>
                                         </xsd:restriction>
                                     </xsd:simpleType>
-                                </xsd:attribute>
-                                <xsd:attribute name="use-multicast" type="xsd:boolean" use="optional">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            Local cache updates can be sent via unicast or multicast. When using
-                                            multicast, make sure MulticastNotifyWorker as part of the space schema
-                                            configuration is enabled. Default to false.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:attribute>
+                                </xsd:attribute>                                
                                 <xsd:attribute name="put-first" type="xsd:boolean" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
