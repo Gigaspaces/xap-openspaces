@@ -165,7 +165,7 @@
             <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
 		    <xsd:sequence>
-		      <xsd:element name="target" minOccurs="1" maxOccurs="unbounded">
+		      <xsd:element name="target" minOccurs="0" maxOccurs="unbounded">
 				<xsd:complexType>
 				<xsd:attribute name="name" type="xsd:string" use="required">
 					<xsd:annotation>
