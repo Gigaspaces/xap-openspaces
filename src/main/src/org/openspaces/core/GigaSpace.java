@@ -38,6 +38,7 @@ import com.gigaspaces.query.IdsQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.TakeModifiers;
+import com.j_spaces.core.client.UpdateModifiers;
 
 /**
  * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
@@ -2169,6 +2170,8 @@ public interface GigaSpace {
      *
      * @param entry The entry to write to the space
      * @param lease The lease the entry will be written with, in <b>milliseconds</b>.
+     * @param timeout The timeout of an update operation, in <b>milliseconds</b>.
+     * @param modifiers The operation modifiers specified by {@link UpdateModifiers}
      * @return A usable <code>Lease</code> on a successful write, or <code>null</code> if performed
      *         with the proxy configured with NoWriteLease flag.
      *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
