@@ -30,8 +30,8 @@ import org.openspaces.core.util.StringPropertiesUtils;
 public class StringPropertiesUtilsTest extends TestCase {
 
 
-    private final String key = "key";
-    private final String missingkey = "missingkey";
+    private final static String KEY = "key";
+    private final static String MISSING_KEY = "missingkey";
     private Map<String,String> map;
     
     @Before
@@ -42,38 +42,38 @@ public class StringPropertiesUtilsTest extends TestCase {
     
     @Test
     public void testBooleanTrue() {
-        StringPropertiesUtils.putBoolean(map,key,true);
-        assertTrue(StringPropertiesUtils.getBoolean(map, key, false));
-        map.put(key, "true");
-        assertTrue(StringPropertiesUtils.getBoolean(map, key, false));
-        map.put(key, "TRUE");
-        assertTrue(StringPropertiesUtils.getBoolean(map, key, false));
-        assertTrue(StringPropertiesUtils.getBoolean(map, missingkey, true));
+        StringPropertiesUtils.putBoolean(map,KEY,true);
+        assertTrue(StringPropertiesUtils.getBoolean(map, KEY, false));
+        map.put(KEY, "true");
+        assertTrue(StringPropertiesUtils.getBoolean(map, KEY, false));
+        map.put(KEY, "TRUE");
+        assertTrue(StringPropertiesUtils.getBoolean(map, KEY, false));
+        assertTrue(StringPropertiesUtils.getBoolean(map, MISSING_KEY, true));
     }
     
     @Test
     public void testBooleanFalse() {
-        StringPropertiesUtils.putBoolean(map,key,false);
-        assertFalse(StringPropertiesUtils.getBoolean(map, key, true));
-        map.put(key, "false");
-        assertFalse(StringPropertiesUtils.getBoolean(map, key, true));
-        map.put(key, "FALSE");
-        assertFalse(StringPropertiesUtils.getBoolean(map, key, true));
-        assertFalse(StringPropertiesUtils.getBoolean(map, missingkey, false));
+        StringPropertiesUtils.putBoolean(map,KEY,false);
+        assertFalse(StringPropertiesUtils.getBoolean(map, KEY, true));
+        map.put(KEY, "false");
+        assertFalse(StringPropertiesUtils.getBoolean(map, KEY, true));
+        map.put(KEY, "FALSE");
+        assertFalse(StringPropertiesUtils.getBoolean(map, KEY, true));
+        assertFalse(StringPropertiesUtils.getBoolean(map, MISSING_KEY, false));
     }
     
     @Test
     public void testInteger() {
-        StringPropertiesUtils.putInteger(map,key,Integer.MAX_VALUE);
-        assertEquals(Integer.MAX_VALUE,StringPropertiesUtils.getInteger(map, key, 0));
-        assertEquals(1,StringPropertiesUtils.getInteger(map, missingkey, 1));
+        StringPropertiesUtils.putInteger(map,KEY,Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE,StringPropertiesUtils.getInteger(map, KEY, 0));
+        assertEquals(1,StringPropertiesUtils.getInteger(map, MISSING_KEY, 1));
     }
     
     @Test
     public void testIntegerOverflowError() {
         try {
-            StringPropertiesUtils.putLong(map,key,Long.MAX_VALUE);
-            StringPropertiesUtils.getInteger(map, key, 0);
+            StringPropertiesUtils.putLong(map,KEY,Long.MAX_VALUE);
+            StringPropertiesUtils.getInteger(map, KEY, 0);
             fail();
         } catch(NumberFormatException e) {
             /*expected result*/
@@ -83,8 +83,8 @@ public class StringPropertiesUtilsTest extends TestCase {
     @Test
     public void testIntegerUnderflowError() {
         try {
-        StringPropertiesUtils.putLong(map,key,Long.MIN_VALUE);
-        StringPropertiesUtils.getInteger(map, key, 0);
+        StringPropertiesUtils.putLong(map,KEY,Long.MIN_VALUE);
+        StringPropertiesUtils.getInteger(map, KEY, 0);
         fail();
         } catch(NumberFormatException e) {
             /*expected result*/
@@ -94,9 +94,9 @@ public class StringPropertiesUtilsTest extends TestCase {
     @Test
     public void testIntegerParsingError() {
         try {
-            map.put(key, "notaninteger");
-            assertEquals(1,StringPropertiesUtils.getIntegerIgnoreExceptions(map, key, 1));
-            StringPropertiesUtils.getInteger(map, key, 0);
+            map.put(KEY, "notaninteger");
+            assertEquals(1,StringPropertiesUtils.getIntegerIgnoreExceptions(map, KEY, 1));
+            StringPropertiesUtils.getInteger(map, KEY, 0);
             fail();
         } catch(NumberFormatException e) {
             /*expected result*/
@@ -105,17 +105,17 @@ public class StringPropertiesUtilsTest extends TestCase {
     
     @Test
     public void testLong() {
-        StringPropertiesUtils.putLong(map,key,Long.MAX_VALUE);
-        assertEquals(Long.MAX_VALUE,StringPropertiesUtils.getLong(map, key, 0));
-        assertEquals(1,StringPropertiesUtils.getInteger(map, missingkey, 1));
+        StringPropertiesUtils.putLong(map,KEY,Long.MAX_VALUE);
+        assertEquals(Long.MAX_VALUE,StringPropertiesUtils.getLong(map, KEY, 0));
+        assertEquals(1,StringPropertiesUtils.getInteger(map, MISSING_KEY, 1));
     }
     
     @Test
     public void testLongParsingError() {
         try {
-        map.put(key, "notaninteger");
-        assertEquals(1,StringPropertiesUtils.getLongIgnoreExceptions(map, key, 1));
-        StringPropertiesUtils.getLong(map, key, 0);
+        map.put(KEY, "notaninteger");
+        assertEquals(1,StringPropertiesUtils.getLongIgnoreExceptions(map, KEY, 1));
+        StringPropertiesUtils.getLong(map, KEY, 0);
         fail();
         } catch(NumberFormatException e) {
             /*expected result*/
@@ -125,7 +125,7 @@ public class StringPropertiesUtilsTest extends TestCase {
     @Test
     public void testMap() {
         Map<String,String> inner = new HashMap<String,String>();
-        inner.put(key, "value");
+        inner.put(KEY, "value");
         StringPropertiesUtils.putMap(map, "prefix.", inner);
         assertEquals(inner,StringPropertiesUtils.getMap(map, "prefix.", inner));
     }
@@ -133,15 +133,15 @@ public class StringPropertiesUtilsTest extends TestCase {
     @Test
     public void testArray() {
         String[] inner = new String[] { "a","b","c"};
-        StringPropertiesUtils.putArray(map, key, inner," ");
-        assertEquals(Arrays.asList(inner),Arrays.asList(StringPropertiesUtils.getArray(map, key, " ", new String[]{})));
-        assertEquals(0,StringPropertiesUtils.getArray(map, missingkey, " ", new String[]{}).length);
+        StringPropertiesUtils.putArray(map, KEY, inner," ");
+        assertEquals(Arrays.asList(inner),Arrays.asList(StringPropertiesUtils.getArray(map, KEY, " ", new String[]{})));
+        assertEquals(0,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", new String[]{}).length);
     }
 
     @Test
     public void testArrayIllegalArgument() {
         try {
-            StringPropertiesUtils.putArray(map, key, new String[] { "a b","c"}," ");
+            StringPropertiesUtils.putArray(map, KEY, new String[] { "a b","c"}," ");
             fail();
         }
         catch(IllegalArgumentException e) {
@@ -153,16 +153,16 @@ public class StringPropertiesUtilsTest extends TestCase {
     public void testArgumentsArray() {
         String[] inner = new String[]   {"a b", "'b c'","\"c d\"", "\"'d e'\"", "'\"e f\"'"};
         String[] expected= new String[] {"a b",  "b c" ,  "c d"  ,   "'d e'"  ,  "\"e f\""};
-        StringPropertiesUtils.putArgumentsArray(map, key, inner);
+        StringPropertiesUtils.putArgumentsArray(map, KEY, inner);
         assertEquals(Arrays.asList(expected),
-                     Arrays.asList(StringPropertiesUtils.getArgumentsArray(map, key, new String[]{})));
-        assertEquals(0,StringPropertiesUtils.getArgumentsArray(map, missingkey, new String[]{}).length);
+                     Arrays.asList(StringPropertiesUtils.getArgumentsArray(map, KEY, new String[]{})));
+        assertEquals(0,StringPropertiesUtils.getArgumentsArray(map, MISSING_KEY, new String[]{}).length);
     }
     
     @Test
     public void testArgumentsArrayIllegalArgument() {
         try {
-            StringPropertiesUtils.putArray(map, key, new String[] { "'a' b'"}," ");
+            StringPropertiesUtils.putArray(map, KEY, new String[] { "'a' b'"}," ");
             fail();
         }
         catch(IllegalArgumentException e) {
@@ -173,7 +173,7 @@ public class StringPropertiesUtilsTest extends TestCase {
     @Test
     public void testArgumentsArrayIllegalArgument2() {
         try {
-            StringPropertiesUtils.putArray(map, key, new String[] { "\"a\" b\""}," ");
+            StringPropertiesUtils.putArray(map, KEY, new String[] { "\"a\" b\""}," ");
             fail();
         }
         catch(IllegalArgumentException e) {
@@ -186,8 +186,8 @@ public class StringPropertiesUtilsTest extends TestCase {
         inner.put("a","1");
         inner.put("b","2");
         inner.put("c","x=3");
-        StringPropertiesUtils.putKeyValuePairs(map, key, inner, ",", "=");
-        assertEquals(inner, StringPropertiesUtils.getKeyValuePairs(map, key, ",", "=", new HashMap<String,String>()));
+        StringPropertiesUtils.putKeyValuePairs(map, KEY, inner, ",", "=");
+        assertEquals(inner, StringPropertiesUtils.getKeyValuePairs(map, KEY, ",", "=", new HashMap<String,String>()));
     }
     
     @Test
@@ -196,8 +196,8 @@ public class StringPropertiesUtilsTest extends TestCase {
         objectProperties.put("foo", "bar");
         
         MapWrapperMock mapWrapper = new MapWrapperMock(objectProperties);
-        StringPropertiesUtils.putMapWrapperObject(map, key, objectProperties, mapWrapper.getClass());
-        MapWrapperMock recoveredMapWrapper = (MapWrapperMock) StringPropertiesUtils.getMapWrapperObject(map, key, null);
+        StringPropertiesUtils.putMapWrapperObject(map, KEY, objectProperties, mapWrapper.getClass());
+        MapWrapperMock recoveredMapWrapper = (MapWrapperMock) StringPropertiesUtils.getMapWrapperObject(map, KEY, null);
         assertNotNull(recoveredMapWrapper);
         assertEquals(mapWrapper.getProperties(),recoveredMapWrapper.getProperties());
         assertEquals(mapWrapper,recoveredMapWrapper);
@@ -206,8 +206,8 @@ public class StringPropertiesUtilsTest extends TestCase {
     @Test
     public void testObject() {
         Object stringWrapperObject = new Integer("1");
-        StringPropertiesUtils.putStringWrapperObject(map,key,stringWrapperObject);
-        Object recoveredStringWrapperObject = StringPropertiesUtils.getStringWrapperObject(map,key,null);
+        StringPropertiesUtils.putStringWrapperObject(map,KEY,stringWrapperObject);
+        Object recoveredStringWrapperObject = StringPropertiesUtils.getStringWrapperObject(map,KEY,null);
         assertNotNull(recoveredStringWrapperObject);
         assertEquals(stringWrapperObject,recoveredStringWrapperObject);
     }
