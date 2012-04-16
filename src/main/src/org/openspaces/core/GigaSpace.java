@@ -2170,7 +2170,8 @@ public interface GigaSpace {
      *
      * @param entry The entry to write to the space
      * @param lease The lease the entry will be written with, in <b>milliseconds</b>.
-     * @param timeout The timeout of an update operation, in <b>milliseconds</b>.
+     * @param timeout The timeout of an update operation, in <b>milliseconds</b>. If the entry is locked by another transaction
+     * wait for the specified number of milliseconds for it to be released.
      * @param modifiers The operation modifiers specified by {@link UpdateModifiers}
      * @return A usable <code>Lease</code> on a successful write, or <code>null</code> if performed
      *         with the proxy configured with NoWriteLease flag.
