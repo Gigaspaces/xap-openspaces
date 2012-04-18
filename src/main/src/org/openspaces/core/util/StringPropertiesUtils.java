@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -276,10 +277,11 @@ public class StringPropertiesUtils {
 
     public static Map<String, String> getMap(Map<String, String> properties, String keyPrefix, Map<String, String> defaultValue) {
         Map<String,String> value = new HashMap<String,String>();
-        for (String key : properties.keySet()) {
+        for (Entry<String, String> pair : properties.entrySet()) {
+            String key = pair.getKey();
             if (key.startsWith(keyPrefix)) {
                 String newKey = key.substring(keyPrefix.length());
-                value.put(newKey, properties.get(key));
+                value.put(newKey, pair.getValue());
             }
         }
         if (value.size() == 0) {
@@ -295,7 +297,7 @@ public class StringPropertiesUtils {
           }
           
           // delete old properties starting with the key prefix
-          Set<String> keysToDelete = new HashSet();
+          Set<String> keysToDelete = new HashSet<String>();
           for (String key : properties.keySet()) {
               if (key.toString().startsWith(keyPrefix)) {
                   keysToDelete.add(key);
@@ -307,14 +309,14 @@ public class StringPropertiesUtils {
           }
       
           // add new properties with the new key prefix
-          for (String key : value.keySet()) {
-              properties.put(keyPrefix+key, value.get(key));
+          for (Entry<String, String> pair : value.entrySet()) {
+              properties.put(keyPrefix+pair.getKey(), pair.getValue());
           }
     }
 
     public static String toString(Map<String, String> properties) {
         //sort and print
-        return new TreeMap(properties).toString();
+        return new TreeMap<String,String>(properties).toString();
     }
 
     public static void putKeyValuePairs(
