@@ -37,7 +37,9 @@ import java.util.List;
  */
 public class RunnableDistributedTaskAdapter<T extends Serializable, R> extends RunnableTaskAdapter<T>
         implements DistributedTask<T, R>, AsyncResultFilter<T> {
-
+    
+    private static final long serialVersionUID = 8361827094517059908L;
+    
     private transient AsyncResultsReducer<T, R> reducer;
 
     private transient AsyncResultFilter<T> filter;

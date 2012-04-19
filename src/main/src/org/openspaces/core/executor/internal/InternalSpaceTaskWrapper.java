@@ -38,6 +38,8 @@ import java.io.Serializable;
  */
 public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTask<T>, SpaceTaskWrapper, Externalizable {
 
+    private static final long serialVersionUID = -7391977361461247102L;
+    
     private Task<T> task;
 
     private Object routing;

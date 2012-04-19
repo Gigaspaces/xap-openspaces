@@ -41,6 +41,8 @@ import java.util.List;
  */
 public class AvgTask<T extends Number, R extends Number> extends AbstractDelegatingDistributedTask<T, R> implements Externalizable {
 
+    private static final long serialVersionUID = -6970700450888522663L;
+    
     private transient AvgReducer<T, R> reducer;
 
     /**

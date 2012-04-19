@@ -34,6 +34,8 @@ import java.security.PrivilegedAction;
  */
 public class PrivilegedTask<T extends Serializable> extends SimpleDelegatingTask<T> implements Externalizable {
 
+    private static final long serialVersionUID = 5299631827451867456L;
+    
     private transient T result;
 
     private transient Exception exception;

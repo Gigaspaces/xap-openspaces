@@ -34,6 +34,8 @@ import java.util.concurrent.Callable;
  */
 public class CallableTaskAdapter<T extends Serializable> implements Task<T>, ProcessObjectsProvider, TaskRoutingProvider, Externalizable {
 
+    private static final long serialVersionUID = -4269560297517277737L;
+    
     private Callable<T> callable;
 
     /**

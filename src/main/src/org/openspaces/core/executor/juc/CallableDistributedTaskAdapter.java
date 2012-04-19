@@ -39,6 +39,8 @@ import java.util.concurrent.Callable;
 public class CallableDistributedTaskAdapter<T extends Serializable, R> extends CallableTaskAdapter<T>
         implements DistributedTask<T, R>, AsyncResultFilter<T> {
 
+    private static final long serialVersionUID = -5146382658283768618L;
+    
     private transient AsyncResultsReducer<T, R> reducer;
 
     private transient AsyncResultFilter<T> filter;

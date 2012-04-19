@@ -41,6 +41,8 @@ import java.util.List;
  */
 public class MinTask<T extends Number> extends AbstractDelegatingDistributedTask<T, T> implements Externalizable {
 
+    private static final long serialVersionUID = -8472546701431396889L;
+    
     private transient MinReducer<T> reducer;
 
     public MinTask() {

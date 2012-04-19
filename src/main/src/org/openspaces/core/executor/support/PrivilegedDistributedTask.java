@@ -38,6 +38,8 @@ import java.util.List;
  */
 public class PrivilegedDistributedTask<T extends Serializable, R> extends AbstractDelegatingDistributedTask<T, R> implements Externalizable {
 
+    private static final long serialVersionUID = 8798827598285224843L;
+    
     private transient T result;
 
     private transient R reduceResult;

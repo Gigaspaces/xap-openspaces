@@ -33,6 +33,8 @@ import java.io.Serializable;
  */
 public class RunnableTaskAdapter<T extends Serializable> implements Task<T>, ProcessObjectsProvider, TaskRoutingProvider, Externalizable {
 
+    private static final long serialVersionUID = -5958775825432335114L;
+    
     private Runnable runnable;
 
     private T result;

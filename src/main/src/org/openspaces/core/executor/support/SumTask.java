@@ -41,6 +41,8 @@ import java.util.List;
  */
 public class SumTask<T extends Number, R extends Number> extends AbstractDelegatingDistributedTask<T, R> implements Externalizable {
 
+    private static final long serialVersionUID = 5923261878864135519L;
+    
     private transient SumReducer<T, R> reducer;
 
     public SumTask() {

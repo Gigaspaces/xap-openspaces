@@ -37,6 +37,8 @@ import java.util.List;
 public class InternalDistributedSpaceTaskWrapper<T extends Serializable, R> extends InternalSpaceTaskWrapper<T>
         implements DistributedSpaceTask<T, R>, AsyncResultFilter<T> {
 
+    private static final long serialVersionUID = -8997841035295544425L;
+    
     public InternalDistributedSpaceTaskWrapper() {
     }
 

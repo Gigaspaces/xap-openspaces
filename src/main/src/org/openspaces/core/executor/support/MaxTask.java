@@ -41,6 +41,8 @@ import java.util.List;
  */
 public class MaxTask<T extends Number> extends AbstractDelegatingDistributedTask<T, T> implements Externalizable {
 
+    private static final long serialVersionUID = 8467204680463687573L;
+    
     private transient MaxReducer<T> reducer;
 
     public MaxTask() {
