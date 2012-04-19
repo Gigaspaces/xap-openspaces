@@ -35,6 +35,8 @@ import java.io.ObjectOutput;
  */
 public class LockHandle implements Externalizable {
 
+    private static final long serialVersionUID = -8380130385514899614L;
+    
     private LockManager lockManager;
 
     private Transaction tx;

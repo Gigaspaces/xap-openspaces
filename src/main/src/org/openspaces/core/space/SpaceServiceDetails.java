@@ -40,6 +40,8 @@ import java.rmi.RemoteException;
  */
 public class SpaceServiceDetails extends PlainServiceDetails {
 
+    private static final long serialVersionUID = -8974518417753189880L;
+    
     public static final String SERVICE_TYPE = "space";
 
     public static final class Attributes {
