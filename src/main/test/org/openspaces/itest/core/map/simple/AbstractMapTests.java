@@ -46,6 +46,8 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         assertEquals("value", map.get("1"));
 
         assertEquals("value", map.remove("1"));
+
+         map.clear();
     }
 
     public void testSimpleGigaMapOperations() {
