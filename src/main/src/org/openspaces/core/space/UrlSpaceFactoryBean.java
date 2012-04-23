@@ -595,7 +595,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     /**
      * Sets the distributed transaction processing configuration for the Mirror component.
-     * @param transactionProcessingConfiguration The distributed transaction processing configuration to set.
+     * @param distributedTransactionProcessingConfiguration The distributed transaction processing configuration to set.
      */
     public void setDistributedTransactionProcessingConfiguration(
             DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
