@@ -69,13 +69,11 @@ public class GSCForkHandler {
 	/****
 	 * 
 	 * Constructor.
-	 * @param admin An active Admin instance used to discover the GSA.
 	 * @param lrmiPort the target GSC port.
 	 * @param discoveryPort the target discovery port.
 	 * @param startEmbeddedLus 
 	 * @param pui the PU instance object of the current PU.  
 	 * @param customJvmProperties 
-	 * @param useScript true if GSC should be created with script instead of GSA.
 	 */
 	public GSCForkHandler(int lrmiPort, int discoveryPort,
 			boolean startEmbeddedLus, ProcessingUnitInstance pui, String customJvmProperties) {
