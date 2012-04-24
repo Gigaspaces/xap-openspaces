@@ -25,11 +25,11 @@ import com.gigaspaces.internal.cluster.node.impl.processlog.multisourcesinglefil
  * Its possible to configure two parameters:
  * <ul>
  * <li>
- * {@link #setDistributedTransactionWaitTimeout(Float)} - determines the wait timeout for all distributed transaction participants data
+ * {@link #setDistributedTransactionWaitTimeout(Long)} - determines the wait timeout for all distributed transaction participants data
  * before committing only the data that arrived.
  * </li>
  * <li>
- * {@link #setDistributedTransactionWaitForOperations(Integer)} - determines the number of operations to wait for before committing
+ * {@link #setDistributedTransactionWaitForOperations(Long)} - determines the number of operations to wait for before committing
  *  a distributed transaction when data from all participants haven't arrived.  
  * </li>
  * </ul>
