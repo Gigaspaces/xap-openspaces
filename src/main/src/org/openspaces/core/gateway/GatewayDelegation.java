@@ -20,8 +20,8 @@ package org.openspaces.core.gateway;
 
 /**
  * Holds gateway delegation settings.
- * {@link GatewayDelegation.getTarget} specifies the delegation target name.
- * {@link GatewayDelegation.getDelegateThrough} specifies the component name to delegate through.
+ * {@link GatewayDelegation#getTarget()} specifies the delegation target name.
+ * {@link GatewayDelegation#getDelegateThrough()} specifies the component name to delegate through.
  * 
  * @author Idan Moyal
  * @since 8.0.3
