@@ -42,7 +42,8 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
      * puts the specified configuration and enables a new bean in its place. 
      * 
      * @param interfaceClasses - the interface that the new and old bean need to implement
-     * @param newBeanConfig - the new bean configuration that is to replace the existing specified interface implementation.
+     * @param beanClassName - the class name of the bean
+     * @param properties - the new bean configuration that is to replace the existing specified interface implementation.
      * 
      * @throws IllegalStateException - if more than one enabled bean implements any of the specified interfaces
      * @throws BeanConfigException - if the bean initialization failed.
