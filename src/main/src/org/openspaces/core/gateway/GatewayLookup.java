@@ -73,7 +73,7 @@ public class GatewayLookup {
     
     /**
      * Sets the gateway's lookup LUS port (Component's discovery port).
-     * @param lusPort
+     * @param discoveryPort
      */
     public void setDiscoveryPort(String discoveryPort) {
         this.discoveryPort = discoveryPort;
