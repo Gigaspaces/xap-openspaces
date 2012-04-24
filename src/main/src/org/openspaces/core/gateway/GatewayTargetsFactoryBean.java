@@ -112,7 +112,7 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
  
     /**
      * Sets the behavior once the defined redo log capacity is exceeded, irrelevant if the capacity is unlimited.
-     * @see #setMaxRedoLogCapacity(long)
+     * @see #setMaxRedoLogCapacity(Long)
      * @param onRedoLogCapacityExceeded
      */
     public void setOnRedoLogCapacityExceeded(RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded) {
