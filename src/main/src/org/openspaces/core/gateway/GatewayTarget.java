@@ -88,7 +88,7 @@ public class GatewayTarget {
 
     /**
      * @return The maximum time (in milliseconds) pending replication packets should wait before being replicated
-     * if {@link #setPendingOperationThreshold(Integer) has not been breached.
+     * if {@link #setPendingOperationThreshold(Integer)} has not been breached.
      */
     public Long getIdleTimeThreshold() {
         return idleTimeThreshold;
@@ -98,7 +98,7 @@ public class GatewayTarget {
      * Sets the threshold count for pending replication packets that once reached, the packets will be replicated using the
      * {@link #setBulkSize(Integer)}.
      * @param pendingOperationThreshold the threshold count.
-     * @see #setIdleTimeThreshold(long)
+     * @see #setIdleTimeThreshold(Long)
      */
     public void setPendingOperationThreshold(Integer pendingOperationThreshold) {
         if (pendingOperationThreshold != null && pendingOperationThreshold < 0)
@@ -108,7 +108,7 @@ public class GatewayTarget {
     
     /**
      * @return The threshold count for pending replication packets that once reached, the packets will be replicated using
-     * the {@link #setBulkSize(Integer).
+     * the {@link #setBulkSize(Integer)}.
      */
     public Integer getPendingOperationThreshold() {
         return pendingOperationThreshold;
@@ -140,7 +140,7 @@ public class GatewayTarget {
     
     /**
      * Sets the behavior once the defined redo log capacity is exceeded, irrelevant if the capacity is unlimited.
-     * @see #setMaxRedoLogCapacity(long)
+     * @see #setMaxRedoLogCapacity(Long)
      * @param onRedoLogCapacityExceeded
      */
     public void setOnRedoLogCapacityExceeded(RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded) {
@@ -148,8 +148,7 @@ public class GatewayTarget {
     }
 
     /**
-     * Sets limited redo log capacity for this gateway
-     * @param maxRedoLogCapacity redo log limit
+     * get limited redo log capacity behavior policy for this gateway
      */
     public RedoLogCapacityExceededPolicy getOnRedoLogCapacityExceeded() {
         return onRedoLogCapacityExceeded;
