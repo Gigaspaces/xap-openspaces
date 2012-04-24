@@ -924,7 +924,7 @@ public interface GigaSpace {
      * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(net.jini.core.entry.Entry,net.jini.core.transaction.Transaction,long,int)
+     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long,int)
      */
     <T> T readIfExists(T template, long timeout, int modifiers) throws DataAccessException;
 
@@ -982,7 +982,7 @@ public interface GigaSpace {
      * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(net.jini.core.entry.Entry,net.jini.core.transaction.Transaction,long,int)
+     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long,int)
      */
     <T> T readIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
