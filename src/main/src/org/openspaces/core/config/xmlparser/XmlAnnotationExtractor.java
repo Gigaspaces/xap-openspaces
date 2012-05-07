@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlElement.DEFAULT;
 
@@ -71,19 +72,23 @@ public class XmlAnnotationExtractor {
             
             XmlElement xmlElementAnnotation = method.getAnnotation(XmlElement.class);
             if (xmlElementAnnotation != null) {
-                validateSetterMethod(method);
-                if (!xmlElementAnnotation.name().equals("##default")) {
-                    putMethodByElementName(xmlElementAnnotation.name(), method);
-                }
-                else if (!xmlElementAnnotation.type().equals(DEFAULT.class)) {
-                    putMethodByElementType(xmlElementAnnotation.type(), method);
-                }
-                else {
-                    putMethodByElementName(getXmlNameFromMethodName(method), method);
+                handleXmlElementAnnotation(method, xmlElementAnnotation);
+            }
+            
+            XmlElements xmlElementsAnnotation = method.getAnnotation(XmlElements.class);
+            if (xmlElementsAnnotation != null) {
+                for (XmlElement innerXmlElementAnnotation : xmlElementsAnnotation.value()) {
+                    if (innerXmlElementAnnotation != null) {
+                        handleXmlElementAnnotation(method, innerXmlElementAnnotation);
+                    }
                 }
             }
                         
-            if (xmlAttributeAnnotation == null && xmlElementAnnotation == null && isSetterMethod(method)) {
+            if (xmlAttributeAnnotation == null && 
+                xmlElementAnnotation == null && 
+                xmlElementsAnnotation == null && 
+                isSetterMethod(method)) {
+                
                 final String name = getXmlNameFromMethodName(method);
                 if (isAssignableFromString(method)) {
                     putMethodByAttributeName(name, method);
@@ -92,6 +97,22 @@ public class XmlAnnotationExtractor {
                     putMethodByElementName(name, method);
                 }
             }
+        }
+    }
+
+    private void handleXmlElementAnnotation(final Method method, XmlElement xmlElementAnnotation) {
+        validateSetterMethod(method);
+        
+        final boolean defaultName = xmlElementAnnotation.name().equals("##default");
+        final boolean defaultType = xmlElementAnnotation.type().equals(DEFAULT.class);
+        if (!defaultName) {
+            putMethodByElementName(xmlElementAnnotation.name(), method);
+        }
+        else if (!defaultType) {
+            putMethodByElementType(xmlElementAnnotation.type(), method);
+        }
+        else {
+            putMethodByElementName(getXmlNameFromMethodName(method), method);
         }
     }
 
