@@ -153,6 +153,7 @@ public class XmlBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
     }
 
     private static boolean isListSetterMethod(Method method) {
-        return method.getParameterTypes()[0].equals(List.class);
+        Class<?> type = method.getParameterTypes()[0];
+        return type.equals(List.class) || type.isArray();
     }
 }
