@@ -127,6 +127,10 @@ public class XmlAnnotationExtractor {
                 return true;
             }
         }
+        
+        if (type.isArray() && String.class.isAssignableFrom(type.getComponentType())) {
+            return true;
+        }
         return false;
     }
 
