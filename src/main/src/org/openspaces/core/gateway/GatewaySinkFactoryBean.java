@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspaces.core.space.SecurityConfig;
-import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -50,7 +49,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private SinkErrorHandlingFactoryBean errorHandlingConfiguration;
     private Long transactionTimeout;
     private Long localSpaceLookupTimeout;
-    private DistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration;
+    private GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration;
     
     public GatewaySinkFactoryBean() {
     }
@@ -153,7 +152,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
      * Gets distributed transaction processing configuration for the Sink component.
      * @return Distributed transaction processing configuration.
      */
-    public DistributedTransactionProcessingConfigurationFactoryBean getDistributedTransactionProcessingConfiguration() {
+    public GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean getDistributedTransactionProcessingConfiguration() {
         return transactionProcessingConfiguration;
     }
     
@@ -161,7 +160,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
      * Sets the distributed transaction processing configuration for the Sink component.
      * @param transactionProcessingConfiguration The distributed transaction processing configuration to set.
      */
-    public void setDistributedTransactionProcessingConfiguration(DistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration) {
+    public void setDistributedTransactionProcessingConfiguration(GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration) {
         this.transactionProcessingConfiguration = transactionProcessingConfiguration;
     }
     

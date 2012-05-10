@@ -17,10 +17,9 @@
  ******************************************************************************/
 package org.openspaces.core.transaction;
 
-import com.gigaspaces.internal.cluster.node.impl.processlog.multisourcesinglefile.DistributedTransactionProcessingConfiguration;
 
 /**
- * A bean for configuring distributed transaction processing at Mirror/Sink components.
+ * A bean for configuring distributed transaction processing at Mirror component.
  * 
  * Its possible to configure two parameters:
  * <ul>
@@ -62,11 +61,4 @@ public class DistributedTransactionProcessingConfigurationFactoryBean {
         this.distributedTransactionWaitForOperations = distributedTransactionWaitForOperations;
     }
 
-    public void copyParameters(DistributedTransactionProcessingConfiguration transactionProcessingConfiguration) {
-        if (distributedTransactionWaitTimeout != null)
-            transactionProcessingConfiguration.setTimeoutBeforePartialCommit(distributedTransactionWaitTimeout.longValue());
-        if (distributedTransactionWaitForOperations != null)
-            transactionProcessingConfiguration.setWaitForOperationsBeforePartialCommit(distributedTransactionWaitForOperations.longValue());
-    }
-    
 }

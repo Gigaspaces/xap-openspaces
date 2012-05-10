@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
- * A bean definition parser for distributed transaction support configuration for mirror & sink components.
+ * A bean definition parser for distributed transaction support configuration for mirror component.
  * 
  * @author idan
  * @since 8.0.4
@@ -36,9 +36,8 @@ public class DistributedTransactionProcessingConfigurationBeanDefinitionParser e
     final private static String WAIT_FOR_OPERATIONS = "dist-tx-wait-for-opers";
     final private static String WAIT_TIMEOUT = "dist-tx-wait-timeout-millis";
     
-    
     @Override
-    protected Class<DistributedTransactionProcessingConfigurationFactoryBean> getBeanClass(Element element) {
+    protected Class getBeanClass(Element element) {
         return DistributedTransactionProcessingConfigurationFactoryBean.class;
     }
     
@@ -52,7 +51,8 @@ public class DistributedTransactionProcessingConfigurationBeanDefinitionParser e
         final String distributedTransactionWaitForOperations = element.getAttribute(WAIT_FOR_OPERATIONS);
         if (StringUtils.hasLength(distributedTransactionWaitTimeout))
             builder.addPropertyValue("distributedTransactionWaitForOperations", distributedTransactionWaitForOperations);
-        
+
     }        
 
+    
 }

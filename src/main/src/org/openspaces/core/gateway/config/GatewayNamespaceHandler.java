@@ -17,7 +17,6 @@
  ******************************************************************************/
 package org.openspaces.core.gateway.config;
 
-import org.openspaces.core.transaction.config.DistributedTransactionProcessingConfigurationBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -39,7 +38,7 @@ public class GatewayNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("delegator", new GatewayDelegatorBeanDefinitionParser());
         registerBeanDefinitionParser("delegation", new GatewayDelegationBeanDefinitionParser());
         registerBeanDefinitionParser("error-handling", new SinkErrorHandlingBeanDefinitionParser());
-        registerBeanDefinitionParser("tx-support", new DistributedTransactionProcessingConfigurationBeanDefinitionParser());
+        registerBeanDefinitionParser("tx-support", new GatewaySinkDistributedTransactionProcessingConfigurationBeanDefinitionParser());
     }
 
 }
