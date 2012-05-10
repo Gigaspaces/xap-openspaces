@@ -49,4 +49,8 @@ public class GatewaySource {
         this.name = name;
     }
     
+    @Override
+    public String toString() {
+        return "GatewaySource [name=" + name + "]";
+    }
 }

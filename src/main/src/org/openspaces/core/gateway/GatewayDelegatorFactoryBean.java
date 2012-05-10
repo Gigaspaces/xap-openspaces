@@ -99,4 +99,14 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
         return new ServiceDetails[]{new GatewayDelegatorServiceDetails(getLocalGatewayName(), getGatewayDelegations().toArray(new GatewayDelegation[getGatewayDelegations().size()]))};
     }
 
+    @Override
+    protected String getGatewayComponentTypeName() {
+        return "Delegator";
+    }
+
+    @Override
+    protected String dumpState() {
+        return replicationConnectiondelegatorContainer != null ? replicationConnectiondelegatorContainer.dumpState() : "";
+    }
+
 }

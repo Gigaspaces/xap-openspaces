@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.core.gateway;
 
+import java.io.PrintWriter;
 import java.rmi.MarshalledObject;
 import java.util.Properties;
 
@@ -31,10 +32,14 @@ import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.SecurityConfig;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
+import com.gigaspaces.internal.dump.InternalDump;
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
+import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
 import com.gigaspaces.internal.license.LicenseException;
 import com.gigaspaces.internal.license.LicenseManager;
 import com.gigaspaces.internal.utils.StringUtils;
@@ -50,7 +55,9 @@ import com.j_spaces.core.Constants;
  * @since 8.0.3
  *
  */
-public abstract class AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean, ClusterInfoAware, ProcessingUnitInstanceAddedEventListener, BeanLevelMergedPropertiesAware {
+public abstract class AbstractGatewayComponentFactoryBean implements DisposableBean, InitializingBean,
+        ClusterInfoAware, ProcessingUnitInstanceAddedEventListener, BeanLevelMergedPropertiesAware,
+        InternalDumpProcessor, BeanNameAware {
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -68,6 +75,8 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
 
     private SecurityConfig securityConfig;
     private Properties beanLevelProperties;
+
+    private String beanName;
     
     private static String customJvmProperties;
     private static final Object relocationDecisionLock = new Object();
@@ -160,6 +169,16 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         return communicationPort;
     }
 
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
+    
+    @Override
+    public String getName() {
+        return beanName;
+    }
+    
     /**
      * Sets the gateway component's communication port.
      * @param communicationPort The communication port.
@@ -350,5 +369,27 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             }
         }
     }
-
+    
+    @Override
+    public void process(InternalDump dump) throws InternalDumpProcessorFailedException {
+        dump.addPrefix("gateway/");
+        try {
+            PrintWriter writer = new PrintWriter(dump.createFileWriter(beanName + ".txt"));
+            writer.println("=============================================");
+            writer.println(" Gateway component type: " + getGatewayComponentTypeName());
+            writer.println("=============================================");
+            writer.println(dumpState());
+            writer.close();
+        } finally {
+            dump.removePrefix();
+        }
+    }
+    
+    /**
+     * @return The gateway component's type name.
+     */
+    protected abstract String getGatewayComponentTypeName();
+    
+    protected abstract String dumpState();
+    
 }

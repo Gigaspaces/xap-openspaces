@@ -243,4 +243,14 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), gatewaySourcesNames, requiresBootstrap, getLocalSpaceUrl())};
     }
     
+    @Override
+    protected String getGatewayComponentTypeName() {
+        return "Sink";
+    }
+
+    @Override
+    protected String dumpState() {
+        return localClusterReplicationSink != null ? localClusterReplicationSink.dumpState() : "";
+    }
+    
 }
