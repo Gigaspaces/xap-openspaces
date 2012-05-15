@@ -17,6 +17,16 @@
  ******************************************************************************/
 package org.openspaces.core.space;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.rmi.RemoteException;
+
+import net.jini.core.lookup.ServiceID;
+
+import org.openspaces.core.util.SpaceUtils;
+import org.openspaces.pu.service.PlainServiceDetails;
+
 import com.gigaspaces.internal.client.cache.localcache.LocalCacheContainer;
 import com.gigaspaces.internal.client.cache.localview.LocalViewContainer;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
@@ -24,14 +34,6 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.IRemoteJSpaceAdmin;
 import com.j_spaces.core.client.SpaceURL;
-import net.jini.core.lookup.ServiceID;
-import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.pu.service.PlainServiceDetails;
-
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.rmi.RemoteException;
 
 /**
  * A Space service defined within a processing unit.
@@ -130,11 +132,11 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         return (SpaceType) getAttributes().get(Attributes.SPACETYPE);
     }
 
-    public boolean isMirror() {
+    public Boolean isMirror() {
         return (Boolean) getAttributes().get(Attributes.MIRROR);
     }
 
-    public boolean isClustered() {
+    public Boolean isClustered() {
         return (Boolean) getAttributes().get(Attributes.CLUSTERED);
     }
 
