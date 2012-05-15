@@ -16,15 +16,12 @@
 
 package org.openspaces.core.space;
 
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 
-import org.openspaces.core.InternalSpaceException;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
@@ -334,24 +331,7 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
      * Destroys the Space by calling {@link UrlSpaceFactoryBean#destroy()}.
      */
     public void destroy() throws Exception {
-        try
-        {
-            urlSpaceFactoryBean.destroy();
-        }
-        catch(InternalSpaceException e)
-        {
-            String path = System.getProperty("com.gigaspaces.shutdownhook.logpath");
-            if (StringUtils.hasText(path));
-            {
-                path = path + com.gigaspaces.internal.utils.StringUtils.FOLDER_SEPARATOR + "UrlSpaceConfigurer_" + UUID.randomUUID() + ".log";                
-                FileWriter writer = new FileWriter(path);
-                writer.write("Caught Exception " + e);
-                writer.flush();
-                writer.close();
-            }
-            Thread.sleep(120*1000);
-            throw e;
-        }
+        urlSpaceFactoryBean.destroy();
     }
 
     private void validate() {
