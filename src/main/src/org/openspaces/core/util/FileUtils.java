@@ -91,6 +91,9 @@ public class FileUtils {
         try {
             zipFile = new ZipFile(directoryOrZip);
             final ZipEntry zipEntry = zipFile.getEntry(applicationFile);
+            if (zipEntry == null) {
+                throw new AdminException("Failed to load " + applicationFile + " from "+directoryOrZip);
+            }
             final int length = (int) zipEntry.getSize();
             if (length > maxFileSizeInBytes) {
                 throw new AdminException(applicationFile + " file size cannot be bigger than " + maxFileSizeInBytes
