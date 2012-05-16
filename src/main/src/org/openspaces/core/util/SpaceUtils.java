@@ -62,15 +62,14 @@ public abstract class SpaceUtils {
      * either a <code>jini</code> or a <code>rmi</code> protocol.
      */
     public static boolean isRemoteProtocol(SpaceURL spaceUrl) {
-        String protocol = spaceUrl.getProtocol();
-        return protocol.equals(SpaceURL.JINI_PROTOCOL) || protocol.equals(SpaceURL.RMI_PROTOCOL);
+        return spaceUrl.isRemoteProtocol();
     }
 
     /**
      * Returns <code>true</code> if the url points at a remote protocol.
      */
     public static boolean isRemoteProtocol(String spaceUrl) {
-        return spaceUrl.startsWith(SpaceURL.JINI_PROTOCOL) || spaceUrl.startsWith(SpaceURL.RMI_PROTOCOL);
+        return SpaceURL.isRemoteProtocol(spaceUrl);
     }
 
     public static String spaceUrlProperty(String propertyName) {
