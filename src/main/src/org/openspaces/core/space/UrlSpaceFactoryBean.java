@@ -54,6 +54,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
@@ -395,7 +396,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             // copy over the space properties
             if (urlProperties != null) {
                 for (Map.Entry<Object, Object> entry : urlProperties.entrySet()) {
-                    props.put(SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + entry.getKey(), entry.getValue());
+                    props.put(SpaceUrlUtils.toCustomUrlProperty((String)entry.getKey()), entry.getValue());
                 }
             }
 

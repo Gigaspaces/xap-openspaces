@@ -17,6 +17,7 @@
 package org.openspaces.core.util;
 
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.client.SpaceURL;
 import org.springframework.dao.DataAccessException;
@@ -54,7 +55,7 @@ public abstract class SpaceUtils {
             // assume this is an embedded Space
             return false;
         }
-        return isRemoteProtocol(space.getFinderURL());
+        return space.getFinderURL().isRemoteProtocol();
     }
 
     /**
@@ -69,11 +70,11 @@ public abstract class SpaceUtils {
      * Returns <code>true</code> if the url points at a remote protocol.
      */
     public static boolean isRemoteProtocol(String spaceUrl) {
-        return SpaceURL.isRemoteProtocol(spaceUrl);
+        return SpaceUrlUtils.isRemoteProtocol(spaceUrl);
     }
 
     public static String spaceUrlProperty(String propertyName) {
-        return SpaceURL.PROPERTIES_SPACE_URL_ARG + "." + propertyName;
+        return SpaceUrlUtils.toCustomUrlProperty(propertyName);
     }
 
     public static boolean isSameSpace(IJSpace space1, IJSpace space2) throws DataAccessException {
