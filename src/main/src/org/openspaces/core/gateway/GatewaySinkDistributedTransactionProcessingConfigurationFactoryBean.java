@@ -17,17 +17,13 @@ package org.openspaces.core.gateway;
 
 import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 
-import com.gigaspaces.cluster.replication.gateway.transaction.AbortOnConsolidationAbortedInterceptor;
-import com.gigaspaces.cluster.replication.gateway.transaction.ExecuteOnConsolidationAbortedInterceptor;
-import com.gigaspaces.cluster.replication.gateway.transaction.TransactionConsolidationInterceptor;
-import com.gigaspaces.internal.cluster.node.impl.gateway.sink.GatewaySinkDistributedTransactionProcessingConfiguration;
-import com.gigaspaces.internal.utils.StringUtils;
+import com.gigaspaces.internal.cluster.node.impl.processlog.multisourcesinglefile.DistributedTransactionProcessingConfiguration;
 
 
 /**
  * A bean for configuring distributed transaction processing at Sink component.
  * 
- * Its possible to configure two parameters:
+ * Its possible to configure three parameters:
  * <ul>
  * <li>
  * {@link #setDistributedTransactionWaitTimeout(Long)} - determines the wait timeout for all distributed transaction participants data
@@ -36,6 +32,9 @@ import com.gigaspaces.internal.utils.StringUtils;
  * <li>
  * {@link #setDistributedTransactionWaitForOperations(Long)} - determines the number of operations to wait for before committing
  *  a distributed transaction when data from all participants haven't arrived.  
+ * </li>
+ * <li>
+ * {@link #setDistributedTransactionConsolidationFailureAction(String)} - determines the action to take when a transaction consolidation is failed.  
  * </li>
  * </ul>
  * 
@@ -46,7 +45,6 @@ public class GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean
         DistributedTransactionProcessingConfigurationFactoryBean {
     
     private String distributedTransactionConsolidationFailureAction;
-    private TransactionConsolidationInterceptor distributedTransactionConsolidationInterceptor;
     
     /**
      * @param distributedTransactionConsolidationFailureAction the distributedTransactionConsolidationFailedAction to set
@@ -63,43 +61,11 @@ public class GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean
         return distributedTransactionConsolidationFailureAction;
     }
     
-    /**
-     * @param distributedTransactionConsolidationInterceptor the distributedTransactionConsolidationIntereceptor to set
-     */
-    public void setDistributedTransactionConsolidationInterceptor(
-            TransactionConsolidationInterceptor distributedTransactionConsolidationInterceptor) {
-        this.distributedTransactionConsolidationInterceptor = distributedTransactionConsolidationInterceptor;
-    }
-    
-    /**
-     * @return the distributedTransactionConsolidationIntereceptor
-     */
-    public TransactionConsolidationInterceptor getDistributedTransactionConsolidationInterceptor() {
-        return distributedTransactionConsolidationInterceptor;
-    }
-    
-    public void copyParameters(GatewaySinkDistributedTransactionProcessingConfiguration transactionProcessingConfiguration) {
+    public void copyParameters(DistributedTransactionProcessingConfiguration transactionProcessingConfiguration) {
         if (getDistributedTransactionWaitTimeout() != null)
             transactionProcessingConfiguration.setTimeoutBeforePartialCommit(getDistributedTransactionWaitTimeout());
         if (getDistributedTransactionWaitForOperations() != null)
             transactionProcessingConfiguration.setWaitForOperationsBeforePartialCommit(getDistributedTransactionWaitForOperations());
-        TransactionConsolidationInterceptor interceptor = null;
-        if (StringUtils.hasLength(distributedTransactionConsolidationFailureAction)) {
-            if (distributedTransactionConsolidationFailureAction.equals("abort"))
-                interceptor = AbortOnConsolidationAbortedInterceptor.INSTANCE;
-            else
-                interceptor = ExecuteOnConsolidationAbortedInterceptor.INSTANCE;
-        }
-        if (distributedTransactionConsolidationInterceptor != null)
-        {
-            if (interceptor != null)
-                throw new IllegalStateException("Cannot specify both distributed transaction consolidation failed action and a custom transaction consolidation interceptor");
-            
-            interceptor = distributedTransactionConsolidationInterceptor;
-        }
-        
-        if (interceptor != null)
-            transactionProcessingConfiguration.setTransactionConsolidationInterceptor(interceptor);
     }
     
 }

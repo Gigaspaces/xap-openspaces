@@ -402,6 +402,23 @@
 				    	</xsd:attribute>
 			    	</xsd:complexType>
 			    </xsd:element>
+			    <xsd:element name="sync-endpoint-interceptor" minOccurs="0" maxOccurs="1">
+			       	<xsd:annotation>
+			    		<xsd:documentation>
+							This element configures the behavior of a pluggable synchronization endpoint interceptor.							
+						</xsd:documentation>
+			    	</xsd:annotation>
+			    	<xsd:complexType>
+				    	<xsd:attribute name="interceptor" type="syncEndpointInterceptorRefType" use="required">
+					       	<xsd:annotation>
+					    		<xsd:documentation>
+					    			Sets a pluggable synchronization endpoint interceptor
+									which can be used to intercept and act on incoming replication events
+								</xsd:documentation>							
+					    	</xsd:annotation>
+				    	</xsd:attribute>
+			    	</xsd:complexType>
+			    </xsd:element>
 			    <xsd:element name="tx-support" minOccurs="0" maxOccurs="1">
 			       	<xsd:annotation>
 			    		<xsd:documentation>
@@ -432,30 +449,22 @@
 				    	<xsd:attribute name="dist-tx-consolidation-failure-action" use="optional">
 			       			<xsd:annotation>
 			    				<xsd:documentation>
-									Specifies the action to take for each transaction participant when a distributed transaction consolidation process is failed.									
+									Specifies the action to take for each transaction participant when a distributed transaction consolidation process is failed.
 								</xsd:documentation>
 			    			</xsd:annotation>
 	                        <xsd:simpleType>
 	                         	<xsd:annotation>
 						        	<xsd:documentation>
 						        		abort - dont execute and abort this transaction participant.
-						        		execute - execute and commit this transaction participant as is.
+						        		commit - commit this transaction participant as is.
 									</xsd:documentation>
 								</xsd:annotation>
 				    			<xsd:restriction base="xsd:string">
 									<xsd:enumeration value="abort"/>
-	    							<xsd:enumeration value="execute"/>	    							
- 									</xsd:restriction>
-							</xsd:simpleType>
-		    			</xsd:attribute>
-  					    	<xsd:attribute name="dist-tx-consolidation-interceptor" type="consolidationInterceptorRefType" use="optional">
-			       			<xsd:annotation>
-			    				<xsd:documentation>
-									Pluggable intereceptor that can implement custom logic upon transaction consolidation related events.
-									This cannot be used when dist-tx-consolidation-failed-action is specified.
-								</xsd:documentation>
-			    			</xsd:annotation>
-		    			</xsd:attribute>
+	    							<xsd:enumeration value="commit"/>	    							
+ 								</xsd:restriction>
+							</xsd:simpleType>	
+						</xsd:attribute>	    			
 			    	</xsd:complexType>
 			    </xsd:element>
 				<xsd:element name="security" minOccurs="0" maxOccurs="1">
@@ -577,14 +586,14 @@
         </xsd:annotation>
         <xsd:union memberTypes="xsd:string"/>
 	</xsd:simpleType>
-	<xsd:simpleType name="consolidationInterceptorRefType">
+	<xsd:simpleType name="syncEndpointInterceptorRefType">
         <xsd:annotation>
             <xsd:appinfo>
                 <tool:annotation kind="ref">
-	               <tool:expected-type type="com.gigaspaces.cluster.replication.gateway.transaction.TransactionConsolidationInterceptor"/>
+	               <tool:expected-type type="com.gigaspaces.sync.SyncEndPointInterceptor"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>
         <xsd:union memberTypes="xsd:string"/>
-	</xsd:simpleType>
+	</xsd:simpleType>	
 </xsd:schema>

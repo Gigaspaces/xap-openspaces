@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
 public class GatewaySinkDistributedTransactionProcessingConfigurationBeanDefinitionParser extends
         DistributedTransactionProcessingConfigurationBeanDefinitionParser {
 
-    final private static String CONSOLIDATION_INTERCEPTOR = "dist-tx-consolidation-interceptor";
     final private static String CONSOLIDATION_FAILURE_ACTION = "dist-tx-consolidation-failure-action";
 
     /* (non-Javadoc)
@@ -49,10 +48,6 @@ public class GatewaySinkDistributedTransactionProcessingConfigurationBeanDefinit
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
      
         super.doParse(element, parserContext, builder);
-        
-        final String distributedTransactionConsolidationInterceptor = element.getAttribute(CONSOLIDATION_INTERCEPTOR);
-        if (StringUtils.hasLength(distributedTransactionConsolidationInterceptor))
-            builder.addPropertyReference("distributedTransactionConsolidationInterceptor", distributedTransactionConsolidationInterceptor);
         
         final String distributedTransactionConsolidationFailureAction = element.getAttribute(CONSOLIDATION_FAILURE_ACTION);
         if (StringUtils.hasLength(distributedTransactionConsolidationFailureAction))

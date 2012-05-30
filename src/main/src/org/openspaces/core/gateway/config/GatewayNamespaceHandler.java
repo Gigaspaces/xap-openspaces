@@ -39,6 +39,7 @@ public class GatewayNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("delegation", new GatewayDelegationBeanDefinitionParser());
         registerBeanDefinitionParser("error-handling", new SinkErrorHandlingBeanDefinitionParser());
         registerBeanDefinitionParser("tx-support", new GatewaySinkDistributedTransactionProcessingConfigurationBeanDefinitionParser());
+        registerBeanDefinitionParser("sync-endpoint-interceptor", new GatewaySinkSyncEndpointInterceptorBeanDefinitionParser());
     }
 
 }

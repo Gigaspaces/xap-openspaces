@@ -51,6 +51,7 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     private static final String LOOKUP_TIMEOUT = "local-space-lookup-timeout";
     private static final String COMMUNICATION_PORT = "communication-port";
     private static final String TRANSACTION_SUPPORT = "tx-support";
+    private static final String SYNC_ENDPOINT_INTERCEPTOR = "sync-endpoint-interceptor";
     private static final String SECURITY = "security";
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
@@ -140,6 +141,15 @@ public class GatewaySinkBeanDefinitionParser extends AbstractSimpleBeanDefinitio
                 builder.addPropertyReference("userDetails", userDetailsRef);
             }
         }
+        
+        // Sync end point interceptor Since 9.0.1
+        final Element syncEndpointInterceptorConfigurationElement = DomUtils.getChildElementByTagName(element,
+                SYNC_ENDPOINT_INTERCEPTOR);
+        if (syncEndpointInterceptorConfigurationElement != null) {
+            Object syncEndpointInterceptorConfiguration = parserContext.getDelegate().parsePropertySubElement(syncEndpointInterceptorConfigurationElement, builder.getRawBeanDefinition());
+            builder.addPropertyValue("syncEndpointInterceptorConfiguration", syncEndpointInterceptorConfiguration);
+        }
+
         
     }
 

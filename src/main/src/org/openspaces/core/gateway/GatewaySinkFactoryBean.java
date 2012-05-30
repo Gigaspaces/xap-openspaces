@@ -27,10 +27,14 @@ import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import com.gigaspaces.cluster.replication.gateway.sync.AbortOnConsolidationFailureInterceptor;
+import com.gigaspaces.cluster.replication.gateway.sync.CommitOnConsolidationFailureInterceptor;
 import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupParameters;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.BootstrapConfig;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSink;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
+import com.gigaspaces.internal.utils.StringUtils;
+import com.gigaspaces.sync.SyncEndPointInterceptor;
 
 /**
  * A sink factory bean for creating a {@link LocalClusterReplicationSink} which
@@ -50,6 +54,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
     private Long transactionTimeout;
     private Long localSpaceLookupTimeout;
     private GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean transactionProcessingConfiguration;
+    private GatewaySinkSyncEndpointInterceptorFactoryBean syncEndpointInterceptorConfiguration;
     
     public GatewaySinkFactoryBean() {
     }
@@ -164,6 +169,23 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         this.transactionProcessingConfiguration = transactionProcessingConfiguration;
     }
     
+    /**
+     * Gets the synchronization endpoint interceptor configuration for the sink component.
+     * @return synchronization endpoint interceptor configuration.
+     */
+    public GatewaySinkSyncEndpointInterceptorFactoryBean getSyncEndpointInterceptorConfiguration() {
+        return syncEndpointInterceptorConfiguration;
+    }
+    
+    /**
+     * Sets the synchronization endpoint interceptor configuration for the sink component.
+     * @param syncEndpointInterceptorConfiguration the syncEndpointInterceptorConfiguration to set
+     */
+    public void setSyncEndpointInterceptorConfiguration(
+            GatewaySinkSyncEndpointInterceptorFactoryBean syncEndpointInterceptorConfiguration) {
+        this.syncEndpointInterceptorConfiguration = syncEndpointInterceptorConfiguration;
+    }
+    
     @Override
     protected void afterPropertiesSetImpl(SecurityConfig securityConfig){
         LocalClusterReplicationSinkConfig config = new LocalClusterReplicationSinkConfig(getLocalGatewayName());
@@ -187,8 +209,29 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             ReplicationLookupParameters lookupParameters = getGatewayLookups().asReplicationLookupParameters();
             config.setGatewayLookupParameters(lookupParameters);
         }
+        
+        SyncEndPointInterceptor interceptor = null;
+        if (syncEndpointInterceptorConfiguration != null)
+            interceptor = syncEndpointInterceptorConfiguration.getInterceptor();
+        
         if (transactionProcessingConfiguration != null)
+        {
             transactionProcessingConfiguration.copyParameters(config.getTransactionProcessingParameters());
+            String distributedTransactionConsolidationFailureAction = transactionProcessingConfiguration.getDistributedTransactionConsolidationFailureAction();
+            if (StringUtils.hasText(distributedTransactionConsolidationFailureAction))
+            {
+                if (interceptor != null)
+                    throw new IllegalArgumentException("Cannot specify transaction consolidation failure behavior and provide a custom sync endpoint interceptor");
+                if (distributedTransactionConsolidationFailureAction == "commit")
+                    interceptor = CommitOnConsolidationFailureInterceptor.INSTANCE;
+                else
+                    interceptor = AbortOnConsolidationFailureInterceptor.INSTANCE;
+            }
+        }
+        
+        if (interceptor != null)
+            config.setSyncEndpointInterceptor(interceptor);
+        
         if (securityConfig != null)
             config.setUserDetails(securityConfig.toUserDetails());
         localClusterReplicationSink = new LocalClusterReplicationSink(config); 
