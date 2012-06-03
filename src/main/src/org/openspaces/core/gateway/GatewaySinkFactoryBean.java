@@ -222,7 +222,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             {
                 if (interceptor != null)
                     throw new IllegalArgumentException("Cannot specify transaction consolidation failure behavior and provide a custom sync endpoint interceptor");
-                if (distributedTransactionConsolidationFailureAction == "commit")
+                if ("commit".equals(distributedTransactionConsolidationFailureAction))
                     interceptor = CommitOnConsolidationFailureInterceptor.INSTANCE;
                 else
                     interceptor = AbortOnConsolidationFailureInterceptor.INSTANCE;
