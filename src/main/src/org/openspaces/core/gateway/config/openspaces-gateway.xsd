@@ -590,7 +590,7 @@
         <xsd:annotation>
             <xsd:appinfo>
                 <tool:annotation kind="ref">
-	               <tool:expected-type type="com.gigaspaces.sync.SyncEndPointInterceptor"/>
+	               <tool:expected-type type="com.gigaspaces.sync.SynchronizationEndpointInterceptor"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>

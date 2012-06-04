@@ -34,7 +34,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.BootstrapConfig;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSink;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 import com.gigaspaces.internal.utils.StringUtils;
-import com.gigaspaces.sync.SyncEndPointInterceptor;
+import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
 
 /**
  * A sink factory bean for creating a {@link LocalClusterReplicationSink} which
@@ -210,7 +210,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             config.setGatewayLookupParameters(lookupParameters);
         }
         
-        SyncEndPointInterceptor interceptor = null;
+        SynchronizationEndpointInterceptor interceptor = null;
         if (syncEndpointInterceptorConfiguration != null)
             interceptor = syncEndpointInterceptorConfiguration.getInterceptor();
         

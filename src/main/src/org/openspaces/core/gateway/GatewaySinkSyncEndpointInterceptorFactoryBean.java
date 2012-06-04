@@ -15,7 +15,7 @@
  *******************************************************************************/
 package org.openspaces.core.gateway;
 
-import com.gigaspaces.sync.SyncEndPointInterceptor;
+import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
 
 /**
  * A factory bean used for configuring the Sink component synchronization endpoint interceptor
@@ -26,19 +26,19 @@ import com.gigaspaces.sync.SyncEndPointInterceptor;
  */
 public class GatewaySinkSyncEndpointInterceptorFactoryBean {
     
-    private SyncEndPointInterceptor interceptor;
+    private SynchronizationEndpointInterceptor interceptor;
     
     /**
      * Sets a custom synchronization endpoint interceptor that can be used provide custom behavior upon incoming replication events.
      */
-    public void setInterceptor(SyncEndPointInterceptor interceptor) {
+    public void setInterceptor(SynchronizationEndpointInterceptor interceptor) {
         this.interceptor = interceptor;
     }
     
     /**
      * Gets the custom synchronization endpoint interceptor that can be used provide custom behavior upon incoming replication events.
      */
-    public SyncEndPointInterceptor getInterceptor() {
+    public SynchronizationEndpointInterceptor getInterceptor() {
         return interceptor;
     }
 }
