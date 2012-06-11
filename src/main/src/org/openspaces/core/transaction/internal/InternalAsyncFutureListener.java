@@ -18,6 +18,8 @@ package org.openspaces.core.transaction.internal;
 
 import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResult;
+import com.gigaspaces.async.internal.DefaultAsyncResult;
+
 import net.jini.core.transaction.Transaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,8 +83,15 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
         this.transactionalListener = listener instanceof TransactionalAsyncFutureListener;
     }
 
+    private static Exception translate(Exception exception, GigaSpace gigaSpace) {
+        if (exception == null)
+            return null;
+        Exception translatedException = gigaSpace.getExceptionTranslator().translateNoUncategorized(exception);
+        return translatedException != null ? translatedException : exception;
+    }
+
     public void onResult(AsyncResult<T> asyncResult) {
-        AsyncResult<T> result = new InternalAsyncResult<T>(gigaSpace, asyncResult);
+        AsyncResult<T> result = new DefaultAsyncResult<T>(asyncResult.getResult(), translate(asyncResult.getException(), gigaSpace));
         Transaction tx = null;
         if (holder != null) {
             tx = holder.getTransaction();
@@ -123,41 +132,6 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
                     throw e;
                 }
             }
-        }
-    }
-
-    private static class InternalAsyncResult<T> implements AsyncResult<T> {
-
-        private final GigaSpace gigaSpace;
-
-        private final AsyncResult<T> result;
-
-        private Exception exception;
-
-        private boolean convertedException;
-
-        private InternalAsyncResult(GigaSpace gigaSpace, AsyncResult<T> result) {
-            this.gigaSpace = gigaSpace;
-            this.result = result;
-        }
-
-        public T getResult() {
-            return result.getResult();
-        }
-
-        public Exception getException() {
-            if (convertedException) {
-                return this.exception;
-            }
-            convertedException = true;
-            exception = result.getException();
-            if (exception != null) {
-                Exception translatedException = gigaSpace.getExceptionTranslator().translateNoUncategorized(exception);
-                if (translatedException != null) {
-                    exception = translatedException;
-                }
-            }
-            return exception;
         }
     }
 }
