@@ -433,30 +433,37 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template) throws DataAccessException {
-        return asyncRead(template, defaultReadTimeout, getModifiersForIsolationLevel(), null);
+        return asyncRead(template, defaultReadTimeout, getModifiersForIsolationLevel(), (AsyncFutureListener<T>)null);
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
         return asyncRead(template, defaultReadTimeout, getModifiersForIsolationLevel(), listener);
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout) throws DataAccessException {
-        return asyncRead(template, timeout, getModifiersForIsolationLevel(), null);
+        return asyncRead(template, timeout, getModifiersForIsolationLevel(), (AsyncFutureListener<T>)null);
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
         return asyncRead(template, timeout, getModifiersForIsolationLevel(), listener);
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
-        return asyncRead(template, timeout, modifiers, null);
+        return asyncRead(template, timeout, modifiers, (AsyncFutureListener<T>)null);
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers) throws DataAccessException {
-        return asyncRead(template, timeout, modifiers.getCode(), null);
+        return asyncRead(template, timeout, modifiers.getCode(), (AsyncFutureListener<T>)null);
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
@@ -466,6 +473,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
+    @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
         Transaction tx = getCurrentTransaction();
         try {
@@ -811,7 +819,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template) throws DataAccessException {
-        return asyncTake(template, defaultTakeTimeout, getModifiersForIsolationLevel(), null);
+        return asyncTake(template, defaultTakeTimeout, getModifiersForIsolationLevel(), (AsyncFutureListener<T>)null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
@@ -819,7 +827,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout) throws DataAccessException {
-        return asyncTake(template, timeout, getModifiersForIsolationLevel(), null);
+        return asyncTake(template, timeout, getModifiersForIsolationLevel(), (AsyncFutureListener<T>)null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
@@ -827,11 +835,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
-        return asyncTake(template, timeout, modifiers, null);
+        return asyncTake(template, timeout, modifiers, (AsyncFutureListener<T>)null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, TakeModifiers modifiers) throws DataAccessException {
-        return asyncTake(template, timeout, modifiers.getCode(), null);
+        return asyncTake(template, timeout, modifiers.getCode(), (AsyncFutureListener<T>)null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
