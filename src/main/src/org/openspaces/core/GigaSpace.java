@@ -30,23 +30,23 @@ import org.springframework.dao.DataAccessException;
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultsReducer;
+import com.gigaspaces.client.ClearModifiers;
+import com.gigaspaces.client.CountModifiers;
 import com.gigaspaces.client.ReadByIdsResult;
+import com.gigaspaces.client.ReadModifiers;
 import com.gigaspaces.client.TakeByIdsResult;
+import com.gigaspaces.client.TakeModifiers;
+import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.query.ISpaceQuery;
 import com.gigaspaces.query.IdQuery;
 import com.gigaspaces.query.IdsQuery;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.TakeModifiers;
-import com.j_spaces.core.client.UpdateModifiers;
 
 /**
  * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
  * utilizing GigaSpaces extended and simplified programming model.
- *
- * <p>Most operations revolve around the use of Objects allowing to use GigaSpaces support for POJOs.
- * JavaSpaces Entries can also be used. Space operations (at the end) are delegated to the relevant
- * operation of {@link com.j_spaces.core.IJSpace}.
+ * Most operations revolve around the use of Objects allowing to use GigaSpaces support for POJOs.
  *
  * <p>Though this interface has a single implementation it is still important to work against the
  * interface as it allows for simpler testing and mocking.
@@ -56,17 +56,11 @@ import com.j_spaces.core.client.UpdateModifiers;
  * the current running transaction. If there is no current running transaction the operation will be
  * executed without a transaction.
  *
- * <p>{@link IJSpace} can be acquired using {@link #getSpace()} and in conjunction with
- * {@link #getTxProvider()} allows to work directly with {@link IJSpace} for low level API
- * execution or other low level GigaSpaces components requiring direct access to
- * {@link IJSpace}.
- *
  * <p>Operations throw a {@link org.springframework.dao.DataAccessException} allowing for simplified
  * development model as it is a runtime exception. The cause of the exception can be acquired from
  * the GigaSpace exception.
  *
  * @author kimchy
- * @see com.j_spaces.core.IJSpace
  * @see com.gigaspaces.query.ISpaceQuery
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
@@ -127,9 +121,7 @@ public interface GigaSpace {
     GigaSpace getClustered();
 
     /**
-     * Returns the transaction provider allowing to access the current running transaction. Allows
-     * to execute low level {@link com.j_spaces.core.IJSpace} operations that requires explicit
-     * transaction object.
+     * Returns the transaction provider allowing to access the current running transaction.
      */
     TransactionProvider getTxProvider();
 
@@ -162,7 +154,6 @@ public interface GigaSpace {
      * </ul>
      *
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#clean()
      * @deprecated Since 8.0.2. The processing unit instance that contain this space instance should be restarted instead, 
      * or if the entire space was meant to be cleaned, the entire processing unit should be undeployed and redeployed.
      * Using this method is strongly not recommended because it will not invoke any space mode change events registered components and
@@ -187,9 +178,14 @@ public interface GigaSpace {
      * @param template the template to use for matching
      * @throws DataAccessException In the event of an error, DataAccessException will
      *         wrap a ClearException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
      */
     void clear(Object template) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #clear(Object, ClearModifiers)} instead.
+     */
+    @Deprecated
+    int clear(Object template, int modifiers);
 
     /**
      * Removes the entries that match the specified template and the specified transaction from this space.
@@ -199,23 +195,19 @@ public interface GigaSpace {
      *
      * <p>The clear operation supports inheritance, therefore template class matching objects
      * and its sub classes matching objects are part of the candidates population
-     * to be removed from the space. You can in fact clean all space objects (that are not under
+     * to be removed from the space. You can in fact remove all space objects (that are not under
      * transaction) by calling: <code>gigaSpace.clear(null)</code>.
      *
      * <p>Notice: The clear operation does not remove notify templates i.e. registration for notifications.
      *
-     * <p>Modifiers can be used to customize the clean operation. For example, the 
-     * {@link com.j_spaces.core.client.TakeModifiers}
-     * allow control over whether the clear operation will only evict entries from an LRU cache.
-     *
      * @param template the template to use for matching
-     * @param modifiers one of {@link TakeModifiers}
+     * @param modifiers one or a union of {@link ClearModifiers}.
      * 
      * @throws DataAccessException In the event of an error, DataAccessException will
      *         wrap a ClearException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#clear(Object,net.jini.core.transaction.Transaction)
+     * @since 9.0.1
      */
-    int clear(Object template, int modifiers);
+    int clear(Object template, ClearModifiers modifiers);
 
     /**
      * Count any matching entry from the space. If a running within a transaction
@@ -227,15 +219,20 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @return The number of matching entries
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#count(Object,net.jini.core.transaction.Transaction)
      */
     int count(Object template) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #count(Object, CountModifiers)} instead.
+     */
+    @Deprecated
+    int count(Object template, int modifiers) throws DataAccessException;
 
     /**
      * Count any matching entries from the space. If this is running within a transaction
      * will count all the entries visible under the transaction.
      *
-     * <p>Allows to specify modifiers using {@link com.j_spaces.core.client.ReadModifiers}
+     * <p>Allows to specify modifiers using {@link ReadModifiers}
      * which allows to programmatically control the isolation level this count operation
      * will be performed under.
      *
@@ -243,11 +240,12 @@ public interface GigaSpace {
      *                  template with <code>null</code> fields being wildcards
      *                  ("match anything") other fields being values ("match
      *                  exactly on the serialized form").
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link CountModifiers}.
      * @return The number of matching entries
      * @throws DataAccessException
+     * @since 9.0.1
      */
-    int count(Object template, int modifiers) throws DataAccessException;
+    int count(Object template, CountModifiers modifiers) throws DataAccessException;
 
     /**
      * <p>The process of serializing an entry for transmission to a JavaSpaces service will
@@ -280,7 +278,6 @@ public interface GigaSpace {
      * @param entry The entry to snapshot
      * @return The snapshot
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#snapshot(Object)
      */
     <T> ISpaceQuery<T> snapshot(Object entry) throws DataAccessException;
 
@@ -328,6 +325,12 @@ public interface GigaSpace {
     <T> T readById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #readById(Class, Object, Object, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read an object from the space matching its id, the class and the routing value. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
@@ -335,10 +338,11 @@ public interface GigaSpace {
      * @param id        The id of the entry
      * @param routing   The routing value
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 9.0.1
      */
-    <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+    <T> T readById(Class<T> clazz, Object id, Object routing, long timeout, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Read an object from the space matching the specified id query. Returns
@@ -369,17 +373,23 @@ public interface GigaSpace {
     <T> T readById(IdQuery<T> query, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #readById(IdQuery, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T readById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read an object from the space matching the specified id query. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
      * @param query Query to search by.
      * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     * @since 8.0
+     * @since 9.0.1
      */
-    <T> T readById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
-    
+    <T> T readById(IdQuery<T> query, long timeout, ReadModifiers modifiers) throws DataAccessException;
+
     /**
      * Read any matching object from the space, blocking until one exists. Return
      * <code>null</code> if the timeout expires.
@@ -393,7 +403,6 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T read(T template) throws DataAccessException;
 
@@ -411,16 +420,21 @@ public interface GigaSpace {
      *                 equivalent to a wait of zero.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T read(T template, long timeout) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #read(Object, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T read(T template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Read any matching object from the space, blocking until one exists. Return
      * <code>null</code> if the timeout expires.
      *
      * <p>Overloads {@link #read(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
      * Modifiers are used to define the behavior of a read operation.
      *
      * @param template  The template used for matching. Matching is done against
@@ -431,12 +445,12 @@ public interface GigaSpace {
      *                  transactionally proper matching object. A timeout of
      *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
      *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     * @since 9.0.1
      */
-    <T> T read(T template, long timeout, int modifiers) throws DataAccessException;
+    <T> T read(T template, long timeout, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Read any matching object from the space, blocking until one exists. Return
@@ -449,7 +463,6 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T read(ISpaceQuery<T> template) throws DataAccessException;
 
@@ -465,16 +478,21 @@ public interface GigaSpace {
      *                 equivalent to a wait of zero.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T read(ISpaceQuery<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #read(ISpaceQuery, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T read(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Read any matching object from the space, blocking until one exists. Return
      * <code>null</code> if the timeout expires.
      *
      * <p>Overloads {@link #read(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
      * Modifiers are used to define the behavior of a read operation.
      *
      * @param template  A query to be executed against the space. Most common one is
@@ -483,12 +501,12 @@ public interface GigaSpace {
      *                  transactionally proper matching object. A timeout of
      *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
      *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     * @since 9.0.1
      */
-    <T> T read(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> T read(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -505,7 +523,6 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(T template) throws DataAccessException;
 
@@ -525,7 +542,6 @@ public interface GigaSpace {
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(T template, AsyncFutureListener<T> listener) throws DataAccessException;
 
@@ -545,7 +561,6 @@ public interface GigaSpace {
      *                 equivalent to a wait of zero.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(T template, long timeout) throws DataAccessException;
 
@@ -566,33 +581,13 @@ public interface GigaSpace {
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asynchronous manner. Returns
-     * immediately with a future. The future can then be used to check if there is a
-     * match or not. Once a match is found or the timeout expires, the future will
-     * return a result (<code>null</code> in case there was no match).
-     *
-     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
-     * Modifiers are used to define the behavior of a read operation.
-     *
-     * @param template  The template used for matching. Matching is done against
-     *                  template with <code>null</code> fields being
-     *                  wildcards ("match anything") other fields being values ("match
-     *                  exactly on the serialized form").
-     * @param timeout   How long the client is willing to wait for a
-     *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A copy of the object read from the space.
-     * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     * @deprecated since 9.0.1 - use {@link #asyncRead(Object, long, ReadModifiers)} instead.
      */
+    @Deprecated
     <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers) throws DataAccessException;
 
     /**
@@ -602,7 +597,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
      * Modifiers are used to define the behavior of a read operation.
      *
      * @param template  The template used for matching. Matching is done against
@@ -613,13 +608,44 @@ public interface GigaSpace {
      *                  transactionally proper matching object. A timeout of
      *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
      *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @since 9.0.1
+     */
+    <T> AsyncFuture<T> asyncRead(T template, long timeout, ReadModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #asyncRead(Object, long, ReadModifiers, AsyncFutureListener)} instead.
+     */
+    @Deprecated
+    <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asynchronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
+     * Modifiers are used to define the behavior of a read operation.
+     *
+     * @param template  The template used for matching. Matching is done against
+     *                  template with <code>null</code> fields being
+     *                  wildcards ("match anything") other fields being values ("match
+     *                  exactly on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching object. A timeout of
+     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                  equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @param listener  A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     * @since 9.0.1
      */
-    <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(T template, long timeout, ReadModifiers modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Reads any matching entry from the space in an asynchronous manner. Returns
@@ -634,7 +660,6 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template) throws DataAccessException;
 
@@ -652,7 +677,6 @@ public interface GigaSpace {
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException;
 
@@ -670,7 +694,6 @@ public interface GigaSpace {
      *                 equivalent to a wait of zero.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
@@ -689,31 +712,13 @@ public interface GigaSpace {
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Reads any matching entry from the space in an asynchronous manner. Returns
-     * immediately with a future. The future can then be used to check if there is a
-     * match or not. Once a match is found or the timeout expires, the future will
-     * return a result (<code>null</code> in case there was no match).
-     *
-     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
-     * Modifiers are used to define the behavior of a read operation.
-     *
-     * @param template  A query to be executed against the space. Most common one is
-     *                  {@link com.j_spaces.core.client.SQLQuery}.
-     * @param timeout   How long the client is willing to wait for a
-     *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A copy of the object read from the space.
-     * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     * @deprecated since 9.0.1 - use {@link #asyncRead(ISpaceQuery, long, ReadModifiers)} instead.
      */
+    @Deprecated
     <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
@@ -723,7 +728,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
      * Modifiers are used to define the behavior of a read operation.
      *
      * @param template  A query to be executed against the space. Most common one is
@@ -732,13 +737,42 @@ public interface GigaSpace {
      *                  transactionally proper matching object. A timeout of
      *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
      *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
+     * @return A copy of the object read from the space.
+     * @throws DataAccessException
+     * @since 9.0.1
+     */
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #asyncRead(ISpaceQuery, long, ReadModifiers, AsyncFutureListener)} instead.
+     */
+    @Deprecated
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Reads any matching entry from the space in an asynchronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * <p>Overloads {@link #asyncRead(Object,long)} by adding a <code>modifiers</code> parameter.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
+     * Modifiers are used to define the behavior of a read operation.
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching object. A timeout of
+     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
+     *                  equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @param listener  A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#read(Object,net.jini.core.transaction.Transaction,long,int)
+     * @since 9.0.1
      */
-    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Read an object from the space matching its id and the class. Returns
@@ -796,6 +830,12 @@ public interface GigaSpace {
     <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #readIfExistsById(Class, Object, Object, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read an object from the space matching its id, the class and the routing value. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
@@ -807,10 +847,11 @@ public interface GigaSpace {
      * @param id        The id of the entry
      * @param routing   The routing value
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 9.0.1
      */
-    <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+    <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Read an object from the space matching the specified id query. Returns
@@ -849,6 +890,12 @@ public interface GigaSpace {
     <T> T readIfExistsById(IdQuery<T> query, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #readIfExistsById(IdQuery, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T readIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Read an object from the space matching the specified id query. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
@@ -858,12 +905,12 @@ public interface GigaSpace {
      *
      * @param query Query to search by.
      * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     * @since 8.0
+     * @since 9.0.1
      */
-    <T> T readIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
-    
+    <T> T readIfExistsById(IdQuery<T> query, long timeout, ReadModifiers modifiers) throws DataAccessException;
+
     /**
      * Read any matching object from the space, returning <code>null</code> if
      * there currently is none. Matching and timeouts are done as in
@@ -879,7 +926,6 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T readIfExists(T template) throws DataAccessException;
 
@@ -899,9 +945,14 @@ public interface GigaSpace {
      *                 equivalent to a wait of zero.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T readIfExists(T template, long timeout) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #readIfExists(Object, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T readIfExists(T template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Read any matching object from the space, returning <code>null</code> if
@@ -910,7 +961,7 @@ public interface GigaSpace {
      * necessary to wait for transactional state to settle.
      *
      * <p>Overloads {@link #read(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
      * Modifiers are used to define the behavior of a read operation.
      *
      * @param template  The template used for matching. Matching is done against
@@ -921,12 +972,12 @@ public interface GigaSpace {
      *                  transactionally proper matching object. A timeout of
      *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
      *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long,int)
+     * @since 9.0.1
      */
-    <T> T readIfExists(T template, long timeout, int modifiers) throws DataAccessException;
+    <T> T readIfExists(T template, long timeout, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Read any matching object from the space, returning <code>null</code> if
@@ -941,7 +992,6 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T readIfExists(ISpaceQuery<T> template) throws DataAccessException;
 
@@ -959,9 +1009,14 @@ public interface GigaSpace {
      *                 equivalent to a wait of zero.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T readIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #readIfExists(ISpaceQuery, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T readIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Read any matching object from the space, returning <code>null</code> if
@@ -970,7 +1025,7 @@ public interface GigaSpace {
      * necessary to wait for transactional state to settle.
      *
      * <p>Overloads {@link #read(Object,long)} by adding a <code>modifiers</code> parameter.
-     * Equivalent when called with the default modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}.
+     * Equivalent when called with the default modifier - {@link ReadModifiers#REPEATABLE_READ}.
      * Modifiers are used to define the behavior of a read operation.
      *
      * @param template  A query to be executed against the space. Most common one is
@@ -979,13 +1034,12 @@ public interface GigaSpace {
      *                  transactionally proper matching object. A timeout of
      *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
      *                  equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#readIfExists(Object,net.jini.core.transaction.Transaction,long,int)
+     * @since 9.0.1
      */
-    <T> T readIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
-
+    <T> T readIfExists(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers) throws DataAccessException;
     
     /**
      * Read any matching entries from the space. Matching is done as in
@@ -1001,11 +1055,9 @@ public interface GigaSpace {
      * @return A copy of the entries read from the space.
      * @throws DataAccessException In the event of a read error, DataAccessException will
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(T template) throws DataAccessException;
-    
-    
+        
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
@@ -1022,11 +1074,42 @@ public interface GigaSpace {
      * @return A copy of the entries read from the space.
      * @throws DataAccessException In the event of a read error, DataAccessException will
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException;
 
-    
+    /**
+     * @deprecated since 9.0.1 - use {@link #readMultiple(Object, int, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
+
+    /**
+     * Read any matching entries from the space. Matching is done as in
+     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * array with matches bound by <code>maxEntries</code>. Returns an
+     * empty array if no match was found.
+     *
+     * <p>Overloads {@link #readMultiple(Object,int)} by adding a
+     * <code>modifiers</code> parameter. Equivalent when called with the default
+     * modifier - {@link ReadModifiers#REPEATABLE_READ}. Modifiers
+     * are used to define the behavior of a read operation.
+     *
+     * 
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @param modifiers one or a union of {@link ReadModifiers}.
+     * @return A copy of the entries read from the space.
+     * @throws DataAccessException In the event of a read error, DataAccessException will
+     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
+     * @since 9.0.1
+     */
+    <T> T[] readMultiple(T template, int maxEntries, ReadModifiers modifiers) throws DataAccessException;
+
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
@@ -1038,7 +1121,6 @@ public interface GigaSpace {
      * @throws DataAccessException In the event of a read error, DataAccessException will
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @return A copy of the entries read from the space.
-     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(ISpaceQuery<T> template) throws DataAccessException;
     
@@ -1055,36 +1137,14 @@ public interface GigaSpace {
      * @throws DataAccessException In the event of a read error, DataAccessException will
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @return A copy of the entries read from the space.
-     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException;
 
     /**
-     * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
-     * array with matches bound by <code>maxEntries</code>. Returns an
-     * empty array if no match was found.
-     *
-     * <p>Overloads {@link #readMultiple(Object,int)} by adding a
-     * <code>modifiers</code> parameter. Equivalent when called with the default
-     * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
-     * are used to define the behavior of a read operation.
-     *
-     * 
-     * @param template   The template used for matching. Matching is done against
-     *                   the template with <code>null</code> fields being.
-     *                   wildcards ("match anything") other fields being values ("match
-     *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
-     * @param maxEntries A limit on the number of entries to be returned. Use
-     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
-     * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
-     * @return A copy of the entries read from the space.
-     * @throws DataAccessException In the event of a read error, DataAccessException will
-     *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
+     * @deprecated since 9.0.1 - use {@link #readMultiple(ISpaceQuery, int, ReadModifiers)} instead.
      */
-    <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
+    @Deprecated
+    <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
      * Read any matching entries from the space. Matching is done as in
@@ -1094,7 +1154,7 @@ public interface GigaSpace {
      *
      * <p>Overloads {@link #readMultiple(Object,int)} by adding a
      * <code>modifiers</code> parameter. Equivalent when called with the default
-     * modifier - {@link com.j_spaces.core.client.ReadModifiers#REPEATABLE_READ}. Modifiers
+     * modifier - {@link ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
      * 
@@ -1102,13 +1162,13 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.  
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
-     * @param modifiers  One or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the entries read from the space.
      * @throws DataAccessException In the event of a read error, DataAccessException will
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#readMultiple(Object,net.jini.core.transaction.Transaction,int)
+     * @since 9.0.1
      */
-    <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
+    <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Read objects from the space matching their IDs and the specified class.
@@ -1125,24 +1185,11 @@ public interface GigaSpace {
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) throws DataAccessException;
 
     /**
-     * Read objects from the space matching their IDs and the specified class, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}.
-     *
-     * <p>Note, if the space is partitioned and the Class defines a specific property
-     * for its routing value (which means that the ID property is not used for routing),
-     * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
-     * can be used to specify the routing explicitly.     
-     * 
-     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
-     * the results are always ordered in correlation with the input IDs array.
-     * 
-     * @param clazz     The class.
-     * @param ids       The object IDs array.
-     * @param modifiers The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return a ReadByIdsResult containing the matched results.
+     * @deprecated since 9.0.1 - use {@link #readByIds(Class, Object[], Object, ReadModifiers)} instead.
      */
+    @Deprecated
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) throws DataAccessException;
-    
+
     /**
      * Read objects from the space matching their IDs, the specified class and routing key.
      * 
@@ -1157,23 +1204,30 @@ public interface GigaSpace {
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey) throws DataAccessException;
     
     /**
+     * @deprecated since 9.0.1 - use {@link #readByIds(Class, Object[], Object, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
+
+    /**
      * Read objects from the space matching their IDs, the specified class type and routing key, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * provided {@link ReadModifiers}.
      * 
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      * 
-     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
-     * @param modifiers     The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers     The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
+     * @since 9.0.1
      */
-    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
-        
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey, ReadModifiers modifiers) throws DataAccessException;
+
     /**
      * Read objects from the space matching their IDs, the specified class and the routing keys.
      * 
@@ -1190,24 +1244,31 @@ public interface GigaSpace {
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys) throws DataAccessException;       
     
     /**
+     * @deprecated since 9.0.1 - use {@link #readByIds(Class, Object[], Object[], ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
+
+    /**
      * Read objects from the space matching their IDs, the specified class and the routing keys, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * provided {@link ReadModifiers}.
      * 
      * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
      * all of the partitions. 
      * 
-     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
      * @param clazz         The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
+     * @since 9.0.1
      */
-    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Read objects from the space matching the specified IDs query.
@@ -1219,15 +1280,21 @@ public interface GigaSpace {
     <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query) throws DataAccessException;
     
     /**
+     * @deprecated since 9.0.1 - use {@link #readByIds(IdQuery, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
+
+    /**
      * Read objects from the space matching the specified IDs query, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}. 
+     * provided {@link ReadModifiers}. 
      * 
      * @param query Query to search by.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
-     * @since 8.0
+     * @since 9.0.1
      */
-    <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
+    <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query, ReadModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) objects from the space matching their IDs and the specified class.
@@ -1244,22 +1311,9 @@ public interface GigaSpace {
     <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) throws DataAccessException;
 
     /**
-     * Take (remove) objects from the space matching their IDs and the specified class, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}.
-     * 
-     * <p>Note, if the space is partitioned, or the Class defines a specific property
-     * for its routing value (which means that the ID property is not used for routing),
-     * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
-     * can be used to specify the routing explicitly.     
-     *
-     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
-     * the results are always ordered in correlation with the input IDs array.
-     * 
-     * @param clazz     The class.
-     * @param ids       The object IDs array.
-     * @param modifiers The read modifiers to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
-     * @return a TakeByIdsResult containing the matched results.
+     * @deprecated since 9.0.1 - use {@link #takeByIds(Class, Object[], Object, TakeModifiers)} instead.
      */
+    @Deprecated
     <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) throws DataAccessException;
 
     /**
@@ -1276,23 +1330,29 @@ public interface GigaSpace {
     <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #takeByIds(Class, Object[], Object, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) objects from the space matching their IDs, the specified class type and routing key, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * provided {@link ReadModifiers}.
      * 
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      *
-     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a TakeByIdsResult containing the matched results.
      */
-    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey, int modifiers) throws DataAccessException;
-        
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routingKey, TakeModifiers modifiers) throws DataAccessException;
+
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and the routing keys.
      * 
@@ -1307,26 +1367,33 @@ public interface GigaSpace {
      * @return a TakeByIdsResult containing the matched results.
      */
     <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys) throws DataAccessException;
-    
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #takeByIds(Class, Object[], Object[], TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
+
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and the routing keys, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}.
+     * provided {@link ReadModifiers}.
      * 
      * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
      * all of the partitions. 
      *
-     * <p>{@link com.j_spaces.core.client.ReadModifiers#FIFO} is not supported by this operation -
+     * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
      * 
      * @param clazz     The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a TakeByIdsResult containing the matched results.
+     * @since 9.0.1
      */
-    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, TakeModifiers modifiers) throws DataAccessException;   
 
     /**
      * Take (remove) objects from the space matching the specified IDs query.
@@ -1338,15 +1405,21 @@ public interface GigaSpace {
     <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query) throws DataAccessException;
     
     /**
+     * @deprecated since 9.0.1 - use {@link #takeByIds(IdQuery, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) objects from the space matching the specified IDs query, with the
-     * provided {@link com.j_spaces.core.client.ReadModifiers}. 
+     * provided {@link ReadModifiers}. 
      * 
      * @param query Query to search by.
-     * @param modifiers The read modifier to use (One or several of {@link com.j_spaces.core.client.ReadModifiers}).
+     * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
-     * @since 8.0
+     * @since 9.0.1
      */
-    <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
+    <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id and the class. Returns
@@ -1392,6 +1465,12 @@ public interface GigaSpace {
     <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #takeById(Class, Object, Object, long, ReadModifiers)} instead.
+     */
+    @Deprecated
+    <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) an object from the space matching its id, the class and the routing value. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
@@ -1399,10 +1478,11 @@ public interface GigaSpace {
      * @param id        The id of the entry
      * @param routing   The routing value
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 9.0.1
      */
-    <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+    <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching the specified id query. Returns
@@ -1433,16 +1513,22 @@ public interface GigaSpace {
     <T> T takeById(IdQuery<T> query, long timeout) throws DataAccessException;
     
     /**
+     * @deprecated since 9.0.1 - use {@link #takeById(IdQuery, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T takeById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) an object from the space matching the specified id query. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
      * @param query Query to search by.
      * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     * @since 8.0
+     * @since 9.0.1
      */
-    <T> T takeById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+    <T> T takeById(IdQuery<T> query, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -1478,6 +1564,12 @@ public interface GigaSpace {
     <T> T take(T template, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #take(Object, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T take(T template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) any matching entry from the space, blocking until one exists.
      * Return <code>null</code> if the timeout expires.
      *
@@ -1489,11 +1581,12 @@ public interface GigaSpace {
      *                  transactionally proper matching entry. A timeout of
      *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                  time at all; this is equivalent to a wait of zero.
-     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
+     * @since 9.0.1
      */
-    <T> T take(T template, long timeout, int modifiers) throws DataAccessException;
+    <T> T take(T template, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, blocking until one exists.
@@ -1525,6 +1618,12 @@ public interface GigaSpace {
     <T> T take(ISpaceQuery<T> template, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #take(ISpaceQuery, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T take(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) any matching entry from the space, blocking until one exists.
      * Return <code>null</code> if the timeout expires.
      *
@@ -1534,11 +1633,12 @@ public interface GigaSpace {
      *                  transactionally proper matching entry. A timeout of
      *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                  time at all; this is equivalent to a wait of zero.
-     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
+     * @since 9.0.1
      */
-    <T> T take(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> T take(ISpaceQuery<T> template, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1617,23 +1717,9 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(T template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
-     * immediately with a future. The future can then be used to check if there is a
-     * match or not. Once a match is found or the timeout expires, the future will
-     * return a result (<code>null</code> in case there was no match).
-     *
-     * @param template  The template used for matching. Matching is done against
-     *                  the template with <code>null</code> fields being wildcards (
-     *                  "match anything") other fields being values ("match exactly
-     *                  on the serialized form").
-     * @param timeout   How long the client is willing to wait for a
-     *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
-     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
-     * @return A removed entry from the space
-     * @throws DataAccessException
+     * @deprecated since 9.0.1 - use {@link #asyncTake(Object, long, TakeModifiers)} instead.
      */
+    @Deprecated
     <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers) throws DataAccessException;
 
     /**
@@ -1650,12 +1736,40 @@ public interface GigaSpace {
      *                  transactionally proper matching entry. A timeout of
      *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                  time at all; this is equivalent to a wait of zero.
-     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @param modifiers one or a union of {@link TakeModifiers}.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     * @since 9.0.1
+     */
+    <T> AsyncFuture<T> asyncTake(T template, long timeout, TakeModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #asyncTake(Object, long, TakeModifiers, AsyncFutureListener)} instead.
+     */
+    @Deprecated
+    <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template  The template used for matching. Matching is done against
+     *                  the template with <code>null</code> fields being wildcards (
+     *                  "match anything") other fields being values ("match exactly
+     *                  on the serialized form").
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @param listener A listener to be notified when a result arrives
      * @return A removed entry from the space
      * @throws DataAccessException
+     * @since 9.0.1
      */
-    <T> AsyncFuture<T> asyncTake(T template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(T template, long timeout, TakeModifiers modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space in an asynchronous manner. Returns
@@ -1726,21 +1840,9 @@ public interface GigaSpace {
     <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
-     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
-     * immediately with a future. The future can then be used to check if there is a
-     * match or not. Once a match is found or the timeout expires, the future will
-     * return a result (<code>null</code> in case there was no match).
-     *
-     * @param template  A query to be executed against the space. Most common one is
-     *                  {@link com.j_spaces.core.client.SQLQuery}.
-     * @param timeout   How long the client is willing to wait for a
-     *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
-     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
-     * @return A removed entry from the space
-     * @throws DataAccessException
+     * @deprecated since 9.0.1 - use {@link #asyncTake(ISpaceQuery, long, TakeModifiers)} instead.
      */
+    @Deprecated
     <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
@@ -1755,12 +1857,38 @@ public interface GigaSpace {
      *                  transactionally proper matching entry. A timeout of
      *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                  time at all; this is equivalent to a wait of zero.
-     * @param modifiers Allows to use {@link com.j_spaces.core.client.ReadModifiers#MATCH_BY_ID}
+     * @param modifiers one or a union of {@link TakeModifiers}.
+     * @return A removed entry from the space
+     * @throws DataAccessException
+     * @since 9.0.1
+     */
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, TakeModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #asyncTake(ISpaceQuery, long, TakeModifiers, AsyncFutureListener)} instead.
+     */
+    @Deprecated
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+
+    /**
+     * Take (remove) any matching entry from the space in an asynchronous manner. Returns
+     * immediately with a future. The future can then be used to check if there is a
+     * match or not. Once a match is found or the timeout expires, the future will
+     * return a result (<code>null</code> in case there was no match).
+     *
+     * @param template  A query to be executed against the space. Most common one is
+     *                  {@link com.j_spaces.core.client.SQLQuery}.
+     * @param timeout   How long the client is willing to wait for a
+     *                  transactionally proper matching entry. A timeout of
+     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
+     *                  time at all; this is equivalent to a wait of zero.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @param listener  A listener to be notified when a result arrives.
      * @return A removed entry from the space
      * @throws DataAccessException
+     * @since 9.0.1
      */
-    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
+    <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, TakeModifiers modifiers, AsyncFutureListener<T> listener) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching its id and the class. Returns
@@ -1815,6 +1943,12 @@ public interface GigaSpace {
     <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #takeIfExistsById(Class, Object, Object, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) an object from the space matching its id, the class and the routing value. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
@@ -1825,10 +1959,11 @@ public interface GigaSpace {
      * @param id        The id of the entry
      * @param routing   The routing value
      * @param timeout   The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
+     * @since 9.0.1
      */
-    <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;
+    <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) an object from the space matching the specified id query. Returns
@@ -1867,6 +2002,12 @@ public interface GigaSpace {
     <T> T takeIfExistsById(IdQuery<T> query, long timeout) throws DataAccessException;
     
     /**
+     * @deprecated since 9.0.1 - use {@link #takeIfExistsById(IdQuery, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T takeIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) an object from the space matching the specified id query. Returns
      * <code>null</code> if there is no match within the specified timeout.
      *
@@ -1876,11 +2017,11 @@ public interface GigaSpace {
      *
      * @param query Query to search by.
      * @param timeout The timeout value to wait for a matching entry if it does not exists within the space
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.ReadModifiers}.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
-     * @since 8.0
+     * @since 9.0.1
      */
-    <T> T takeIfExistsById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException;
+    <T> T takeIfExistsById(IdQuery<T> query, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if
@@ -1920,6 +2061,12 @@ public interface GigaSpace {
     <T> T takeIfExists(T template, long timeout) throws DataAccessException;
 
     /**
+     * @deprecated since 9.0.1 - use {@link #takeIfExists(Object, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T takeIfExists(T template, long timeout, int modifiers) throws DataAccessException;
+
+    /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if
      * there currently is none. Matching and timeouts are done as in <code>take</code>,
      * except that blocking in this call is done only if necessary to wait for transactional
@@ -1933,11 +2080,12 @@ public interface GigaSpace {
      *                 transactionally proper matching entry. A timeout of
      *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                 time at all; this is equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.TakeModifiers}.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
+     * @since 9.0.1
      */
-    <T> T takeIfExists(T template, long timeout, int modifiers) throws DataAccessException;
+    <T> T takeIfExists(T template, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if
@@ -1952,7 +2100,6 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @return A removed entry from the space
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T takeIfExists(ISpaceQuery<T> template) throws DataAccessException;
 
@@ -1970,9 +2117,14 @@ public interface GigaSpace {
      *                 time at all; this is equivalent to a wait of zero.
      * @return A removed entry from the space
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> T takeIfExists(ISpaceQuery<T> template, long timeout) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #takeIfExists(ISpaceQuery, long, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T takeIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if
@@ -1986,12 +2138,12 @@ public interface GigaSpace {
      *                 transactionally proper matching entry. A timeout of
      *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
      *                 time at all; this is equivalent to a wait of zero.
-     * @param modifiers one or a union of {@link com.j_spaces.core.client.TakeModifiers}.
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#takeIfExists(Object,net.jini.core.transaction.Transaction,long)
+     * @since 9.0.1
      */
-    <T> T takeIfExists(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException;
+    <T> T takeIfExists(ISpaceQuery<T> template, long timeout, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Takes (removes) all the entries matching the specified template from this
@@ -2006,11 +2158,9 @@ public interface GigaSpace {
      * @return Removed matched entries from the space
      * @throws DataAccessException In the event of a take error, DataAccessException will
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(T template) throws DataAccessException;
-    
-    
+        
     /**
      * Takes (removes) all the entries matching the specified template from this
      * space.
@@ -2025,9 +2175,34 @@ public interface GigaSpace {
      * @return Removed matched entries from the space
      * @throws DataAccessException In the event of a take error, DataAccessException will
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(T template, int maxEntries) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #takeMultiple(Object, int, TakeModifiers)} instead.
+     */
+    @Deprecated
+    <T> T[] takeMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
+
+    /**
+     * Takes (removes) all the entries matching the specified template from this
+     * space.
+     *
+     * 
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param maxEntries A limit on the number of entries to be returned. Use
+     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
+     * @param modifiers one or a union of {@link TakeModifiers}.
+     * @return Removed matched entries from the space
+     * @throws DataAccessException In the event of a take error, DataAccessException will
+     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
+     * @since 9.0.1
+     */
+    <T> T[] takeMultiple(T template, int maxEntries, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Takes (removes) all the entries matching the specified template from this
@@ -2039,7 +2214,6 @@ public interface GigaSpace {
      * @return Removed matched entries from the space
      * @throws DataAccessException In the event of a take error, DataAccessException will
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(ISpaceQuery<T> template) throws DataAccessException;
     
@@ -2054,29 +2228,14 @@ public interface GigaSpace {
      * @return Removed matched entries from the space
      * @throws DataAccessException In the event of a take error, DataAccessException will
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
      */
     <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException;
 
     /**
-     * Takes (removes) all the entries matching the specified template from this
-     * space.
-     *
-     * 
-     * @param template   The template used for matching. Matching is done against
-     *                   the template with <code>null</code> fields being.
-     *                   wildcards ("match anything") other fields being values ("match
-     *                   exactly on the serialized form"). The template can also be one
-     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
-     * @param maxEntries A limit on the number of entries to be returned. Use
-     *                   {@link Integer#MAX_VALUE} for the uppermost limit.
-     * @param modifiers one of {@link TakeModifiers}                  
-     * @return Removed matched entries from the space
-     * @throws DataAccessException In the event of a take error, DataAccessException will
-     *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     * @deprecated since 9.0.1 - use {@link #takeMultiple(ISpaceQuery, int, TakeModifiers)} instead.
      */
-    <T> T[] takeMultiple(T template, int maxEntries, int modifiers) throws DataAccessException;
+    @Deprecated
+    <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
 
     /**
      * Takes (removes) all the entries matching the specified template from this
@@ -2086,27 +2245,27 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.  
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
-     * @param modifiers one of {@link TakeModifiers}
+     * @param modifiers one or a union of {@link TakeModifiers}.
      * @return Removed matched entries from the space
      * @throws DataAccessException In the event of a take error, DataAccessException will
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#takeMultiple(Object,net.jini.core.transaction.Transaction,int)
+     * @since 9.0.1
      */
-    <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries, int modifiers) throws DataAccessException;
+    <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.
      *
-     * <p>By default uses the {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE}
+     * <p>By default uses the {@link WriteModifiers#UPDATE_OR_WRITE}
      * modifier (see {@link #write(Object,long,long,int)}. In order to force the operation
-     * to perform "write" only (a bit more performant), the {@link com.j_spaces.core.client.UpdateModifiers#WRITE_ONLY}
+     * to perform "write" only (a bit more performant), the {@link WriteModifiers#WRITE_ONLY}
      * modifier can be used resulting in an {@link org.openspaces.core.EntryAlreadyInSpaceException}
      * if the entry already exists in the space (it must have an id for this exception to be raised).
      *
      * <p>If the object has a primary key that isn't auto - generated, and the modifiers value is one of
-     * {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE},
-     * {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} or
-     * {@link com.j_spaces.core.client.UpdateModifiers#PARTIAL_UPDATE}, it will call to the update method,
+     * {@link WriteModifiers#UPDATE_OR_WRITE},
+     * {@link WriteModifiers#UPDATE_ONLY} or
+     * {@link WriteModifiers#PARTIAL_UPDATE}, it will call to the update method,
      * returning a LeaseContext holder. This lease is unknown to the grantor, unless an actual 'write' was performed.
      *
      * <p>The entry will be written using the default lease this interface is configured with
@@ -2116,73 +2275,109 @@ public interface GigaSpace {
      * @param entry The entry to write to the space
      * @return A usable <code>Lease</code> on a successful write, or <code>null</code> if performed
      *         with the proxy configured with NoWriteLease flag.
-     *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
      *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#write(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> LeaseContext<T> write(T entry) throws DataAccessException;
 
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.
      *
-     * <p>By default uses the {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE}
+     * <p>By default uses the {@link WriteModifiers#UPDATE_OR_WRITE}
      * modifier (see {@link #write(Object,long,long,int)}. In order to force the operation
-     * to perform "write" only (a bit more performant), the {@link com.j_spaces.core.client.UpdateModifiers#WRITE_ONLY}
+     * to perform "write" only (a bit more performant), the {@link WriteModifiers#WRITE_ONLY}
      * modifier can be used resulting in an {@link org.openspaces.core.EntryAlreadyInSpaceException}
      * if the entry already exists in the space (it must have an id for this exception to be raised).
      *
      * <p>If the object has a primary key that isn't auto - generated, and the modifiers value is one of
-     * {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE},
-     * {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} or
-     * {@link com.j_spaces.core.client.UpdateModifiers#PARTIAL_UPDATE}, it will call to the update method,
+     * {@link WriteModifiers#UPDATE_OR_WRITE},
+     * {@link WriteModifiers#UPDATE_ONLY} or
+     * {@link WriteModifiers#PARTIAL_UPDATE}, it will call to the update method,
      * returning a LeaseContext holder. This lease is unknown to the grantor, unless an actual 'write' was performed.
      *
      * @param entry The entry to write to the space
      * @param lease The lease the entry will be written with, in <b>milliseconds</b>.
      * @return A usable <code>Lease</code> on a successful write, or <code>null</code> if performed
      *         with the proxy configured with NoWriteLease flag.
-     *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
      *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#write(Object,net.jini.core.transaction.Transaction,long)
      */
     <T> LeaseContext<T> write(T entry, long lease) throws DataAccessException;
 
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.
      *
-     * <p>By default uses the {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE}
+     * <p>By default uses the {@link WriteModifiers#UPDATE_OR_WRITE}
      * modifier (see {@link #write(Object,long,long,int)}. In order to force the operation
-     * to perform "write" only (a bit more performant), the {@link com.j_spaces.core.client.UpdateModifiers#WRITE_ONLY}
+     * to perform "write" only (a bit more performant), the {@link WriteModifiers#WRITE_ONLY}
      * modifier can be used resulting in an {@link org.openspaces.core.EntryAlreadyInSpaceException}
      * if the entry already exists in the space (it must have an id for this exception to be raised).
      *
      * <p>If the object has a primary key that isn't auto - generated, and the modifiers value is one of
-     * {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE},
-     * {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_ONLY} or
-     * {@link com.j_spaces.core.client.UpdateModifiers#PARTIAL_UPDATE}, it will call to the update method,
+     * {@link WriteModifiers#UPDATE_OR_WRITE},
+     * {@link WriteModifiers#UPDATE_ONLY} or
+     * {@link WriteModifiers#PARTIAL_UPDATE}, it will call to the update method,
+     * returning a LeaseContext holder. This lease is unknown to the grantor, unless an actual 'write' was performed.
+     *
+     * <p>The entry will be written using the default lease this interface is configured with
+     * (using the its factory). In order to explicitly define the lease, please use
+     * {@link #write(Object,long)}.
+     *
+     * @param entry The entry to write to the space
+     * @param modifiers one or a union of {@link WriteModifiers}.
+     * @return A usable <code>Lease</code> on a successful write, or <code>null</code> if performed
+     *         with the proxy configured with NoWriteLease flag.
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
+     *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
+     *         is thrown if timeout occurred while trying to update the object.
+     * @throws DataAccessException
+     * @since 9.0.1
+     */
+    <T> LeaseContext<T> write(T entry, WriteModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #write(Object, long, long, WriteModifiers)} instead.
+     */
+    @Deprecated
+    <T> LeaseContext<T> write(T entry, long lease, long timeout, int modifiers) throws DataAccessException;
+
+    /**
+     * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.
+     *
+     * <p>By default uses the {@link com.gigaspaces.client.WriteModifiers#UPDATE_OR_WRITE} modifier. 
+     * In order to force the operation to perform "write" only (a bit more performant), the 
+     * {@link com.gigaspaces.client.WriteModifiers#WRITE_ONLY} modifier can be used resulting in an 
+     * {@link org.openspaces.core.EntryAlreadyInSpaceException} if the entry already exists in the space 
+     * (it must have an id for this exception to be raised).
+     *
+     * <p>If the object has a primary key that isn't auto - generated, and the modifiers value is one of
+     * {@link WriteModifiers#UPDATE_OR_WRITE},
+     * {@link WriteModifiers#UPDATE_ONLY} or
+     * {@link WriteModifiers#PARTIAL_UPDATE}, it will call to the update method,
      * returning a LeaseContext holder. This lease is unknown to the grantor, unless an actual 'write' was performed.
      *
      * @param entry The entry to write to the space
      * @param lease The lease the entry will be written with, in <b>milliseconds</b>.
      * @param timeout The timeout of an update operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @param modifiers The operation modifiers specified by {@link UpdateModifiers}
+     * @param modifiers one or a union of {@link WriteModifiers}.
      * @return A usable <code>Lease</code> on a successful write, or <code>null</code> if performed
      *         with the proxy configured with NoWriteLease flag.
-     *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
      *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
-     * @see com.j_spaces.core.IJSpace#write(Object,net.jini.core.transaction.Transaction,long)
+     * @since 9.0.1
      */
-    <T> LeaseContext<T> write(T entry, long lease, long timeout, int modifiers) throws DataAccessException;
+    <T> LeaseContext<T> write(T entry, long lease, long timeout, WriteModifiers modifiers) throws DataAccessException;
 
     /**
      * Writes the specified entries to this space.
@@ -2195,7 +2390,6 @@ public interface GigaSpace {
      * @return Leases for the written entries
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#writeMultiple(Object[],net.jini.core.transaction.Transaction,long)
      */
     <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException;
 
@@ -2207,9 +2401,26 @@ public interface GigaSpace {
      * @return Leases for the written entries
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
-     * @see com.j_spaces.core.IJSpace#writeMultiple(Object[],net.jini.core.transaction.Transaction,long)
      */
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease) throws DataAccessException;
+
+    /**
+     * Writes the specified entries to this space.
+     * 
+     * @param entries The entries to write to the space.
+     * @param modifiers one or a union of {@link WriteModifiers}.
+     * @return Leases for the written entries
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
+     * @since 9.0.1
+     */
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, WriteModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #writeMultiple(Object[], long, WriteModifiers)} instead.
+     */
+    @Deprecated
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException;
 
     /**
      * Writes the specified entries to this space.
@@ -2222,11 +2433,11 @@ public interface GigaSpace {
      * 
      * @param entries           the entries to write. 
      * @param lease             the requested lease time, in milliseconds
-     * @param updateModifiers   operation modifiers, values from {@link com.j_spaces.core.client.UpdateModifiers UpdateModifiers}.
+     * @param modifiers one or a union of {@link WriteModifiers}.
      *         
      * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
      *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
-     *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         <ul>
      *         <li>{@link LeaseContext#getObject()} returns:
      *         <ul>
@@ -2237,9 +2448,16 @@ public interface GigaSpace {
      *         </ul>
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
+     * @since 9.0.1
      */
-    <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException;
-    
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, WriteModifiers modifiers) throws DataAccessException;
+
+    /**
+     * @deprecated since 9.0.1 - use {@link #writeMultiple(Object[], long[], WriteModifiers)} instead.
+     */
+    @Deprecated
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
+
     /**
      * Writes the specified entries to this space.
      * 
@@ -2251,11 +2469,11 @@ public interface GigaSpace {
      * 
      * @param entries           the entries to write. 
      * @param leases            the requested lease time per entry, in milliseconds
-     * @param updateModifiers   operation modifiers, values from {@link com.j_spaces.core.client.UpdateModifiers UpdateModifiers}.
+     * @param modifiers one or a union of {@link WriteModifiers}.
      *         
      * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
      *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
-     *         <p>when {@link com.j_spaces.core.client.UpdateModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         <ul>
      *         <li>{@link LeaseContext#getObject()} returns:
      *         <ul>
@@ -2266,10 +2484,10 @@ public interface GigaSpace {
      *         </ul>
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
-     * @since 8.0.3
+     * @since 9.0.1
      */    
-    <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException;
-    
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, WriteModifiers modifiers) throws DataAccessException;
+
     /**
      * Returns an iterator builder allowing to configure and create a {@link com.j_spaces.core.client.GSIterator}
      * over the Space.
