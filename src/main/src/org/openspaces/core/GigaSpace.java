@@ -1465,7 +1465,7 @@ public interface GigaSpace {
     <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout) throws DataAccessException;
 
     /**
-     * @deprecated since 9.0.1 - use {@link #takeById(Class, Object, Object, long, ReadModifiers)} instead.
+     * @deprecated since 9.0.1 - use {@link #takeById(Class, Object, Object, long, TakeModifiers)} instead.
      */
     @Deprecated
     <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) throws DataAccessException;

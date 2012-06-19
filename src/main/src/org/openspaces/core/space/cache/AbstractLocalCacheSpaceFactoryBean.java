@@ -16,22 +16,23 @@
 
 package org.openspaces.core.space.cache;
 
-import com.gigaspaces.internal.client.cache.ISpaceCache;
-import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
-import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
-import com.j_spaces.core.IJSpace;
+import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.space.SpaceServiceDetails;
-import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceDetails;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import java.util.Properties;
+import com.gigaspaces.internal.client.cache.ISpaceCache;
+import com.gigaspaces.internal.client.cache.SpaceCacheConfig;
+import com.gigaspaces.internal.client.spaceproxy.IDirectSpaceProxy;
+import com.j_spaces.core.IJSpace;
 
 /**
  * Base class for different Local cache space proxies that work with a master {@link IJSpace}. The
@@ -95,9 +96,8 @@ public abstract class AbstractLocalCacheSpaceFactoryBean implements Initializing
 
     /**
      * Constructs a new local cache {@link IJSpace} based on the master local cache set using
-     * {@link #setSpace(IJSpace)} and a set of properties driving the actual local cache type based
-     * on {@link #initCacheProperties()}. Additional properties are applied based on
-     * {@link #setProperties(java.util.Properties)}.
+     * {@link #setSpace(IJSpace)} and a set of properties driving the actual local cache type from the configuration.
+     * Additional properties are applied based on {@link #setProperties(java.util.Properties)}.
      */
     @Override
     public void afterPropertiesSet() {
