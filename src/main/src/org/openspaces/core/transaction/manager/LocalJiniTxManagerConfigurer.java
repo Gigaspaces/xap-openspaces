@@ -24,27 +24,25 @@ import org.openspaces.core.space.UrlSpaceConfigurer;
  * A simple configurer for {@link org.openspaces.core.transaction.manager.LocalJiniTransactionManager}.
  *
  * @author kimchy
+ * @deprecated since 8.0 - use {@link DistributedJiniTxManagerConfigurer} instead.
  */
+@Deprecated
 public class LocalJiniTxManagerConfigurer {
 
-    final private LocalJiniTransactionManager localJiniTransactionManager;
-
-    private boolean initialized = false;
+    final private DistributedJiniTxManagerConfigurer distConfigurer;
 
     public LocalJiniTxManagerConfigurer(UrlSpaceConfigurer urlSpaceConfigurer) {
         this(urlSpaceConfigurer.space());
     }
 
     public LocalJiniTxManagerConfigurer(IJSpace space) {
-        localJiniTransactionManager = new LocalJiniTransactionManager();
-        localJiniTransactionManager.setSpace(space);
+        distConfigurer = new DistributedJiniTxManagerConfigurer();
     }
 
     /**
      * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setClustered(Boolean)
      */
     public LocalJiniTxManagerConfigurer clustered(boolean clustered) {
-        localJiniTransactionManager.setClustered(clustered);
         return this;
     }
 
@@ -52,7 +50,7 @@ public class LocalJiniTxManagerConfigurer {
      * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setDefaultTimeout(int)
      */
     public LocalJiniTxManagerConfigurer defaultTimeout(int defaultTimeout) {
-        localJiniTransactionManager.setDefaultTimeout(defaultTimeout);
+        distConfigurer.defaultTimeout(defaultTimeout);
         return this;
     }
 
@@ -60,7 +58,7 @@ public class LocalJiniTxManagerConfigurer {
      * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setCommitTimeout(Long)
      */
     public LocalJiniTxManagerConfigurer commitTimeout(long commitTimeout) {
-        localJiniTransactionManager.setCommitTimeout(commitTimeout);
+        distConfigurer.commitTimeout(commitTimeout);
         return this;
     }
 
@@ -68,7 +66,7 @@ public class LocalJiniTxManagerConfigurer {
      * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setRollbackTimeout(Long)
      */
     public LocalJiniTxManagerConfigurer rollbackTimeout(Long rollbackTimeout) {
-        localJiniTransactionManager.setRollbackTimeout(rollbackTimeout);
+        distConfigurer.rollbackTimeout(rollbackTimeout);
         return this;
     }
 
@@ -76,19 +74,15 @@ public class LocalJiniTxManagerConfigurer {
      * @see org.openspaces.core.transaction.manager.LocalJiniTransactionManager#setRollbackTimeout(Long)
      */
     public LocalJiniTxManagerConfigurer leaseRenewalConfig(TransactionLeaseRenewalConfig leaseRenewalConfig) {
-        localJiniTransactionManager.setLeaseRenewalConfig(leaseRenewalConfig);
+        distConfigurer.leaseRenewalConfig(leaseRenewalConfig);
         return this;
     }
 
     public PlatformTransactionManager transactionManager() throws Exception {
-        if (!initialized) {
-            localJiniTransactionManager.afterPropertiesSet();
-            initialized = true;
-        }
-        return localJiniTransactionManager;
+        return distConfigurer.transactionManager();
     }
 
     public void destroy() throws Exception {
-        localJiniTransactionManager.destroy();
+        distConfigurer.destroy();
     }
 }

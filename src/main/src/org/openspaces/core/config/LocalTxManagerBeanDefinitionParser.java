@@ -16,7 +16,9 @@
 
 package org.openspaces.core.config;
 
-import org.openspaces.core.transaction.manager.LocalJiniTransactionManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openspaces.core.transaction.manager.DistributedJiniTransactionManager;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
@@ -29,18 +31,23 @@ import org.w3c.dom.NamedNodeMap;
  * A bean definition builder for {@link LocalJiniTransactionManager}.
  *
  * @author kimchy
+ * @deprecated
  */
+@Deprecated
 public class LocalTxManagerBeanDefinitionParser extends AbstractJiniTxManagerBeanDefinitionParser {
 
+    protected final Log log = LogFactory.getLog(getClass());
+    
     public static final String SPACE = "space";
 
     public static final String CLUSTERED = "clustered";
 
-    protected Class<LocalJiniTransactionManager> getBeanClass(Element element) {
-        return LocalJiniTransactionManager.class;
+    protected Class<DistributedJiniTransactionManager> getBeanClass(Element element) {
+        return DistributedJiniTransactionManager.class;
     }
 
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        log.warn("Local transaction manager is deprecated, use distributed transaction manager instead ('distributed-tx-manager')");
         super.doParse(element, builder);
         NamedNodeMap attributes = element.getAttributes();
         for (int x = 0; x < attributes.getLength(); x++) {
@@ -51,11 +58,9 @@ public class LocalTxManagerBeanDefinitionParser extends AbstractJiniTxManagerBea
             }
             String propertyName = extractPropertyName(name);
             if (SPACE.equals(name)) {
-                builder.addPropertyReference(propertyName, attribute.getValue());
                 continue;
             }
             if (CLUSTERED.equals(name)) {
-                builder.addPropertyValue(propertyName, attribute.getValue());
                 continue;
             }
 

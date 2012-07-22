@@ -1246,9 +1246,7 @@
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LocalJiniTransactionManager">
                 Spring transaction manager using GigaSpaces LocalJiniTransactionManager.
-
-                Local transaction manager is high performance single space transaction manager and should be used in
-                most if not all space related operations.
+				deprecated since 8.0, use distributed-tx-manager instead.                
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
