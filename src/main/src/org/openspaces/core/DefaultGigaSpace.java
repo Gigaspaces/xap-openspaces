@@ -1529,7 +1529,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (queryResultType == QueryResultType.DEFAULT || queryResultType == QueryResultType.NOT_SET)
             return QueryResultTypeInternal.NOT_SET;
         if (queryResultType == QueryResultType.OBJECT)
-            return QueryResultTypeInternal.OBJECT;
+            return QueryResultTypeInternal.OBJECT_JAVA;
         if (queryResultType == QueryResultType.DOCUMENT)
             return QueryResultTypeInternal.DOCUMENT_ENTRY;
         
