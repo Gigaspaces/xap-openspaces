@@ -89,4 +89,12 @@ public class ExistingJiniTransactionManager {
     public static ExisitingJiniTransactionHolder unbindExistingTransaction() {
         return ((ExisitingJiniTransactionHolder)TransactionSynchronizationManager.unbindResource(CONTEXT));
     }
+    
+    /**
+     * Unbinds the current on going bounded transaction from the thread context if possible.
+     */
+    public static ExisitingJiniTransactionHolder unbindExistingTransactionIfPossible() {
+        return (ExisitingJiniTransactionHolder) TransactionSynchronizationManager.unbindResourceIfPossible(CONTEXT);
+    }
+
 }

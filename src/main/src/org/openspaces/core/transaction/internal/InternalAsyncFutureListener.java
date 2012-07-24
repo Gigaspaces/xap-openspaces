@@ -103,7 +103,6 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
                 if (transactionalListener) {
                     ((TransactionalAsyncFutureListener<T>) listener).onTransactionalResult(result, txStatus);
                 }
-                ExistingJiniTransactionManager.unbindExistingTransaction();
                 transactionManager.commit(txStatus);
                 if (transactionalListener) {
                     ((TransactionalAsyncFutureListener<T>) listener).onPostCommitTransaction(result);
@@ -120,6 +119,8 @@ public class InternalAsyncFutureListener<T> implements AsyncFutureListener<T> {
                     ((TransactionalAsyncFutureListener<T>) listener).onPostRollbackTransaction(result);
                 }
                 throw e;
+            } finally {
+                ExistingJiniTransactionManager.unbindExistingTransactionIfPossible();                
             }
         } else {
             listener.onResult(result);
