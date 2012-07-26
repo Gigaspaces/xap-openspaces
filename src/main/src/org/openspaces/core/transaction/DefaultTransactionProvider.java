@@ -16,12 +16,14 @@
 
 package org.openspaces.core.transaction;
 
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.LocalTransactionManager;
-import com.j_spaces.core.client.XAResourceImpl;
+import java.rmi.RemoteException;
+import java.util.List;
+
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+
 import net.jini.core.transaction.Transaction;
-import net.jini.core.transaction.server.TransactionManager;
+import net.jini.core.transaction.TransactionException;
 
 import org.openspaces.core.TransactionDataAccessException;
 import org.openspaces.core.transaction.manager.ExistingJiniTransactionManager;
@@ -32,10 +34,10 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import java.rmi.RemoteException;
-import java.util.List;
+import com.gigaspaces.client.transaction.DistributedTransactionManagerProvider;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.XAResourceImpl;
 
 /**
  * Default transaction provider works in conjunction with
@@ -64,6 +66,10 @@ public class DefaultTransactionProvider implements TransactionProvider {
     private PlatformTransactionManager transactionManager;
 
     private boolean isJta = false;
+    
+    private DistributedTransactionManagerProvider distributedTransactionManagerProvider;
+    
+    private final Object distributedTransactionManagerProviderLock = new Object();
 
     /**
      * Creates a new transaction provider. Will use the provided transactional context in order to
@@ -136,14 +142,18 @@ public class DefaultTransactionProvider implements TransactionProvider {
             if(jtaTransaction == null)
                 return null;
 
-            TransactionManager distributedTxManager;
-            try {
-                // TODO LTM: change to distributed transaction manager
-                distributedTxManager = LocalTransactionManager.getInstance(space);
-            } catch (RemoteException e) {
-                throw new TransactionDataAccessException("Failed to get local transaction manager for space [" + space + "]", e);
+            if (distributedTransactionManagerProvider == null) {
+                synchronized(distributedTransactionManagerProviderLock) {
+                    if (distributedTransactionManagerProvider == null) {
+                        try {
+                            distributedTransactionManagerProvider = new DistributedTransactionManagerProvider();
+                        } catch (TransactionException e) {
+                            throw new TransactionDataAccessException("Failed to get local transaction manager for space [" + space + "]", e);
+                        }
+                    }
+                }
             }
-            XAResource xaResourceSpace = new XAResourceImpl(distributedTxManager, space);
+            XAResource xaResourceSpace = new XAResourceImpl(distributedTransactionManagerProvider.getTransactionManager(), space);
             // set the default timeout to be the one specified on the JTA transaction manager
             if (jtaTransactionManager.getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                 try {
@@ -230,6 +240,14 @@ public class DefaultTransactionProvider implements TransactionProvider {
             return true;
         }
         return false;
+    }
+    
+    public void destroy() throws RemoteException {
+        synchronized(distributedTransactionManagerProviderLock)
+        {
+            if (distributedTransactionManagerProvider != null)
+                distributedTransactionManagerProvider.destroy();
+        }
     }
 
     /**

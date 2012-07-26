@@ -28,6 +28,7 @@ import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Constants;
@@ -92,7 +93,7 @@ import com.j_spaces.core.IJSpace;
  * @see org.openspaces.core.exception.ExceptionTranslator
  * @see org.openspaces.core.transaction.manager.AbstractJiniTransactionManager
  */
-public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
+public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, FactoryBean, BeanNameAware {
 
     private static final Log logger = LogFactory.getLog(GigaSpaceFactoryBean.class);
 
@@ -109,6 +110,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
     private ISpaceProxy space;
 
     private TransactionProvider txProvider;
+    
+    private DefaultTransactionProvider defaultTxProvider;
 
     private ExceptionTranslator exTranslator;
 
@@ -277,7 +280,8 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
             if (transactionManager != null && transactionManager instanceof JiniPlatformTransactionManager) {
                 transactionalContext = ((JiniPlatformTransactionManager) transactionManager).getTransactionalContext();
             }
-            txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
+            defaultTxProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
+            txProvider = defaultTxProvider;
         }
         gigaSpace = new DefaultGigaSpace(space, txProvider, exTranslator, defaultIsolationLevel);
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
@@ -304,5 +308,14 @@ public class GigaSpaceFactoryBean implements InitializingBean, FactoryBean, Bean
      */
     public boolean isSingleton() {
         return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.DisposableBean#destroy()
+     */
+    @Override
+    public void destroy() throws Exception {
+        if (defaultTxProvider != null)
+            defaultTxProvider.destroy();
     }
 }

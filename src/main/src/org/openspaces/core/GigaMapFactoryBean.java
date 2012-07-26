@@ -25,6 +25,7 @@ import org.openspaces.core.transaction.DefaultTransactionProvider;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Constants;
@@ -35,7 +36,7 @@ import org.springframework.util.Assert;
 /**
  * @author kimchy
  */
-public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNameAware {
+public class GigaMapFactoryBean implements InitializingBean, DisposableBean, FactoryBean, BeanNameAware {
 
     /**
      * Prefix for the isolation constants defined in TransactionDefinition
@@ -50,6 +51,8 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
     private IMap map;
 
     private TransactionProvider txProvider;
+    
+    private DefaultTransactionProvider defaultTxProvider;
 
     private ExceptionTranslator exTranslator;
 
@@ -187,7 +190,8 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
             if (transactionalContext == null) {
                 transactionalContext = map.getMasterSpace();
             }
-            txProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
+            defaultTxProvider = new DefaultTransactionProvider(transactionalContext, transactionManager);
+            txProvider = defaultTxProvider;
         }
         gigaMap = new DefaultGigaMap(map, txProvider, exTranslator, defaultIsolationLevel);
         gigaMap.setDefaultTimeToLive(defaultTimeToLive);
@@ -213,5 +217,14 @@ public class GigaMapFactoryBean implements InitializingBean, FactoryBean, BeanNa
      */
     public boolean isSingleton() {
         return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.DisposableBean#destroy()
+     */
+    @Override
+    public void destroy() throws Exception {
+        if (defaultTxProvider != null)
+            defaultTxProvider.destroy();
     }
 }
