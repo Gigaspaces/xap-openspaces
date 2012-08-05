@@ -16,17 +16,14 @@
 
 package org.openspaces.core.map;
 
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.EntryNotInSpaceException;
-import com.j_spaces.core.client.LocalTransactionManager;
-import com.j_spaces.core.client.ReadModifiers;
-import com.j_spaces.map.IMap;
-import com.j_spaces.map.MapEntryFactory;
-import com.j_spaces.map.SpaceMapEntry;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import net.jini.core.transaction.Transaction;
+import net.jini.core.transaction.TransactionException;
 import net.jini.core.transaction.TransactionFactory;
-import net.jini.core.transaction.server.TransactionManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,11 +31,13 @@ import org.openspaces.core.SpaceTimeoutException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.transaction.CannotCreateTransactionException;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import com.gigaspaces.client.transaction.DistributedTransactionManagerProvider;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.EntryNotInSpaceException;
+import com.j_spaces.core.client.ReadModifiers;
+import com.j_spaces.map.IMap;
+import com.j_spaces.map.MapEntryFactory;
+import com.j_spaces.map.SpaceMapEntry;
 
 /**
  * The lock manager is built on top of {@link IMap} and supports the ability to lock and unlock
@@ -60,15 +59,15 @@ public class LockManager {
 
     private static Log logger = LogFactory.getLog(LockManager.class);
 
-    private IMap map;
+    private final IMap map;
 
-    private ConcurrentHashMap<String, Transaction> lockedUIDHashMap = new ConcurrentHashMap<String, Transaction>();
+    private final ConcurrentHashMap<String, Transaction> lockedUIDHashMap = new ConcurrentHashMap<String, Transaction>();
 
-    private IJSpace masterSpace = null;
+    private final IJSpace masterSpace;
 
-    private BlockingQueue<SpaceMapEntry> templatePool;
+    private final BlockingQueue<SpaceMapEntry> templatePool;
 
-    private TransactionManager transactionManager;
+    private final DistributedTransactionManagerProvider transactionManagerProvider;
 
 
     /**
@@ -78,9 +77,8 @@ public class LockManager {
         this.map = map;
         this.masterSpace = map.getMasterSpace();
         try {
-            // TODO LTM: change to distributed transaction manager
-            transactionManager = LocalTransactionManager.getInstance(masterSpace);
-        } catch (RemoteException e) {
+            transactionManagerProvider = new DistributedTransactionManagerProvider();
+        } catch (TransactionException e) {
             throw new CannotCreateTransactionException("Failed to obtain transaction lock manager", e);
         }
 
@@ -233,7 +231,7 @@ public class LockManager {
     private Transaction getTransaction(long timeout) throws CannotCreateTransactionException {
         Transaction.Created tCreated;
         try {
-            tCreated = TransactionFactory.create(transactionManager, timeout);
+            tCreated = TransactionFactory.create(transactionManagerProvider.getTransactionManager(), timeout);
         } catch (Exception e) {
             throw new CannotCreateTransactionException("Failed to create lock transaction", e);
         }
