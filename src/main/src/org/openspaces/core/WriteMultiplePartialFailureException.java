@@ -16,12 +16,13 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.client.WriteMultipleException.IWriteResult;
-import com.j_spaces.core.LeaseContext;
-
 import net.jini.core.lease.Lease;
+
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
+
+import com.gigaspaces.client.WriteMultipleException.IWriteResult;
+import com.j_spaces.core.LeaseContext;
 
 /**
  * This exception is thrown when write multiple is called and for some reason the
@@ -67,7 +68,16 @@ public class WriteMultiplePartialFailureException extends InvalidDataAccessResou
 
         private TranslatedWriteResult(IWriteResult result, ExceptionTranslator exceptionTranslator) {
             this.result = result;
-            this.error = exceptionTranslator.translate(result.getError());
+            Exception translatedException;
+            try
+            {
+                translatedException = exceptionTranslator.translate(result.getError());
+            }
+            catch(Exception e)
+            {
+                translatedException = e;
+            }
+            this.error = translatedException;
         }
 
         public ResultType getResultType() {
