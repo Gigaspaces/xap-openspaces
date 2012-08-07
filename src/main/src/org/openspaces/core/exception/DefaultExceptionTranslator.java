@@ -23,6 +23,7 @@ import net.jini.core.transaction.TransactionException;
 import org.openspaces.core.*;
 import org.springframework.dao.DataAccessException;
 
+import com.gigaspaces.client.protective.ProtectiveModeException;
 import com.gigaspaces.security.SecurityException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.CacheException;
@@ -50,6 +51,8 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (dae != null) {
             return dae;
         }
+        if (e instanceof ProtectiveModeException)
+            throw new ProtectiveModeException(e.getMessage(), e);
         if (e instanceof RuntimeException) {
             throw (RuntimeException)e;
         }
@@ -204,8 +207,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof com.gigaspaces.client.ResourceCapacityExceededException){
             return new ResourceCapacityExceededException((com.gigaspaces.client.ResourceCapacityExceededException)e);
         }
-            
-            
 
         return null;
     }
