@@ -175,7 +175,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
         }
         BackwardsServiceDiscoveryManager serviceDiscovery = null;
         try {
-            serviceDiscovery = SharedDiscoveryManagement.getServiceDiscoveryManager(groups, lookupLocators, null);
+            serviceDiscovery = SharedDiscoveryManagement.getBackwardsServiceDiscoveryManager(groups, lookupLocators, null);
             ServiceItem returnObject = serviceDiscovery.lookup(templ, null, timeout);
             if (returnObject != null) {
                 service = returnObject.service;
