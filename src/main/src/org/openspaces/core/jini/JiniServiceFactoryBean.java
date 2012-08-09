@@ -16,14 +16,16 @@
 
 package org.openspaces.core.jini;
 
-import com.j_spaces.core.jini.SharedDiscoveryManagement;
+import java.lang.reflect.InvocationTargetException;
+
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.discovery.LookupDiscovery;
-import net.jini.lookup.BackwardsServiceDiscoveryManager;
+import net.jini.lookup.ServiceDiscoveryManager;
 import net.jini.lookup.entry.Name;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
@@ -31,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
-import java.lang.reflect.InvocationTargetException;
+import com.j_spaces.core.jini.SharedDiscoveryManagement;
 
 /**
  * JiniServiceFactoryBean for Jini environments. The class is made up from various samples found on
@@ -173,7 +175,7 @@ public class JiniServiceFactoryBean extends AbstractFactoryBean implements Metho
                 lookupLocators[i] = new LookupLocator(locator);
             }
         }
-        BackwardsServiceDiscoveryManager serviceDiscovery = null;
+        ServiceDiscoveryManager serviceDiscovery = null;
         try {
             serviceDiscovery = SharedDiscoveryManagement.getBackwardsServiceDiscoveryManager(groups, lookupLocators, null);
             ServiceItem returnObject = serviceDiscovery.lookup(templ, null, timeout);
