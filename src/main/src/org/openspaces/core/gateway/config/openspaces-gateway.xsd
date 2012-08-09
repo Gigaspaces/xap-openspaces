@@ -505,10 +505,11 @@
 					</xsd:documentation>
 		    	</xsd:annotation>
 	    	</xsd:attribute>
-			<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="required">
+			<xsd:attribute name="gateway-lookups" type="gatewayLookupsRefType" use="optional">
 		       	<xsd:annotation>
 		    		<xsd:documentation>
-		    			Sets the gateway lookups information for communication with other gateways.
+		    			Sets the gateway lookups information for communication with other remote gateways.
+		    			When all the gateways are in the same lookup environment, this is not required.
 					</xsd:documentation>
 		    	</xsd:annotation>
 	    	</xsd:attribute>
@@ -520,7 +521,7 @@
 					</xsd:documentation>
 		    	</xsd:annotation>
 	    	</xsd:attribute>
-			<xsd:attribute name="start-embedded-lus" type="xsd:boolean" default="true">
+			<xsd:attribute name="start-embedded-lus" type="xsd:boolean" use="optional">
 		       	<xsd:annotation>
 		    		<xsd:documentation>
 							Determines whether to start an embedded lookup service within the sink component.							

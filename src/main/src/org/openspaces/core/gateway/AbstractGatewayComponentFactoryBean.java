@@ -63,7 +63,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     
     private String localGatewayName;
     private GatewayLookupsFactoryBean gatewayLookups;
-    private boolean startEmbeddedLus = true;
+    private Boolean startEmbeddedLus = null;
     private boolean relocateIfWrongPorts = true;
     
     private int communicationPort;
@@ -72,7 +72,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     private boolean relocatingInvoked;
     private Admin admin;
     private boolean communicationPortIsSet;
-
+    
     private SecurityConfig securityConfig;
     private Properties beanLevelProperties;
 
@@ -123,7 +123,11 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
      * @return true if a LUS server will be started, false otherwise. 
      */
     public boolean isStartEmbeddedLus() {
-        return startEmbeddedLus;
+        //If this is not explicitly set, the default will be according to whether this sink hate gateway lookups
+        //which is marking whether this sink is used on local network or on separated networks (e.g WAN).
+        if (startEmbeddedLus == null)
+            return gatewayLookups != null;
+        return startEmbeddedLus.booleanValue();
     }
     
     /**
@@ -308,12 +312,12 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             }
         }
 
-        if (startEmbeddedLus) {
+        if (isStartEmbeddedLus()) {
             final int currentDiscoPort = Integer.parseInt(
                     System.getProperty("com.sun.jini.reggie.initialUnicastDiscoveryPort", "0"));
 
             logger.info("Discovery port: " + currentDiscoPort + ", target Discovery port: " + discoveryPort);
-            if (currentDiscoPort != discoveryPort) {
+            if (discoveryPort != 0 && currentDiscoPort != discoveryPort) {
                 if (isRelocateIfWrongPorts())
                 {
                     logger.info("This GSC is not running with the required Unicast Discovery port. This instance will be relocated to GSC with required communication port.");
@@ -328,6 +332,9 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     
     private void initNeededPorts() {
         StringBuilder foundGateways = null;
+        //Indicates this is a local gateway sink, no lookups are specified
+        if (getGatewayLookups() == null)
+            return;
         for (GatewayLookup gatewayLookup : getGatewayLookups().getGatewayLookups()) {
             if (gatewayLookup.getGatewayName().equals(getLocalGatewayName())) {
                 if (!communicationPortIsSet)
@@ -356,7 +363,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
             if (this.puName.equals(processingUnitInstance
                     .getProcessingUnit().getName())) {
                 relocatingInvoked = true;
-                final GSCForkHandler gscForkHandler = new GSCForkHandler(this.communicationPort, this.discoveryPort, this.startEmbeddedLus, processingUnitInstance, customJvmProperties);
+                final GSCForkHandler gscForkHandler = new GSCForkHandler(this.communicationPort, this.discoveryPort, this.isStartEmbeddedLus(), processingUnitInstance, customJvmProperties);
                 //perform blocking operation on a non-event listener thread
                 ((InternalAdmin)admin).scheduleAdminOperation(new Runnable() {
                     
