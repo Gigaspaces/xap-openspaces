@@ -77,6 +77,10 @@ public class LocalViewSpaceFactoryBean extends AbstractLocalCacheSpaceFactoryBea
         Assert.notNull(config.getViewQueries(), "localViews must be set");
         Assert.isTrue(config.getViewQueries().size() > 0, "At least one local view must be defined");
     }
+    
+    public void setInitialSynchronizationTimeout(long initialSynchronizationTimeout) {
+        config.setInitialSynchronizationTimeout(initialSynchronizationTimeout);
+    }
 
     /**
      * Creates the local view 

@@ -894,6 +894,14 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="initial-synchronization-timeout" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                            	Determines the initial synchronization process timeout, once exceeded the process is considered failed and 
+								will be retried (Defaults to 5 minutes). 
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>                                        
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

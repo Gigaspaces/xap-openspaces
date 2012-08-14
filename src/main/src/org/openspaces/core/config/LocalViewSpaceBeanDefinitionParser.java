@@ -20,6 +20,7 @@ import org.openspaces.core.space.cache.LocalViewSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -47,5 +48,9 @@ public class LocalViewSpaceBeanDefinitionParser extends AbstractLocalCacheSpaceB
             list.add(parserContext.getDelegate().parsePropertySubElement(ele, builder.getRawBeanDefinition(), null));
         }
         builder.addPropertyValue("localViews", list);        
+        
+        String initialSynchronizationTimeout = element.getAttribute("initial-synchronization-timeout");
+        if (StringUtils.hasLength(initialSynchronizationTimeout))
+            builder.addPropertyValue("initialSynchronizationTimeout", initialSynchronizationTimeout);
     }
 }

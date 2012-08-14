@@ -51,12 +51,12 @@ public abstract class AbstractLocalCacheSpaceBeanDefinitionParser extends Abstra
         
         String maxDisconnectionDuration = element.getAttribute("max-disconnection-duration");
         if (StringUtils.hasLength(maxDisconnectionDuration))
-            builder.addPropertyValue("maxDisconnectionDuration", Long.parseLong(maxDisconnectionDuration ));
+            builder.addPropertyValue("maxDisconnectionDuration", maxDisconnectionDuration);
         String batchSize = element.getAttribute("batch-size");
         if (StringUtils.hasLength(batchSize))
-            builder.addPropertyValue("batchSize", Integer.parseInt(batchSize));
+            builder.addPropertyValue("batchSize", batchSize);
         String batchTimeout = element.getAttribute("batch-timeout");
         if (StringUtils.hasLength(batchTimeout))
-            builder.addPropertyValue("batchTimeout", Long.parseLong(batchTimeout));
+            builder.addPropertyValue("batchTimeout", batchTimeout);
     }
 }
