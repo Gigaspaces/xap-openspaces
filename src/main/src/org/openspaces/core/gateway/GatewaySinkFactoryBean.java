@@ -204,10 +204,11 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
                 gatewaySourcesNames[i] = getGatewaySources().get(i).getName();
             }
             config.setSiteNames(gatewaySourcesNames);
-            if (getGatewayLookups() == null)
-                throw new IllegalArgumentException("gatewayLookups property was not set!");
-            ReplicationLookupParameters lookupParameters = getGatewayLookups().asReplicationLookupParameters();
-            config.setGatewayLookupParameters(lookupParameters);
+            if (getGatewayLookups() != null)
+            {
+                ReplicationLookupParameters lookupParameters = getGatewayLookups().asReplicationLookupParameters();
+                config.setGatewayLookupParameters(lookupParameters);
+            }
         }
         
         SynchronizationEndpointInterceptor interceptor = null;
