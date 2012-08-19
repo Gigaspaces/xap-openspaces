@@ -130,11 +130,30 @@ public class StringPropertiesUtilsTest extends TestCase {
         assertEquals(inner,StringPropertiesUtils.getMap(map, "prefix.", inner));
     }
     
+    /**
+     * empty map is like removing the key
+     */
+    @Test
+    public void testEmptyMap() {
+        Map<String,String> inner = new HashMap<String,String>();
+        StringPropertiesUtils.putMap(map, "prefix.", inner);
+        assertEquals(inner,StringPropertiesUtils.getMap(map, "prefix.", new HashMap<String,String>()));
+        assertEquals(inner,StringPropertiesUtils.getMap(map, MISSING_KEY, new HashMap<String,String>()));
+    }
+    
     @Test
     public void testArray() {
         String[] inner = new String[] { "a","b","c"};
         StringPropertiesUtils.putArray(map, KEY, inner," ");
         assertEquals(Arrays.asList(inner),Arrays.asList(StringPropertiesUtils.getArray(map, KEY, " ", new String[]{})));
+        assertEquals(0,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", new String[]{}).length);
+    }
+    
+    @Test
+    public void testEmptyArray() {
+        String[] inner = new String[0];
+        StringPropertiesUtils.putArray(map, KEY, inner," ");
+        assertEquals(0,StringPropertiesUtils.getArray(map, KEY, " ", null).length);
         assertEquals(0,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", new String[]{}).length);
     }
 
@@ -181,6 +200,7 @@ public class StringPropertiesUtilsTest extends TestCase {
         }
     }
     
+    @Test
     public void testKeyValuePairs() {
         Map<String, String> inner = new HashMap<String,String>();
         inner.put("a","1");

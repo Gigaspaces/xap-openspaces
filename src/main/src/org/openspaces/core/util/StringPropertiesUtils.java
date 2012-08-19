@@ -178,9 +178,15 @@ public class StringPropertiesUtils {
     }
     
     public static String[] getArray(Map<String,String> properties, String key, String separator, String[] defaultValue) {
-        String[] array = defaultValue;
+        String[] array;
         String value = properties.get(key);
-        if (value != null) {
+        if (value == null) {
+            array = defaultValue;
+        }
+        else if (value.isEmpty()) {
+            array = new String[0];
+        }
+        else {
             array = value.split(java.util.regex.Pattern.quote(separator));
         }
         return array;
