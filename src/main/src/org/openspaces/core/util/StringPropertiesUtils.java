@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -182,6 +183,16 @@ public class StringPropertiesUtils {
             array = value.split(java.util.regex.Pattern.quote(separator));
         }
         return array;
+    }
+    
+    public static Set<String> getSet(Map<String,String> properties, String key, String separator, Set<String> defaultValue) {
+        String[] array = getArray(properties, key, separator, defaultValue.toArray(new String[0]));
+        Set<String> set = new HashSet<String>(Arrays.asList(array));
+        return set;
+    }
+    
+    public static void putSet(Map<String, String> properties, String key, Set<String> value, String separator) {
+        putArray(properties, key, value.toArray(new String[0]), separator);
     }
 
     /**

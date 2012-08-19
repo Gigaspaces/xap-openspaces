@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class StringProperties {
     
@@ -103,6 +104,17 @@ public class StringProperties {
         StringPropertiesUtils.putArray(properties, key, value, separator);
         return this;
     }
+    
+    public Set<String> getSet(String key, String separator, Set<String> defaultValue) {
+        return StringPropertiesUtils.getSet(properties, key, separator, defaultValue);
+    }
+    
+    public StringProperties putSet(String key, Set<String> value, String separator) {
+        StringPropertiesUtils.putSet(properties, key, value, separator);
+        return this;
+        
+    }
+    
     public void store(OutputStream out, String comments) throws IOException {
         StringPropertiesUtils.store(properties, out, comments);
     }
