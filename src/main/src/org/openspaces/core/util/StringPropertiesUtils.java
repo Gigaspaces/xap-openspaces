@@ -434,9 +434,9 @@ public class StringPropertiesUtils {
                 throw new IllegalArgumentException(key + " value type (" + value.getClass() +") does not have a constructor that accepts a String");
             }
         } catch (SecurityException e) {
-            throw new AdminException("Failed to verify low threshold class type",e);
+            throw new AdminException("Failed to verify " + value.getClass().getName() + " class type",e);
         } catch (NoSuchMethodException e) {
-            throw new AdminException("Failed to verify low threshold class type",e);
+            throw new AdminException("Failed to verify " + value.getClass().getName() + " class type",e);
         }
         properties.put(key +".class", value.getClass().getName());
         properties.put(key +".value", value.toString());
