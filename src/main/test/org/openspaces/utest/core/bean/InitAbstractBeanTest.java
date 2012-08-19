@@ -17,13 +17,6 @@
  ******************************************************************************/
 package org.openspaces.utest.core.bean;
 
-import junit.framework.TestCase;
-import org.openspaces.pu.container.jee.context.BootstrapWebApplicationContextListener;
-
-import javax.servlet.*;
-import javax.servlet.FilterRegistration.Dynamic;
-import javax.servlet.descriptor.JspConfigDescriptor;
-
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,6 +24,23 @@ import java.util.Enumeration;
 import java.util.EventListener;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
+import javax.servlet.FilterRegistration.Dynamic;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
+import javax.servlet.SessionCookieConfig;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.descriptor.JspConfigDescriptor;
+
+import junit.framework.TestCase;
+
+import org.openspaces.pu.container.jee.context.BootstrapWebApplicationContextListener;
 
 public class InitAbstractBeanTest extends TestCase {
 

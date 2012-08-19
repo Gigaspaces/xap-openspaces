@@ -16,12 +16,9 @@
 
 package org.openspaces.utest.core;
 
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.ReadModifiers;
 import net.jini.core.lease.Lease;
 import net.jini.space.JavaSpace;
+
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.jmock.core.Constraint;
@@ -29,6 +26,11 @@ import org.openspaces.core.DefaultGigaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.springframework.transaction.TransactionDefinition;
+
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.ReadModifiers;
 
 /**
  * A set of mock tests verifies that the correct {@link com.j_spaces.core.IJSpace} API is called as
