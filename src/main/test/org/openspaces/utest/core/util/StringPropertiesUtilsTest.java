@@ -194,9 +194,9 @@ public class StringPropertiesUtilsTest extends TestCase {
     public void testConfig() {
         Map<String,String> objectProperties = new HashMap<String, String>();
         objectProperties.put("foo", "bar");
-        
         ConfigMock config = new ConfigMock(objectProperties);
-        StringPropertiesUtils.putConfig(map, KEY, objectProperties);
+        
+        StringPropertiesUtils.putConfig(map, KEY, config);
         ConfigMock recoveredConfig = (ConfigMock) StringPropertiesUtils.getConfig(map, KEY, null);
         assertNotNull(recoveredConfig);
         assertEquals(config.getProperties(),recoveredConfig.getProperties());
