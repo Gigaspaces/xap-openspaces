@@ -17,11 +17,11 @@ package org.openspaces.utest.core.util;
 
 import java.util.Map;
 
-public class MapWrapperMock 
+public class ConfigMock 
 {
     private Map<String, String> properties;
             
-    public MapWrapperMock(Map<String,String> properties) {
+    public ConfigMock(Map<String,String> properties) {
        this.properties = properties; 
     }
     
@@ -51,7 +51,7 @@ public class MapWrapperMock
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MapWrapperMock other = (MapWrapperMock) obj;
+        ConfigMock other = (ConfigMock) obj;
         if (properties == null) {
             if (other.properties != null)
                 return false;

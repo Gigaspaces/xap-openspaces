@@ -167,12 +167,12 @@ public class StringProperties {
        return StringPropertiesUtils.getKeyValuePairs(properties, key, pairSeperator, keyValueSeperator, defaultValue);
    }
    
-   public void putMapWrapperObject(String key, Map<String, String> objectProperties, Class<?> clazz) {
-       StringPropertiesUtils.putMapWrapperObject(properties, key, objectProperties, clazz);
+   public void putConfig(String key, Object object) {
+       StringPropertiesUtils.putConfig(properties, key, object);
    }
 
-   public Object getMapWrapperObject(String key, Object defaultValue) {
-       return StringPropertiesUtils.getMapWrapperObject(properties, key ,defaultValue);
+   public Object getConfig(String key, Object defaultValue) {
+       return StringPropertiesUtils.getConfig(properties, key ,defaultValue);
    }
    
    public void putStringWrapperObject(String key, Object value) {

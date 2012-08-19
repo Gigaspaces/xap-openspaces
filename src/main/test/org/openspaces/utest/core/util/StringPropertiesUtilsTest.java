@@ -191,16 +191,16 @@ public class StringPropertiesUtilsTest extends TestCase {
     }
     
     @Test
-    public void testMapWrapper() {
+    public void testConfig() {
         Map<String,String> objectProperties = new HashMap<String, String>();
         objectProperties.put("foo", "bar");
         
-        MapWrapperMock mapWrapper = new MapWrapperMock(objectProperties);
-        StringPropertiesUtils.putMapWrapperObject(map, KEY, objectProperties, mapWrapper.getClass());
-        MapWrapperMock recoveredMapWrapper = (MapWrapperMock) StringPropertiesUtils.getMapWrapperObject(map, KEY, null);
-        assertNotNull(recoveredMapWrapper);
-        assertEquals(mapWrapper.getProperties(),recoveredMapWrapper.getProperties());
-        assertEquals(mapWrapper,recoveredMapWrapper);
+        ConfigMock config = new ConfigMock(objectProperties);
+        StringPropertiesUtils.putConfig(map, KEY, objectProperties);
+        ConfigMock recoveredConfig = (ConfigMock) StringPropertiesUtils.getConfig(map, KEY, null);
+        assertNotNull(recoveredConfig);
+        assertEquals(config.getProperties(),recoveredConfig.getProperties());
+        assertEquals(config,recoveredConfig);
     }
 
     @Test

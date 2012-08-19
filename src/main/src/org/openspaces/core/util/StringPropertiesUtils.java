@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -302,6 +303,10 @@ public class StringPropertiesUtils {
 
     }
     
+    /**
+     * Puts the map as a value by adding the specified prefix to each key
+     * If value is null the object is removed from properties.
+     */
     public static void putMap(Map<String, String> properties, String keyPrefix, Map<String, String> value) {
         if (properties == value) {
             throw new IllegalArgumentException("properties and value must be different objects");
@@ -318,10 +323,11 @@ public class StringPropertiesUtils {
           for (String key : keysToDelete) {
               properties.remove(key);
           }
-      
-          // add new properties with the new key prefix
-          for (Entry<String, String> pair : value.entrySet()) {
-              properties.put(keyPrefix+pair.getKey(), pair.getValue());
+          if (value != null) {
+              // add new properties with the new key prefix
+              for (Entry<String, String> pair : value.entrySet()) {
+                  properties.put(keyPrefix+pair.getKey(), pair.getValue());
+              }
           }
     }
 
@@ -344,25 +350,57 @@ public class StringPropertiesUtils {
 
     /**
      * Puts an object that has a constructor that accepts Map<String,String> as a single argument
+     * and has a getProperties method which returns a Map<String,String>
+     * If object is null it is removed from the map
      */
-    public static void putMapWrapperObject(Map<String, String> properties, String key, Map<String, String> objectProperties, Class<?> clazz) {
+    @SuppressWarnings("unchecked")
+    public static void putConfig(Map<String, String> properties, String key, Object object) {
+        String classKey = key +".class";
+        String valuesKey = key+".values.";
+        if (object == null) {
+            properties.remove(classKey);
+            putMap(properties,valuesKey,null);
+            return;
+        }
+        
+        Object objectProperties;
+        Class<?> clazz = object.getClass();
+        try {
+            Method getPropertiesMethod = clazz.getMethod("getProperties");
+            objectProperties = getPropertiesMethod.invoke(object);
+        } catch (SecurityException e) {
+            throw new AdminException("Failed to verify getProperties method",e);
+        } catch (NoSuchMethodException e) {
+            throw new AdminException("Failed to verify getProperties method",e);
+        } catch (IllegalArgumentException e) {
+            throw new AdminException("Failed to verify getProperties method",e);
+        } catch (IllegalAccessException e) {
+            throw new AdminException("Failed to verify getProperties method",e);
+        } catch (InvocationTargetException e) {
+            throw new AdminException("Failed to verify getProperties method",e);
+        }
+        
+        if (!(properties instanceof Map<?,?>)) {
+            throw new IllegalArgumentException(key + " value type (" + clazz +") does not have a getProperties() method that returns a Map");
+        }
         try {
             if (clazz.getConstructor(Map.class) == null) {
                 throw new IllegalArgumentException(key + " value type (" + clazz +") does not have a constructor that accepts a String");
             }
         } catch (SecurityException e) {
-            throw new AdminException("Failed to verify low threshold class type",e);
+            throw new AdminException("Failed to verify constructor that accepts a map",e);
         } catch (NoSuchMethodException e) {
-            throw new AdminException("Failed to verify low threshold class type",e);
+            throw new AdminException("Failed to verify constructor that accepts a map",e);
         }
-        properties.put(key +".class", clazz.getName());
-        putMap(properties,key+".values.",objectProperties);
+        
+        properties.put(classKey, clazz.getName());
+        putMap(properties,valuesKey,(Map<String,String>)objectProperties);
     }
 
     /**
      * Gets an object that has a constructor that accepts Map<String,String> as a single argument
      */
-    public static Object getMapWrapperObject(Map<String,String> properties, String key, Object defaultValue) {
+    public static Object getConfig(Map<String,String> properties, String key, Object defaultValue) {
         Object value = defaultValue;
         String className = properties.get(key +".class");
         if (className != null) {
