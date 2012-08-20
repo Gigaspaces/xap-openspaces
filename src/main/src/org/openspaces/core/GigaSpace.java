@@ -2730,4 +2730,32 @@ public interface GigaSpace {
      * @since 8.0
      */
     GigaSpaceTypeManager getTypeManager();
+    
+    /* TODO MU: Implement in place update.
+    <T> UpdateResult<T> update(T template, ChangeSet changeSet);
+    <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers);
+    <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet);
+    <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers);
+
+    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet);
+    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries);
+    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
+    <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet);
+    <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries);
+    <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
+
+    <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet);
+    <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet, AsyncFutureListener<UpdateResult<T>> listener);
+    <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet, UpdateModifiers modifiers, AsyncFutureListener<UpdateResult<T>> listener);
+    <T> Future<UpdateResult<T>> asyncUpdate(ISpaceQuery<T> query, ChangeSet changeSet);
+    <T> Future<UpdateResult<T>> asyncUpdate(ISpaceQuery<T> query, ChangeSet changeSet, AsyncFutureListener<UpdateResult<T>> listener);
+    <T> Future<UpdateResult<T>> asyncUpdate(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers, AsyncFutureListener<UpdateResult<T>> listener);
+
+    <T> Future<UpdateMultipleResult<T>> asyncUpdateMultiple(T template, ChangeSet changeSet);
+    <T> Future<UpdateMultipleResult<T>> asyncUpdateMultiple(T template, ChangeSet changeSet, int maxEntries);
+    <T> Future<UpdateMultipleResult<T>> asyncUpdateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers, AsyncFutureListener<UpdateMultipleResult<T>> listener);
+    <T> Future<UpdateMultipleResult<T>> asyncUpdateMultiple(ISpaceQuery<T> query, ChangeSet changeSet);
+    <T> Future<UpdateMultipleResult<T>> asyncUpdateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries);
+    <T> Future<UpdateMultipleResult<T>> asyncUpdateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers, AsyncFutureListener<UpdateMultipleResult<T>> listener);
+    */
 }
