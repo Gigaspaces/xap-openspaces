@@ -19,7 +19,9 @@ package org.openspaces.utest.core.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -139,6 +141,17 @@ public class StringPropertiesUtilsTest extends TestCase {
         StringPropertiesUtils.putMap(map, "prefix.", inner);
         assertEquals(inner,StringPropertiesUtils.getMap(map, "prefix.", new HashMap<String,String>()));
         assertEquals(inner,StringPropertiesUtils.getMap(map, MISSING_KEY, new HashMap<String,String>()));
+    }
+    
+    /**
+     * empty set is like removing the key
+     */
+    @Test
+    public void testEmptySet() {
+        Set<String> inner = new HashSet<String>();
+        StringPropertiesUtils.putSet(map, "prefix.", inner, ",");
+        assertEquals(null,StringPropertiesUtils.getSet(map, "prefix.", ",", null));
+        assertEquals(null,StringPropertiesUtils.getSet(map, MISSING_KEY, ",", null));
     }
     
     @Test

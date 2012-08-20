@@ -193,13 +193,23 @@ public class StringPropertiesUtils {
     }
     
     public static Set<String> getSet(Map<String,String> properties, String key, String separator, Set<String> defaultValue) {
-        String[] array = getArray(properties, key, separator, defaultValue.toArray(new String[0]));
-        Set<String> set = new HashSet<String>(Arrays.asList(array));
+        String[] defaultArray = defaultValue == null ? null : defaultValue.toArray(new String[0]);
+        String[] array = getArray(properties, key, separator, defaultArray);
+        Set<String> set = null;
+        if (array != null) {
+            set = new HashSet<String>(Arrays.asList(array));
+        }
         return set;
     }
     
     public static void putSet(Map<String, String> properties, String key, Set<String> value, String separator) {
-        putArray(properties, key, value.toArray(new String[0]), separator);
+        if (value.isEmpty()) {
+            //same behavior as map, different from array behavior
+            properties.remove(key);
+        }
+        else {
+            putArray(properties, key, value.toArray(new String[0]), separator);
+        }
     }
 
     /**
