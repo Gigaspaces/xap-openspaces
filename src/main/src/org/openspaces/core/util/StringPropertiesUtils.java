@@ -155,26 +155,28 @@ public class StringPropertiesUtils {
      * Concatenates the specified array into a combined string using the specified separator
      * and puts the result as a value into the specified properties with the specified key.
      * The values in the array must not contain the separator otherwise an IllegalArgumentException is raised.  
-     * @param properties
-     * @param key
-     * @param array
-     * @param separator
+     * Null or empty arrays will remove the key from the properties map
      */
     public static void putArray(Map<String,String> properties, String key, String[] array, String separator) {
-        StringBuilder concat = new StringBuilder();
-        for (int i = 0 ; i < array.length ; i++) {
-            String value = array[i];
-            if (value != null && value.length() > 0) {
-                if (value.contains(separator)) {
-                    throw new IllegalArgumentException("array contains an element '"+value+"' that contains the seperator '"+separator+"'");
-                }
-                concat.append(value);
-                if (i < array.length-1) {
-                    concat.append(separator);
+        if (array == null || array.length == 0) {
+            properties.remove(key);
+        }
+        else {
+            StringBuilder concat = new StringBuilder();
+            for (int i = 0 ; i < array.length ; i++) {
+                String value = array[i];
+                if (value != null && value.length() > 0) {
+                    if (value.contains(separator)) {
+                        throw new IllegalArgumentException("array contains an element '"+value+"' that contains the seperator '"+separator+"'");
+                    }
+                    concat.append(value);
+                    if (i < array.length-1) {
+                        concat.append(separator);
+                    }
                 }
             }
+            properties.put(key, concat.toString());
         }
-        properties.put(key, concat.toString());
     }
     
     public static String[] getArray(Map<String,String> properties, String key, String separator, String[] defaultValue) {
@@ -182,9 +184,6 @@ public class StringPropertiesUtils {
         String value = properties.get(key);
         if (value == null) {
             array = defaultValue;
-        }
-        else if (value.isEmpty()) {
-            array = new String[0];
         }
         else {
             array = value.split(java.util.regex.Pattern.quote(separator));

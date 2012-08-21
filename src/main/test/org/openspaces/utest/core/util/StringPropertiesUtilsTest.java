@@ -162,12 +162,15 @@ public class StringPropertiesUtilsTest extends TestCase {
         assertEquals(0,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", new String[]{}).length);
     }
     
+    /**
+     * empty array is like removing the key
+     */
     @Test
     public void testEmptyArray() {
-        String[] inner = new String[0];
-        StringPropertiesUtils.putArray(map, KEY, inner," ");
-        assertEquals(0,StringPropertiesUtils.getArray(map, KEY, " ", null).length);
-        assertEquals(0,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", new String[]{}).length);
+        String[] empty = new String[0];
+        StringPropertiesUtils.putArray(map, KEY, empty," ");
+        assertEquals(null,StringPropertiesUtils.getArray(map, KEY, " ", null));
+        assertEquals(null,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", null));
     }
 
     @Test
