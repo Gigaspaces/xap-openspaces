@@ -30,12 +30,14 @@ import org.springframework.dao.DataAccessException;
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.async.AsyncFutureListener;
 import com.gigaspaces.async.AsyncResultsReducer;
+import com.gigaspaces.client.ChangeSet;
 import com.gigaspaces.client.ClearModifiers;
 import com.gigaspaces.client.CountModifiers;
 import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.ReadModifiers;
 import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.client.TakeModifiers;
+import com.gigaspaces.client.UpdateResult;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.query.ISpaceQuery;
 import com.gigaspaces.query.IdQuery;
@@ -2731,8 +2733,9 @@ public interface GigaSpace {
      */
     GigaSpaceTypeManager getTypeManager();
     
-    /* TODO MU: Implement in place update.
+    //TODO MU: jdoc
     <T> UpdateResult<T> update(T template, ChangeSet changeSet);
+    /* TODO MU: Implement in place update.
     <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers);

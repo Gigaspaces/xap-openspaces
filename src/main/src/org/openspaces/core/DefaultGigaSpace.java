@@ -16,30 +16,8 @@
 
 package org.openspaces.core;
 
-import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.async.AsyncFutureListener;
-import com.gigaspaces.async.AsyncResultFilter;
-import com.gigaspaces.async.AsyncResultsReducer;
-import com.gigaspaces.async.FutureFactory;
-import com.gigaspaces.client.ClearModifiers;
-import com.gigaspaces.client.CountModifiers;
-import com.gigaspaces.client.ReadByIdsResult;
-import com.gigaspaces.client.ReadModifiers;
-import com.gigaspaces.client.TakeByIdsResult;
-import com.gigaspaces.client.ReadByIdsResultImpl;
-import com.gigaspaces.client.TakeByIdsResultImpl;
-import com.gigaspaces.client.TakeModifiers;
-import com.gigaspaces.client.WriteModifiers;
-import com.gigaspaces.internal.client.QueryResultTypeInternal;
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.gigaspaces.internal.utils.ObjectUtils;
-import com.gigaspaces.query.ISpaceQuery;
-import com.gigaspaces.query.IdQuery;
-import com.gigaspaces.query.IdsQuery;
-import com.gigaspaces.query.QueryResultType;
-
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.LeaseContext;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
@@ -56,13 +34,36 @@ import org.openspaces.core.internal.InternalGigaSpace;
 import org.openspaces.core.transaction.TransactionProvider;
 import org.openspaces.core.transaction.internal.InternalAsyncFuture;
 import org.openspaces.core.transaction.internal.InternalAsyncFutureListener;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.TransactionDefinition;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
+import com.gigaspaces.async.AsyncFuture;
+import com.gigaspaces.async.AsyncFutureListener;
+import com.gigaspaces.async.AsyncResultFilter;
+import com.gigaspaces.async.AsyncResultsReducer;
+import com.gigaspaces.async.FutureFactory;
+import com.gigaspaces.client.ChangeSet;
+import com.gigaspaces.client.ClearModifiers;
+import com.gigaspaces.client.CountModifiers;
+import com.gigaspaces.client.ReadByIdsResult;
+import com.gigaspaces.client.ReadByIdsResultImpl;
+import com.gigaspaces.client.ReadModifiers;
+import com.gigaspaces.client.TakeByIdsResult;
+import com.gigaspaces.client.TakeByIdsResultImpl;
+import com.gigaspaces.client.TakeModifiers;
+import com.gigaspaces.client.UpdateModifiers;
+import com.gigaspaces.client.UpdateResult;
+import com.gigaspaces.client.WriteModifiers;
+import com.gigaspaces.internal.client.QueryResultTypeInternal;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.internal.utils.ObjectUtils;
+import com.gigaspaces.query.ISpaceQuery;
+import com.gigaspaces.query.IdQuery;
+import com.gigaspaces.query.IdsQuery;
+import com.gigaspaces.query.QueryResultType;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.LeaseContext;
 
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
@@ -1079,6 +1080,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }        
     }
+    
+    @Override
+    public <T> UpdateResult<T> update(T template, ChangeSet changeSet) {
+        try {
+            return (UpdateResult<T>) space.mutate(template, changeSet, getCurrentTransaction(), 0, UpdateModifiers.NONE);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
 
     public <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException {
         return writeMultiple(entries, defaultWriteLease);
@@ -1535,4 +1545,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         
         throw new IllegalArgumentException("Unsupported query result type: " + queryResultType);
     }
+
+    
 }
