@@ -53,6 +53,7 @@ import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.client.TakeByIdsResultImpl;
 import com.gigaspaces.client.TakeModifiers;
 import com.gigaspaces.client.UpdateModifiers;
+import com.gigaspaces.client.UpdateMultipleResult;
 import com.gigaspaces.client.UpdateResult;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.internal.client.QueryResultTypeInternal;
@@ -1089,6 +1090,42 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+    
+    @Override
+    public <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers) {
+        try {
+            return (UpdateResult<T>) space.mutate(template, changeSet, getCurrentTransaction(), 0, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    };
+    
+    @Override
+    public <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet) {
+        try {
+            return (UpdateResult<T>) space.mutate(query, changeSet, getCurrentTransaction(), 0, UpdateModifiers.NONE);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers) {
+        try {
+            return (UpdateResult<T>) space.mutate(query, changeSet, getCurrentTransaction(), 0, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers) {
+        try {
+            return (UpdateMultipleResult<T>) space.mutateMultiple(template, changeSet, getCurrentTransaction(), maxEntries, modifiers);
+        }  catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    };
 
     public <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException {
         return writeMultiple(entries, defaultWriteLease);

@@ -37,6 +37,8 @@ import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.ReadModifiers;
 import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.client.TakeModifiers;
+import com.gigaspaces.client.UpdateModifiers;
+import com.gigaspaces.client.UpdateMultipleResult;
 import com.gigaspaces.client.UpdateResult;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.query.ISpaceQuery;
@@ -2735,14 +2737,14 @@ public interface GigaSpace {
     
     //TODO MU: jdoc
     <T> UpdateResult<T> update(T template, ChangeSet changeSet);
-    /* TODO MU: Implement in place update.
     <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers);
 
+    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
+    /* TODO MU: Implement in place update.
     <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet);
     <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries);
-    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
     <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet);
     <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries);
     <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
