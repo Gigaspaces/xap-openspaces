@@ -1119,6 +1119,51 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
     
     @Override
+    public <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet) {
+        try {
+            return (UpdateMultipleResult<T>) space.mutateMultiple(query, changeSet, getCurrentTransaction(), Integer.MAX_VALUE, UpdateModifiers.NONE);
+        }  catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries) {
+        try {
+            return (UpdateMultipleResult<T>) space.mutateMultiple(query, changeSet, getCurrentTransaction(), maxEntries, UpdateModifiers.NONE);
+        }  catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    public <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries,
+            UpdateModifiers modifiers) {
+        try {
+            return (UpdateMultipleResult<T>) space.mutateMultiple(query, changeSet, getCurrentTransaction(), maxEntries, modifiers);
+        }  catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet) {
+        try {
+            return (UpdateMultipleResult<T>) space.mutateMultiple(template, changeSet, getCurrentTransaction(), Integer.MAX_VALUE, UpdateModifiers.NONE);
+        }  catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    };
+    
+    @Override
+    public <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries) {
+        try {
+            return (UpdateMultipleResult<T>) space.mutateMultiple(template, changeSet, getCurrentTransaction(), maxEntries, UpdateModifiers.NONE);
+        }  catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    };
+    
+    @Override
     public <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers) {
         try {
             return (UpdateMultipleResult<T>) space.mutateMultiple(template, changeSet, getCurrentTransaction(), maxEntries, modifiers);

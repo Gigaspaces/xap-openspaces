@@ -2741,13 +2741,13 @@ public interface GigaSpace {
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers);
 
-    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
-    /* TODO MU: Implement in place update.
     <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet);
     <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries);
+    <T> UpdateMultipleResult<T> updateMultiple(T template, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
     <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet);
     <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries);
     <T> UpdateMultipleResult<T> updateMultiple(ISpaceQuery<T> query, ChangeSet changeSet, int maxEntries, UpdateModifiers modifiers);
+    /* TODO MU: Implement in place update.
 
     <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet);
     <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet, AsyncFutureListener<UpdateResult<T>> listener);
