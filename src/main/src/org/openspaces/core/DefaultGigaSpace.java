@@ -1101,6 +1101,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     };
     
     @Override
+    public <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers, long timeout) {
+        try {
+            return (UpdateResult<T>) space.mutate(template, changeSet, getCurrentTransaction(), timeout, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    };
+    
+    @Override
     public <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet) {
         try {
             return (UpdateResult<T>) space.mutate(query, changeSet, getCurrentTransaction(), 0, UpdateModifiers.NONE);

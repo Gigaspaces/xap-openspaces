@@ -2738,6 +2738,7 @@ public interface GigaSpace {
     //TODO MU: jdoc
     <T> UpdateResult<T> update(T template, ChangeSet changeSet);
     <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers);
+    <T> UpdateResult<T> update(T template, ChangeSet changeSet, UpdateModifiers modifiers, long timeout);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet);
     <T> UpdateResult<T> update(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers);
 
