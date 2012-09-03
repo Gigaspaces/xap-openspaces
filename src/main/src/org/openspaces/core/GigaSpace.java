@@ -37,8 +37,8 @@ import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.ReadModifiers;
 import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.client.TakeModifiers;
-import com.gigaspaces.client.UpdateModifiers;
-import com.gigaspaces.client.UpdateResult;
+import com.gigaspaces.client.ChangeModifiers;
+import com.gigaspaces.client.ChangeResult;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.query.ISpaceQuery;
 import com.gigaspaces.query.IdQuery;
@@ -2735,9 +2735,9 @@ public interface GigaSpace {
     GigaSpaceTypeManager getTypeManager();
     
     //TODO MU: jdoc
-    <T> UpdateResult<T> update(IdQuery<T> query, ChangeSet changeSet);
-    <T> UpdateResult<T> update(IdQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers);
-    <T> UpdateResult<T> update(IdQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers, long timeout);
+    <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet);
+    <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
+    <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout);
     /*
     <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet);
     <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet, AsyncFutureListener<UpdateResult<T>> listener);

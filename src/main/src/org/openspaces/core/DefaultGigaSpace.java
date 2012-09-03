@@ -52,8 +52,8 @@ import com.gigaspaces.client.ReadModifiers;
 import com.gigaspaces.client.TakeByIdsResult;
 import com.gigaspaces.client.TakeByIdsResultImpl;
 import com.gigaspaces.client.TakeModifiers;
-import com.gigaspaces.client.UpdateModifiers;
-import com.gigaspaces.client.UpdateResult;
+import com.gigaspaces.client.ChangeModifiers;
+import com.gigaspaces.client.ChangeResult;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.internal.client.QueryResultTypeInternal;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
@@ -1082,27 +1082,27 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
     
     @Override
-    public <T> UpdateResult<T> update(IdQuery<T> query, ChangeSet changeSet) {
+    public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet) {
         try {
-            return (UpdateResult<T>) space.mutate(query, changeSet, getCurrentTransaction(), 0, UpdateModifiers.NONE);
+            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), 0, ChangeModifiers.NONE);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
     
     @Override
-    public <T> UpdateResult<T> update(IdQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers) {
+    public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers) {
         try {
-            return (UpdateResult<T>) space.mutate(query, changeSet, getCurrentTransaction(), 0, modifiers);
+            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), 0, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     };
     
     @Override
-    public <T> UpdateResult<T> update(IdQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers, long timeout) {
+    public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout) {
         try {
-            return (UpdateResult<T>) space.mutate(query, changeSet, getCurrentTransaction(), timeout, modifiers);
+            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
