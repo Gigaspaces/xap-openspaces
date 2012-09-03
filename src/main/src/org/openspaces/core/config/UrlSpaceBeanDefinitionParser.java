@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.openspaces.core.space.AllInCachePolicy;
 import org.openspaces.core.space.CachePolicy;
+import org.openspaces.core.space.CustomCachePolicy;
 import org.openspaces.core.space.LruCachePolicy;
 import org.openspaces.core.space.SecurityConfig;
 import org.openspaces.core.space.UrlSpaceFactoryBean;
@@ -158,6 +159,23 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
             if (StringUtils.hasText(initialLoadPercentage)) {
                 ((LruCachePolicy) cachePolicy).setInitialLoadPercentage(Integer.parseInt(initialLoadPercentage));
             }
+        }
+        Element customCacheEle = DomUtils.getChildElementByTagName(element, "custom-cache-policy");
+        if (customCacheEle != null) {
+            final CustomCachePolicy customCachePolicy = new CustomCachePolicy();
+            String size = customCacheEle.getAttribute("size");
+            if (StringUtils.hasText(size)) {
+                customCachePolicy.setSize(Integer.parseInt(size));
+            }
+            String initialLoadPercentage = customCacheEle.getAttribute("initialLoadPercentage");
+            if (StringUtils.hasText(initialLoadPercentage)) {
+                customCachePolicy.setInitialLoadPercentage(Integer.parseInt(initialLoadPercentage));
+            }
+            String customCachePolicyClass = customCacheEle.getAttribute("customCachePolicyClass");
+            if (StringUtils.hasText(customCachePolicyClass)){
+                customCachePolicy.setCustomCachePolicyClass(customCachePolicyClass);
+            }
+            cachePolicy = customCachePolicy;
         }
         if (cachePolicy != null) {
             builder.addPropertyValue("cachePolicy", cachePolicy);

@@ -325,6 +325,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      *
      * @see org.openspaces.core.space.AllInCachePolicy
      * @see org.openspaces.core.space.LruCachePolicy
+     * @see org.openspaces.core.space.CustomCachePolicy
      */
     public void setCachePolicy(CachePolicy cachePolicy) {
         this.cachePolicy = cachePolicy;

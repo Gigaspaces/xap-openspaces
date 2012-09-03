@@ -48,7 +48,36 @@
                         </xsd:element>
                         <xsd:element name="all-in-cache-policy"/>
                         <xsd:element name="lru-cache-policy">
+                            <xsd:complexType >
+                                <xsd:attribute name="size" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the cache.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="initialLoadPercentage" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When a space is running in a persistent mode (i.e. using the
+                                            HibernateDataSource implementation), The initial_load sets the % of the
+                                            space cache data to be loaded (default is 50%) maximum size. To disable this
+                                            initial load phase, you should configure the initial_load value to be 0.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="custom-cache-policy">
                             <xsd:complexType>
+                            <xsd:attribute name="customCachePolicyClass" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The fully qualified name of the custom eviction policy class you want to use
+                                            as your space eviction policy (i.e. com.mycompany.myapp.MyCustomCachePolicy) 
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                                 <xsd:attribute name="size" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
