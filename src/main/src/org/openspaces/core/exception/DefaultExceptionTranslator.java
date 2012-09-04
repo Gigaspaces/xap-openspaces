@@ -207,6 +207,9 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof com.gigaspaces.client.ResourceCapacityExceededException){
             return new ResourceCapacityExceededException((com.gigaspaces.client.ResourceCapacityExceededException)e);
         }
+        if (e instanceof com.gigaspaces.client.ChangeException){
+            return new ChangeException((com.gigaspaces.client.ChangeException) e, this);
+        }
 
         return null;
     }
