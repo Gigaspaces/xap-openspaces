@@ -21,8 +21,8 @@ import java.util.Collection;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
-import com.gigaspaces.client.ChangeEntryResult;
-import com.gigaspaces.client.FailedChangeEntryResult;
+import com.gigaspaces.client.ChangedEntryDetails;
+import com.gigaspaces.client.FailedChangedEntryDetails;
 import com.gigaspaces.internal.client.FailedChangeResultImpl;
 
 
@@ -35,15 +35,15 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
 
     private static final long serialVersionUID = 1L;
     
-    private final Collection<ChangeEntryResult<?>> changedEntries;
-    private final Collection<FailedChangeEntryResult> translatedEntriesFailedToChange;
+    private final Collection<ChangedEntryDetails<?>> changedEntries;
+    private final Collection<FailedChangedEntryDetails> translatedEntriesFailedToChange;
     private final Collection<Throwable> translatedErrors;
     
     public ChangeException(com.gigaspaces.client.ChangeException changeException, ExceptionTranslator exceptionTranslator) {
         super(changeException.getMessage(), changeException);
-        this.changedEntries = changeException.getChangedEntries();
-        translatedEntriesFailedToChange = new ArrayList<FailedChangeEntryResult>(changeException.getEntriesFailedToChange().size());
-        for (FailedChangeEntryResult failedChangeEntryResult : changeException.getEntriesFailedToChange()) {
+        this.changedEntries = changeException.getSuccesfullChanges();
+        translatedEntriesFailedToChange = new ArrayList<FailedChangedEntryDetails>(changeException.getFailedChanges().size());
+        for (FailedChangedEntryDetails failedChangeEntryResult : changeException.getFailedChanges()) {
             translatedEntriesFailedToChange.add(new FailedChangeResultImpl(failedChangeEntryResult.getTypeName(),
                     failedChangeEntryResult.getId(), failedChangeEntryResult.getVersion(), translateException(exceptionTranslator, failedChangeEntryResult.getCause())));
         }
@@ -65,9 +65,9 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
     }
     
     /**
-     * Returns the successfully changed entries results
+     * Returns the successfully done changes.
      */
-    public Collection<ChangeEntryResult<?>> getChangedEntries()
+    public Collection<ChangedEntryDetails<?>> getSuccesfullChanges()
     {
         return changedEntries;
     }
@@ -75,13 +75,13 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
     /**
      * Returns the entries that failed to change result.
      */
-    public Collection<FailedChangeEntryResult> getEntriesFailedToChange()
+    public Collection<FailedChangedEntryDetails> getFailedChanges()
     {
         return translatedEntriesFailedToChange;
     }
     
     /**
-     * Return any general errors occurred which are not associated to a specific entry that were being changed. 
+     * Returns the failed changes.
      */
     public Collection<Throwable> getErrors()
     {
