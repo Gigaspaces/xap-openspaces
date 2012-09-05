@@ -2735,7 +2735,9 @@ public interface GigaSpace {
     GigaSpaceTypeManager getTypeManager();
     
     //TODO MU: jdoc
+    //TODO MU: async 
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet);
+    <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, long timeout);
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout);
     /*

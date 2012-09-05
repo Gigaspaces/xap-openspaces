@@ -1100,6 +1100,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     };
     
     @Override
+    public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, long timeout) {
+        try {
+            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), timeout, ChangeModifiers.NONE);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
     public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout) {
         try {
             return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), timeout, modifiers);
