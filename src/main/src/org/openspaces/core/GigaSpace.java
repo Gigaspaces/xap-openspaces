@@ -17,6 +17,7 @@
 package org.openspaces.core;
 
 import java.io.Serializable;
+import java.util.concurrent.Future;
 
 import net.jini.core.transaction.Transaction;
 import net.jini.space.JavaSpace;
@@ -2735,18 +2736,18 @@ public interface GigaSpace {
     GigaSpaceTypeManager getTypeManager();
     
     //TODO MU-NOW: jdoc
-    //TODO MU-NOW: async 
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet);
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, long timeout);
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
     <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout);
-    /*
-    <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet);
-    <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet, AsyncFutureListener<UpdateResult<T>> listener);
-    <T> Future<UpdateResult<T>> asyncUpdate(T template, ChangeSet changeSet, UpdateModifiers modifiers, AsyncFutureListener<UpdateResult<T>> listener);
-    <T> Future<UpdateResult<T>> asyncUpdate(ISpaceQuery<T> query, ChangeSet changeSet);
-    <T> Future<UpdateResult<T>> asyncUpdate(ISpaceQuery<T> query, ChangeSet changeSet, AsyncFutureListener<UpdateResult<T>> listener);
-    <T> Future<UpdateResult<T>> asyncUpdate(ISpaceQuery<T> query, ChangeSet changeSet, UpdateModifiers modifiers, AsyncFutureListener<UpdateResult<T>> listener);
+    
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, AsyncFutureListener<ChangeResult<T>> listener);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, long timeout);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, long timeout, AsyncFutureListener<ChangeResult<T>> listener);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, AsyncFutureListener<ChangeResult<T>> listener);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout);
+    <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout, AsyncFutureListener<ChangeResult<T>> listener);
 
-    */
 }

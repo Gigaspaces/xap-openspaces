@@ -18,6 +18,7 @@ package org.openspaces.core;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.concurrent.Future;
 
 import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
@@ -1084,7 +1085,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @Override
     public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet) {
         try {
-            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), 0, ChangeModifiers.NONE);
+            return space.change(query, changeSet, getCurrentTransaction(), 0, ChangeModifiers.NONE);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1093,7 +1094,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @Override
     public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers) {
         try {
-            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), 0, modifiers);
+            return space.change(query, changeSet, getCurrentTransaction(), 0, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1102,7 +1103,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @Override
     public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, long timeout) {
         try {
-            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), timeout, ChangeModifiers.NONE);
+            return space.change(query, changeSet, getCurrentTransaction(), timeout, ChangeModifiers.NONE);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1111,11 +1112,88 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @Override
     public <T> ChangeResult<T> change(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout) {
         try {
-            return (ChangeResult<T>) space.change(query, changeSet, getCurrentTransaction(), timeout, modifiers);
+            return space.change(query, changeSet, getCurrentTransaction(), timeout, modifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     };
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), 0, ChangeModifiers.NONE, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet,
+            AsyncFutureListener<ChangeResult<T>> listener) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), 0, ChangeModifiers.NONE, listener);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, long timeout) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, ChangeModifiers.NONE, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, long timeout,
+            AsyncFutureListener<ChangeResult<T>> listener) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, ChangeModifiers.NONE, listener);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), 0, modifiers, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers,
+            AsyncFutureListener<ChangeResult<T>> listener) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), 0, modifiers, listener);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers,
+            long timeout) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, modifiers, null);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+    
+    @Override
+    public <T> Future<ChangeResult<T>> asyncChange(IdQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers,
+            long timeout, AsyncFutureListener<ChangeResult<T>> listener) {
+        try {
+            return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, modifiers, listener);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
     
     public <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException {
         return writeMultiple(entries, defaultWriteLease);
