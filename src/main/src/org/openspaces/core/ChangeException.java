@@ -23,7 +23,7 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import com.gigaspaces.client.ChangedEntryDetails;
 import com.gigaspaces.client.FailedChangedEntryDetails;
-import com.gigaspaces.internal.client.FailedChangeResultImpl;
+import com.gigaspaces.internal.client.FailedChangedEntryDetailsImpl;
 
 
 /**
@@ -44,7 +44,7 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
         this.changedEntries = changeException.getSuccesfullChanges();
         translatedEntriesFailedToChange = new ArrayList<FailedChangedEntryDetails>(changeException.getFailedChanges().size());
         for (FailedChangedEntryDetails failedChangeEntryResult : changeException.getFailedChanges()) {
-            translatedEntriesFailedToChange.add(new FailedChangeResultImpl(failedChangeEntryResult.getTypeName(),
+            translatedEntriesFailedToChange.add(new FailedChangedEntryDetailsImpl(failedChangeEntryResult.getTypeName(),
                     failedChangeEntryResult.getId(), failedChangeEntryResult.getVersion(), translateException(exceptionTranslator, failedChangeEntryResult.getCause())));
         }
         translatedErrors = new ArrayList<Throwable>(changeException.getErrors().size());
