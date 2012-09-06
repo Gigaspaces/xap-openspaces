@@ -49,6 +49,8 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
     public static final String URL_PROPERTIES = "url-properties";
     
     public static final String GATEWAY_TARGETS = "gateway-targets";
+    
+    public static final String REGISTER_FOR_SPACE_MODE_EVENTS = "register-for-space-mode-notifications";
 
     @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
@@ -193,5 +195,8 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         if (StringUtils.hasLength(gatewayTargetsRef))
             builder.addPropertyReference("gatewayTargets", gatewayTargetsRef);
         
+        String registerForSpaceModeEvents = element.getAttribute(REGISTER_FOR_SPACE_MODE_EVENTS);
+        if (StringUtils.hasLength(registerForSpaceModeEvents))
+            builder.addPropertyValue("registerForSpaceModeNotifications", registerForSpaceModeEvents);
     }
 }
