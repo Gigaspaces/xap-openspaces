@@ -47,6 +47,7 @@ public class AvgReducer<T extends Number, R extends Number> extends SumReducer<T
             if (result.getException() == null) {
                 count++;
             }
+            else throw result.getException();
         }
         if (count == 0) {
             throw new NoResultsException("No results to calculate average on");
