@@ -1,3 +1,6 @@
+[![Build Status](https://secure.travis-ci.org/OpenSpaces/OpenSpaces.png)](http://travis-ci.org/OpenSpaces/OpenSpaces)
+
+
 <h1>What is OpenSpaces?</h1>
 OpenSpaces is designed to enable scaling-out of stateful applications in a simple way using the Spring Framework. 
 It is shipped as an open source initiative from GigaSpaces, and supports the GigaSpaces Space-Based Architecture model out-of-the-box.
