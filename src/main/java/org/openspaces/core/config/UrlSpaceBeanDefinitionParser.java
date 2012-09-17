@@ -173,10 +173,20 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
             if (StringUtils.hasText(initialLoadPercentage)) {
                 customCachePolicy.setInitialLoadPercentage(Integer.parseInt(initialLoadPercentage));
             }
+            //TODO remove this once we support eviction strategy injection
             String customCachePolicyClass = customCacheEle.getAttribute("customCachePolicyClass");
             if (StringUtils.hasText(customCachePolicyClass)){
                 customCachePolicy.setCustomCachePolicyClass(customCachePolicyClass);
             }
+            //TODO 
+            String evictionStrategyRef = customCacheEle.getAttribute("evictionStrategy");
+            if (StringUtils.hasText(evictionStrategyRef)){
+                //customCachePolicy.setEvictionStrategy(evictionStrategy);
+                //What to do here? use builder.addPropertyReference is problematic because we'll need to add
+                //setEvictionStrategy to UrlSpaceFactoryBean and it already has setCachePolicy.
+                //Also in xsd this is defined as element inside choice scope, can it still point to a ref type?
+            }
+            
             cachePolicy = customCachePolicy;
         }
         if (cachePolicy != null) {

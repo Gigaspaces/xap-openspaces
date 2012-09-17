@@ -17,6 +17,7 @@ package org.openspaces.core.space;
 
 import java.util.Properties;
 
+import com.gigaspaces.server.eviction.SpaceEvictionStrategy;
 import com.j_spaces.core.Constants;
 
 /**
@@ -29,7 +30,9 @@ import com.j_spaces.core.Constants;
  */
 public class CustomCachePolicy extends LruCachePolicy {
 
+    //TODO remove this once we support injection propertly
     private String customCachePolicyClass = "";
+    private SpaceEvictionStrategy evictionStrategy;
     
     
     /**
@@ -37,8 +40,18 @@ public class CustomCachePolicy extends LruCachePolicy {
      * the String argument must be the fully qualified name (i.e. com.mycompany.myapp.MySpaceCachePolicy)
      * When using a Custom Cache Policy this property must be set
      */
+    //TODO remove this once we support injection propertly
     public CustomCachePolicy customCachePolicyClass(String customCachePolicyClass) {
         setCustomCachePolicyClass(customCachePolicyClass);
+        return this;
+    }
+    
+    /**
+     * Sets the custom eviction strategy to be used by the space,
+     * When using a Custom Cache Policy this property must be set.
+     */
+    public CustomCachePolicy evictionStrategy(SpaceEvictionStrategy evictionStrategy) {
+        setEvictionStrategy(evictionStrategy);
         return this;
     }
     
@@ -47,15 +60,27 @@ public class CustomCachePolicy extends LruCachePolicy {
      * the String argument must be the fully qualified name (i.e. com.mycompany.myapp.MySpaceCachePolicy)
      * When using a Custom Cache Policy this property must be set
      */
+    //TODO remove this once we support injection propertly
     public void setCustomCachePolicyClass(String customCachePolicyClass) {
         this.customCachePolicyClass = customCachePolicyClass;
+    }
+    
+    /**
+     * Sets the custom eviction strategy to be used by the space,
+     * When using a Custom Cache Policy this property must be set.
+     */
+    public void setEvictionStrategy(SpaceEvictionStrategy evictionStrategy) {
+        this.evictionStrategy = evictionStrategy;
     }
     
     @Override
     public Properties toProps() {
         Properties props = super.toProps();
         props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_PLUGGED_EVICTION);
-        props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_EVICTION_STRATEGY_PROP, customCachePolicyClass);
+        if (evictionStrategy != null)
+            props.put(Constants.CacheManager.FULL_CACHE_MANAGER_EVICTION_STRATEGY_PROP, evictionStrategy);
+        //TODO remove this once we support injection propertly
+        props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_EVICTION_STRATEGY_CLASS_PROP, customCachePolicyClass);
         
         return props;
     }
