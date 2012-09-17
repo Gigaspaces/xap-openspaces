@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.itest.core.iterator;
 
+import com.gigaspaces.client.iterator.IteratorScope;
 import com.j_spaces.core.client.GSIterator;
 import junit.framework.TestCase;
 import net.jini.core.entry.Entry;
@@ -39,7 +40,7 @@ public class SimpleIteratorTests extends TestCase {
             gigaSpace.write(testMessage);
         }
 
-        GSIterator it = gigaSpace.iterator().withHistory().addTemplate(new TestMessage()).iterate();
+        GSIterator it = gigaSpace.iterator().iteratorScope(IteratorScope.CURRENT_AND_FUTURE).addTemplate(new TestMessage()).iterate();
         int counter = 0;
         for (Object test : it) {
             counter++;

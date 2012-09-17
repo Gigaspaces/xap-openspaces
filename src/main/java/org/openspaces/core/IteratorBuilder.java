@@ -87,16 +87,6 @@ public class IteratorBuilder {
     }
 
     /**
-     * Sets to initially contain all of the visible matching entities in the space. If not called,
-     * will contain only visible matching entities thereafter.
-     * DEPRECATED: use {@link #iteratorScope(IteratorScope)} instead.
-     */
-    @Deprecated
-    public IteratorBuilder withHistory() {
-        return iteratorScope(IteratorScope.CURRENT_AND_FUTURE);
-    }
-    
-    /**
      * Determines iterator's scope: current entries, future entries or both.
      */
     public IteratorBuilder iteratorScope(IteratorScope iteratorScope) {
