@@ -58,5 +58,6 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("space-type", new GigaSpaceDocumentTypeBeanDefinitionParser());
         registerBeanDefinitionParser("mirror", new MirrorSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("tx-support", new DistributedTransactionProcessingConfigurationBeanDefinitionParser());
+        registerBeanDefinitionParser("custom-cache-policy", new CustomCachePolicyBeanDefinitionParser());
     }
 }

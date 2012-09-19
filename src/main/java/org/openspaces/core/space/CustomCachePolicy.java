@@ -78,7 +78,7 @@ public class CustomCachePolicy extends LruCachePolicy {
         Properties props = super.toProps();
         props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_PLUGGED_EVICTION);
         if (evictionStrategy != null)
-            props.put(Constants.CacheManager.FULL_CACHE_MANAGER_EVICTION_STRATEGY_PROP, evictionStrategy);
+            props.put(Constants.CacheManager.CACHE_MANAGER_EVICTION_STRATEGY_PROP, evictionStrategy);
         //TODO remove this once we support injection propertly
         props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_EVICTION_STRATEGY_CLASS_PROP, customCachePolicyClass);
         

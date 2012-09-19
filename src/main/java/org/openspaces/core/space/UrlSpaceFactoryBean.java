@@ -31,6 +31,7 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.config.CustomCachePolicyFactoryBean;
 import org.openspaces.core.executor.AutowireTask;
 import org.openspaces.core.executor.AutowireTaskMarker;
 import org.openspaces.core.executor.TaskGigaSpace;
@@ -143,6 +144,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private Properties beanLevelProperties;
 
     private ClusterInfo clusterInfo;
+    
+    private CustomCachePolicyFactoryBean customCachePolicy;
     
 
     /**
@@ -477,6 +480,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(Constants.Engine.SPACE_TYPES, typeDescriptors);
             }
             
+            if (customCachePolicy != null)
+                cachePolicy = customCachePolicy.asCachePolicy();
+            
             if (cachePolicy != null) {
                 props.putAll(cachePolicy.toProps());
             }
@@ -604,6 +610,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.distributedTransactionProcessingConfiguration = distributedTransactionProcessingConfiguration;
     }
 
+    public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
+        this.customCachePolicy = customCachePolicy;
+    }
+    
     private class ExecutorFilterProviderFactory implements FilterProviderFactory {
 
         public FilterProvider getFilterProvider() {

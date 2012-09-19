@@ -70,13 +70,18 @@
                         </xsd:element>
                         <xsd:element name="custom-cache-policy">
                             <xsd:complexType>
-                            <xsd:attribute name="customCachePolicyClass" type="xsd:string" use="required">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            The fully qualified name of the custom eviction policy class you want to use
-                                            as your space eviction policy (i.e. com.mycompany.myapp.MyCustomCachePolicy) 
-                                        </xsd:documentation>
-                                    </xsd:annotation>
+	                            <xsd:attribute name="space-eviction-strategy" type="xsd:string" use="required">
+			                        <xsd:annotation>
+			                            <xsd:documentation source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
+		                                	The bean name which represent the space eviction strategy class you want to use
+	                                        as your space eviction policy. The class should extend com.gigaspaces.server.eviction.SpaceEvictionStrategy. 
+			                            </xsd:documentation>
+			                            <xsd:appinfo>
+			                                <tool:annotation kind="ref">
+			                                    <tool:expected-type type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
+			                                </tool:annotation>
+			                            </xsd:appinfo>
+			                        </xsd:annotation>
                                 </xsd:attribute>
                                 <xsd:attribute name="size" type="xsd:string" use="optional">
                                     <xsd:annotation>
@@ -85,7 +90,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="initialLoadPercentage" type="xsd:string" use="optional">
+                                <xsd:attribute name="initial-load-percentage" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             When a space is running in a persistent mode (i.e. using the
