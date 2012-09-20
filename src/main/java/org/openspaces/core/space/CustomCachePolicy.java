@@ -30,21 +30,8 @@ import com.j_spaces.core.Constants;
  */
 public class CustomCachePolicy extends LruCachePolicy {
 
-    //TODO remove this once we support injection propertly
-    private String customCachePolicyClass = "";
     private SpaceEvictionStrategy evictionStrategy;
     
-    
-    /**
-     * Sets the custom eviction policy to be used by the space,
-     * the String argument must be the fully qualified name (i.e. com.mycompany.myapp.MySpaceCachePolicy)
-     * When using a Custom Cache Policy this property must be set
-     */
-    //TODO remove this once we support injection propertly
-    public CustomCachePolicy customCachePolicyClass(String customCachePolicyClass) {
-        setCustomCachePolicyClass(customCachePolicyClass);
-        return this;
-    }
     
     /**
      * Sets the custom eviction strategy to be used by the space,
@@ -53,16 +40,6 @@ public class CustomCachePolicy extends LruCachePolicy {
     public CustomCachePolicy evictionStrategy(SpaceEvictionStrategy evictionStrategy) {
         setEvictionStrategy(evictionStrategy);
         return this;
-    }
-    
-    /**
-     * Sets the custom eviction policy to be used by the space,
-     * the String argument must be the fully qualified name (i.e. com.mycompany.myapp.MySpaceCachePolicy)
-     * When using a Custom Cache Policy this property must be set
-     */
-    //TODO remove this once we support injection propertly
-    public void setCustomCachePolicyClass(String customCachePolicyClass) {
-        this.customCachePolicyClass = customCachePolicyClass;
     }
     
     /**
@@ -79,8 +56,6 @@ public class CustomCachePolicy extends LruCachePolicy {
         props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_PLUGGED_EVICTION);
         if (evictionStrategy != null)
             props.put(Constants.CacheManager.CACHE_MANAGER_EVICTION_STRATEGY_PROP, evictionStrategy);
-        //TODO remove this once we support injection propertly
-        props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_EVICTION_STRATEGY_CLASS_PROP, customCachePolicyClass);
         
         return props;
     }
