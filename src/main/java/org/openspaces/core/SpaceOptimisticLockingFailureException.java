@@ -20,7 +20,7 @@ import com.j_spaces.core.client.EntryVersionConflictException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 /**
- * This exception is thrown when update/take operation is rejected
+ * This exception is thrown when update/take/change/clear operation is rejected
  * as a result of optimistic locking version conflict. Wraps
  * {@link com.j_spaces.core.client.EntryVersionConflictException}.
  *
