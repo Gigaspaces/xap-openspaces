@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import com.gigaspaces.server.eviction.SpaceEvictionStrategy;
 
 /**
- * 
+ * A factory for creating {@link CustomCachePolicy} instance.
  * @author idan
  * @since 9.1
  *
