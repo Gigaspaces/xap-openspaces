@@ -55,7 +55,7 @@ public class BeanLevelProperties implements Serializable {
 
     /**
      * Returns properties that are associated with a specific bean name. If the properties do not
-     * exists, they will be created and bounded the the bean name.
+     * exists, they will be created and bounded to the bean name.
      *
      * @param beanName The bean name to get the properties for
      * @return The properties assigned to the bean
