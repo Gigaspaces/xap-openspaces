@@ -149,24 +149,6 @@ public interface GigaSpace {
     int getModifiersForIsolationLevel();
 
     /**
-     * Cleans this space. The side-effects of cleaning the space are:
-     * <ul>
-     * <li>All entries and templates are deleted.</li>
-     * <li>All storage adapter contexts are closed.</li>
-     * <li>All engine threads are terminated.</li>
-     * <li>The engine re-initializes itself.</li>
-     * </ul>
-     *
-     * @throws DataAccessException
-     * @deprecated Since 8.0.2. The processing unit instance that contain this space instance should be restarted instead, 
-     * or if the entire space was meant to be cleaned, the entire processing unit should be undeployed and redeployed.
-     * Using this method is strongly not recommended because it will not invoke any space mode change events registered components and
-     * it is not a cluster wide operation.
-     */
-    @Deprecated
-    void clean() throws DataAccessException;
-
-    /**
      * Removes the entries that match the specified template and the specified transaction from this space.
      *
      * <p>If the clear operation conducted without transaction (null as value) it will clear all entries that
