@@ -413,14 +413,29 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         assertEquals(FilterOperationCodes.BEFORE_WRITE, params[1]);
 
         params = simpleFilter.getLastExecutions().get(2);
-        assertEquals(2, params.length);
-        assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
-
-        params = simpleFilter.getLastExecutions().get(3);
-        assertEquals(2, params.length);
-        assertEquals("test", ((Message) params[0]).getMessage());
-        assertEquals(FilterOperationCodes.AFTER_TAKE, params[1]);
+        if (params[1].equals(FilterOperationCodes.AFTER_WRITE))
+        {
+            assertEquals(2, params.length);
+            assertEquals("test", ((Message) params[0]).getMessage());
+            
+            params = simpleFilter.getLastExecutions().get(3);
+            assertEquals(2, params.length);
+            assertEquals("test", ((Message) params[0]).getMessage());
+            assertEquals(FilterOperationCodes.AFTER_TAKE, params[1]);
+        }
+        else if (params[1].equals(FilterOperationCodes.AFTER_TAKE))
+        {
+            assertEquals(2, params.length);
+            assertEquals("test", ((Message) params[0]).getMessage());
+            
+            params = simpleFilter.getLastExecutions().get(3);
+            assertEquals(2, params.length);
+            assertEquals("test", ((Message) params[0]).getMessage());
+            assertEquals(FilterOperationCodes.AFTER_WRITE, params[1]);
+        }
+        else
+            fail();
+        
 
         gigaSpace.clear(null);
         simpleFilter.getLastExecutions().clear();
