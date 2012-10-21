@@ -173,6 +173,20 @@ public class StringPropertiesUtilsTest extends TestCase {
         assertEquals(null,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", null));
     }
 
+    /**
+     * empty array is like removing the key
+     */
+    @Test
+    public void testArrayWithEmptyString() {
+        String[] arrayWithEmptyString = new String[1];
+        arrayWithEmptyString[0] = "";
+        StringPropertiesUtils.putArray(map, KEY, arrayWithEmptyString," ");
+        String[] actual = StringPropertiesUtils.getArray(map, KEY, " ", null);
+        assertEquals(1, actual.length);
+        assertEquals("", actual[0]);
+        assertEquals(null,StringPropertiesUtils.getArray(map, MISSING_KEY, " ", null));
+    }
+    
     @Test
     public void testArrayIllegalArgument() {
         try {
