@@ -258,10 +258,10 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
             // in case the space is a local cache space, set the clustered flag to true since we do
             // not want to get the actual member (the cluster flag was set on the local cache already)
             if (space instanceof ISpaceCache) {
+                clustered = true;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Clustered flag automatically set to [" + clustered + "] since the space is a local cache space for bean [" + beanName + "]");
                 }
-                clustered = true;
             } else {
                 clustered = SpaceUtils.isRemoteProtocol(space);
                 if (logger.isDebugEnabled()) {
