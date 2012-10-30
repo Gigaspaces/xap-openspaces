@@ -446,6 +446,13 @@
 								</xsd:documentation>
 					    	</xsd:annotation>
 				    	</xsd:attribute>
+				    	<xsd:attribute name="monitor-pending-opers-memory" type="xsd:boolean" use="optional">
+					       	<xsd:annotation>
+					    		<xsd:documentation>
+					    			Sets whether pending operations queue memory monitoring is enabled.
+								</xsd:documentation>
+					    	</xsd:annotation>
+				    	</xsd:attribute>
 				    	<xsd:attribute name="dist-tx-consolidation-failure-action" use="optional">
 			       			<xsd:annotation>
 			    				<xsd:documentation>
