@@ -35,9 +35,10 @@ public class DistributedTransactionProcessingConfigurationBeanDefinitionParser e
 
     final private static String WAIT_FOR_OPERATIONS = "dist-tx-wait-for-opers";
     final private static String WAIT_TIMEOUT = "dist-tx-wait-timeout-millis";
+    final private static String MONITOR_MEMORY = "monitor-pending-opers-memory";
     
     @Override
-    protected Class getBeanClass(Element element) {
+    protected Class<?> getBeanClass(Element element) {
         return DistributedTransactionProcessingConfigurationFactoryBean.class;
     }
     
@@ -52,6 +53,10 @@ public class DistributedTransactionProcessingConfigurationBeanDefinitionParser e
         if (StringUtils.hasLength(distributedTransactionWaitTimeout))
             builder.addPropertyValue("distributedTransactionWaitForOperations", distributedTransactionWaitForOperations);
 
+        final String monitorPendingOperationsMemory = element.getAttribute(MONITOR_MEMORY);
+        if (StringUtils.hasLength(monitorPendingOperationsMemory))
+            builder.addPropertyValue("monitorPendingOperationsMemory", monitorPendingOperationsMemory);
+        
     }        
 
     

@@ -41,6 +41,7 @@ public class DistributedTransactionProcessingConfigurationFactoryBean {
 
     private Long distributedTransactionWaitTimeout;
     private Long distributedTransactionWaitForOperations;
+    private Boolean monitorPendingOperationsMemory;
     
     public DistributedTransactionProcessingConfigurationFactoryBean() {
     }
@@ -59,6 +60,14 @@ public class DistributedTransactionProcessingConfigurationFactoryBean {
     
     public void setDistributedTransactionWaitForOperations(Long distributedTransactionWaitForOperations) {
         this.distributedTransactionWaitForOperations = distributedTransactionWaitForOperations;
+    }
+
+    public Boolean isMonitorPendingOperationsMemory() {
+        return monitorPendingOperationsMemory;
+    }
+
+    public void setMonitorPendingOperationsMemory(Boolean monitorPendingOperationsMemory) {
+        this.monitorPendingOperationsMemory = monitorPendingOperationsMemory;
     }
 
 }

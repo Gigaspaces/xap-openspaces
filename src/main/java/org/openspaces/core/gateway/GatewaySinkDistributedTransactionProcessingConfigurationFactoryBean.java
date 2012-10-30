@@ -66,6 +66,8 @@ public class GatewaySinkDistributedTransactionProcessingConfigurationFactoryBean
             transactionProcessingConfiguration.setTimeoutBeforePartialCommit(getDistributedTransactionWaitTimeout());
         if (getDistributedTransactionWaitForOperations() != null)
             transactionProcessingConfiguration.setWaitForOperationsBeforePartialCommit(getDistributedTransactionWaitForOperations());
+        if (isMonitorPendingOperationsMemory() != null)
+            transactionProcessingConfiguration.setMonitorPendingOperationsMemory(isMonitorPendingOperationsMemory().booleanValue());
     }
     
 }
