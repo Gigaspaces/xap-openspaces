@@ -55,6 +55,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
@@ -146,6 +147,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private ClusterInfo clusterInfo;
     
     private CustomCachePolicyFactoryBean customCachePolicy;
+
+    private SpaceDataSource spaceDataSource;
     
 
     /**
@@ -315,6 +318,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.externalDataSource = externalDataSource;
     }
     
+    public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
+        this.spaceDataSource = spaceDataSource;
+    }
+    
     /**
      * Inject a list of space types.
      */
@@ -473,6 +480,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
                 }
             }
+            
+            if (spaceDataSource != null) {
+                if (SpaceUtils.isRemoteProtocol(url))
+                    throw new IllegalArgumentException("Space data source can only be used with an embedded Space");
+                props.put(Constants.DataAdapter.DATA_SOURCE, spaceDataSource);
+            }
+            
             if (typeDescriptors != null && typeDescriptors.length >0 ) {
                 if (SpaceUtils.isRemoteProtocol(url)) {
                     throw new IllegalArgumentException("Space types can only be introduced on embedded Space");

@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.IJSpace;
@@ -233,6 +234,13 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
+    // TODO DATASOURCE: is this the correct way to set a space data source?
+    public UrlSpaceConfigurer spaceDataSource(SpaceDataSource spaceDataSource) {
+        validate();
+        urlSpaceFactoryBean.setSpaceDataSource(spaceDataSource);
+        return this;
+    }
+    
     /**
      * @see org.openspaces.core.space.UrlSpaceFactoryBean#setCachePolicy(CachePolicy) 
      */
