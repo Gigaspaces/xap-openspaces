@@ -318,6 +318,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.externalDataSource = externalDataSource;
     }
     
+    /**
+     * Sets the {@link SpaceDataSource} which will be used as a data source for the space.
+     * @param spaceDataSource The {@link SpaceDataSource} instance.
+     */
     public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
         this.spaceDataSource = spaceDataSource;
     }

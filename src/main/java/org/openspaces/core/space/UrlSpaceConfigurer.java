@@ -234,7 +234,9 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
 
-    // TODO DATASOURCE: is this the correct way to set a space data source?
+    /**
+     * @see UrlSpaceFactoryBean#setSpaceDataSource(SpaceDataSource)
+     */
     public UrlSpaceConfigurer spaceDataSource(SpaceDataSource spaceDataSource) {
         validate();
         urlSpaceFactoryBean.setSpaceDataSource(spaceDataSource);
