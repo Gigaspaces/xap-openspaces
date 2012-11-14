@@ -27,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jini.rio.boot.PUZipUtils;
 import org.openspaces.admin.AdminException;
 
+import com.gigaspaces.internal.io.BootIOUtils;
+
 /**
  * @author itaif
  * @since 9.0.1
@@ -38,7 +40,7 @@ public class FileUtils {
     
     public static void deleteFileOrDirectory(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory()) {
-          for (File file : fileOrDirectory.listFiles())
+          for (File file : BootIOUtils.listFiles(fileOrDirectory))
               deleteFileOrDirectory(file);
         }
         if (!fileOrDirectory.delete()) {
