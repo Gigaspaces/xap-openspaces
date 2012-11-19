@@ -62,6 +62,7 @@ import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.UserDetails;
+import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
@@ -150,7 +151,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private SpaceDataSource spaceDataSource;
     
+    private SynchronizationEndpointInterceptor synchronizationEndpointInterceptor;
 
+    
     /**
      * Creates a new url space factory bean. The url parameters is requires so the
      * {@link #setUrl(String)} must be called before the bean is initialized.
@@ -488,7 +491,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             if (spaceDataSource != null) {
                 if (SpaceUtils.isRemoteProtocol(url))
                     throw new IllegalArgumentException("Space data source can only be used with an embedded Space");
-                props.put(Constants.DataAdapter.DATA_SOURCE, spaceDataSource);
+                props.put(Constants.DataAdapter.SPACE_DATA_SOURCE, spaceDataSource);
+            }
+            
+            if (synchronizationEndpointInterceptor != null) {
+                if (SpaceUtils.isRemoteProtocol(url))
+                    throw new IllegalArgumentException("Synchronization endpoint interceptor can only be used with an embedded Space");
+                props.put(Constants.DataAdapter.SYNC_ENDPOINT_INTERCEPTOR, synchronizationEndpointInterceptor);
             }
             
             if (typeDescriptors != null && typeDescriptors.length >0 ) {
@@ -645,6 +654,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private static Object NO_FIELD = new Object();
 
+
     private class ExecutorSpaceFilter implements ISpaceFilter {
 
         private IJSpace space;
@@ -760,5 +770,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
             return obj.getClass().isAnnotationPresent(AutowireTask.class);
         }
+    }
+
+    /**
+     * @param synchronizationEndpointInterceptor
+     */
+    public void setSynchronizationEndpointInterceptor(
+            SynchronizationEndpointInterceptor synchronizationEndpointInterceptor) {
+                this.synchronizationEndpointInterceptor = synchronizationEndpointInterceptor;
     }
 }

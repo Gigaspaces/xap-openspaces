@@ -33,6 +33,7 @@ import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.UserDetails;
+import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
 import com.j_spaces.core.IJSpace;
 
 /**
@@ -240,6 +241,12 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     public UrlSpaceConfigurer spaceDataSource(SpaceDataSource spaceDataSource) {
         validate();
         urlSpaceFactoryBean.setSpaceDataSource(spaceDataSource);
+        return this;
+    }
+    
+    public UrlSpaceConfigurer synchronizationEndpointInterceptor(SynchronizationEndpointInterceptor synchronizationEndpointInterceptor) {
+        validate();
+        urlSpaceFactoryBean.setSynchronizationEndpointInterceptor(synchronizationEndpointInterceptor);
         return this;
     }
     
