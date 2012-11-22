@@ -35,13 +35,22 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
 
     private static final long serialVersionUID = 1L;
     
-    private final Collection<ChangedEntryDetails<?>> changedEntries;
+    private Collection<ChangedEntryDetails<?>> changedEntries;
     private final Collection<FailedChangedEntryDetails> translatedEntriesFailedToChange;
     private final Collection<Throwable> translatedErrors;
+    private final int numChangedEntries;
     
     public ChangeException(com.gigaspaces.client.ChangeException changeException, ExceptionTranslator exceptionTranslator) {
         super(changeException.getMessage(), changeException);
-        this.changedEntries = changeException.getSuccesfullChanges();
+        this.numChangedEntries = changeException.getNumSuccesfullChanges();
+        try
+        {
+            this.changedEntries = changeException.getSuccesfullChanges();
+        }
+        catch (Exception ex)
+        {//no details
+            this.changedEntries = null;
+        }
         translatedEntriesFailedToChange = new ArrayList<FailedChangedEntryDetails>(changeException.getFailedChanges().size());
         for (FailedChangedEntryDetails failedChangeEntryResult : changeException.getFailedChanges()) {
             translatedEntriesFailedToChange.add(new FailedChangedEntryDetailsImpl(failedChangeEntryResult.getTypeName(),
@@ -69,8 +78,19 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
      */
     public Collection<ChangedEntryDetails<?>> getSuccesfullChanges()
     {
+        if (changedEntries == null)
+            throw new UnsupportedOperationException(" no detailed information available: operation modifier not set to return detailed change result");
         return changedEntries;
     }
+    
+    /**
+     * Returns the number of successful  changes.
+     */
+    public int getNumSuccesfullChanges()
+    {
+        return numChangedEntries;
+    }
+    
     
     /**
      * Returns the entries that failed to change result.
