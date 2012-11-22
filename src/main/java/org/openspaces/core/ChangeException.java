@@ -35,7 +35,7 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
 
     private static final long serialVersionUID = 1L;
     
-    private Collection<ChangedEntryDetails<?>> changedEntries;
+    private final Collection<ChangedEntryDetails<?>> changedEntries;
     private final Collection<FailedChangedEntryDetails> translatedEntriesFailedToChange;
     private final Collection<Throwable> translatedErrors;
     private final int numChangedEntries;
@@ -43,14 +43,9 @@ public class ChangeException extends InvalidDataAccessResourceUsageException {
     public ChangeException(com.gigaspaces.client.ChangeException changeException, ExceptionTranslator exceptionTranslator) {
         super(changeException.getMessage(), changeException);
         this.numChangedEntries = changeException.getNumSuccesfullChanges();
-        try
-        {
-            this.changedEntries = changeException.getSuccesfullChanges();
-        }
-        catch (Exception ex)
-        {//no details
-            this.changedEntries = null;
-        }
+        
+        this.changedEntries = changeException.getSuccesfullChanges();
+        
         translatedEntriesFailedToChange = new ArrayList<FailedChangedEntryDetails>(changeException.getFailedChanges().size());
         for (FailedChangedEntryDetails failedChangeEntryResult : changeException.getFailedChanges()) {
             translatedEntriesFailedToChange.add(new FailedChangedEntryDetailsImpl(failedChangeEntryResult.getTypeName(),
