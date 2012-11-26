@@ -33,7 +33,7 @@ import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.UserDetails;
-import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
+import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
 
 /**
@@ -244,9 +244,9 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         return this;
     }
     
-    public UrlSpaceConfigurer synchronizationEndpointInterceptor(SynchronizationEndpointInterceptor synchronizationEndpointInterceptor) {
+    public UrlSpaceConfigurer spaceSynchronizationEndpoint(SpaceSynchronizationEndpoint synchronizationEndpoint) {
         validate();
-        urlSpaceFactoryBean.setSynchronizationEndpointInterceptor(synchronizationEndpointInterceptor);
+        urlSpaceFactoryBean.setSpaceSynchronizationEndpoint(synchronizationEndpoint);
         return this;
     }
     

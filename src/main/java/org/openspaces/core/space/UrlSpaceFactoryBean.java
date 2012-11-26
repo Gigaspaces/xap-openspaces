@@ -62,7 +62,7 @@ import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.UserDetails;
-import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
+import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
@@ -151,7 +151,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
     private SpaceDataSource spaceDataSource;
     
-    private SynchronizationEndpointInterceptor synchronizationEndpointInterceptor;
+    private SpaceSynchronizationEndpoint spaceSynchronizationEndpoint;
 
     
     /**
@@ -494,10 +494,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(Constants.DataAdapter.SPACE_DATA_SOURCE, spaceDataSource);
             }
             
-            if (synchronizationEndpointInterceptor != null) {
+            if (spaceSynchronizationEndpoint != null) {
                 if (SpaceUtils.isRemoteProtocol(url))
                     throw new IllegalArgumentException("Synchronization endpoint interceptor can only be used with an embedded Space");
-                props.put(Constants.DataAdapter.SYNC_ENDPOINT_INTERCEPTOR, synchronizationEndpointInterceptor);
+                props.put(Constants.DataAdapter.SYNC_ENDPOINT, spaceSynchronizationEndpoint);
             }
             
             if (typeDescriptors != null && typeDescriptors.length >0 ) {
@@ -773,10 +773,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     /**
-     * @param synchronizationEndpointInterceptor
+     * @param spaceSynchronizationEndpoint
      */
-    public void setSynchronizationEndpointInterceptor(
-            SynchronizationEndpointInterceptor synchronizationEndpointInterceptor) {
-                this.synchronizationEndpointInterceptor = synchronizationEndpointInterceptor;
+    public void setSpaceSynchronizationEndpoint(
+            SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
+                this.spaceSynchronizationEndpoint = spaceSynchronizationEndpoint;
     }
 }
