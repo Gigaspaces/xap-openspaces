@@ -51,6 +51,9 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
     
     public static final String REGISTER_FOR_SPACE_MODE_EVENTS = "register-for-space-mode-notifications";
 
+    private static final String SPACE_DATA_SOURCE = "space-data-source";
+    private static final String SPACE_SYNC_ENDPOINT = "space-sync-endpoint";
+    
     @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
         return UrlSpaceFactoryBean.class;
@@ -58,7 +61,8 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
     @Override
     protected boolean isEligibleAttribute(String attributeName) {
-        return super.isEligibleAttribute(attributeName) && !DATA_SOURCE.equals(attributeName);
+        return super.isEligibleAttribute(attributeName) && !DATA_SOURCE.equals(attributeName)
+                && !SPACE_DATA_SOURCE.equals(attributeName) && !SPACE_SYNC_ENDPOINT.equals(attributeName);
     }
 
     @Override
@@ -69,7 +73,17 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         if (StringUtils.hasLength(dataSource)) {
             builder.addPropertyReference("externalDataSource", dataSource);
         }
+        
+        String spaceDataSource = element.getAttribute(SPACE_DATA_SOURCE);        
+        if (StringUtils.hasLength(spaceDataSource)) {
+            builder.addPropertyReference("spaceDataSource", spaceDataSource);
+        }
 
+        String spaceSynchronizationEndpoint = element.getAttribute(SPACE_SYNC_ENDPOINT);
+        if (StringUtils.hasLength(spaceSynchronizationEndpoint)) {
+            builder.addPropertyReference("spaceSynchronizationEndpoint", spaceSynchronizationEndpoint);
+        }
+        
         Element parametersEle = DomUtils.getChildElementByTagName(element, PARAMETERS);
         if (parametersEle != null) {
             Object parameters = parserContext.getDelegate().parsePropertyValue(parametersEle,
@@ -187,4 +201,5 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         if (StringUtils.hasLength(registerForSpaceModeEvents))
             builder.addPropertyValue("registerForSpaceModeNotifications", registerForSpaceModeEvents);
     }
+
 }

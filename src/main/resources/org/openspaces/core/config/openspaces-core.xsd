@@ -345,6 +345,7 @@
                         <xsd:annotation>
                             <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
                                 Allows to provide a Space external data source reference.
+                            	Deprecated since 9.5 - use the 'space-data-source' & 'space-sync-endpoint' attributes instead.
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
@@ -353,6 +354,30 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="space-data-source" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.datasource.SpaceDataSource">
+                                Allows to provide a Space data source reference.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.datasource.SpaceDataSource"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="space-sync-endpoint" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.sync.SpaceSynchronizationEndpoint">
+                                Allows to provide a Space synchronization endpoint reference.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.sync.SpaceSynchronizationEndpoint"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>                    
                     <xsd:attribute name="enable-member-alive-indicator" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -360,11 +385,6 @@
                                 if the Space started is an embedded Space, and false if the it is connected to a remote
                                 Space.
                             </xsd:documentation>
-                            <xsd:appinfo>
-                                <tool:annotation kind="ref">
-                                    <tool:expected-type type="com.gigaspaces.datasource.ManagedDataSource"/>
-                                </tool:annotation>
-                            </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="gateway-targets" type="gatewayTargetsRefType">

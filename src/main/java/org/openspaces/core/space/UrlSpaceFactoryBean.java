@@ -492,13 +492,17 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 if (SpaceUtils.isRemoteProtocol(url))
                     throw new IllegalArgumentException("Space data source can only be used with an embedded Space");
                 props.put(Constants.DataAdapter.SPACE_DATA_SOURCE, spaceDataSource);
+                props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
             }
             
             if (spaceSynchronizationEndpoint != null) {
                 if (SpaceUtils.isRemoteProtocol(url))
                     throw new IllegalArgumentException("Synchronization endpoint interceptor can only be used with an embedded Space");
-                props.put(Constants.DataAdapter.SYNC_ENDPOINT, spaceSynchronizationEndpoint);
+                props.put(Constants.DataAdapter.SPACE_SYNC_ENDPOINT, spaceSynchronizationEndpoint);
+                props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
             }
+            
+            verifyExternalDataSourceIsNotUsedIfNecessary();
             
             if (typeDescriptors != null && typeDescriptors.length >0 ) {
                 if (SpaceUtils.isRemoteProtocol(url)) {
@@ -770,6 +774,12 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
             return obj.getClass().isAnnotationPresent(AutowireTask.class);
         }
+    }
+
+    private void verifyExternalDataSourceIsNotUsedIfNecessary() {
+        if (externalDataSource != null && (spaceDataSource != null || spaceSynchronizationEndpoint != null))
+            throw new IllegalArgumentException(
+                    "Cannot set both externalDataSource and spaceDataSource/spaceSynchronizationEndpoint - it is recommended to use spaceDataSource/spaceSynchronizationEndpoint since externalDataSource is deprecated");
     }
 
     /**
