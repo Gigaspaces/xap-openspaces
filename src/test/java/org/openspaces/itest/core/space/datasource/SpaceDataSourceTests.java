@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.openspaces.itest.core.space.datasource;
 
-import org.junit.Assert;
-import org.junit.Test;
+import junit.framework.Assert;
+
 import org.openspaces.core.GigaSpace;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -41,7 +41,6 @@ public class SpaceDataSourceTests extends AbstractDependencyInjectionSpringConte
         return new String[] { "/org/openspaces/itest/core/space/datasource/space-data-source.xml" };
     }
     
-    @Test
     public void test() {
         int count = gigaSpace.count(null);
         Assert.assertEquals(1, count);

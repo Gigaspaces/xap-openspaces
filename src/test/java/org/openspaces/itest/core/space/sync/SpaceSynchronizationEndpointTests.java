@@ -18,8 +18,8 @@ package org.openspaces.itest.core.space.sync;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import junit.framework.Assert;
+
 import org.openspaces.core.GigaSpace;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -45,7 +45,6 @@ public class SpaceSynchronizationEndpointTests extends AbstractDependencyInjecti
         return new String[] { "/org/openspaces/itest/core/space/sync/space-sync-endpoint.xml" };
     }
     
-    @Test
     public void test() throws InterruptedException, BrokenBarrierException, TimeoutException  {
         gigaSpace.getTypeManager().registerTypeDescriptor(
                 new SpaceTypeDescriptorBuilder("MockDocument").idProperty("id").create());
