@@ -28,7 +28,7 @@ import com.gigaspaces.metadata.SpaceTypeDescriptorBuilder;
 
 /**
  * @author Idan Moyal
- * @since 9.5
+ * @since 9.1.1
  *
  */
 @SuppressWarnings("deprecation")

@@ -21,7 +21,7 @@ import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 /**
  * 
  * @author Idan Moyal
- * @since 9.5
+ * @since 9.1.1
  *
  */
 public class MockSpaceSynchronizationEndpoint extends SpaceSynchronizationEndpoint {

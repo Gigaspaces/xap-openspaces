@@ -24,7 +24,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * 
  * 
  * @author Idan Moyal
- * @since 9.5
+ * @since 9.1.1
  *
  */
 @SuppressWarnings("deprecation")
