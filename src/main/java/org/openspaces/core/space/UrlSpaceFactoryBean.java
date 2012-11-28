@@ -477,6 +477,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
 
             if (externalDataSource != null) {
+                if (logger.isWarnEnabled())
+                    logger.warn("externalDataSource is deprecated - instead use spaceDataSource and/or spaceSynchronizationEndpoint");
                 if (SpaceUtils.isRemoteProtocol(url)) {
                     throw new IllegalArgumentException("External data source can only be used with an embedded Space");
                 }
