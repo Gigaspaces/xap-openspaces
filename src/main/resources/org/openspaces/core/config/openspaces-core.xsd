@@ -345,7 +345,7 @@
                         <xsd:annotation>
                             <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
                                 Allows to provide a Space external data source reference.
-                            	Deprecated since 9.5 - use the 'space-data-source' & 'space-sync-endpoint' attributes instead.
+                            	Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes instead.
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
