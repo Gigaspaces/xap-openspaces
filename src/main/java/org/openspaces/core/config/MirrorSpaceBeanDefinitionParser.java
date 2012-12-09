@@ -42,6 +42,7 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
     public static final String OPERATION_GROUPING = "operation-grouping";
     public static final String PROPERTIES = "properties";
     public static final String TRANSACTION_SUPPORT = "tx-support";
+    public static final String SPACE_SYNC_ENDPOINT = "space-sync-endpoint";
 
     @Override
     protected Class<UrlSpaceFactoryBean> getBeanClass(Element element) {
@@ -50,9 +51,8 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
 
     @Override
     protected boolean isEligibleAttribute(String attributeName) {
-        return super.isEligibleAttribute(attributeName) 
-        && !DATA_SOURCE.equals(attributeName)
-        && !OPERATION_GROUPING.equals(attributeName);
+        return super.isEligibleAttribute(attributeName) && !DATA_SOURCE.equals(attributeName)
+                && !SPACE_SYNC_ENDPOINT.equals(attributeName) && !OPERATION_GROUPING.equals(attributeName);
     }
 
     @Override
@@ -67,6 +67,12 @@ public class MirrorSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitio
             builder.addPropertyReference("externalDataSource", dataSource);
         }
 
+        //parse the space-sync-endpoint attribute
+        String spaceSynchronizationEndpoint = element.getAttribute(SPACE_SYNC_ENDPOINT);
+        if (StringUtils.hasLength(spaceSynchronizationEndpoint)) {
+            builder.addPropertyReference("spaceSynchronizationEndpoint", spaceSynchronizationEndpoint);
+        }
+        
         //parse the operation-grouping attribute
         Properties properties = new Properties();
         String operationGrouping = element.getAttribute(OPERATION_GROUPING);
