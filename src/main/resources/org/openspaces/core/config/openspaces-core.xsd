@@ -528,8 +528,19 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    
-                      <xsd:attribute name="operation-grouping" use="optional">
+                    <xsd:attribute name="space-sync-endpoint" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.sync.SpaceSynchronizationEndpoint">
+                                Allows to provide a Space synchronization endpoint reference.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.sync.SpaceSynchronizationEndpoint"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>                                        
+                    <xsd:attribute name="operation-grouping" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The url the space will be created with.
