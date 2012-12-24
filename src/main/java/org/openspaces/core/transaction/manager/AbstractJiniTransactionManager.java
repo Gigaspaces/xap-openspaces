@@ -265,8 +265,15 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
     protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
             throws InvalidIsolationLevelException {
         if (isolationLevel != TransactionDefinition.ISOLATION_DEFAULT) {
-            throw new InvalidIsolationLevelException("TransactionManager does not support custom isolation levels");
+        	if (!suppportsCustomIsolationLevel())
+        		throw new InvalidIsolationLevelException(getClass().getName() + " does not support custom isolation levels");
+            if (isolationLevel == TransactionDefinition.ISOLATION_SERIALIZABLE)
+                throw new InvalidIsolationLevelException("Jini Transaction Manager does not support serializable isolation level");
         }
+    }
+    
+    protected boolean suppportsCustomIsolationLevel() {
+    	return false;
     }
 
     @Override

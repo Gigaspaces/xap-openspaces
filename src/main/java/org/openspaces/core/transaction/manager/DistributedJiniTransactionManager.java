@@ -22,6 +22,7 @@ import com.sun.jini.mahalo.TxnManager;
 import com.sun.jini.start.LifeCycle;
 import net.jini.admin.Administrable;
 import net.jini.core.transaction.server.TransactionManager;
+
 import org.openspaces.pu.service.PlainServiceDetails;
 import org.openspaces.pu.service.ServiceDetails;
 import org.springframework.beans.factory.DisposableBean;
@@ -76,5 +77,10 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
 
     public ServiceDetails[] getServicesDetails() {
         return new ServiceDetails[] {new PlainServiceDetails(getBeanName(), SERVICE_TYPE, "distributed", getBeanName(), "Distributed (embedded)")};
+    }
+    
+    @Override
+    protected boolean suppportsCustomIsolationLevel() {
+    	return true;
     }
 }

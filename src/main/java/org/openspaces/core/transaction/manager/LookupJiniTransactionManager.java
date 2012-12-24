@@ -21,8 +21,6 @@ import org.openspaces.core.jini.JiniServiceFactoryBean;
 import org.openspaces.pu.service.PlainServiceDetails;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
-import org.springframework.transaction.InvalidIsolationLevelException;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionSystemException;
 
 import java.util.Arrays;
@@ -125,11 +123,7 @@ public class LookupJiniTransactionManager extends AbstractJiniTransactionManager
     }
 
     @Override
-    protected void applyIsolationLevel(JiniTransactionObject txObject, int isolationLevel)
-            throws InvalidIsolationLevelException {
-        if (isolationLevel == TransactionDefinition.ISOLATION_SERIALIZABLE) {
-            throw new InvalidIsolationLevelException(
-                    "Lookup Jini TransactionManager does not support serializable isolation level");
-        }
+    protected boolean suppportsCustomIsolationLevel() {
+    	return true;
     }
 }
