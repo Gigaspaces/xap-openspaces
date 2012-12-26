@@ -113,14 +113,19 @@ public class GSCForkHandler {
 	 * and moves this PUI to the new GSC.
 	 */
 	public void movePuToAlternativeGSC() {
-
+	    logger.info("Locating GSC which meets communication/discovery ports requirement");
         GridServiceContainer gsc = locateExistingGSCWithPorts();
-        if (gsc == null){
+        if (gsc == null) {
+            logger.info("Suitable GSC not found - attempting to create a new GSC");
     		if (!GatewayUtils.checkPortAvailable(lrmiPort)) {
-    			throw new IllegalArgumentException("The required communication port for the new GSC(" + lrmiPort + ") is not available!");
+    			String exceptionMessage = "The required communication port for the new GSC(" + lrmiPort + ") is not available!";
+    			logger.error(exceptionMessage);
+                throw new IllegalArgumentException(exceptionMessage);
     		}
     		if (startEmbeddedLus && !GatewayUtils.checkPortAvailable(discoveryPort)) {
-                throw new IllegalArgumentException("The required discovery port for the new GSC(" + discoveryPort + ") is not available!");
+                String exceptionMessage = "The required discovery port for the new GSC(" + discoveryPort + ") is not available!";
+                logger.error(exceptionMessage);
+                throw new IllegalArgumentException(exceptionMessage);
             }
     
     		GridServiceAgent gsa = null;
