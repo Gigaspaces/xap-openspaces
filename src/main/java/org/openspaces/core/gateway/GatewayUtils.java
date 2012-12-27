@@ -84,11 +84,16 @@ public class GatewayUtils {
         if (instances == null || instances.length == 0)
             return null;
         
-        ProcessingUnitInstance instance = instances[0];
-        ServiceDetails[] serviceDetails = instance.getServicesDetailsByServiceType(GatewayServiceDetails.SERVICE_TYPE);
-        if (serviceDetails == null || serviceDetails.length == 0)
+        return extractGatewayName( instances[0] );
+    }
+
+	public static String extractGatewayName(ProcessingUnitInstance instance) {
+		ServiceDetails[] serviceDetails = 
+				instance.getServicesDetailsByServiceType( GatewayServiceDetails.SERVICE_TYPE );
+        if( serviceDetails == null || serviceDetails.length == 0 ){
             return null;
+        }
         
         return ((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName();
-    }
+	}
 }
