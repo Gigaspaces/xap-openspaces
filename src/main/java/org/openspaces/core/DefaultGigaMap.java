@@ -21,9 +21,7 @@ import com.j_spaces.javax.cache.CacheEntry;
 import com.j_spaces.javax.cache.CacheException;
 import com.j_spaces.javax.cache.CacheListener;
 import com.j_spaces.map.IMap;
-import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
-import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.map.LockHandle;
 import org.openspaces.core.map.LockManager;
@@ -55,9 +53,9 @@ public class DefaultGigaMap implements GigaMap {
 
     final private ExceptionTranslator exTranslator;
 
-    private long defaultWaitForResponse = JavaSpace.NO_WAIT;
+    private long defaultWaitForResponse = 0;
 
-    private long defaultTimeToLive = Lease.FOREVER;
+    private long defaultTimeToLive = Long.MAX_VALUE;
 
     private long defaultLockTimeToLive = 60000;
 

@@ -20,9 +20,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;
 
-import net.jini.core.lease.Lease;
 import net.jini.core.transaction.Transaction;
-import net.jini.space.JavaSpace;
 
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
@@ -92,11 +90,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     final private GigaSpaceTypeManager typeManager;
 
-    private long defaultReadTimeout = JavaSpace.NO_WAIT;
+    private long defaultReadTimeout = 0;
 
-    private long defaultTakeTimeout = JavaSpace.NO_WAIT;
+    private long defaultTakeTimeout = 0;
 
-    private long defaultWriteLease = Lease.FOREVER;
+    private long defaultWriteLease = Long.MAX_VALUE;
 
     private int defaultIsolationLevel;
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();

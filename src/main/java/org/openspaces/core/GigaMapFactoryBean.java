@@ -17,8 +17,6 @@
 package org.openspaces.core;
 
 import com.j_spaces.map.IMap;
-import net.jini.core.lease.Lease;
-import net.jini.space.JavaSpace;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.transaction.DefaultTransactionProvider;
@@ -58,9 +56,9 @@ public class GigaMapFactoryBean implements InitializingBean, DisposableBean, Fac
 
     private PlatformTransactionManager transactionManager;
 
-    private long defaultWaitForResponse = JavaSpace.NO_WAIT;
+    private long defaultWaitForResponse = 0;
 
-    private long defaultTimeToLive = Lease.FOREVER;
+    private long defaultTimeToLive = Long.MAX_VALUE;
 
     private long defaultLockTimeToLive = 60000;
 

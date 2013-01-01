@@ -16,9 +16,6 @@
 
 package org.openspaces.core;
 
-import net.jini.core.lease.Lease;
-import net.jini.space.JavaSpace;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.exception.DefaultExceptionTranslator;
@@ -119,11 +116,11 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
 
     private Boolean clustered;
 
-    private long defaultReadTimeout = JavaSpace.NO_WAIT;
+    private long defaultReadTimeout = 0;
 
-    private long defaultTakeTimeout = JavaSpace.NO_WAIT;
+    private long defaultTakeTimeout = 0;
 
-    private long defaultWriteLease = Lease.FOREVER;
+    private long defaultWriteLease = Long.MAX_VALUE;
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
     
@@ -177,8 +174,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
 
     /**
      * <p>Sets the default read timeout for {@link org.openspaces.core.GigaSpace#read(Object)} and
-     * {@link org.openspaces.core.GigaSpace#readIfExists(Object)} operations. Default to
-     * {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * {@link org.openspaces.core.GigaSpace#readIfExists(Object)} operations. Default to 0.
      */
     public void setDefaultReadTimeout(long defaultReadTimeout) {
         this.defaultReadTimeout = defaultReadTimeout;
@@ -186,8 +182,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
 
     /**
      * <p>Sets the default take timeout for {@link org.openspaces.core.GigaSpace#take(Object)} and
-     * {@link org.openspaces.core.GigaSpace#takeIfExists(Object)} operations. Default to
-     * {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * {@link org.openspaces.core.GigaSpace#takeIfExists(Object)} operations. Default to 0.
      */
     public void setDefaultTakeTimeout(long defaultTakeTimeout) {
         this.defaultTakeTimeout = defaultTakeTimeout;

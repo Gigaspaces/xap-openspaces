@@ -16,9 +16,6 @@
 
 package org.openspaces.utest.core;
 
-import net.jini.core.lease.Lease;
-import net.jini.space.JavaSpace;
-
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.jmock.core.Constraint;
@@ -60,7 +57,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(JavaSpace.NO_WAIT), eq(ReadModifiers.READ_COMMITTED)).will(returnValue(retVal));
+        mockIJSpace.expects(once()).method("read").with(same(template), NULL, eq(0), eq(ReadModifiers.READ_COMMITTED)).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
                 returnValue(TransactionDefinition.ISOLATION_READ_COMMITTED));
@@ -109,7 +106,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Object template = new Object();
         Object retVal = new Object();
 
-        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(JavaSpace.NO_WAIT),
+        mockIJSpace.expects(once()).method("readIfExists").with(same(template), NULL, eq(0),
                 eq(ReadModifiers.READ_COMMITTED)).will(returnValue(retVal));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
         mockTxProvider.expects(once()).method("getCurrentTransactionIsolationLevel").with(eq(gs)).will(
@@ -188,7 +185,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Constraint[] constraints = new Constraint[] {
                 same(template), 
                 NULL, 
-                eq(JavaSpace.NO_WAIT), 
+                eq(0), 
                 eq(ReadModifiers.READ_COMMITTED), 
                 same(false)
                 };
@@ -251,7 +248,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Constraint[] constraints = new Constraint[] {
                 same(template),
                 NULL, 
-                eq(JavaSpace.NO_WAIT),
+                eq(0),
                 eq(ReadModifiers.READ_COMMITTED), 
                 eq(Boolean.TRUE)
         };
@@ -339,7 +336,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
         Mock mockLeaseContext = mock(LeaseContext.class);
         LeaseContext<Object> leaseContext = (LeaseContext<Object>) mockLeaseContext.proxy();
 
-        mockIJSpace.expects(once()).method("write").with(same(entry), NULL, eq(Lease.FOREVER)).will(
+        mockIJSpace.expects(once()).method("write").with(same(entry), NULL, eq(Long.MAX_VALUE)).will(
                 returnValue(leaseContext));
         mockTxProvider.expects(once()).method("getCurrentTransaction").with(eq(gs), eq(gs.getSpace()));
 

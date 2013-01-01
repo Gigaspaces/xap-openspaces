@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.concurrent.Future;
 
 import net.jini.core.transaction.Transaction;
-import net.jini.space.JavaSpace;
 
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
@@ -48,7 +47,7 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.LeaseContext;
 
 /**
- * Provides a simpler interface of both {@link JavaSpace} and GigaSpaces {@link IJSpace} extension
+ * Provides a simpler interface of {@link IJSpace} extension
  * utilizing GigaSpaces extended and simplified programming model.
  * Most operations revolve around the use of Objects allowing to use GigaSpaces support for POJOs.
  *
@@ -272,7 +271,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -289,7 +288,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param clazz   The class of the entry
      * @param id      The id of the entry
@@ -335,7 +334,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -381,7 +380,7 @@ public interface GigaSpace {
      * <code>null</code> if the timeout expires.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 template with <code>null</code> fields being
@@ -402,8 +401,7 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
      */
@@ -429,8 +427,7 @@ public interface GigaSpace {
      *                  exactly on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -443,7 +440,7 @@ public interface GigaSpace {
      * <code>null</code> if the timeout expires.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -460,8 +457,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
      */
@@ -485,8 +481,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -501,7 +496,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 template with <code>null</code> fields being
@@ -519,7 +514,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 template with <code>null</code> fields being
@@ -543,8 +538,7 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
      */
@@ -562,8 +556,7 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -592,8 +585,7 @@ public interface GigaSpace {
      *                  exactly on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -623,8 +615,7 @@ public interface GigaSpace {
      *                  exactly on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @param listener  A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
@@ -640,7 +631,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -656,7 +647,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -676,8 +667,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
      */
@@ -692,9 +682,8 @@ public interface GigaSpace {
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
-     *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 transactionally proper matching object. A timeout of 0 
+     *                 means to wait no time at all.
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -721,8 +710,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -750,8 +738,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @param listener  A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
@@ -769,7 +756,7 @@ public interface GigaSpace {
      * necessary to wait for transactional state to settle.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -790,7 +777,7 @@ public interface GigaSpace {
      * necessary to wait for transactional state to settle.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param clazz   The class of the entry
      * @param id      The id of the entry
@@ -844,7 +831,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -904,7 +891,7 @@ public interface GigaSpace {
      * necessary to wait for transactional state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 the template with <code>null</code> fields being
@@ -927,8 +914,7 @@ public interface GigaSpace {
      *                 exactly on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
      */
@@ -956,8 +942,7 @@ public interface GigaSpace {
      *                  exactly on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -972,7 +957,7 @@ public interface GigaSpace {
      * necessary to wait for transactional state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -991,8 +976,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching object. A timeout of
-     *                 {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                 equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
      */
@@ -1018,8 +1002,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching object. A timeout of
-     *                  {@link JavaSpace#NO_WAIT} means to wait no time at all; this is
-     *                  equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link ReadModifiers}.
      * @return A copy of the object read from the space.
      * @throws DataAccessException
@@ -1029,7 +1012,7 @@ public interface GigaSpace {
     
     /**
      * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * <code>read</code> without timeout (0). Returns an
      * unbounded array of matches. Returns an empty array if no match was found.
      * Same as calling {@link #readMultiple(Object, int) readMultiple(template, Integer.MAX_VALUE)}.
      *
@@ -1046,7 +1029,7 @@ public interface GigaSpace {
         
     /**
      * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * <code>read</code> without timeout (0). Returns an
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
      *
@@ -1071,7 +1054,7 @@ public interface GigaSpace {
 
     /**
      * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * <code>read</code> without timeout (0). Returns an
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
      *
@@ -1098,7 +1081,7 @@ public interface GigaSpace {
 
     /**
      * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * <code>read</code> without timeout (0). Returns an
      * unbounded array of matches. Returns an
      * empty array if no match was found.
      *
@@ -1112,7 +1095,7 @@ public interface GigaSpace {
     
     /**
      * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * <code>read</code> without timeout (0). Returns an
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
      *
@@ -1134,7 +1117,7 @@ public interface GigaSpace {
 
     /**
      * Read any matching entries from the space. Matching is done as in
-     * <code>read</code> without timeout ({@link JavaSpace#NO_WAIT}). Returns an
+     * <code>read</code> without timeout (0). Returns an
      * array with matches bound by <code>maxEntries</code>. Returns an
      * empty array if no match was found.
      *
@@ -1412,7 +1395,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -1429,7 +1412,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param clazz   The class of the entry
      * @param id      The id of the entry
@@ -1475,7 +1458,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -1521,7 +1504,7 @@ public interface GigaSpace {
      * Return <code>null</code> if the timeout expires.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 the template with <code>null</code> fields being wildcards (
@@ -1542,8 +1525,7 @@ public interface GigaSpace {
      *                 on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A removed entry from the space
      * @throws DataAccessException
      */
@@ -1565,8 +1547,7 @@ public interface GigaSpace {
      *                  on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -1579,7 +1560,7 @@ public interface GigaSpace {
      * Return <code>null</code> if the timeout expires.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -1596,8 +1577,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A removed entry from the space
      * @throws DataAccessException
      */
@@ -1617,8 +1597,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -1633,7 +1612,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 the template with <code>null</code> fields being wildcards (
@@ -1651,7 +1630,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 the template with <code>null</code> fields being wildcards (
@@ -1675,8 +1654,7 @@ public interface GigaSpace {
      *                 on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A removed entry from the space
      * @throws DataAccessException
      */
@@ -1694,8 +1672,7 @@ public interface GigaSpace {
      *                 on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @param listener A listener to be notified when a result arrives
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -1720,8 +1697,7 @@ public interface GigaSpace {
      *                  on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -1747,8 +1723,7 @@ public interface GigaSpace {
      *                  on the serialized form").
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @param listener A listener to be notified when a result arrives
      * @return A removed entry from the space
@@ -1764,7 +1739,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -1780,7 +1755,7 @@ public interface GigaSpace {
      * return a result (<code>null</code> in case there was no match).
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -1800,8 +1775,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A removed entry from the space
      * @throws DataAccessException
      */
@@ -1817,8 +1791,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @param listener A listener to be notified when a result arrives.
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -1841,8 +1814,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -1866,8 +1838,7 @@ public interface GigaSpace {
      *                  {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout   How long the client is willing to wait for a
      *                  transactionally proper matching entry. A timeout of
-     *                  {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                  time at all; this is equivalent to a wait of zero.
+     *                  0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @param listener  A listener to be notified when a result arrives.
      * @return A removed entry from the space
@@ -1884,7 +1855,7 @@ public interface GigaSpace {
      * call is done only if necessary to wait for transactional state to settle.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -1904,7 +1875,7 @@ public interface GigaSpace {
      * call is done only if necessary to wait for transactional state to settle.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param clazz   The class of the entry
      * @param id      The id of the entry
@@ -1956,7 +1927,7 @@ public interface GigaSpace {
      * <code>null</code> if there is no match.
      *
      * <p>The timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
@@ -2016,7 +1987,7 @@ public interface GigaSpace {
      * state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template The template used for matching. Matching is done against
      *                 the template with <code>null</code> fields being wildcards (
@@ -2039,8 +2010,7 @@ public interface GigaSpace {
      *                 on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A removed entry from the space
      * @throws DataAccessException
      */
@@ -2064,8 +2034,7 @@ public interface GigaSpace {
      *                 on the serialized form").
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
@@ -2080,7 +2049,7 @@ public interface GigaSpace {
      * state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
-     * (using its factory) and defaults to {@link net.jini.space.JavaSpace#NO_WAIT}.
+     * (using its factory) and defaults to 0.
      *
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
@@ -2099,8 +2068,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @return A removed entry from the space
      * @throws DataAccessException
      */
@@ -2122,8 +2090,7 @@ public interface GigaSpace {
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
      *                 transactionally proper matching entry. A timeout of
-     *                 {@link net.jini.space.JavaSpace#NO_WAIT} means to wait no
-     *                 time at all; this is equivalent to a wait of zero.
+     *                 0 means to wait no time at all.
      * @param modifiers one or a union of {@link TakeModifiers}.
      * @return A removed entry from the space
      * @throws DataAccessException
