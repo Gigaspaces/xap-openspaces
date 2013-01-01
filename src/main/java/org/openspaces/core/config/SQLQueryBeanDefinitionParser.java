@@ -38,6 +38,8 @@ public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionPa
 
     private static final String TEMPLATE = "template";
 
+    private static final String PROJECTIONS = "projections";
+
     protected Class<? extends SQLQueryFactoryBean> getBeanClass(Element element) {
         return SQLQueryFactoryBean.class;
     }
@@ -53,6 +55,11 @@ public class SQLQueryBeanDefinitionParser extends AbstractSingleBeanDefinitionPa
         String className = element.getAttribute(CLASS_NAME);
         if (StringUtils.hasLength(className)) {
             builder.addPropertyValue("className", className);
+        }
+
+        String projections = element.getAttribute(PROJECTIONS);
+        if (StringUtils.hasLength(projections)) {
+            builder.addPropertyValue("projections", projections);
         }
 
         Element templateEle = DomUtils.getChildElementByTagName(element, TEMPLATE);

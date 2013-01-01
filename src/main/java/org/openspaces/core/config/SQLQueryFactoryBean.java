@@ -29,6 +29,8 @@ import org.springframework.util.Assert;
  */
 public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
 
+    private static final String PROJECTIONS_SEPARATOR = ",";
+
     private String where;
 
     private Object template;
@@ -38,6 +40,8 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
     private String className;
 
     private SQLQuery<Object> sqlQuery;
+
+    private String projections;
 
     public void setWhere(String where) {
         this.where = where;
@@ -71,6 +75,16 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
         return this.className;
     }
 
+    public String getProjections()
+    {
+        return this.projections;
+    }
+
+    public void setProjections(String projections)
+    {
+        this.projections = projections;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         validate();
@@ -80,6 +94,12 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
             sqlQuery = new SQLQuery<Object>(getType(), getWhere());
         } else {
             sqlQuery = new SQLQuery<Object>(getClassName(), getWhere());
+        }
+        if (projections != null) {
+            String[] projectionsArray = projections.split(PROJECTIONS_SEPARATOR);
+            for (int i = 0; i < projectionsArray.length; i++)
+                 projectionsArray[i] = projectionsArray[i].trim();
+            sqlQuery.setProjections(projectionsArray);
         }
     }
 

@@ -1678,6 +1678,14 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
+                <xsd:attribute name="projections" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The properties names (separated by a comma) of the properties the result of this query will contain.
+                            non projected properties will be null in the result of this query's execution.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
