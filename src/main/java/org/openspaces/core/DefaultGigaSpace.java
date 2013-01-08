@@ -47,6 +47,7 @@ import com.gigaspaces.client.ChangeResult;
 import com.gigaspaces.client.ChangeSet;
 import com.gigaspaces.client.ClearModifiers;
 import com.gigaspaces.client.CountModifiers;
+import com.gigaspaces.client.IsolationLevelModifiers;
 import com.gigaspaces.client.ReadByIdsResult;
 import com.gigaspaces.client.ReadByIdsResultImpl;
 import com.gigaspaces.client.ReadModifiers;
@@ -242,14 +243,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (readModifiers.getCode() == 0) {
             return IsolationLevelHelpers.toReadModifiers(defaultIsolationLevel);
         }
-        if ((springIsolationLevel == TransactionDefinition.ISOLATION_REPEATABLE_READ && !readModifiers.isRepeatableRead()) ||
-            (springIsolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED && !readModifiers.isReadCommitted()) ||
-            (springIsolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED && !readModifiers.isDirtyRead())) { 
-            throw new IllegalArgumentException("Cannot configure conflicting isolation level and " +
-            		"default read modifiers." + StringUtils.NEW_LINE +
-            		"defaultIsolationLevel [" + defaultIsolationLevel + "]" + StringUtils.NEW_LINE + 
-            		"defaultReadModifiers [" + readModifiers.getCode() + "]");
-        }
+        validateWithDefaultIsolationLevel(readModifiers, "read");
         return readModifiers;
     }
     
@@ -257,15 +251,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         if (countModifiers.getCode() == 0) {
             return IsolationLevelHelpers.toCountModifiers(defaultIsolationLevel);
         }
-        if ((springIsolationLevel == TransactionDefinition.ISOLATION_REPEATABLE_READ && !countModifiers.isRepeatableRead()) ||
-            (springIsolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED && !countModifiers.isReadCommitted()) ||
-            (springIsolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED && !countModifiers.isDirtyRead())) { 
-            throw new IllegalArgumentException("Cannot configure conflicting isolation level and " +
-                    "default count modifiers." + StringUtils.NEW_LINE +
-                    "defaultIsolationLevel [" + defaultIsolationLevel + "]" + StringUtils.NEW_LINE + 
-                    "defaultReadModifiers [" + countModifiers.getCode() + "]");
-            }
+        validateWithDefaultIsolationLevel(countModifiers, "count");
         return countModifiers;
+    }
+
+    private void validateWithDefaultIsolationLevel(IsolationLevelModifiers modifiers, String name) {
+        if ((springIsolationLevel == TransactionDefinition.ISOLATION_REPEATABLE_READ && !modifiers.isRepeatableRead()) ||
+                (springIsolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED && !modifiers.isReadCommitted()) ||
+                (springIsolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED && !modifiers.isDirtyRead())) { 
+                throw new IllegalArgumentException("Cannot configure conflicting isolation level and " +
+                        "default " + name + " modifiers." + StringUtils.NEW_LINE +
+                        "defaultIsolationLevel [" + defaultIsolationLevel + "]" + StringUtils.NEW_LINE + 
+                        "default " + name + " modifiers [" + modifiers.getCode() + "]");
+            }
     }
     
     // GigaSpace interface Methods
