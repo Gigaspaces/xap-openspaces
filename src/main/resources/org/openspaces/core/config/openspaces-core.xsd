@@ -994,20 +994,62 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
-                    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-					     <xsd:element ref="space-type">
-					       <xsd:annotation>
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+					    <xsd:element ref="space-type">
+					        <xsd:annotation>
 					            <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
 					                Defines a single document type for the space
 					            </xsd:documentation>
 					            <xsd:appinfo>
-					                 <tool:annotation kind="ref">
+					                <tool:annotation kind="ref">
 					                    <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
 					                </tool:annotation>
 					            </xsd:appinfo>
 					        </xsd:annotation>
 					    </xsd:element>
-                    </xsd:sequence>
+					    <xsd:element ref="write-modifier">
+					        <xsd:annotation>
+					            <xsd:documentation>
+					            	Defines a single default write modifier for the space proxy
+					            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+					    <xsd:element ref="read-modifier">
+					        <xsd:annotation>
+					            <xsd:documentation>
+					            	Defines a single default read modifier for the space proxy
+					            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+					    <xsd:element ref="change-modifier">
+					        <xsd:annotation>
+					            <xsd:documentation>
+					            	Defines a single default change modifier for the space proxy
+					            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+					    <xsd:element ref="take-modifier">
+					        <xsd:annotation>
+					            <xsd:documentation>
+					            	Defines a single default take modifier for the space proxy
+					            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+					    <xsd:element ref="clear-modifier">
+					        <xsd:annotation>
+					            <xsd:documentation>
+					            	Defines a single default clear modifier for the space proxy
+					            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+					    <xsd:element ref="count-modifier">
+					        <xsd:annotation>
+					            <xsd:documentation>
+					            	Defines a single default count modifier for the space proxy
+					            </xsd:documentation>
+					        </xsd:annotation>
+					    </xsd:element>
+                    </xsd:choice>
                     <xsd:attribute name="space" type="spaceRefType" use="required">
                         <xsd:annotation>
                             <xsd:documentation source="java:com.j_spaces.core.IJSpace">
@@ -1878,9 +1920,168 @@
         <xsd:union memberTypes="xsd:string"/>
     </xsd:simpleType>
     
-    
-    
-    
+	<xsd:element name="write-modifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a single default write modifier for the space proxy
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="value" use="required">
+				<xsd:simpleType>
+				    <xsd:annotation>
+			            <xsd:documentation>
+							The modifier constant name as defined in WriteModifiers
+			            </xsd:documentation>
+			        </xsd:annotation>
+			        <xsd:restriction base="xsd:string">
+			            <xsd:enumeration value="NONE"/>
+			            <xsd:enumeration value="WRITE_ONLY"/>
+			            <xsd:enumeration value="UPDATE_ONLY"/>
+			            <xsd:enumeration value="UPDATE_OR_WRITE"/>
+			            <xsd:enumeration value="RETURN_PREV_ON_UPDATE"/>
+			            <xsd:enumeration value="ONE_WAY"/>
+			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+			            <xsd:enumeration value="PARTIAL_UPDATE"/>
+			        </xsd:restriction>
+			    </xsd:simpleType>			
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+     
+   	<xsd:element name="read-modifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a single default read modifier for the space proxy
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="value" use="required">
+				<xsd:simpleType>
+				    <xsd:annotation>
+			            <xsd:documentation>
+							The modifier constant name as defined in ReadModifiers
+			            </xsd:documentation>
+			        </xsd:annotation>
+			        <xsd:restriction base="xsd:string">
+			            <xsd:enumeration value="NONE"/>
+			            <xsd:enumeration value="REPEATABLE_READ"/>
+			            <xsd:enumeration value="READ_COMMITTED"/>
+			            <xsd:enumeration value="DIRTY_READ"/>
+			            <xsd:enumeration value="EXCLUSIVE_READ_LOCK"/>
+			            <xsd:enumeration value="IGNORE_PARTIAL_FAILURE"/>
+			            <xsd:enumeration value="FIFO"/>
+			            <xsd:enumeration value="FIFO_GROUPING_POLL"/>
+			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+			        </xsd:restriction>
+			    </xsd:simpleType>			
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element> 
+      
+    <xsd:element name="change-modifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a single default change modifier for the space proxy
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="value" use="required">
+				<xsd:simpleType>
+				    <xsd:annotation>
+			            <xsd:documentation>
+							The modifier constant name as defined in ChangeModifiers
+			            </xsd:documentation>
+			        </xsd:annotation>
+			        <xsd:restriction base="xsd:string">
+			            <xsd:enumeration value="NONE"/>
+			            <xsd:enumeration value="ONE_WAY"/>
+			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+			            <xsd:enumeration value="RETURN_DETAILED_RESULTS"/>
+			        </xsd:restriction>
+			    </xsd:simpleType>			
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>   
+        
+    <xsd:element name="take-modifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a single default take modifier for the space proxy
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="value" use="required">
+				<xsd:simpleType>
+				    <xsd:annotation>
+			            <xsd:documentation>
+							The modifier constant name as defined in TakeModifiers
+			            </xsd:documentation>
+			        </xsd:annotation>
+			        <xsd:restriction base="xsd:string">
+			            <xsd:enumeration value="NONE"/>
+			            <xsd:enumeration value="EVICT_ONLY"/>
+			            <xsd:enumeration value="IGNORE_PARTIAL_FAILURE"/>
+			            <xsd:enumeration value="FIFO"/>
+			            <xsd:enumeration value="FIFO_GROUPING_POLL"/>
+			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+			        </xsd:restriction>
+			    </xsd:simpleType>			
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>  
+
+    <xsd:element name="count-modifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a single default count modifier for the space proxy
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="value" use="required">
+				<xsd:simpleType>
+				    <xsd:annotation>
+			            <xsd:documentation>
+							The modifier constant name as defined in CountModifiers
+			            </xsd:documentation>
+			        </xsd:annotation>
+			        <xsd:restriction base="xsd:string">
+			            <xsd:enumeration value="NONE"/>
+			            <xsd:enumeration value="REPEATABLE_READ"/>
+			            <xsd:enumeration value="READ_COMMITTED"/>
+			            <xsd:enumeration value="DIRTY_READ"/>
+			            <xsd:enumeration value="EXCLUSIVE_READ_LOCK"/>
+			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+			        </xsd:restriction>
+			    </xsd:simpleType>			
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>  
+
+    <xsd:element name="clear-modifier">
+		<xsd:annotation>
+			<xsd:documentation>
+				Defines a single default clear modifier for the space proxy
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="value" use="required">
+				<xsd:simpleType>
+				    <xsd:annotation>
+			            <xsd:documentation>
+							The modifier constant name as defined in ClearModifiers
+			            </xsd:documentation>
+			        </xsd:annotation>
+			        <xsd:restriction base="xsd:string">
+			            <xsd:enumeration value="NONE"/>
+			            <xsd:enumeration value="EVICT_ONLY"/>
+			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+			        </xsd:restriction>
+			    </xsd:simpleType>			
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>  
+        
     <xsd:element name="space-type">
        <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.config.GigaSpaceDocumentTypeDescriptorFactoryBean">

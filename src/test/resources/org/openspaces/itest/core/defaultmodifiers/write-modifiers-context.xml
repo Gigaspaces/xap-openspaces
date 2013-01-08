@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd">
+ 
+ 	<os-core:space id="space" url="/./dataGrid" />
+ 
+ 	<os-core:giga-space id="empty" space="space">
+ 	
+	</os-core:giga-space>
+ 	
+	<os-core:giga-space id="none" space="space">
+		<os-core:write-modifier value="NONE"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="memoryOnly" space="space">
+		<os-core:write-modifier value="MEMORY_ONLY_SEARCH"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="oneWay" space="space">
+		<os-core:write-modifier value="ONE_WAY"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="returnPrev" space="space">
+		<os-core:write-modifier value="RETURN_PREV_ON_UPDATE"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="upateOnly" space="space">
+		<os-core:write-modifier value="UPDATE_ONLY"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="writeOnly" space="space">
+		<os-core:write-modifier value="WRITE_ONLY"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="updateOrWrite" space="space">
+		<os-core:write-modifier value="UPDATE_OR_WRITE"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="partialUpdate" space="space">
+		<os-core:write-modifier value="PARTIAL_UPDATE"/>
+	</os-core:giga-space>
+
+	<os-core:giga-space id="memoryOnlyAndOneWay" space="space">
+		<os-core:write-modifier value="MEMORY_ONLY_SEARCH"/>
+		<os-core:write-modifier value="ONE_WAY"/>
+	</os-core:giga-space>
+
+</beans>

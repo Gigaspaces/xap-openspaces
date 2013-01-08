@@ -148,6 +148,48 @@ public interface GigaSpace {
     int getModifiersForIsolationLevel();
 
     /**
+     * Gets the default {@link WriteModifiers} set during this {@link GigaSpace} configuration.
+     * This value is configured either by using a {@link GigaSpaceConfigurer} or through the pu.xml.
+     */
+    WriteModifiers getDefaultWriteModifiers();
+    
+    /**
+     * Gets the default {@link ClearModifiers} set during this {@link GigaSpace} configuration.
+     * This value is configured either by using a {@link GigaSpaceConfigurer} or through the pu.xml.
+     */
+    ClearModifiers getDefaultClearModifiers();
+
+    /**
+     * Gets the default {@link CountModifiers} set during this {@link GigaSpace} configuration.
+     * This value is configured either by using a {@link GigaSpaceConfigurer} or through the pu.xml.
+     * If there is an active transaction and that transaction has any isolation level set on it, that
+     * isolation level will be merged into the returned modifiers with any previously set isolation level
+     * on the modifiers overriden.
+     */
+    CountModifiers getDefaultCountModifiers();
+
+    /**
+     * Gets the default {@link ReadModifiers} set during this {@link GigaSpace} configuration.
+     * This value is configured either by using a {@link GigaSpaceConfigurer} or through the pu.xml.
+     * If there is an active transaction and that transaction has any isolation level set on it, that
+     * isolation level will be merged into the returned modifiers with any previously set isolation level
+     * on the modifiers overriden.
+     */
+    ReadModifiers getDefaultReadModifiers();
+
+    /**
+     * Gets the default {@link TakeModifiers} set during this {@link GigaSpace} configuration.
+     * This value is configured either by using a {@link GigaSpaceConfigurer} or through the pu.xml.
+     */
+    TakeModifiers getDefaultTakeModifiers();
+
+    /**
+     * Gets the default {@link ChangeModifiers} set during this {@link GigaSpace} configuration.
+     * This value is configured either by using a {@link GigaSpaceConfigurer} or through the pu.xml.
+     */
+    ChangeModifiers getDefaultChangeModifiers();
+    
+    /**
      * Removes the entries that match the specified template and the specified transaction from this space.
      *
      * <p>If the clear operation conducted without transaction (null as value) it will clear all entries that

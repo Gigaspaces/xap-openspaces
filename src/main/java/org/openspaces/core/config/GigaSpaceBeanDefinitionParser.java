@@ -16,13 +16,17 @@
 
 package org.openspaces.core.config;
 
+import java.util.List;
+
 import org.openspaces.core.GigaSpaceFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -47,6 +51,8 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
+        handleModifierElements(element, parserContext, builder);
+        
         NamedNodeMap attributes = element.getAttributes();
         for (int x = 0; x < attributes.getLength(); x++) {
             Attr attribute = (Attr) attributes.item(x);
@@ -74,6 +80,41 @@ public class GigaSpaceBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             builder.addPropertyValue(propertyName, attribute.getValue());
         }
         
+    }
+
+    private static enum ModifierElement {
+        Write, Read, Take, Count, Clear, Change
+    }
+    
+    private void handleModifierElements(Element element, ParserContext parserContext,
+            BeanDefinitionBuilder builder) {
+        handleModifierElements(element, parserContext, builder, ModifierElement.Write);
+        handleModifierElements(element, parserContext, builder, ModifierElement.Read);
+        handleModifierElements(element, parserContext, builder, ModifierElement.Take);
+        handleModifierElements(element, parserContext, builder, ModifierElement.Count);
+        handleModifierElements(element, parserContext, builder, ModifierElement.Clear);
+        handleModifierElements(element, parserContext, builder, ModifierElement.Change);
+    }
+
+    @SuppressWarnings({"unchecked","rawtypes"})
+    private void handleModifierElements(Element element, ParserContext parserContext,
+            BeanDefinitionBuilder builder, ModifierElement modifierElementEnum) {
+        List<Element> modifiers = DomUtils.getChildElementsByTagName(element, 
+                                                                     modifierElementEnum.name().toLowerCase() + "-modifier");
+        if (modifiers.isEmpty()) {
+            return;
+        }
+        
+        ManagedList managedModifiers = new ManagedList();
+        for (Element modifierElement : modifiers) {
+            managedModifiers.add(parserContext.getDelegate().parsePropertySubElement(
+                                          modifierElement, 
+                                          builder.getRawBeanDefinition(), 
+                                          null));
+        }
+        
+        builder.addPropertyValue("default" + modifierElementEnum.name() + "Modifiers", 
+                                 managedModifiers);
     }
 
     protected String extractPropertyName(String attributeName) {

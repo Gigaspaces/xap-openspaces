@@ -33,6 +33,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.util.Assert;
 
+import com.gigaspaces.client.ChangeModifiers;
+import com.gigaspaces.client.ClearModifiers;
+import com.gigaspaces.client.CountModifiers;
+import com.gigaspaces.client.ReadModifiers;
+import com.gigaspaces.client.TakeModifiers;
+import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.internal.client.cache.ISpaceCache;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
@@ -123,6 +129,18 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
     private long defaultWriteLease = Long.MAX_VALUE;
 
     private int defaultIsolationLevel = TransactionDefinition.ISOLATION_DEFAULT;
+    
+    private WriteModifiers[] defaultWriteModifiers;
+    
+    private ReadModifiers[] defaultReadModifiers;
+    
+    private TakeModifiers[] defaultTakeModifiers;
+    
+    private ClearModifiers[] defaultClearModifiers;
+    
+    private CountModifiers[] defaultCountModifiers;
+    
+    private ChangeModifiers[] defaultChangeModifiers;
     
     private String beanName;
 
@@ -227,7 +245,73 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
         }
         this.defaultIsolationLevel = defaultIsolationLevel;
     }
-
+    
+    /**
+     * Set the default {@link WriteModifiers} to be used for write operations
+     * on the {@link GigaSpace} instance.
+     * Defaults to {@link WriteModifiers#NONE}
+     * @param defaultWriteModifiers The default write modifiers.
+     * @see {@link WriteModifiers}
+     */
+    public void setDefaultWriteModifiers(WriteModifiers[] defaultWriteModifiers) {
+        this.defaultWriteModifiers = defaultWriteModifiers;
+    }
+    
+    /**
+     * Set the default {@link ReadModifiers} to be used for read operations
+     * on the {@link GigaSpace} instance.
+     * Defaults to {@link ReadModifiers#NONE}
+     * @param defaultReadModifiers The default read modifiers.
+     * @see {@link ReadModifiers}
+     */
+    public void setDefaultReadModifiers(ReadModifiers[] defaultReadModifiers) {
+        this.defaultReadModifiers = defaultReadModifiers;
+    }
+    
+    /**
+     * Set the default {@link TakeModifiers} to be used for take operations
+     * on the {@link GigaSpace} instance.
+     * Defaults to {@link TakeModifiers#NONE}
+     * @param defaultTakeModifiers The default take modifiers.
+     * @see {@link TakeModifiers}
+     */
+    public void setDefaultTakeModifiers(TakeModifiers[] defaultTakeModifiers) {
+        this.defaultTakeModifiers = defaultTakeModifiers;
+    }
+    
+    /**
+     * Set the default {@link CountModifiers} to be used for count operations
+     * on the {@link GigaSpace} instance.
+     * Defaults to {@link CountModifiers#NONE}
+     * @param defaultCountModifiers The default count modifiers.
+     * @see {@link CountModifiers}
+     */
+    public void setDefaultCountModifiers(CountModifiers[] defaultCountModifiers) {
+        this.defaultCountModifiers = defaultCountModifiers;
+    }
+    
+    /**
+     * Set the default {@link ClearModifiers} to be used for clear operations
+     * on the {@link GigaSpace} instance.
+     * Defaults to {@link ClearModifiers#NONE}
+     * @param defaultClearModifiers The default clear modifiers.
+     * @see {@link ClearModifiers}
+     */
+    public void setDefaultClearModifiers(ClearModifiers[] defaultClearModifiers) {
+        this.defaultClearModifiers = defaultClearModifiers;
+    }
+    
+    /**
+     * Set the default {@link ChangeModifiers} to be used for change operations
+     * on the {@link GigaSpace} instance.
+     * Defaults to {@link ChangeModifiers#NONE}
+     * @param defaultChangeModifiers The default change modifiers.
+     * @see {@link ChangeModifiers}
+     */
+    public void setDefaultChangeModifiers(ChangeModifiers[] defaultChangeModifiers) {
+        this.defaultChangeModifiers = defaultChangeModifiers;
+    }
+    
     /**
      * <p>Set the transaction manager to enable transactional operations. Can be <code>null</code>
      * if transactional support is not required or the default space is used as a transactional context.
@@ -282,8 +366,31 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
         gigaSpace.setDefaultReadTimeout(defaultReadTimeout);
         gigaSpace.setDefaultTakeTimeout(defaultTakeTimeout);
         gigaSpace.setDefaultWriteLease(defaultWriteLease);
+        setDefaultModifiers();
+        
         gigaSpace.setName(beanName == null ? space.getName() : beanName);
       
+    }
+
+    private void setDefaultModifiers() {
+        if (defaultWriteModifiers != null) {
+            gigaSpace.setDefaultWriteModifiers(new WriteModifiers(defaultWriteModifiers));
+        }
+        if (defaultReadModifiers != null) {
+            gigaSpace.setDefaultReadModifiers(new ReadModifiers(defaultReadModifiers));
+        }
+        if (defaultTakeModifiers != null) {
+            gigaSpace.setDefaultTakeModifiers(new TakeModifiers(defaultTakeModifiers));
+        }
+        if (defaultCountModifiers != null) {
+            gigaSpace.setDefaultCountModifiers(new CountModifiers(defaultCountModifiers));
+        }
+        if (defaultClearModifiers != null) {
+            gigaSpace.setDefaultClearModifiers(new ClearModifiers(defaultClearModifiers));
+        }
+        if (defaultChangeModifiers != null) {
+            gigaSpace.setDefaultChangeModifiers(new ChangeModifiers(defaultChangeModifiers));
+        }
     }
 
     /**
@@ -313,4 +420,5 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
         if (defaultTxProvider != null)
             defaultTxProvider.destroy();
     }
+
 }
