@@ -33,7 +33,10 @@ import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.IRemoteJSpaceAdmin;
+import com.j_spaces.core.admin.SpaceConfig;
 import com.j_spaces.core.client.SpaceURL;
+import com.j_spaces.core.cluster.ClusterPolicy;
+import com.j_spaces.core.cluster.ReplicationPolicy;
 
 /**
  * A Space service defined within a processing unit.
@@ -55,6 +58,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
         public static final String URL = "url";
         public static final String SPACE_URL = "spaceUrl";
         public static final String MIRROR = "mirror";
+        public static final String LOCALGATEWAYNAME = "local-site-name";
     }
 
     private IJSpace space;
@@ -89,9 +93,14 @@ public class SpaceServiceDetails extends PlainServiceDetails {
             spaceType = SpaceType.REMOTE;
         } else { // embedded
             try {
-                if (((IRemoteJSpaceAdmin) space.getAdmin()).getConfig().isMirrorServiceEnabled()) {
+                SpaceConfig spaceConfig = ((IRemoteJSpaceAdmin) space.getAdmin()).getConfig();
+				if (spaceConfig.isMirrorServiceEnabled()) {
                     getAttributes().put(Attributes.MIRROR, true);
                 }
+				ClusterPolicy clusterPolicy = spaceConfig.getClusterPolicy();
+				ReplicationPolicy replicationPolicy = clusterPolicy != null? clusterPolicy.getReplicationPolicy() : null;
+				if (clusterPolicy != null && replicationPolicy != null && replicationPolicy.getGatewaysPolicy() != null)
+					getAttributes().put(Attributes.LOCALGATEWAYNAME, replicationPolicy.getGatewaysPolicy().getLocalSiteName());
             } catch (RemoteException e) {
                 getAttributes().put(Attributes.MIRROR, false);
             }
@@ -146,6 +155,10 @@ public class SpaceServiceDetails extends PlainServiceDetails {
 
     public SpaceURL getSpaceUrl() {
         return (SpaceURL) getAttributes().get(Attributes.SPACE_URL);
+    }
+    
+    public String getLocalGatewayName() {
+    	return (String) getAttributes().get(Attributes.LOCALGATEWAYNAME);
     }
 
     @Override
