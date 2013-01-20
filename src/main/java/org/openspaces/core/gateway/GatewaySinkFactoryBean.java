@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.core.gateway;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -199,6 +200,11 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         if (errorHandlingConfiguration != null)
             errorHandlingConfiguration.copyToSinkConfiguration(config);
         if (getGatewaySources() != null) {
+        	for (Iterator<GatewaySource> iterator = getGatewaySources().iterator(); iterator.hasNext();) {
+        		GatewaySource source = iterator.next();
+        		if (source.getName().equals(getLocalGatewayName()))
+        			iterator.remove();
+			}
             String[] gatewaySourcesNames = new String[getGatewaySources().size()];
             for (int i = 0; i < getGatewaySources().size(); i++) {
                 gatewaySourcesNames[i] = getGatewaySources().get(i).getName();

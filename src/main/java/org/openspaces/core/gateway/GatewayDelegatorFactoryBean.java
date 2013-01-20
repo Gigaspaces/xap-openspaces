@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.core.gateway;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.openspaces.core.space.SecurityConfig;
@@ -68,8 +69,13 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
         
         ReplicationConnectionDelegatorConfig config = new ReplicationConnectionDelegatorConfig(getLocalGatewayName());
         config.setStartLookupService(isStartEmbeddedLus());
-        if (gatewayDelegations != null) {
-            for (GatewayDelegation delegation : gatewayDelegations) {
+        if (getGatewayDelegations() != null) {
+        	for (Iterator<GatewayDelegation> iterator = getGatewayDelegations().iterator(); iterator.hasNext();) {
+        		GatewayDelegation target = iterator.next();
+        		if (target.getTarget().equals(getLocalGatewayName()))
+        			iterator.remove();
+        	}
+            for (GatewayDelegation delegation : getGatewayDelegations()) {
                 ReplicationDelegationConfig replicationRoutingConfig = new ReplicationDelegationConfig();
                 replicationRoutingConfig.setTargetName(delegation.getTarget());
                 replicationRoutingConfig.setDelegation(delegation.getDelegateThrough());
