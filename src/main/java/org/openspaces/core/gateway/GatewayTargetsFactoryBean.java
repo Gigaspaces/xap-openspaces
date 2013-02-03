@@ -41,6 +41,7 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
     private Integer pendingOperationThreshold;
     private Long maxRedoLogCapacity;
     private RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded;
+    private Boolean replicateChangeAsUpdate;
     
     public GatewayTargetsFactoryBean() {
     }
@@ -120,6 +121,15 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
     }
     
     /**
+     * Sets whether change operations should be replicated as full update.
+     * @param replicateChangeAsUpdate true if change should be replicated as update.
+     */
+    public void setReplicateChangeAsUpdate(Boolean replicateChangeAsUpdate)
+    {
+        this.replicateChangeAsUpdate = replicateChangeAsUpdate;
+    }
+    
+    /**
      * @return A new {@link GatewaysPolicy} instance using the bean's properties.
      */
     public GatewaysPolicy asGatewaysPolicy() {
@@ -149,6 +159,8 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
             policy.setMaxRedoLogCapacity(maxRedoLogCapacity.longValue());
         if (onRedoLogCapacityExceeded != null)
             policy.setOnRedoLogCapacityExceeded(onRedoLogCapacityExceeded);
+        if (replicateChangeAsUpdate != null)
+            policy.setReplicateChangeAsUpdate(replicateChangeAsUpdate.booleanValue());
         return policy;
     }
 
@@ -166,6 +178,8 @@ public class GatewayTargetsFactoryBean implements InitializingBean {
                     gatewayTarget.setPendingOperationThreshold(pendingOperationThreshold);
                 if (gatewayTarget.getOnRedoLogCapacityExceeded() == null)
                     gatewayTarget.setOnRedoLogCapacityExceeded(onRedoLogCapacityExceeded);
+                if (gatewayTarget.isReplicateChangeAsUpdate() == null)
+                    gatewayTarget.setReplicateChangeAsUpdate(replicateChangeAsUpdate);
             }
         }
     }

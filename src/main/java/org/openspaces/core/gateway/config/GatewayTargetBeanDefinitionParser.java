@@ -40,6 +40,7 @@ public class GatewayTargetBeanDefinitionParser extends AbstractSimpleBeanDefinit
     private static final String MAX_REDOLOG_CAPACITY = "max-redo-log-capacity";
     private static final String PENDING_OPERATION_THRESHOLD = "pending-operation-threshold";
     private static final String ON_REDOLOG_CAPACITY_EXCEEDED = "on-redo-log-capacity-exceeded";
+    private static final String REPLICATE_CHANGE_AS_UPDATE = "replicate-change-as-update";
     
     @Override
     protected Class<GatewayTarget> getBeanClass(Element element) {
@@ -88,6 +89,10 @@ public class GatewayTargetBeanDefinitionParser extends AbstractSimpleBeanDefinit
         String onRedoLogCapacityExceeded = element.getAttribute(ON_REDOLOG_CAPACITY_EXCEEDED);
         if (StringUtils.hasText(onRedoLogCapacityExceeded))
             builder.addPropertyValue("onRedoLogCapacityExceeded", parseOnRedoLogCapacityExceededString(onRedoLogCapacityExceeded));
+        
+        String replicateChangeAsUpdate = element.getAttribute(REPLICATE_CHANGE_AS_UPDATE);
+        if (StringUtils.hasText(replicateChangeAsUpdate))
+            builder.addPropertyValue("replicateChangeAsUpdate", replicateChangeAsUpdate);
     }
 
     private static RedoLogCapacityExceededPolicy parseOnRedoLogCapacityExceededString(String onRedoLogCapacityExceededString) {

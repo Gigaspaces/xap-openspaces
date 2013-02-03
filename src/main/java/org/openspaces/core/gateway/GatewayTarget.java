@@ -35,6 +35,7 @@ public class GatewayTarget {
     private Integer pendingOperationThreshold;
     private Long maxRedoLogCapacity;
     private RedoLogCapacityExceededPolicy onRedoLogCapacityExceeded;
+    private Boolean replicateChangeAsUpdate;
 
     public GatewayTarget() {
         
@@ -153,6 +154,26 @@ public class GatewayTarget {
     public RedoLogCapacityExceededPolicy getOnRedoLogCapacityExceeded() {
         return onRedoLogCapacityExceeded;
     }
+    
+    /**
+     * Sets whether change operations should be replicated as full update.
+     * @param replicateChangeAsUpdate true if change should be replicated as update.
+     */
+    public void setReplicateChangeAsUpdate(Boolean replicateChangeAsUpdate)
+    {
+        this.replicateChangeAsUpdate = replicateChangeAsUpdate;
+    }
+    
+    /**
+     * get replicate change as update behavior for this gateway.
+     */
+    public Boolean isReplicateChangeAsUpdate()
+    {
+        return replicateChangeAsUpdate;
+    }
+    
+    
+    
     /**
      * @return A new {@link GatewayPolicy} instance from the gateway target's properties.
      */
@@ -187,6 +208,10 @@ public class GatewayTarget {
             policy.setOnRedoLogCapacityExceeded(onRedoLogCapacityExceeded);
         else
             policy.setOnRedoLogCapacityExceeded(defaultGatewayPolicy.getOnRedoLogCapacityExceeded());
+        if (replicateChangeAsUpdate != null)
+            policy.setReplicateChangeAsUpdate(replicateChangeAsUpdate.booleanValue());
+        else
+            policy.setReplicateChangeAsUpdate(defaultGatewayPolicy.isReplicateChangeAsUpdate());
         return policy;
     }
     

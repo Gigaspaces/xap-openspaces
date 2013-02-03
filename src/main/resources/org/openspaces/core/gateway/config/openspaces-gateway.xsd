@@ -216,6 +216,13 @@
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
+				<xsd:attribute name="replicate-change-as-update" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation>
+							Specifies whether change operation should be replicated as full update.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
 				</xsd:complexType>
 		      </xsd:element>
 		    </xsd:sequence>
@@ -274,6 +281,13 @@
 						<xsd:enumeration value="drop-oldest" />
 					</xsd:restriction>
 				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="replicate-change-as-update" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						Specifies whether change operation should be replicated as full update.
+					</xsd:documentation>
+				</xsd:annotation>
 			</xsd:attribute>
           </xsd:extension>
           </xsd:complexContent>
