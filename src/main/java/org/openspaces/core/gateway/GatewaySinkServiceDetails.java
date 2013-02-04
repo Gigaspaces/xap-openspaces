@@ -41,8 +41,15 @@ public class GatewaySinkServiceDetails extends GatewayServiceDetails {
         super();
     }
     
-    public GatewaySinkServiceDetails(String localGatewayName, String[] gatewaySourceNames, boolean requiresBootstrap, String localSpaceUrl) {
-        super(localGatewayName + "-sink", SERVICE_SUB_TYPE, "gateway sink (" + localGatewayName + ")", "gateway sink (" + localGatewayName + ")", localGatewayName);
+    public GatewaySinkServiceDetails(String localGatewayName, String[] gatewaySourceNames, boolean requiresBootstrap, String localSpaceUrl, int discoveryPort, int communicationPort, boolean embeddedLus) {
+        super(localGatewayName + "-sink",
+              SERVICE_SUB_TYPE,
+              "gateway sink (" + localGatewayName + ")",
+              "gateway sink (" + localGatewayName + ")",
+              localGatewayName,
+              discoveryPort,
+              communicationPort,
+              embeddedLus);
         _gatewaySourceNames = gatewaySourceNames;
         _requiresBootstrap = requiresBootstrap;
         _localSpaceUrl = localSpaceUrl;

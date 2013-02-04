@@ -30,6 +30,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.ReplicationDelegationCo
 import com.gigaspaces.internal.cluster.node.impl.gateway.delegator.ReplicationConnectionDelegatorConfig;
 import com.gigaspaces.internal.cluster.node.impl.gateway.delegator.ReplicationConnectionDelegatorContainer;
 import com.gigaspaces.internal.cluster.node.impl.gateway.lus.ReplicationLookupParameters;
+import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 
 /**
  * A gateway delegator factory bean for creating a {@link ReplicationConnectionDelegatorContainer}.
@@ -102,7 +103,11 @@ public class GatewayDelegatorFactoryBean extends AbstractGatewayComponentFactory
     }
 
     public ServiceDetails[] getServicesDetails() {
-        return new ServiceDetails[]{new GatewayDelegatorServiceDetails(getLocalGatewayName(), getGatewayDelegations().toArray(new GatewayDelegation[getGatewayDelegations().size()]))};
+        return new ServiceDetails[] { new GatewayDelegatorServiceDetails(getLocalGatewayName(),
+                                                                         getGatewayDelegations().toArray(new GatewayDelegation[getGatewayDelegations().size()]),
+                                                                         NIOInfoHelper.getDetails().getPort(),
+                                                                         getDiscoveryPort(),
+                                                                         isStartEmbeddedLus()) };
     }
 
     @Override

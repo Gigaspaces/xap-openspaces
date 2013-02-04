@@ -41,8 +41,15 @@ public class GatewayDelegatorServiceDetails extends GatewayServiceDetails {
     public GatewayDelegatorServiceDetails() {
     }
     
-    public GatewayDelegatorServiceDetails(String localGatewayName, GatewayDelegation[] gatewayDelegations) {
-        super(localGatewayName + "-delegator", SERVICE_SUB_TYPE, "gateway delegator (" + localGatewayName + ")", "gateway delegator (" + localGatewayName + ")", localGatewayName);
+    public GatewayDelegatorServiceDetails(String localGatewayName, GatewayDelegation[] gatewayDelegations, int discoveryPort, int communicationPort, boolean embeddedLus) {
+        super(localGatewayName + "-delegator",
+              SERVICE_SUB_TYPE,
+              "gateway delegator (" + localGatewayName + ")",
+              "gateway delegator (" + localGatewayName + ")",
+              localGatewayName,
+              discoveryPort,
+              communicationPort,
+              embeddedLus);
         _delegationTargets = gatewayDelegations;
     }
 

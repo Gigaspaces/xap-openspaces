@@ -96,4 +96,14 @@ public class GatewayUtils {
         
         return ((GatewayServiceDetails)serviceDetails[0]).getLocalGatewayName();
 	}
+	
+	public static GatewayServiceDetails extractGatewayDetails(ProcessingUnitInstance instance) {
+        ServiceDetails[] serviceDetails = 
+                instance.getServicesDetailsByServiceType( GatewayServiceDetails.SERVICE_TYPE );
+        if( serviceDetails == null || serviceDetails.length == 0 ){
+            return null;
+        }
+        
+        return (GatewayServiceDetails)serviceDetails[0];
+    }
 }

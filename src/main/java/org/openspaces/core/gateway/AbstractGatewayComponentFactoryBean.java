@@ -172,6 +172,11 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     public int getCommunicationPort() {
         return communicationPort;
     }
+    
+    public int getDiscoveryPort()
+    {
+        return discoveryPort;
+    }
 
     @Override
     public void setBeanName(String name) {

@@ -35,6 +35,7 @@ import com.gigaspaces.internal.cluster.node.impl.gateway.sink.BootstrapConfig;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSink;
 import com.gigaspaces.internal.cluster.node.impl.gateway.sink.LocalClusterReplicationSinkConfig;
 import com.gigaspaces.internal.utils.StringUtils;
+import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.sync.SynchronizationEndpointInterceptor;
 
 /**
@@ -290,7 +291,13 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
         } else {
             gatewaySourcesNames = new String[0];
         }
-        return new ServiceDetails[]{new GatewaySinkServiceDetails(getLocalGatewayName(), gatewaySourcesNames, requiresBootstrap, getLocalSpaceUrl())};
+        return new ServiceDetails[] { new GatewaySinkServiceDetails(getLocalGatewayName(),
+                                                                    gatewaySourcesNames,
+                                                                    requiresBootstrap,
+                                                                    getLocalSpaceUrl(),
+                                                                    NIOInfoHelper.getDetails().getPort(),
+                                                                    getDiscoveryPort(),
+                                                                    isStartEmbeddedLus()) };
     }
     
     @Override

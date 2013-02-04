@@ -24,6 +24,8 @@ import java.io.ObjectOutput;
 import org.openspaces.pu.service.PlainServiceDetails;
 
 import com.gigaspaces.internal.io.IOUtils;
+import com.gigaspaces.internal.version.PlatformLogicalVersion;
+import com.gigaspaces.lrmi.LRMIInvocationContext;
 
 /**
  * Provide service details of a gateway
@@ -39,29 +41,61 @@ public class GatewayServiceDetails extends PlainServiceDetails {
     private static final long serialVersionUID = 1L;
     
     private String _localGatewayName;
+    private int _discoveryPort;
+    private int _communicationPort;
+    private boolean _embeddedLus;
 
     public GatewayServiceDetails() {
         super();
     }
     
-    public GatewayServiceDetails(String id, String subserviceType, String description, String longDescription, String localGatewayName) {
+    public GatewayServiceDetails(String id, String subserviceType,
+            String description, String longDescription,
+            String localGatewayName, int discoveryPort, int communicationPort,
+            boolean embeddedLus)
+    {
         super(id, SERVICE_TYPE, subserviceType, description, longDescription);
         _localGatewayName = localGatewayName;
+        _discoveryPort = discoveryPort;
+        _communicationPort = communicationPort;
+        _embeddedLus = embeddedLus;
     }
 
     public String getLocalGatewayName() {
         return _localGatewayName;
     }
     
+    public int getCommunicationPort() {
+        return _communicationPort;
+    }
+    
+    public int getDiscoveryPort() {
+        return _discoveryPort;
+    }
+    
+    public boolean isStartEmbeddedLus() {
+        return _embeddedLus;
+    }
+    
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         super.writeExternal(out);
         IOUtils.writeRepetitiveString(out, _localGatewayName);
+        if (LRMIInvocationContext.getEndpointLogicalVersion().greaterOrEquals(PlatformLogicalVersion.v9_5_0)){
+            out.writeInt(_communicationPort);
+            out.writeInt(_discoveryPort);
+            out.writeBoolean(_embeddedLus);
+        }
     }
     
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
         _localGatewayName = IOUtils.readRepetitiveString(in);
+        if (LRMIInvocationContext.getEndpointLogicalVersion().greaterOrEquals(PlatformLogicalVersion.v9_5_0)){
+            _communicationPort = in.readInt();
+            _discoveryPort = in.readInt();
+            _embeddedLus = in.readBoolean();
+        }
     }
 }
