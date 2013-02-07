@@ -124,47 +124,47 @@ public class GigaSpaceConfigurer {
     }
 
     /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultWriteModifiers(WriteModifiers)
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultWriteModifiers(com.gigaspaces.client.WriteModifiers[])
      */
     public GigaSpaceConfigurer defaultWriteModifiers(WriteModifiers defaultWriteModifiers) {
         gigaSpaceFactoryBean.setDefaultWriteModifiers(new WriteModifiers[] { defaultWriteModifiers });
         return this;
     }
-    
+
     /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultReadModifiers(ReadModifiers)
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultReadModifiers(com.gigaspaces.client.ReadModifiers[])
      */
     public GigaSpaceConfigurer defaultReadModifiers(ReadModifiers defaultReadModifiers) {
         gigaSpaceFactoryBean.setDefaultReadModifiers(new ReadModifiers[] { defaultReadModifiers });
         return this;
     }
-    
+
     /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultTakeModifiers(TakeModifiers)
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultTakeModifiers(com.gigaspaces.client.TakeModifiers[])
      */
     public GigaSpaceConfigurer defaultTakeModifiers(TakeModifiers defaultTakeModifiers) {
         gigaSpaceFactoryBean.setDefaultTakeModifiers(new TakeModifiers[] { defaultTakeModifiers });
         return this;
     }
-    
+
     /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultCountModifiers(CountModifiers)
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultCountModifiers(com.gigaspaces.client.CountModifiers[])
      */
     public GigaSpaceConfigurer defaultCountModifiers(CountModifiers defaultCountModifiers) {
         gigaSpaceFactoryBean.setDefaultCountModifiers(new CountModifiers[] { defaultCountModifiers });
         return this;
     }
-    
+
     /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultClearModifiers(ClearModifiers)
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultClearModifiers(com.gigaspaces.client.ClearModifiers[])
      */
     public GigaSpaceConfigurer defaultClearModifiers(ClearModifiers defaultClearModifiers) {
         gigaSpaceFactoryBean.setDefaultClearModifiers(new ClearModifiers[] { defaultClearModifiers });
         return this;
     }
-    
+
     /**
-     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultChangeModifiers(ChangeModifiers)
+     * @see org.openspaces.core.GigaSpaceFactoryBean#setDefaultChangeModifiers(com.gigaspaces.client.ChangeModifiers[])
      */
     public GigaSpaceConfigurer defaultChangeModifiers(ChangeModifiers defaultChangeModifiers) {
         gigaSpaceFactoryBean.setDefaultChangeModifiers(new ChangeModifiers[] { defaultChangeModifiers });
@@ -178,7 +178,7 @@ public class GigaSpaceConfigurer {
         gigaSpaceFactoryBean.setTransactionManager(transactionManager);
         return this;
     }
-    
+
     /**
      * Creates a new {@link org.openspaces.core.GigaSpace} instance if non already created.
      */
@@ -189,7 +189,7 @@ public class GigaSpaceConfigurer {
         }
         return gigaSpace;
     }
-   
+
     /**
      * Creates a new {@link org.openspaces.core.GigaSpace} instance if non already created.
      * @see #create()
