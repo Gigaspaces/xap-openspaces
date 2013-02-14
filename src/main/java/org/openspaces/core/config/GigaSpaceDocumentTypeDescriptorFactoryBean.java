@@ -115,6 +115,9 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
                     } else if (index instanceof ExtendedIndex) {
                         ExtendedIndex extendedIndex = (ExtendedIndex) index;
                         typeDescriptorBuilder.addPathIndex(extendedIndex.getPath(), SpaceIndexType.EXTENDED);
+                    } else if (index instanceof CompoundIndex) {
+                        CompoundIndex compoundIndex = (CompoundIndex) index;
+                        typeDescriptorBuilder.addCompoundIndex(compoundIndex.getPaths(),compoundIndex.getCompoundIndexType() == CompoundIndex.CompoundIndexTypes.EXTENDED ? SpaceIndexType.EXTENDED : SpaceIndexType.BASIC);
                     } else {
                         throw new IllegalArgumentException("Illegal index type " + index);
                     }

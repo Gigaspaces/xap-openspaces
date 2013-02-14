@@ -19,6 +19,8 @@ package org.openspaces.core.config;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -103,6 +105,14 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             }
             
         }
+        //cater for compound indices after all non-compounds were added
+        indexedElements = DomUtils.getChildElementsByTagName(element, "compound-index");
+        
+        for (int i = 0; i < indexedElements.size(); i++) {
+            CompoundIndex cs = createCompoundIndexDef(indexedElements.get(i).getAttribute("paths"), indexedElements.get(i).getAttribute("type"));            
+            if (cs != null)
+                indexes.put(cs.getPath(),cs);
+        }
         
         builder.addPropertyValue("indexes", indexes.values().toArray());
 
@@ -151,9 +161,43 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         
         builder.addPropertyValue("fifoGroupingIndexesPaths", fifoGroupingIndexes);
         
+        
     }
 
     private String extractPropertyName(String attributeName) {
         return Conventions.attributeNameToPropertyName(attributeName);
+    }
+    
+    private CompoundIndex createCompoundIndexDef(String paths, String indexType)
+    {//in any case of invalid setting we return null- no execption thrown
+		if (!StringUtils.hasText(paths))
+			return null;
+		StringBuffer sb = new StringBuffer();	
+		//parse the paths
+		String delim = paths.indexOf(",") != -1 ? "," : " ";
+		StringTokenizer st = new StringTokenizer(paths, delim);
+		int pnum = st.countTokens();
+		if (pnum < 2)
+			return null;
+		
+		String[] ps = new String[pnum];
+		for (int i = 0; i < pnum; i++)
+		{
+			ps[i] = st.nextToken().trim();
+			if (!StringUtils.hasText(ps[i]))
+				return null;
+			if (i > 0)
+				sb.append("+");
+			sb.append(ps[i]);
+		}
+    	
+		CompoundIndex.CompoundIndexTypes type = null;
+		indexType = StringUtils.hasText(indexType) ? indexType.trim() : indexType;
+		type = (!StringUtils.hasText(indexType) || indexType.equalsIgnoreCase("basic")) ? CompoundIndex.CompoundIndexTypes.BASIC :
+			(indexType.equalsIgnoreCase("extended") ? CompoundIndex.CompoundIndexTypes.EXTENDED : null);
+    	if (type == null)
+    		return null;
+    	return new CompoundIndex(sb.toString(), ps, type);
+    	
     }
 }
