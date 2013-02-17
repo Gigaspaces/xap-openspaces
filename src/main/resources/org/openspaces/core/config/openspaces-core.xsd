@@ -2170,6 +2170,32 @@
 					        </xsd:attribute>
 					    </xsd:complexType>
                        </xsd:element>
+
+                   		<xsd:element name="compound-index"  minOccurs="0" maxOccurs="unbounded">
+                         <xsd:annotation>
+                             <xsd:documentation>
+                                 compound index definition.
+                             </xsd:documentation>
+                         </xsd:annotation>
+                         <xsd:complexType>
+					        <xsd:attribute name="paths" type="xsd:string" use="required">
+					            <xsd:annotation>
+					                <xsd:documentation>
+					                The paths of the index segments, seperated by blank or comma.
+					                </xsd:documentation>
+					            </xsd:annotation>
+					        </xsd:attribute>
+					    </xsd:complexType>
+                         <xsd:complexType>
+					        <xsd:attribute name="type" type="xsd:string">
+					            <xsd:annotation>
+					                <xsd:documentation>
+					                The type of index- basic or extended.
+					                </xsd:documentation>
+					            </xsd:annotation>
+					        </xsd:attribute>
+					    </xsd:complexType>
+                       </xsd:element>
                        
                    		<xsd:element name="document-class"  minOccurs="0" maxOccurs="1">
                          <xsd:annotation>
