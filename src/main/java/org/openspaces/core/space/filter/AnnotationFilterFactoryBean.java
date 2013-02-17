@@ -128,6 +128,9 @@ public class AnnotationFilterFactoryBean extends AbstractFilterProviderAdapterFa
                 if (method.isAnnotationPresent(BeforeChange.class)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_CHANGE);
                 }
+                if (method.isAnnotationPresent(AfterChange.class)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_CHANGE);
+                }
             }
         });
         return invokerLookup;

@@ -101,6 +101,8 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
     private String afterExecute;
     
     private String beforeChange;
+    
+    private String afterChange;
     /**
      * Creates an operation code to filter invoker map based on the {@link #getFilter()}
      * delegate and the callbacks set on this factory.
@@ -182,6 +184,9 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
                 }
                 if (ObjectUtils.nullSafeEquals(method.getName(), beforeChange)) {
                     addInvoker(invokerLookup, method, FilterOperationCodes.BEFORE_CHANGE);
+                }
+                if (ObjectUtils.nullSafeEquals(method.getName(), beforeChange)) {
+                    addInvoker(invokerLookup, method, FilterOperationCodes.AFTER_CHANGE);
                 }
             }
         }, new UniqueMethodFilter());
@@ -454,6 +459,15 @@ public class MethodFilterFactoryBean extends AbstractFilterProviderAdapterFactor
      */
     public void setBeforeChange(String beforeChange) {
         this.beforeChange = beforeChange;
+    }
+    
+    /**
+     * Filter callback after change operation.
+     *
+     * @see com.j_spaces.core.filters.FilterOperationCodes#AFTER_CHANGE
+     */
+    public void setAfterChange(String afterChange) {
+        this.afterChange = afterChange;
     }
     
     private static class UniqueMethodFilter implements ReflectionUtils.MethodFilter {
