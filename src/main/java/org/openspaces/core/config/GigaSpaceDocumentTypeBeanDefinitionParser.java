@@ -190,13 +190,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
 			sb.append(ps[i]);
 		}
     	
-		CompoundIndex.CompoundIndexTypes type = null;
-		indexType = StringUtils.hasText(indexType) ? indexType.trim() : indexType;
-		type = (!StringUtils.hasText(indexType) || indexType.equalsIgnoreCase("basic")) ? CompoundIndex.CompoundIndexTypes.BASIC :
-			(indexType.equalsIgnoreCase("extended") ? CompoundIndex.CompoundIndexTypes.EXTENDED : null);
-    	if (type == null)
-    		return null;
-    	return new CompoundIndex(sb.toString(), ps, type);
+    	return new CompoundIndex(sb.toString(), ps, CompoundIndex.CompoundIndexTypes.BASIC); 
     	
     }
 }
