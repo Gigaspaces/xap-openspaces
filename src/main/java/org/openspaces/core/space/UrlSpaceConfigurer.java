@@ -32,6 +32,8 @@ import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
+import com.gigaspaces.security.directory.CredentialsProvider;
+import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
@@ -287,16 +289,34 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
 
     /**
      * Creates a secured space with the provided user name and password.
+     * @deprecated Use {@link #credentials(String, String)} instead.
      */
+    @Deprecated
     public UrlSpaceConfigurer userDetails(String userName, String password) {
         return securityConfig(new SecurityConfig(userName, password));
     }
 
     /**
      * Creates a secured space with the provided user details.
+     * @deprecated Use {@link #credentialsProvider(CredentialsProvider)} instead.
      */
+    @Deprecated
     public UrlSpaceConfigurer userDetails(UserDetails userDetails) {
-        return securityConfig(new SecurityConfig(userDetails));
+        return credentialsProvider(new DefaultCredentialsProvider(userDetails));
+    }
+
+    /**
+     * Creates a secured space with the provided user name and password.
+     */
+    public UrlSpaceConfigurer credentials(String userName, String password) {
+        return securityConfig(new SecurityConfig(userName, password));
+    }
+
+    /**
+     * Creates a secured space with the provided credentials provider.
+     */
+    public UrlSpaceConfigurer credentialsProvider(CredentialsProvider credentialsProvider) {
+        return securityConfig(new SecurityConfig(credentialsProvider));
     }
 
     /**

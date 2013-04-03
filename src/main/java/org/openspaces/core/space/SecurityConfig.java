@@ -16,9 +16,13 @@
 
 package org.openspaces.core.space;
 
-import com.gigaspaces.security.directory.User;
-import com.gigaspaces.security.directory.UserDetails;
+import java.util.Properties;
 
+import com.gigaspaces.security.directory.CredentialsProvider;
+import com.gigaspaces.security.directory.CredentialsProviderHelper;
+import com.gigaspaces.security.directory.DefaultCredentialsProvider;
+
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.util.StringUtils;
 
 /**
@@ -30,10 +34,8 @@ import org.springframework.util.StringUtils;
 public class SecurityConfig {
 
     private String username;
-
     private String password;
-
-    private UserDetails userDetails;
+    private CredentialsProvider credentialsProvider;
 
     public SecurityConfig() {
     }
@@ -43,8 +45,8 @@ public class SecurityConfig {
         this.password = password;
     }
 
-    public SecurityConfig(UserDetails userDetails) {
-        this.userDetails = userDetails;
+    public SecurityConfig(CredentialsProvider credentialsProvider) {
+        this.credentialsProvider = credentialsProvider;
     }
 
     /**
@@ -75,20 +77,26 @@ public class SecurityConfig {
         this.password = password;
     }
 
-    public UserDetails toUserDetails() {
-        if (!isFilled()) {
-            return null;
-        }
-        if (userDetails != null) {
-            return userDetails;
-        }
-        return new User(username, password);
+    public CredentialsProvider getCredentialsProvider() {
+        if (credentialsProvider != null)
+            return credentialsProvider;
+        return isFilled() ? new DefaultCredentialsProvider(username, password) : null; 
     }
 
     public boolean isFilled() {
-        if (userDetails != null) {
+        if (credentialsProvider != null) {
             return true;
         }
-        return (StringUtils.hasText(username) && !"${security.username}".equals(username)) && (StringUtils.hasText(password) && !"${security.password}".equals(password));
+        return (StringUtils.hasText(username) && !"${security.username}".equals(username)) && 
+                (StringUtils.hasText(password) && !"${security.password}".equals(password));
     }
+    
+    public static SecurityConfig fromMarshalledProperties(Properties properties) {
+        try {
+            CredentialsProvider credentials = CredentialsProviderHelper.extractMarshalledCredentials(properties, false);
+            return credentials == null ? null : new SecurityConfig(credentials); 
+        } catch (Exception e) {
+            throw new InvalidDataAccessResourceUsageException("Failed to deserialize security user details", e);
+        }
+    }    
 }

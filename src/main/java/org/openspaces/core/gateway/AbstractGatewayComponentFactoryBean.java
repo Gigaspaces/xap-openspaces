@@ -18,7 +18,6 @@
 package org.openspaces.core.gateway;
 
 import java.io.PrintWriter;
-import java.rmi.MarshalledObject;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +34,6 @@ import org.openspaces.core.space.SecurityConfig;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
@@ -44,8 +42,9 @@ import com.gigaspaces.internal.license.LicenseManager;
 import com.gigaspaces.internal.utils.StringUtils;
 import com.gigaspaces.license.LicenseException;
 import com.gigaspaces.lrmi.ProtocolAdapter;
+import com.gigaspaces.security.directory.CredentialsProvider;
+import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
-import com.j_spaces.core.Constants;
 
 /**
  * Base class for replication gateway components.
@@ -211,9 +210,18 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
      * @param userDetails {@link UserDetails} instance to initialize security config with.
      */
     public void setUserDetails(UserDetails userDetails) {
-        this.securityConfig = new SecurityConfig(userDetails);
+        setCredentialsProvider(new DefaultCredentialsProvider(userDetails));
     }
-    
+
+    /**
+     * Initializes security configuration for this component with the provided {@link UserDetails} instance.
+     * For more information see {@link #setSecurityConfig(SecurityConfig)}.
+     * @param credentialsProvider {@link CredentialsProvider} instance to initialize security config with.
+     */
+    public void setCredentialsProvider(CredentialsProvider credentialsProvider) {
+        this.securityConfig = new SecurityConfig(credentialsProvider);
+    }
+
     @Override
     public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
         this.beanLevelProperties = beanLevelProperties;
@@ -231,14 +239,10 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         
         // Security details provided on deployment
         if (beanLevelProperties != null) {
-            MarshalledObject<?> userDetailsObj = (MarshalledObject<?>) beanLevelProperties.get(Constants.Security.USER_DETAILS);
-            if (userDetailsObj != null) {
-                try {
-                    setSecurityConfig(new SecurityConfig((UserDetails) userDetailsObj.get()));
-                } catch (Exception e) {
-                    throw new InvalidDataAccessResourceUsageException("Failed to deserialize security user details", e);
-                }
-            }
+            SecurityConfig securityConfig = SecurityConfig.fromMarshalledProperties(beanLevelProperties);
+            if (securityConfig != null)
+                setSecurityConfig(securityConfig);
+
             // Clear since contains security credentials
             beanLevelProperties = null;
         }
@@ -259,7 +263,7 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
                     relocationInProgress = true;
                     final AdminFactory adminFactory = new AdminFactory();
                     if (securityConfig != null) {
-                        adminFactory.userDetails(securityConfig.toUserDetails());
+                        adminFactory.credentialsProvider(securityConfig.getCredentialsProvider());
                     }
                     admin = adminFactory.create();
                     admin.getProcessingUnits()

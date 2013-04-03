@@ -51,6 +51,8 @@ import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
+import com.gigaspaces.security.directory.CredentialsProvider;
+import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.IJSpaceContainer;
@@ -118,7 +120,15 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
      * @param userDetails a custom user details.
      */
     public void setUserDetails(UserDetails userDetails) {
-        this.securityConfig = new SecurityConfig(userDetails);
+        setCredentialsProvider(new DefaultCredentialsProvider(userDetails));
+    }
+    
+    /**
+     * Sets the security configuration with the provided custom credentials provider.
+     * @param credentialsProvider a custom credentials provider.
+     */
+    public void setCredentialsProvider(CredentialsProvider credentialsProvider) {
+        this.securityConfig = new SecurityConfig(credentialsProvider);
     }
 
     /**
@@ -177,7 +187,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
         if (securityConfig != null && securityConfig.isFilled() && SpaceUtils.isRemoteProtocol(space)) {
             try {
                 if (space.isServiceSecured()) {
-                    space.login(securityConfig.toUserDetails());
+                    space.login(securityConfig.getCredentialsProvider());
                 }
             } catch (Exception e) {
                 throw new CannotCreateSpaceException("Failed to login to secured space", e);

@@ -241,7 +241,7 @@ public class GatewaySinkFactoryBean extends AbstractGatewayComponentFactoryBean 
             config.setSyncEndpointInterceptor(interceptor);
         
         if (securityConfig != null)
-            config.setUserDetails(securityConfig.toUserDetails());
+            config.setCredentialsProvider(securityConfig.getCredentialsProvider());
         localClusterReplicationSink = new LocalClusterReplicationSink(config); 
     }
 

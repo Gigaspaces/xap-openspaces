@@ -18,7 +18,6 @@ package org.openspaces.core.space;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -49,7 +48,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -61,7 +59,7 @@ import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
-import com.gigaspaces.security.directory.UserDetails;
+import com.gigaspaces.security.directory.CredentialsProviderHelper;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
@@ -550,14 +548,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
             // handle security
             if (beanLevelProperties != null) {
-                MarshalledObject userDetailsObj = (MarshalledObject) beanLevelProperties.get(Constants.Security.USER_DETAILS);
-                if (userDetailsObj != null) {
-                    try {
-                        setSecurityConfig(new SecurityConfig((UserDetails) userDetailsObj.get()));
-                    } catch (Exception e) {
-                        throw new InvalidDataAccessResourceUsageException("Failed to deserialize security user details", e);
-                    }
-                }
+                SecurityConfig securityConfig = SecurityConfig.fromMarshalledProperties(beanLevelProperties);
+                if (securityConfig != null)
+                    setSecurityConfig(securityConfig);
             }
 
             if (getSecurityConfig() == null || !getSecurityConfig().isFilled()) {
@@ -569,7 +562,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
             if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
                 props.put(SpaceURL.SECURED, "true");
-                props.put(Constants.Security.USER_DETAILS, getSecurityConfig().toUserDetails());
+                CredentialsProviderHelper.appendCredentials(props, getSecurityConfig().getCredentialsProvider());
             } else if (secured != null && secured) {
                 props.put(SpaceURL.SECURED, "true");
             }

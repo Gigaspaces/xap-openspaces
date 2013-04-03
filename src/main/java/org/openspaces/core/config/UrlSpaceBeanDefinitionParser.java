@@ -18,10 +18,10 @@ package org.openspaces.core.config;
 
 import java.util.List;
 
+import org.openspaces.core.config.xmlparser.SecurityDefinitionsParser;
 import org.openspaces.core.space.AllInCachePolicy;
 import org.openspaces.core.space.CachePolicy;
 import org.openspaces.core.space.LruCachePolicy;
-import org.openspaces.core.space.SecurityConfig;
 import org.openspaces.core.space.UrlSpaceFactoryBean;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -138,20 +138,7 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
         Element securityEle = DomUtils.getChildElementByTagName(element, "security");
         if (securityEle != null) {
-            String username = securityEle.getAttribute("username");
-            String password = securityEle.getAttribute("password");
-            if (StringUtils.hasText(username)) {
-                SecurityConfig securityConfig = new SecurityConfig();
-                securityConfig.setUsername(username);
-                if (StringUtils.hasText(password)) {
-                    securityConfig.setPassword(password);
-                }
-                builder.addPropertyValue("securityConfig", securityConfig);
-            }
-            String userDetailsRef = securityEle.getAttribute("user-details");
-            if (StringUtils.hasText(userDetailsRef)) {
-                builder.addPropertyReference("userDetails", userDetailsRef);
-            }
+            SecurityDefinitionsParser.parseXml(securityEle, builder);
             String secured = securityEle.getAttribute("secured");
             if (StringUtils.hasText(secured)) {
                 builder.addPropertyValue("secured", Boolean.parseBoolean(secured));

@@ -19,8 +19,8 @@ package org.openspaces.core.gateway.config;
 
 import java.util.List;
 
+import org.openspaces.core.config.xmlparser.SecurityDefinitionsParser;
 import org.openspaces.core.gateway.GatewayDelegatorFactoryBean;
-import org.openspaces.core.space.SecurityConfig;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -47,9 +47,6 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
     private static final String COMMUNICATION_PORT = "communication-port";
     private static final String DELEGATIONS = "delegations";
     private static final String SECURITY = "security";
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
-    private static final String USER_DETAILS = "user-details";
     private static final String DELEGATION = "delegation";
     
     @Override
@@ -87,20 +84,7 @@ public class GatewayDelegatorBeanDefinitionParser extends AbstractSimpleBeanDefi
         // Security configuration - since 8.0.4
         final Element securityElement = DomUtils.getChildElementByTagName(element, SECURITY);
         if (securityElement != null) {
-            String username = securityElement.getAttribute(USERNAME);
-            String password = securityElement.getAttribute(PASSWORD);
-            if (StringUtils.hasText(username)) {
-                SecurityConfig securityConfig = new SecurityConfig();
-                securityConfig.setUsername(username);
-                if (StringUtils.hasText(password)) {
-                    securityConfig.setPassword(password);
-                }
-                builder.addPropertyValue("securityConfig", securityConfig);
-            }
-            String userDetailsRef = securityElement.getAttribute(USER_DETAILS);
-            if (StringUtils.hasText(userDetailsRef)) {
-                builder.addPropertyReference("userDetails", userDetailsRef);
-            }
+            SecurityDefinitionsParser.parseXml(securityElement, builder);
         }
                 
         // Using security and delegation in the same level is not allowed
