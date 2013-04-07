@@ -81,8 +81,8 @@ public class InternalAsyncFuture<T> implements AsyncFuture<T> {
                 return future.get();
             } 
             return future.get(timeout, unit);
-        } catch (ExecutionException e) {
-            Exception translatedException = gigaSpace.getExceptionTranslator().translateNoUncategorized(e.getCause());
+        } catch (ExecutionException e) {        	
+            Exception translatedException = gigaSpace.getExceptionTranslator().translateNoUncategorized(e);
             if (translatedException != null) {
                 e = new ExecutionException(e.getMessage(), translatedException);
             }
