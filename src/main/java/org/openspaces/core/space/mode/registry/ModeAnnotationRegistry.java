@@ -98,18 +98,6 @@ public class ModeAnnotationRegistry implements SpaceBeforePrimaryListener,
             throw new IllegalArgumentException("The specified annotation is not a space mode annotation: " + annotation);
         }
         
-        // check that the supplied method belongs to the passed object
-        Method objMethod;
-        try {
-            objMethod = object.getClass().getMethod(method.getName(), method.getParameterTypes());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to validate method: " + method, e);
-        }
-        if (!objMethod.equals(method)) {
-            throw new IllegalArgumentException("The specified bean is not the one declaring the" +
-            		" specified method. Bean: " + object + ", Method: " + method);
-        }
-        
         // if the annotation is not yet in the registry create and add it.
         HashSet<RegistryEntry> methods = registry.get(annotation);
         if (methods == null) {
