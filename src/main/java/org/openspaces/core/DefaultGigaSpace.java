@@ -139,8 +139,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         // set the default read take modifiers according to the default isolation level
         this.springIsolationLevel = defaultIsolationLevel;
         this.defaultIsolationLevel = 
-                IsolationLevelHelpers.convertSpringToSpaceIsolationLevel(defaultIsolationLevel, ReadModifiers.NONE.getCode());
         
+                IsolationLevelHelpers.convertSpringToSpaceIsolationLevel(defaultIsolationLevel, space.getReadModifiers());
         this.defaultCountModifiers = IsolationLevelHelpers.toCountModifiers(this.defaultIsolationLevel);
         this.defaultReadModifiers = IsolationLevelHelpers.toReadModifiers(this.defaultIsolationLevel);
         
