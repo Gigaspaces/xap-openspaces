@@ -2448,6 +2448,38 @@ public interface GigaSpace {
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, WriteModifiers modifiers) throws DataAccessException;
 
     /**
+     * Writes the specified entries to this space.
+     * 
+     * Same as a single write but for a group of entities sharing the same transaction (if any),
+     * applied with the same specified operation modifier. 
+     * The semantics of a single write and a batch update are similar - the return 
+     * value for each corresponds to it's cell in the returned array.
+     * see <code>'returns'</code> for possible return values.
+     * 
+     * @param entries           the entries to write. 
+     * @param lease             the requested lease time, in milliseconds
+     * @param timeout The timeout of the update operations, in <b>milliseconds</b>. If entries are locked by another transaction
+     * @param modifiers one or a union of {@link WriteModifiers}.
+     *         
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <ul>
+     *         <li>{@link LeaseContext#getObject()} returns:
+     *         <ul>
+     *         <li>null - on a successful write
+     *         <li>previous value - on successful update
+     *         </ul>
+     *         <li>or, OperationTimeoutException - thrown if timeout occurred
+     *         </ul>
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
+     * @since 9.6
+     */
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, long timeout, WriteModifiers modifiers) throws DataAccessException;
+
+    
+    /**
      * @deprecated since 9.0.1 - use {@link #writeMultiple(Object[], long[], WriteModifiers)} instead.
      */
     @Deprecated
@@ -2482,6 +2514,37 @@ public interface GigaSpace {
      * @since 9.0.1
      */    
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, WriteModifiers modifiers) throws DataAccessException;
+
+    /**
+     * Writes the specified entries to this space.
+     * 
+     * Same as a single write but for a group of entities sharing the same transaction (if any),
+     * applied with the same specified operation modifier. 
+     * The semantics of a single write and a batch update are similar - the return 
+     * value for each corresponds to it's cell in the returned array.
+     * see <code>'returns'</code> for possible return values.
+     * 
+     * @param entries           the entries to write. 
+     * @param leases            the requested lease time per entry, in milliseconds
+     * @param timeout The timeout of the update operations, in <b>milliseconds</b>. If entries are locked by another transaction
+     * @param modifiers one or a union of {@link WriteModifiers}.
+     *         
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
+     *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
+     *         <ul>
+     *         <li>{@link LeaseContext#getObject()} returns:
+     *         <ul>
+     *         <li>null - on a successful write
+     *         <li>previous value - on successful update
+     *         </ul>
+     *         <li>or, OperationTimeoutException - thrown if timeout occurred
+     *         </ul>
+     * @throws DataAccessException In the event of a write error, DataAccessException will
+     *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
+     * @since 9.6
+     */    
+    <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, long timeout, WriteModifiers modifiers) throws DataAccessException;
 
     /**
      * Returns an iterator builder allowing to configure and create a {@link com.j_spaces.core.client.GSIterator}
