@@ -109,10 +109,17 @@
 						<xsd:attribute name="user-details" type="xsd:string">
 							<xsd:annotation>
 								<xsd:documentation>
-									User details bean reference containing username and password used for authentication.
+									Deprecated since 9.5.1 - use credentials-provider attribute instead. 
 								</xsd:documentation>
 							</xsd:annotation>												
 						</xsd:attribute>
+						<xsd:attribute name="credentials-provider" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>
+									Credentials Provider bean reference containing credentials used for authentication.
+								</xsd:documentation>
+							</xsd:annotation>												
+						</xsd:attribute>						
 					</xsd:complexType>
 		        </xsd:element>
 		        </xsd:sequence>
@@ -512,10 +519,18 @@
 						<xsd:attribute name="user-details" type="xsd:string">
 							<xsd:annotation>
 								<xsd:documentation>
-									User details bean reference containing username and password used for authentication.
+									Deprecated since 9.5.1 - use credentials-provider attribute instead. 
 								</xsd:documentation>
 							</xsd:annotation>												
 						</xsd:attribute>
+						<xsd:attribute name="credentials-provider" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>
+									Credentials Provider bean reference containing credentials used for authentication.
+								</xsd:documentation>
+							</xsd:annotation>												
+						</xsd:attribute>						
+						
 					</xsd:complexType>
 		        </xsd:element>		      
    	    	</xsd:all>
