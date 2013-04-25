@@ -497,6 +497,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
                 NULL, 
                 eq(Long.MAX_VALUE), 
                 eq(null),
+                eq(0L),
                 eq(WriteModifiers.ONE_WAY.getCode())
         };
         
@@ -525,6 +526,7 @@ public class DefaultGigaSpacesTests extends MockObjectTestCase {
                 NULL, 
                 eq(Long.MAX_VALUE), 
                 eq(null),
+                eq(0L),
                 eq(WriteModifiers.ONE_WAY.getCode())
         };
         
