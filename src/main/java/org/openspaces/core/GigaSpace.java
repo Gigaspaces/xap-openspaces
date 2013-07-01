@@ -2272,7 +2272,7 @@ public interface GigaSpace {
      *         with the proxy configured with NoWriteLease flag.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
-     *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
+     *         or the previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null).  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
      */
@@ -2299,7 +2299,7 @@ public interface GigaSpace {
      *         with the proxy configured with NoWriteLease flag.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
-     *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
+     *         or the previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null).  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
      */
@@ -2330,7 +2330,7 @@ public interface GigaSpace {
      *         with the proxy configured with NoWriteLease flag.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
-     *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
+     *         or the previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null).  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
      * @since 9.0.1
@@ -2367,7 +2367,7 @@ public interface GigaSpace {
      *         with the proxy configured with NoWriteLease flag.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         {@link LeaseContext#getObject()} returns <code>null</code> on a successful write
-     *         or the previous value - on successful update.  {@link org.openspaces.core.UpdateOperationTimeoutException}
+     *         or the previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null).  {@link org.openspaces.core.UpdateOperationTimeoutException}
      *         is thrown if timeout occurred while trying to update the object.
      * @throws DataAccessException
      * @since 9.0.1
@@ -2437,7 +2437,7 @@ public interface GigaSpace {
      *         <li>{@link LeaseContext#getObject()} returns:
      *         <ul>
      *         <li>null - on a successful write
-     *         <li>previous value - on successful update
+     *         <li>previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null)
      *         </ul>
      *         <li>or, OperationTimeoutException - thrown if timeout occurred
      *         </ul>
@@ -2468,7 +2468,7 @@ public interface GigaSpace {
      *         <li>{@link LeaseContext#getObject()} returns:
      *         <ul>
      *         <li>null - on a successful write
-     *         <li>previous value - on successful update
+     *         <li>previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null)
      *         </ul>
      *         <li>or, OperationTimeoutException - thrown if timeout occurred
      *         </ul>
@@ -2505,7 +2505,7 @@ public interface GigaSpace {
      *         <li>{@link LeaseContext#getObject()} returns:
      *         <ul>
      *         <li>null - on a successful write
-     *         <li>previous value - on successful update
+     *         <li>previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null)
      *         </ul>
      *         <li>or, OperationTimeoutException - thrown if timeout occurred
      *         </ul>
@@ -2536,7 +2536,7 @@ public interface GigaSpace {
      *         <li>{@link LeaseContext#getObject()} returns:
      *         <ul>
      *         <li>null - on a successful write
-     *         <li>previous value - on successful update
+     *         <li>previous value - on successful update (Only if {@link WriteModifiers#RETURN_PREV_ON_UPDATE} is used, otherwise null)
      *         </ul>
      *         <li>or, OperationTimeoutException - thrown if timeout occurred
      *         </ul>
