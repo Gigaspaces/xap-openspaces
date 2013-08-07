@@ -90,8 +90,10 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
 
         for (int i = 0; i < indexedElements.size(); i++) {
             String indexPropertyPath = indexedElements.get(i).getAttribute("path");
+            String  uniques = indexedElements.get(i).getAttribute("unique");
             if (StringUtils.hasText(indexPropertyPath)) {
-                indexes.put(indexPropertyPath,new BasicIndex(indexPropertyPath));
+            	boolean unique = StringUtils.hasText(uniques) && uniques.equalsIgnoreCase("true");
+                indexes.put(indexPropertyPath,new BasicIndex(indexPropertyPath, unique));
             }
            
         }
@@ -99,8 +101,10 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         
         for (int i = 0; i < indexedElements.size(); i++) {
             String indexPropertyPath = indexedElements.get(i).getAttribute("path");
+            String  uniques = indexedElements.get(i).getAttribute("unique");
             if (StringUtils.hasText(indexPropertyPath)) {
-                indexes.put(indexPropertyPath,new ExtendedIndex(indexPropertyPath));
+            	boolean unique = StringUtils.hasText(uniques) && uniques.equalsIgnoreCase("true");
+                indexes.put(indexPropertyPath,new ExtendedIndex(indexPropertyPath, unique));
             }
             
         }
@@ -108,7 +112,9 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         indexedElements = DomUtils.getChildElementsByTagName(element, "compound-index");
         
         for (int i = 0; i < indexedElements.size(); i++) {
-            CompoundIndex cs = createCompoundIndexDef(indexedElements.get(i).getAttribute("paths"), indexedElements.get(i).getAttribute("type"));            
+            String  uniques = indexedElements.get(i).getAttribute("unique");
+        	boolean unique = StringUtils.hasText(uniques) && uniques.equalsIgnoreCase("true");
+            CompoundIndex cs = createCompoundIndexDef(indexedElements.get(i).getAttribute("paths"), indexedElements.get(i).getAttribute("type"), unique);            
             if (cs != null)
                 indexes.put(cs.getPath(),cs);
         }
@@ -167,7 +173,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         return Conventions.attributeNameToPropertyName(attributeName);
     }
     
-    private CompoundIndex createCompoundIndexDef(String paths, String indexType)
+    private CompoundIndex createCompoundIndexDef(String paths, String indexType, boolean unique)
     {//in any case of invalid setting we return null- no execption thrown
 		if (!StringUtils.hasText(paths))
 			return null;
@@ -190,7 +196,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
 			sb.append(ps[i]);
 		}
     	
-    	return new CompoundIndex(sb.toString(), ps, CompoundIndex.CompoundIndexTypes.BASIC); 
+    	return new CompoundIndex(sb.toString(), ps, CompoundIndex.CompoundIndexTypes.BASIC, unique); 
     	
     }
 }

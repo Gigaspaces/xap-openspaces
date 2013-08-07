@@ -25,6 +25,7 @@ package org.openspaces.core.config;
 public class SpaceIndex {
 
     private String path;
+    private boolean _unique;
 
     public SpaceIndex() {
         super();
@@ -34,6 +35,17 @@ public class SpaceIndex {
         super();
         this.path = path;
     }
+    
+    public SpaceIndex(boolean unique) {
+        super();
+        _unique = unique;
+    }
+    public SpaceIndex(String path,boolean unique) {
+        super();
+        _unique = unique;
+        this.path = path;
+        
+    }
 
     public String getPath() {
         return path;
@@ -41,5 +53,14 @@ public class SpaceIndex {
 
     public void setPath(String path) {
         this.path = path;
+    }
+    
+    public boolean isUnique()
+    {
+    	return _unique;
+    }
+    public void setUnique()
+    {
+    	_unique = true;
     }
 }

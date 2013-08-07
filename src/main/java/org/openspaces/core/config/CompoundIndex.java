@@ -40,6 +40,11 @@ public class CompoundIndex extends SpaceIndex
         this.paths = paths;
         this.compoundIndexType = compoundIndexType;
     }
+    public CompoundIndex(String name,String[] paths, CompoundIndexTypes compoundIndexType, boolean unique) {
+        super(name, unique);
+        this.paths = paths;
+        this.compoundIndexType = compoundIndexType;
+    }
     
     public String[] getPaths()
     {

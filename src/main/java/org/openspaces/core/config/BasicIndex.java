@@ -26,5 +26,11 @@ public class BasicIndex extends SpaceIndex{
     public BasicIndex(String indexPropertyPath) {
         super(indexPropertyPath);
     }
+    public BasicIndex(boolean unique) {
+        super(unique);
+    }
+    public BasicIndex(String indexPropertyPath, boolean unique) {
+        super(indexPropertyPath, unique);
+    }
 
 }

@@ -26,5 +26,13 @@ public class ExtendedIndex extends SpaceIndex{
     public ExtendedIndex(String path) {
         super(path);
     }
+    
+    public ExtendedIndex(boolean unique) {
+        super(unique);
+    }
+    public ExtendedIndex(String indexPropertyPath, boolean unique) {
+        super(indexPropertyPath, unique);
+    }
+    
 
 }

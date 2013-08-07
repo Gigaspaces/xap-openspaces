@@ -2159,6 +2159,15 @@
 						            </xsd:annotation>
 						        </xsd:attribute>
 						    </xsd:complexType>
+	                         <xsd:complexType>
+						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
+						            <xsd:annotation>
+						                <xsd:documentation>
+						                The index unique indicator.
+						                </xsd:documentation>
+						            </xsd:annotation>
+						        </xsd:attribute>
+						    </xsd:complexType>
 					    </xsd:element>
                    	
                    		<xsd:element name="extended-index"  minOccurs="0" maxOccurs="unbounded">
@@ -2176,6 +2185,15 @@
 					            </xsd:annotation>
 					        </xsd:attribute>
 					    </xsd:complexType>
+	                         <xsd:complexType>
+						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
+						            <xsd:annotation>
+						                <xsd:documentation>
+						                The index unique indicator.
+						                </xsd:documentation>
+						            </xsd:annotation>
+						        </xsd:attribute>
+						    </xsd:complexType>
                        </xsd:element>
 
                    		<xsd:element name="compound-index"  minOccurs="0" maxOccurs="unbounded">
@@ -2193,6 +2211,15 @@
 					            </xsd:annotation>
 					        </xsd:attribute>
 					    </xsd:complexType>
+	                         <xsd:complexType>
+						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
+						            <xsd:annotation>
+						                <xsd:documentation>
+						                The index unique indicator.
+						                </xsd:documentation>
+						            </xsd:annotation>
+						        </xsd:attribute>
+						    </xsd:complexType>
                        </xsd:element>
                        
                    		<xsd:element name="document-class"  minOccurs="0" maxOccurs="1">

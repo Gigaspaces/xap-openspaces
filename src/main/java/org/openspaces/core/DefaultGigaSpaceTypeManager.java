@@ -107,6 +107,8 @@ public class DefaultGigaSpaceTypeManager implements GigaSpaceTypeManager {
                     throw new IllegalArgumentException("Index at position #" + i + " is null.");
                 if (!(indexes[i] instanceof ISpaceIndex))
                     throw new IllegalArgumentException("Index at position #" + i + " is of an unsupported type - " + indexes[i].getClass().getName());
+                if (((ISpaceIndex)indexes[i]).isUnique())
+                	throw new UnsupportedOperationException("invalid index at position #" + i + " dynamic index cannot be unique");
                 internalIndexes[i] = (ISpaceIndex) indexes[i];
             }
             // Execute:

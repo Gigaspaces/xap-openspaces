@@ -28,6 +28,7 @@ import com.gigaspaces.security.SecurityException;
 import com.j_spaces.core.MemoryShortageException;
 import com.j_spaces.core.client.CacheException;
 import com.j_spaces.core.client.CacheTimeoutException;
+import com.j_spaces.core.client.DuplicateIndexValueExecption;
 import com.j_spaces.core.client.EntryVersionConflictException;
 import com.j_spaces.core.client.OperationTimeoutException;
 import com.j_spaces.core.client.sql.SQLQueryException;
@@ -67,7 +68,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e == null) {
             return null;
         }
-
+        if (e instanceof DuplicateIndexValueExecption){
+        	return new UniqueConstraintViolationExecption(e.toString(), e);
+        }
+        
         if (e instanceof DataAccessException) {
             return (DataAccessException)e;
         }
