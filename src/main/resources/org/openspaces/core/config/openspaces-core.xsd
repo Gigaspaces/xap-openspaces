@@ -2158,8 +2158,6 @@
 						                </xsd:documentation>
 						            </xsd:annotation>
 						        </xsd:attribute>
-						    </xsd:complexType>
-	                         <xsd:complexType>
 						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
 						            <xsd:annotation>
 						                <xsd:documentation>
@@ -2184,8 +2182,6 @@
 					                </xsd:documentation>
 					            </xsd:annotation>
 					        </xsd:attribute>
-					    </xsd:complexType>
-	                         <xsd:complexType>
 						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
 						            <xsd:annotation>
 						                <xsd:documentation>
@@ -2193,7 +2189,7 @@
 						                </xsd:documentation>
 						            </xsd:annotation>
 						        </xsd:attribute>
-						    </xsd:complexType>
+					    </xsd:complexType>
                        </xsd:element>
 
                    		<xsd:element name="compound-index"  minOccurs="0" maxOccurs="unbounded">
@@ -2210,8 +2206,6 @@
 					                </xsd:documentation>
 					            </xsd:annotation>
 					        </xsd:attribute>
-					    </xsd:complexType>
-	                         <xsd:complexType>
 						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
 						            <xsd:annotation>
 						                <xsd:documentation>
@@ -2219,7 +2213,7 @@
 						                </xsd:documentation>
 						            </xsd:annotation>
 						        </xsd:attribute>
-						    </xsd:complexType>
+					    </xsd:complexType>
                        </xsd:element>
                        
                    		<xsd:element name="document-class"  minOccurs="0" maxOccurs="1">
