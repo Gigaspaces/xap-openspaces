@@ -21,8 +21,8 @@ import java.rmi.RemoteException;
 import java.util.concurrent.Future;
 
 import com.gigaspaces.events.DataEventSession;
+import com.gigaspaces.events.DataEventSessionFactory;
 import com.gigaspaces.events.EventSessionConfig;
-import com.gigaspaces.events.EventSessionFactory;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -1881,7 +1881,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @Override
     public DataEventSession newDataEventSession(EventSessionConfig config) {
         try {
-            return EventSessionFactory.newDataSession(getSpace(), config);
+            return DataEventSessionFactory.create(getSpace(), config);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
