@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;
 
+import com.gigaspaces.events.DataEventSession;
+import com.gigaspaces.events.EventSessionConfig;
+import com.gigaspaces.events.EventSessionFactory;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -1866,6 +1869,19 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
                 return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(query.getTypeName(), query.getIds(), query.getRouting(), getCurrentTransaction(), modifiers.getCode(), toInternal(query.getQueryResultType()), false, query.getProjections()));
             else
                 return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(query.getTypeName(), query.getIds(), query.getRoutings(), getCurrentTransaction(), modifiers.getCode(), toInternal(query.getQueryResultType()), false, query.getProjections()));
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @Override
+    public DataEventSession newDataEventSession() {
+        return newDataEventSession(new EventSessionConfig());
+    }
+    @Override
+    public DataEventSession newDataEventSession(EventSessionConfig config) {
+        try {
+            return EventSessionFactory.newDataSession(getSpace(), config);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }

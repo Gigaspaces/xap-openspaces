@@ -19,6 +19,8 @@ package org.openspaces.core;
 import java.io.Serializable;
 import java.util.concurrent.Future;
 
+import com.gigaspaces.events.DataEventSession;
+import com.gigaspaces.events.EventSessionConfig;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -68,7 +70,7 @@ import com.j_spaces.core.LeaseContext;
  * @see com.j_spaces.core.client.SQLQuery
  * @see org.openspaces.core.transaction.TransactionProvider
  * @see org.openspaces.core.DefaultGigaSpace
- * @see org.springframework.dao.DataAccessExceptionf
+ * @see org.springframework.dao.DataAccessException
  */
 public interface GigaSpace {
 
@@ -3285,5 +3287,19 @@ public interface GigaSpace {
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, ChangeModifiers modifiers, long timeout, AsyncFutureListener<ChangeResult<T>> listener);
-    
+
+    /**
+     * Creates a new DataEventSession with the default configuration.
+     * @return a new data event session.
+     * @since  9.7.0
+     */
+    DataEventSession newDataEventSession();
+
+    /**
+     * Creates a new DataEventSession with the specified configuration.
+     * @param config The configuration settings for the new data event session.
+     * @return a new data event session.
+     * @since  9.7.0
+     */
+    DataEventSession newDataEventSession(EventSessionConfig config);
 }
