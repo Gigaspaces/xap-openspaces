@@ -22,14 +22,14 @@ import org.springframework.dao.DataAccessException;
  * @author yechielf
  */
 
-public class UniqueConstraintViolationExecption  extends DataAccessException {
+public class UniqueConstraintViolationException  extends DataAccessException {
     private static final long serialVersionUID = 1L;
 
-    public UniqueConstraintViolationExecption(String msg) {
+    public UniqueConstraintViolationException(String msg) {
         super(msg);
     }
 
-    public UniqueConstraintViolationExecption(String msg, Throwable cause) {
+    public UniqueConstraintViolationException(String msg, Throwable cause) {
         super(msg, cause);
     }
 

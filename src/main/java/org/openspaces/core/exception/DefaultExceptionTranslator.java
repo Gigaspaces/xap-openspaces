@@ -69,7 +69,7 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return null;
         }
         if (e instanceof DuplicateIndexValueExecption){
-        	return new UniqueConstraintViolationExecption(e.toString(), e);
+        	return new UniqueConstraintViolationException(e.toString(), e);
         }
         
         if (e instanceof DataAccessException) {
