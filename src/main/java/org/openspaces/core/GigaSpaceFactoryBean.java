@@ -249,7 +249,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
     /**
      * Set the default {@link WriteModifiers} to be used for write operations
      * on the {@link GigaSpace} instance.
-     * Defaults to {@link WriteModifiers#NONE}
+     * Defaults to {@link WriteModifiers#UPDATE_OR_WRITE}
      * @param defaultWriteModifiers The default write modifiers.
      * @see {@link WriteModifiers}
      */
@@ -260,7 +260,7 @@ public class GigaSpaceFactoryBean implements InitializingBean, DisposableBean, F
     /**
      * Set the default {@link ReadModifiers} to be used for read operations
      * on the {@link GigaSpace} instance.
-     * Defaults to {@link ReadModifiers#NONE}
+     * Defaults to {@link ReadModifiers#READ_COMMITTED}
      * @param defaultReadModifiers The default read modifiers.
      * @see {@link ReadModifiers}
      */
