@@ -45,10 +45,11 @@ public interface BeanServer<T extends Bean> extends BeanConfigPropertiesManager{
      * @param beanClassName - the class name of the bean
      * @param properties - the new bean configuration that is to replace the existing specified interface implementation.
      * 
+     * @return true -if bean reaplaced, false if no configuration change detected.
      * @throws IllegalStateException - if more than one enabled bean implements any of the specified interfaces
      * @throws BeanConfigException - if the bean initialization failed.
      */
-    void replaceBeanAssignableTo(Class<?>[] interfaceClasses, String beanClassName, Map<String,String> properties);
+    boolean replaceBeanAssignableTo(Class<?>[] interfaceClasses, String beanClassName, Map<String,String> properties);
 
     void destroy();
 

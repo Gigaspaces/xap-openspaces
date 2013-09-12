@@ -164,7 +164,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         return beanClassNames;
     }
 
-    public void replaceBeanAssignableTo(Class<?>[] interfaceClasses, String newBeanClassName, Map<String,String> newBeanProperties) throws BeanInitializationException {
+    public boolean replaceBeanAssignableTo(Class<?>[] interfaceClasses, String newBeanClassName, Map<String,String> newBeanProperties) throws BeanInitializationException {
         
         if (newBeanClassName == null) {
             throw new IllegalArgumentException("config.getBeanClassName() cannot be null.");
@@ -242,6 +242,8 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
             setBeanConfig(newBeanClassName, newBeanProperties);
             enableBean(newBeanClassName);
         }
+        
+        return !noChangeRequired;
     }
 
     public List<String> getEnabledBeansClassNamesAssignableTo(Class<?>[] interfaceClasses) throws ClassNotFoundException {
