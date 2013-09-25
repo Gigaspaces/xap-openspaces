@@ -18,6 +18,7 @@ package org.openspaces.itest.core.space.filter;
 
 import com.j_spaces.core.filters.FilterOperationCodes;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.itest.utils.EmptySpaceDataObject;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
@@ -45,7 +46,7 @@ public class SimpleFilterTests extends AbstractDependencyInjectionSpringContextT
         assertNull(simpleFilter.getStats().get(FilterOperationCodes.BEFORE_READ));
         assertNull(simpleFilter.getStats().get(FilterOperationCodes.BEFORE_TAKE));
 
-        gigaSpace.write(new Object());
+        gigaSpace.write(new EmptySpaceDataObject());
         assertEquals(1, simpleFilter.getStats().get(FilterOperationCodes.BEFORE_WRITE).intValue());
         assertEquals(1, simpleFilter.getStats().get(FilterOperationCodes.AFTER_WRITE).intValue());
         assertNull(simpleFilter.getStats().get(FilterOperationCodes.BEFORE_READ));
