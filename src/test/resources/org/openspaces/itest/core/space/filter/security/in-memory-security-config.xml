@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-<beans>
-	<bean id="authenticationManager"
-		class="org.springframework.security.authentication.ProviderManager">
-		<property name="providers">
-			<list>
-				<ref bean="daoAuthenticationProvider" />
-			</list>
-		</property>
-	</bean>
 
-	<bean id="daoAuthenticationProvider" 
-		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-		<property name="userDetailsService" ref="daoUserDetailsService" />
-	</bean>
+<!--
+     Spring Security sample configuration file.
+     For detailed information, refer to the GigaSpaces documentation section on Spring-based Security.
+ -->
 
-	<bean id="daoUserDetailsService" class="org.springframework.security.core.userdetails.memory.InMemoryDaoImpl">
-		<property name="userMap">
-			<value>
-				user = password, SpacePrivilege READ , SpacePrivilege WRITE, SpacePrivilege TAKE , SpacePrivilege EXECUTE
-			</value>
-		</property>
-	</bean>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+   
+   <sec:authentication-manager>
+      <sec:authentication-provider>
+	   	<sec:user-service>
+	        <sec:user name="user" password="password" authorities="SpacePrivilege READ , SpacePrivilege WRITE, SpacePrivilege TAKE , SpacePrivilege EXECUTE" />
+	    </sec:user-service>	
+   	  </sec:authentication-provider>
+   </sec:authentication-manager>
 
 </beans>
