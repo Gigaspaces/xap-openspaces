@@ -104,7 +104,7 @@ public class LockManager {
      */
     public LockHandle lock(Object key, long lockTimeToLive, long timeoutWaitingForLock) {
 
-        String uid = MapEntryFactory.getUID(key);
+        String uid = String.valueOf(key);
         Transaction tr = null;
         try {
             tr = getTransaction(lockTimeToLive);
@@ -156,7 +156,7 @@ public class LockManager {
      * @param value The value to put after unlocking the key
      */
     public void putAndUnlock(Object key, Object value) {
-        String uid = MapEntryFactory.getUID(key);
+        String uid = String.valueOf(key);
         Transaction tr = lockedUIDHashMap.get(uid);
 
         if (tr == null) {
@@ -182,7 +182,7 @@ public class LockManager {
      */
     public boolean islocked(Object key) {
         // first check locally
-        String uid = MapEntryFactory.getUID(key);
+        String uid = String.valueOf(key);
         boolean locked = lockedUIDHashMap.containsKey(uid);
         if (locked) {
             return true;
@@ -212,7 +212,7 @@ public class LockManager {
      * @param key The key to unlock
      */
     public void unlock(Object key) {
-        String uid = MapEntryFactory.getUID(key);
+        String uid = String.valueOf(key);
 
         Transaction tr = lockedUIDHashMap.get(uid);
         if (tr == null) {
