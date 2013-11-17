@@ -115,7 +115,7 @@ public class LockManager {
             }
         }
 
-        SpaceMapEntry ee = getTemplate(key, uid);
+        SpaceMapEntry ee = getTemplate(key);
         try {
             Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK | ReadModifiers.MATCH_BY_ID);
             if (retTake == null) {
@@ -188,7 +188,7 @@ public class LockManager {
             return true;
         }
         // now check globally
-        SpaceMapEntry ee = getTemplate(key, uid);
+        SpaceMapEntry ee = getTemplate(key);
         try {
             Object lockEntry = masterSpace.readIfExists(ee, null, 0, ReadModifiers.MATCH_BY_ID);
             if (lockEntry != null) { // released
@@ -238,7 +238,7 @@ public class LockManager {
         return tCreated.transaction;
     }
 
-    private SpaceMapEntry getTemplate(Object key, String uid) {
+    private SpaceMapEntry getTemplate(Object key) {
     	SpaceMapEntry ee;
         try {
             ee = templatePool.poll(100, TimeUnit.MILLISECONDS);
@@ -249,7 +249,6 @@ public class LockManager {
             throw new DataAccessResourceFailureException("Failed to take resource from pool", e);
         }
         ee.setKey(key);
-        ee.setUID(uid);
         // to support load balancing
         return ee;
     }
