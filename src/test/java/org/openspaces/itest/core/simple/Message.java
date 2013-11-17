@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.openspaces.itest.core.simple;
 
+import com.gigaspaces.annotation.pojo.SpaceId;
+
 /**
  * @author kimchy
  */
@@ -37,5 +39,16 @@ public class Message {
 
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    private String uid;
+
+    @SpaceId(autoGenerate=true)
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

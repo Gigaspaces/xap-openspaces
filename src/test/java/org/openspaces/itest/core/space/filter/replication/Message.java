@@ -16,6 +16,8 @@
 
 package org.openspaces.itest.core.space.filter.replication;
 
+import com.gigaspaces.annotation.pojo.SpaceId;
+
 /**
  * @author kimchy
  */
@@ -29,5 +31,16 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+    
+    private String uid;
+
+    @SpaceId(autoGenerate=true)
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }
