@@ -33,7 +33,6 @@ import org.springframework.transaction.CannotCreateTransactionException;
 
 import com.gigaspaces.client.transaction.DistributedTransactionManagerProvider;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.EntryNotInSpaceException;
 import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.map.IMap;
 import com.j_spaces.map.MapEntryFactory;
@@ -69,7 +68,6 @@ public class LockManager {
 
     private final DistributedTransactionManagerProvider transactionManagerProvider;
 
-
     /**
      * Creates a new Lock Manager based on the {@link com.j_spaces.map.IMap}.
      */
@@ -86,7 +84,6 @@ public class LockManager {
         for (int i = 0; i < 1000; i++) {
             templatePool.add(MapEntryFactory.create());
         }
-
     }
 
     /**
@@ -117,13 +114,11 @@ public class LockManager {
 
         SpaceMapEntry ee = getTemplate(key);
         try {
-            Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK | ReadModifiers.MATCH_BY_ID);
+            Object retTake = masterSpace.readIfExists(ee, tr, timeoutWaitingForLock, ReadModifiers.EXCLUSIVE_READ_LOCK);
             if (retTake == null) {
-                throw new SpaceTimeoutException("Failed waiting for lock on key [" + key + "]");
+                // TODO GS-9310: design and implement a solution for locking non-existent keys.
+                map.put(key, EMPTY_LOCK_VALUE, tr, Integer.MAX_VALUE);
             }
-        } catch (EntryNotInSpaceException e) {
-            // TODO GS-9310: design and implement a solution for locking non-existent keys.
-            map.put(key, EMPTY_LOCK_VALUE, tr, Integer.MAX_VALUE);
         } catch (SpaceTimeoutException e) {
             try {
                 tr.abort();
@@ -183,27 +178,20 @@ public class LockManager {
     public boolean islocked(Object key) {
         // first check locally
         String uid = String.valueOf(key);
-        boolean locked = lockedUIDHashMap.containsKey(uid);
-        if (locked) {
+        if (lockedUIDHashMap.containsKey(uid))
             return true;
-        }
+
         // now check globally
         SpaceMapEntry ee = getTemplate(key);
         try {
-            Object lockEntry = masterSpace.readIfExists(ee, null, 0, ReadModifiers.MATCH_BY_ID);
-            if (lockEntry != null) { // released
-                return false;
-            }
-        } 
-        catch(EntryNotInSpaceException en){
-            return false;
+            Object lockEntry = masterSpace.readIfExists(ee, null, 0);
+            return lockEntry == null;
         }
         catch (Exception e) {
             return true;
         } finally {
             releaseTemplate(ee);
         }
-        return true;
     }
 
     /**
