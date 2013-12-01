@@ -192,7 +192,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
         }
         
         } catch (ClassNotFoundException e) {
-            throw new BeanConfigurationException("Problem creating new bean instance.",e);
+            throw new BeanConfigurationException("Problem creating new bean instance of class " + newBeanClassName,e);
         }
         
         
