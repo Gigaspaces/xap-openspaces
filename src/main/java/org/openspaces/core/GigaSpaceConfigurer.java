@@ -40,7 +40,7 @@ import com.j_spaces.core.IJSpace;
  *
  * GigaSpace gigaSpace = new GigaSpaceConfigurer(urlSpaceConfigurer).defaultTakeTimeout(1000).gigaSpace();
  * ...
- * urlSpaceConfigurer.destroySpace(); // optional
+ * urlSpaceConfigurer.destroy(); // optional
  * </pre>
  *
  * @author kimchy
