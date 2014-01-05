@@ -54,7 +54,7 @@ public class SpaceModeAnnotationsTest extends AbstractDependencyInjectionSpringC
 
         // shut down space1 and wait for active election to do its stuff
         try {
-            gigaSpace1.getSpace().getContainer().shutdown();
+            gigaSpace1.getSpace().getDirectProxy().getContainer().shutdown();
             Thread.sleep(TIMEOUT);
         } catch (Exception e) {
             fail(e.getMessage());

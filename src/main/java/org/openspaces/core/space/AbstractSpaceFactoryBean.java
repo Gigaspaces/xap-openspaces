@@ -238,7 +238,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
             IJSpaceContainer embeddedContainer = null;
             if (!SpaceUtils.isRemoteProtocol(space)) {
                 // if we are in embedded mode, store space
-                embeddedContainer = space.getContainer();
+                embeddedContainer = space.getDirectProxy().getContainer();
             }
             space.close();
             
