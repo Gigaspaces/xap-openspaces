@@ -308,7 +308,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } else {
             final DefaultGigaSpace newClusteredGigaSpace;
             try {
-                newClusteredGigaSpace = new DefaultGigaSpace(this.space.getClusteredSpace(), this);
+                newClusteredGigaSpace = new DefaultGigaSpace(this.space.getDirectProxy().getClusteredProxy(), this);
             } catch (Exception e) {
                 throw new InvalidDataAccessApiUsageException("Failed to get clustered Space from actual space", e);
             }

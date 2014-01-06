@@ -41,7 +41,7 @@ public abstract class SpaceUtils {
      */
     public static IJSpace getClusterMemberSpace(IJSpace space) throws DataAccessException {
         try {
-            return ((ISpaceProxy) space).getClusterMember();
+            return space.getDirectProxy().getNonClusteredProxy();
         } catch (Exception e) {
             throw new DataAccessResourceFailureException("Failed to find space under name [" + space.getName() + "]", e);
         }

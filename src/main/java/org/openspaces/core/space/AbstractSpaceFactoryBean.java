@@ -55,7 +55,6 @@ import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.IJSpaceContainer;
 import com.j_spaces.core.SpaceHealthStatus;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.SpaceRuntimeInfo;
@@ -234,18 +233,13 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
             }
         }
         try {
-            
-            IJSpaceContainer embeddedContainer = null;
+
+            // shutdown the space if we are in embedded mode
             if (!SpaceUtils.isRemoteProtocol(space)) {
-                // if we are in embedded mode, store space
-                embeddedContainer = space.getDirectProxy().getContainer();
+                space.getDirectProxy().shutdown();
             }
             space.close();
             
-            if (embeddedContainer != null) {
-                // shutdown the space if we are in embedded mode
-                embeddedContainer.shutdown();
-            }
         } finally {
             space = null;
         }

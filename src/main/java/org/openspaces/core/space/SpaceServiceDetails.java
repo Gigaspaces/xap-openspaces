@@ -105,7 +105,7 @@ public class SpaceServiceDetails extends PlainServiceDetails {
                 getAttributes().put(Attributes.MIRROR, false);
             }
             try {
-                directSpace = ((ISpaceProxy) space).getClusterMember();
+                directSpace = space.getDirectProxy().getNonClusteredProxy();
                 directSpaceAdmin = (IInternalRemoteJSpaceAdmin) directSpace.getAdmin();
             } catch (Exception e) {
                 // no direct space???
