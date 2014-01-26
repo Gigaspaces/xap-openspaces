@@ -72,7 +72,6 @@ import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.FilterProvider;
 import com.j_spaces.core.filters.ISpaceFilter;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
-import com.j_spaces.sadapter.datasource.DataAdapter;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
@@ -481,7 +480,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                     throw new IllegalArgumentException("External data source can only be used with an embedded Space");
                 }
                 props.put(Constants.DataAdapter.DATA_SOURCE, externalDataSource);
-                props.put(Constants.StorageAdapter.FULL_STORAGE_STORAGE_ADAPTER_CLASS_PROP, DataAdapter.class.getName());
                 props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
                 if (logger.isDebugEnabled()) {
                     logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
