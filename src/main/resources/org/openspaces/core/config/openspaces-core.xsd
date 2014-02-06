@@ -1673,7 +1673,7 @@
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
-    <xsd:element name="view-query" type="viewQueryType">
+    <xsd:element name="view-query" type="sqlQueryType">
         <xsd:annotation>
             <xsd:documentation>
                 A local view query template.
@@ -1735,23 +1735,6 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="viewQueryType">
-        <xsd:annotation>
-            <xsd:documentation source="java:com.j_spaces.core.client.view.View">
-                A local view query template.
-            </xsd:documentation>
-            <xsd:appinfo>
-                <tool:annotation>
-                    <tool:exports type="com.j_spaces.core.client.view.View"/>
-                </tool:annotation>
-            </xsd:appinfo>
-        </xsd:annotation>
-        <xsd:complexContent>
-            <xsd:extension base="sqlQueryType">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
