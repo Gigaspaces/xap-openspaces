@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/10.0/core/openspaces-core.xsd">
+
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <os-core:giga-space-context/>
+    <os-core:giga-space-late-context/>
+
+    <bean id="simpleSpaceFilter" class="org.openspaces.itest.core.space.filter.storageTypes.SimpleFilter"/>
+
+    <os-core:space id="space" url="/./spaceAdapterSimpleFilterAnnotation" lookup-groups="${user.name}">
+        <os-core:space-filter>
+            <os-core:filter ref="simpleSpaceFilter"/>
+            <!-- register the filter to the following operations -->
+            <os-core:operation code-name="after-write"/>
+            <os-core:operation code-name="after-update"/>
+            <os-core:operation code-name="after-read"/>
+        </os-core:space-filter>
+    </os-core:space>
+
+    <os-core:giga-space id="gigaSpace" space="space"/>
+
+</beans>
