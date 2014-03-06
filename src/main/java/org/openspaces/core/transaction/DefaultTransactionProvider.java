@@ -104,7 +104,6 @@ public class DefaultTransactionProvider implements TransactionProvider {
      * @return The current running transaction or <code>null</code> if no transaction is running
      */
     public Transaction.Created getCurrentTransaction(Object transactionalContext, IJSpace space) {
-
         JiniTransactionHolder txObject = (JiniTransactionHolder) TransactionSynchronizationManager.getResource(ExistingJiniTransactionManager.CONTEXT);
         if (txObject != null && txObject.hasTransaction()) {
             return txObject.getTxCreated();
@@ -171,9 +170,9 @@ public class DefaultTransactionProvider implements TransactionProvider {
                 throw new TransactionDataAccessException("Failed to enlist xa resource [" + xaResourceSpace + "] with space [" + space + "]", e);
             }
 
-            // get the context transaction from the Space and nullify it. We will handle
-            // the declarative transaction nature using Spring sync
-            Transaction.Created transaction = ((ISpaceProxy) space).replaceContextTransaction(null);
+            // get the context transaction from the Space, dont nullify it since the proxy thread local contains the XAResoureceImpl instance 
+            //   Transaction.Created transaction = ((ISpaceProxy) space).replaceContextTransaction(null);
+            Transaction.Created transaction = ((ISpaceProxy) space).getContextTransaction();
 
             // register a marker sync object that acts as a placeholder for both the Space and the transaction
             TransactionSynchronizationManager.registerSynchronization(new SpaceAndTransactionSync(space, transaction));
