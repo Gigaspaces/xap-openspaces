@@ -152,7 +152,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
                     }
                 }
             }
-            XAResource xaResourceSpace = new XAResourceImpl(distributedTransactionManagerProvider.getTransactionManager(), space);
+            XAResource xaResourceSpace = new XAResourceImpl(distributedTransactionManagerProvider.getTransactionManager(), space, true);
             // set the default timeout to be the one specified on the JTA transaction manager
             if (jtaTransactionManager.getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                 try {
