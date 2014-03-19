@@ -75,6 +75,9 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             
             if(propertyName.equals("storageType"))
                 builder.addPropertyValue(propertyName, Enum.valueOf(StorageType.class, attribute.getValue().toUpperCase()));
+
+            if(propertyName.equals("disableOffHeapData"))
+                builder.addPropertyValue(propertyName,attribute.getValue());
         }
         
         Element documentClassElem = DomUtils.getChildElementByTagName(element, "document-class");
