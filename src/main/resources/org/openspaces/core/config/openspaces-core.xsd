@@ -2295,6 +2295,14 @@
   							</xsd:restriction>
 						</xsd:simpleType>
                     </xsd:attribute>
+
+                    <xsd:attribute name="disable-offheap-ddta" type="xsd:boolean" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicator whether this type will disable offheap data even if cache-policy is offheap.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     
                 </xsd:extension>
             </xsd:complexContent>
