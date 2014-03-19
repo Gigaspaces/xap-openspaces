@@ -1,8 +1,5 @@
 package org.openspaces.itest.core.space.filter.storageTypes;
 
-import com.gigaspaces.client.WriteModifiers;
-
-import java.util.HashMap;
 
 /**
  * Tests the ability of space-filters to work with complicated objects that contain Object,Binary and Compressed storage-types.<br/>
