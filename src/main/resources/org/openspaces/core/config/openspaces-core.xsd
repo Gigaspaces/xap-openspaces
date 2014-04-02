@@ -109,6 +109,30 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
+                        <xsd:element name="cached-indices-offheap-data-policy">
+                            <xsd:complexType>
+                                <xsd:attribute name="offheap-cache-size" type="xsd:decimal" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the cache.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="offheap-storage-handler" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation source="java:com.j_spaces.core.cache.offHeap.OffHeapStorageHandler">
+                                            The bean name which represent the space offheap storage implementation class you want to use.
+                                            The class should extend com.j_spaces.core.cache.offHeap.OffHeapStorageHandler.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type type="com.j_spaces.core.cache.offHeap.OffHeapStorageHandler"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                             </xsd:complexType>
+                        </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>

@@ -18,19 +18,53 @@
 package org.openspaces.core.space;
 
 import com.j_spaces.core.Constants;
+import com.j_spaces.core.cache.offHeap.OffHeapStorageHandler;
 
 import java.util.Properties;
 
 /**
- * A cache policy that stores data offheap and ndexes onheap.
+ * A cache policy that stores data offheap and indexes onheap.
  *
  * @author yechielf
  */
 public class OffHeapDataCachePolicy implements CachePolicy {
 
+    private Integer offHeapCacheSize;
+    private OffHeapStorageHandler offHeapStorageHandler;
+
+
+    public OffHeapDataCachePolicy() {
+    }
+
+    public OffHeapDataCachePolicy(OffHeapStorageHandler offHeapStorageHandler) {
+        this.offHeapStorageHandler = offHeapStorageHandler;
+    }
+
+    public OffHeapDataCachePolicy(Integer offheapCacheSize, OffHeapStorageHandler offHeapStorageHandler) {
+        this.offHeapCacheSize = offheapCacheSize;
+        this.offHeapStorageHandler = offHeapStorageHandler;
+    }
+
+    public void setOffHeapStorageHandler(OffHeapStorageHandler offHeapStorageHandler) {
+        this.offHeapStorageHandler = offHeapStorageHandler;
+    }
+
+    public void setOffHeapCacheSize(Integer offHeapCacheSize) {
+        this.offHeapCacheSize = offHeapCacheSize;
+    }
+
     public Properties toProps() {
         Properties props = new Properties();
         props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_CACHED_INDICES_OFFHEAP_DATA);
+
+        if(offHeapCacheSize != null) {
+            props.setProperty(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_PROP, offHeapCacheSize.toString());
+        }
+
+        if(offHeapStorageHandler != null){
+            props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, offHeapStorageHandler);
+        }
+
         return props;
     }
 }

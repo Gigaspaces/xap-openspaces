@@ -19,10 +19,7 @@ package org.openspaces.core.config;
 import java.util.List;
 
 import org.openspaces.core.config.xmlparser.SecurityDefinitionsParser;
-import org.openspaces.core.space.AllInCachePolicy;
-import org.openspaces.core.space.CachePolicy;
-import org.openspaces.core.space.LruCachePolicy;
-import org.openspaces.core.space.UrlSpaceFactoryBean;
+import org.openspaces.core.space.*;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -166,6 +163,11 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
         if (customCacheEle != null) {
             Object customCachePolicyFactoryBean = parserContext.getDelegate().parsePropertySubElement(customCacheEle, builder.getRawBeanDefinition());
             builder.addPropertyValue("customCachePolicy", customCachePolicyFactoryBean);
+        }
+        Element cachedIndicesOffheapDataPolicyEle = DomUtils.getChildElementByTagName(element, "cached-indices-offheap-data-policy");
+        if (cachedIndicesOffheapDataPolicyEle != null) {
+            Object cachedIndicesOffheapDataPolicyFactoryBean = parserContext.getDelegate().parsePropertySubElement(cachedIndicesOffheapDataPolicyEle, builder.getRawBeanDefinition());
+            builder.addPropertyValue("cachedIndicesOffheapDataPolicy", cachedIndicesOffheapDataPolicyFactoryBean);
         }
         
         if (cachePolicy != null) {
