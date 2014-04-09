@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package org.openspaces.core.config.xmlparser;
+package org.openspaces.core.config;
 
-import org.openspaces.core.config.CachedIndicesOffheapDataPolicyFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -29,13 +28,14 @@ import org.w3c.dom.Element;
  * @since 10.0.0
  *
  */
-public class CachedIndicesOffheapDataPolicyBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     private static final String OFFHEAP_CACHE_SIZE_PROPERTY = "offheap-cache-size";
-    private static final String STORAGE_HANDLER = "offheap-storage-handler";
+    private static final String STORAGE_HANDLER = "blob-store-handler";
+
     @Override
-    protected Class<CachedIndicesOffheapDataPolicyFactoryBean> getBeanClass(Element element) {
-        return CachedIndicesOffheapDataPolicyFactoryBean.class;
+    protected Class<BlobStoreDataPolicyFactoryBean> getBeanClass(Element element) {
+        return BlobStoreDataPolicyFactoryBean.class;
     }
 
     @Override
@@ -47,11 +47,10 @@ public class CachedIndicesOffheapDataPolicyBeanDefinitionParser extends Abstract
 
         final String offheapStorageHandler = element.getAttribute(STORAGE_HANDLER);
         if (StringUtils.hasText(offheapStorageHandler))
-            builder.addPropertyReference("offHeapStorageHandler", offheapStorageHandler);
+            builder.addPropertyReference("blobStoreHandler", offheapStorageHandler);
 
         if(!StringUtils.hasText(offheapStorageHandler))
-            throw new IllegalArgumentException("A reference to a space offheap storage handler bean or a space offheap " +
-                    "storage handler class name must be specified");
+            throw new IllegalArgumentException("A reference to a space blob store handler bean must be specified");
     }    
     
 }

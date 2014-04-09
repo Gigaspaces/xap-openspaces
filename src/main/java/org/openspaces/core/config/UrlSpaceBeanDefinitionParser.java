@@ -164,10 +164,10 @@ public class UrlSpaceBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
             Object customCachePolicyFactoryBean = parserContext.getDelegate().parsePropertySubElement(customCacheEle, builder.getRawBeanDefinition());
             builder.addPropertyValue("customCachePolicy", customCachePolicyFactoryBean);
         }
-        Element cachedIndicesOffheapDataPolicyEle = DomUtils.getChildElementByTagName(element, "cached-indices-offheap-data-policy");
-        if (cachedIndicesOffheapDataPolicyEle != null) {
-            Object cachedIndicesOffheapDataPolicyFactoryBean = parserContext.getDelegate().parsePropertySubElement(cachedIndicesOffheapDataPolicyEle, builder.getRawBeanDefinition());
-            builder.addPropertyValue("cachedIndicesOffheapDataPolicy", cachedIndicesOffheapDataPolicyFactoryBean);
+        Element blobStoreDataPolicyEle = DomUtils.getChildElementByTagName(element, "blob-store-data-policy");
+        if (blobStoreDataPolicyEle != null) {
+            Object blobStoreDataPolicyFactoryBean = parserContext.getDelegate().parsePropertySubElement(blobStoreDataPolicyEle, builder.getRawBeanDefinition());
+            builder.addPropertyValue("blobStoreDataPolicy", blobStoreDataPolicyFactoryBean);
         }
         
         if (cachePolicy != null) {

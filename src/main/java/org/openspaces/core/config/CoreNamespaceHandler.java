@@ -17,7 +17,6 @@
 package org.openspaces.core.config;
 
 import org.openspaces.core.config.modifiers.SpaceProxyOperationModifierBeanDefinitionParser;
-import org.openspaces.core.config.xmlparser.CachedIndicesOffheapDataPolicyBeanDefinitionParser;
 import org.openspaces.core.transaction.config.DistributedTransactionProcessingConfigurationBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
@@ -61,8 +60,8 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("mirror", new MirrorSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("tx-support", new DistributedTransactionProcessingConfigurationBeanDefinitionParser());
         registerBeanDefinitionParser("custom-cache-policy", new CustomCachePolicyBeanDefinitionParser());
-        registerBeanDefinitionParser("cached-indices-offheap-data-policy", new CachedIndicesOffheapDataPolicyBeanDefinitionParser());
-        
+        registerBeanDefinitionParser("blob-store-data-policy", new BlobStoreDataPolicyBeanDefinitionParser());
+
         SpaceProxyOperationModifierBeanDefinitionParser defaultModifiersParser = 
                 new SpaceProxyOperationModifierBeanDefinitionParser();
         registerBeanDefinitionParser("write-modifier", defaultModifiersParser);

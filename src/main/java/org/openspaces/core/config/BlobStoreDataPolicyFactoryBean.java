@@ -15,24 +15,21 @@
  *******************************************************************************/
 package org.openspaces.core.config;
 
-import com.gigaspaces.server.eviction.SpaceEvictionStrategy;
 import com.j_spaces.core.cache.offHeap.OffHeapStorageHandler;
+import org.openspaces.core.space.BlobStoreDataCachePolicy;
 import org.openspaces.core.space.CachePolicy;
-import org.openspaces.core.space.CustomCachePolicy;
-import org.openspaces.core.space.OffHeapDataCachePolicy;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * A factory for creating {@link org.openspaces.core.space.OffHeapDataCachePolicy} instance.
+ * A factory for creating {@link org.openspaces.core.space.BlobStoreDataCachePolicy} instance.
  * @author Kobi
  * @since 10.0.0
  *
  */
-public class CachedIndicesOffheapDataPolicyFactoryBean implements InitializingBean {
+public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
 
     private Integer offHeapCacheSize;
-    private OffHeapStorageHandler offHeapStorageHandler;
-
+    private OffHeapStorageHandler blobStoreHandler;
 
     public Integer getOffHeapCacheSize() {
         return offHeapCacheSize;
@@ -42,12 +39,12 @@ public class CachedIndicesOffheapDataPolicyFactoryBean implements InitializingBe
         this.offHeapCacheSize = offHeapCacheSize;
     }
 
-    public OffHeapStorageHandler getOffHeapStorageHandler() {
-        return offHeapStorageHandler;
+    public OffHeapStorageHandler getBlobStoreHandler() {
+        return blobStoreHandler;
     }
 
-    public void setOffHeapStorageHandler(OffHeapStorageHandler offHeapStorageHandler) {
-        this.offHeapStorageHandler = offHeapStorageHandler;
+    public void setBlobStoreHandler(OffHeapStorageHandler blobStoreHandler) {
+        this.blobStoreHandler = blobStoreHandler;
     }
 
     @Override
@@ -55,11 +52,11 @@ public class CachedIndicesOffheapDataPolicyFactoryBean implements InitializingBe
     }
 
     public CachePolicy asCachePolicy() {
-        final OffHeapDataCachePolicy policy = new OffHeapDataCachePolicy();
+        final BlobStoreDataCachePolicy policy = new BlobStoreDataCachePolicy();
         if (offHeapCacheSize != null)
             policy.setOffHeapCacheSize(offHeapCacheSize);
-        if (offHeapStorageHandler != null)
-            policy.setOffHeapStorageHandler(offHeapStorageHandler);
+        if (blobStoreHandler != null)
+            policy.setOffHeapStorageHandler(blobStoreHandler);
         return policy;
     }
      

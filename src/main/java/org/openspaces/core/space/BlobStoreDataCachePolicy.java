@@ -25,28 +25,27 @@ import java.util.Properties;
 /**
  * A cache policy that stores data offheap and indexes onheap.
  *
- * @author yechielf
+ * @author yechielf, Kobi
  */
-public class OffHeapDataCachePolicy implements CachePolicy {
+public class BlobStoreDataCachePolicy implements CachePolicy {
 
     private Integer offHeapCacheSize;
-    private OffHeapStorageHandler offHeapStorageHandler;
+    private OffHeapStorageHandler blobStorageHandler;
 
-
-    public OffHeapDataCachePolicy() {
+    public BlobStoreDataCachePolicy() {
     }
 
-    public OffHeapDataCachePolicy(OffHeapStorageHandler offHeapStorageHandler) {
-        this.offHeapStorageHandler = offHeapStorageHandler;
+    public BlobStoreDataCachePolicy(OffHeapStorageHandler offHeapStorageHandler) {
+        this.blobStorageHandler = offHeapStorageHandler;
     }
 
-    public OffHeapDataCachePolicy(Integer offheapCacheSize, OffHeapStorageHandler offHeapStorageHandler) {
+    public BlobStoreDataCachePolicy(Integer offheapCacheSize, OffHeapStorageHandler offHeapStorageHandler) {
         this.offHeapCacheSize = offheapCacheSize;
-        this.offHeapStorageHandler = offHeapStorageHandler;
+        this.blobStorageHandler = offHeapStorageHandler;
     }
 
     public void setOffHeapStorageHandler(OffHeapStorageHandler offHeapStorageHandler) {
-        this.offHeapStorageHandler = offHeapStorageHandler;
+        this.blobStorageHandler = offHeapStorageHandler;
     }
 
     public void setOffHeapCacheSize(Integer offHeapCacheSize) {
@@ -61,8 +60,8 @@ public class OffHeapDataCachePolicy implements CachePolicy {
             props.setProperty(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_PROP, offHeapCacheSize.toString());
         }
 
-        if(offHeapStorageHandler != null){
-            props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, offHeapStorageHandler);
+        if(blobStorageHandler != null){
+            props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, blobStorageHandler);
         }
 
         return props;

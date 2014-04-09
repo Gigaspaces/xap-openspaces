@@ -30,7 +30,7 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.config.CachedIndicesOffheapDataPolicyFactoryBean;
+import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
 import org.openspaces.core.config.CustomCachePolicyFactoryBean;
 import org.openspaces.core.executor.AutowireTask;
 import org.openspaces.core.executor.AutowireTaskMarker;
@@ -147,7 +147,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     
     private CustomCachePolicyFactoryBean customCachePolicy;
 
-    private CachedIndicesOffheapDataPolicyFactoryBean cachedIndicesOffheapDataPolicy;
+    private BlobStoreDataPolicyFactoryBean blobStoreDataPolicy;
 
     private SpaceDataSource spaceDataSource;
     
@@ -343,7 +343,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @see org.openspaces.core.space.AllInCachePolicy
      * @see org.openspaces.core.space.LruCachePolicy
      * @see org.openspaces.core.space.CustomCachePolicy
-     * @see org.openspaces.core.space.OffHeapDataCachePolicy
+     * @see org.openspaces.core.space.BlobStoreDataCachePolicy
      */
     public void setCachePolicy(CachePolicy cachePolicy) {
         this.cachePolicy = cachePolicy;
@@ -515,10 +515,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             
             if (customCachePolicy != null)
                 cachePolicy = customCachePolicy.asCachePolicy();
-
-            if (cachedIndicesOffheapDataPolicy != null)
-                cachePolicy = cachedIndicesOffheapDataPolicy.asCachePolicy();
             
+            if (blobStoreDataPolicy != null)
+                cachePolicy = blobStoreDataPolicy.asCachePolicy();
+
             if (cachePolicy != null) {
                 props.putAll(cachePolicy.toProps());
             }
@@ -645,8 +645,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.customCachePolicy = customCachePolicy;
     }
 
-    public void setCachedIndicesOffheapDataPolicy(CachedIndicesOffheapDataPolicyFactoryBean cachedIndicesOffheapDataPolicy) {
-        this.cachedIndicesOffheapDataPolicy = cachedIndicesOffheapDataPolicy;
+    public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
+        this.blobStoreDataPolicy = blobStoreDataPolicy;
     }
 
     private class ExecutorFilterProviderFactory implements FilterProviderFactory {
