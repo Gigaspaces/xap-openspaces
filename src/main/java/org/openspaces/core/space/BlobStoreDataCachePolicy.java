@@ -21,6 +21,7 @@ import com.j_spaces.core.Constants;
 import com.j_spaces.core.cache.offHeap.OffHeapStorageHandler;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * A cache policy that stores data offheap and indexes onheap.
@@ -28,9 +29,14 @@ import java.util.Properties;
  * @author yechielf, Kobi
  */
 public class BlobStoreDataCachePolicy implements CachePolicy {
+    private static final Logger _logger = Logger.getLogger(com.gigaspaces.logger.Constants.LOGGER_CONFIG);
 
-    private Integer offHeapCacheSize;
+    private Long avgObjectSizeKB;
+    private Integer cacheEntriesPercentage;
     private OffHeapStorageHandler blobStorageHandler;
+
+    private static final long DEFAULT_AVG_OBJECT_SIZE_KB = 5;
+    private static final int DEFAULT_CACHE_ENTRIES_PERCENTAGE = 20;
 
     public BlobStoreDataCachePolicy() {
     }
@@ -39,26 +45,56 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         this.blobStorageHandler = offHeapStorageHandler;
     }
 
-    public BlobStoreDataCachePolicy(Integer offheapCacheSize, OffHeapStorageHandler offHeapStorageHandler) {
-        this.offHeapCacheSize = offheapCacheSize;
-        this.blobStorageHandler = offHeapStorageHandler;
-    }
-
     public void setOffHeapStorageHandler(OffHeapStorageHandler offHeapStorageHandler) {
         this.blobStorageHandler = offHeapStorageHandler;
     }
 
-    public void setOffHeapCacheSize(Integer offHeapCacheSize) {
-        this.offHeapCacheSize = offHeapCacheSize;
+    public void setAvgObjectSizeKB(Long avgObjectSizeKB) {
+        this.avgObjectSizeKB = avgObjectSizeKB;
+    }
+
+    public void setCacheEntriesPercentage(Integer cacheEntriesPercentage) {
+        this.cacheEntriesPercentage = cacheEntriesPercentage;
+    }
+
+    private void checkProp(String propName, long propValue){
+        if(propValue < 0){
+            throw new IllegalArgumentException(propName + " can not be negative");
+        }
     }
 
     public Properties toProps() {
         Properties props = new Properties();
         props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_CACHED_INDICES_OFFHEAP_DATA);
 
-        if(offHeapCacheSize != null) {
-            props.setProperty(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_PROP, offHeapCacheSize.toString());
+        long blobStoreCacheSize;
+
+        if(cacheEntriesPercentage == null){
+            cacheEntriesPercentage = DEFAULT_CACHE_ENTRIES_PERCENTAGE;
         }
+        if(avgObjectSizeKB == null) {
+            avgObjectSizeKB = DEFAULT_AVG_OBJECT_SIZE_KB;
+        }
+        checkProp("cacheEntriesPercentage", cacheEntriesPercentage);
+        checkProp("avgObjectSizeKB", avgObjectSizeKB);
+
+
+        if(cacheEntriesPercentage != 0){
+            long maxMemoryInBytes = Runtime.getRuntime().maxMemory();
+            if(maxMemoryInBytes == Long.MAX_VALUE){
+                blobStoreCacheSize = Long.parseLong(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_DELAULT);
+                _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
+            }else{
+                double percentage = (double)cacheEntriesPercentage/100;
+                blobStoreCacheSize = (long) ((maxMemoryInBytes*percentage)/(1024*avgObjectSizeKB));
+            }
+        }else{
+            blobStoreCacheSize = 0;
+        }
+
+        props.setProperty(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_PROP, String.valueOf(blobStoreCacheSize));
+        _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
+
 
         if(blobStorageHandler != null){
             props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, blobStorageHandler);
@@ -66,4 +102,6 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
         return props;
     }
+
+
 }

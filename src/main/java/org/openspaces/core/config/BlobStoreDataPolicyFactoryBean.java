@@ -28,15 +28,24 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
 
-    private Integer offHeapCacheSize;
+    private Long avgObjectSizeKB;
+    private Integer cacheEntriesPercentage;
     private OffHeapStorageHandler blobStoreHandler;
 
-    public Integer getOffHeapCacheSize() {
-        return offHeapCacheSize;
+    public Long getAvgObjectSizeKB() {
+        return avgObjectSizeKB;
     }
 
-    public void setOffHeapCacheSize(Integer offHeapCacheSize) {
-        this.offHeapCacheSize = offHeapCacheSize;
+    public void setAvgObjectSizeKB(Long avgObjectSizeKB) {
+        this.avgObjectSizeKB = avgObjectSizeKB;
+    }
+
+    public Integer getCacheEntriesPercentage() {
+        return cacheEntriesPercentage;
+    }
+
+    public void setCacheEntriesPercentage(Integer cacheEntriesPercentage) {
+        this.cacheEntriesPercentage = cacheEntriesPercentage;
     }
 
     public OffHeapStorageHandler getBlobStoreHandler() {
@@ -53,8 +62,10 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
 
     public CachePolicy asCachePolicy() {
         final BlobStoreDataCachePolicy policy = new BlobStoreDataCachePolicy();
-        if (offHeapCacheSize != null)
-            policy.setOffHeapCacheSize(offHeapCacheSize);
+        if (avgObjectSizeKB != null)
+            policy.setAvgObjectSizeKB(avgObjectSizeKB);
+        if (cacheEntriesPercentage != null)
+            policy.setCacheEntriesPercentage(cacheEntriesPercentage);
         if (blobStoreHandler != null)
             policy.setOffHeapStorageHandler(blobStoreHandler);
         return policy;

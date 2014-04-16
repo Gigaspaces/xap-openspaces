@@ -30,7 +30,8 @@ import org.w3c.dom.Element;
  */
 public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
-    private static final String OFFHEAP_CACHE_SIZE_PROPERTY = "offheap-cache-size";
+    private static final String AVG_OBJECT_SIZE_KB = "avg-object-size-KB";
+    private static final String CACHE_ENTRIES_PERCENTAGE = "cache-entries-percentage";
     private static final String STORAGE_HANDLER = "blob-store-handler";
 
     @Override
@@ -41,9 +42,13 @@ public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanD
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         
-        final String size = element.getAttribute(OFFHEAP_CACHE_SIZE_PROPERTY);
-        if (StringUtils.hasText(size))
-            builder.addPropertyValue("offHeapCacheSize", size);
+        final String avgObjectSize = element.getAttribute(AVG_OBJECT_SIZE_KB);
+        if (StringUtils.hasText(avgObjectSize))
+            builder.addPropertyValue("avgObjectSizeKB", avgObjectSize);
+
+        final String cacheEntriesPercentage = element.getAttribute(CACHE_ENTRIES_PERCENTAGE);
+        if (StringUtils.hasText(cacheEntriesPercentage))
+            builder.addPropertyValue("cacheEntriesPercentage", cacheEntriesPercentage);
 
         final String offheapStorageHandler = element.getAttribute(STORAGE_HANDLER);
         if (StringUtils.hasText(offheapStorageHandler))

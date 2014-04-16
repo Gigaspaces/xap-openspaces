@@ -111,10 +111,18 @@
                         </xsd:element>
                         <xsd:element name="blob-store-data-policy">
                             <xsd:complexType>
-                                <xsd:attribute name="offheap-cache-size" type="xsd:decimal" use="optional">
+                                <xsd:attribute name="cache-entries-percentage" type="xsd:decimal" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            The size of the cache.
+                                            Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx configuration
+                                            the cache size is 10000.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="avg-object-size-KB" type="xsd:decimal" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Cverage object size.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
@@ -2319,7 +2327,6 @@
   							</xsd:restriction>
 						</xsd:simpleType>
                     </xsd:attribute>
-
                     <xsd:attribute name="disable-offheap-data" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
