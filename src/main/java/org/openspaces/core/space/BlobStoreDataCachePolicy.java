@@ -57,12 +57,6 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         this.cacheEntriesPercentage = cacheEntriesPercentage;
     }
 
-    private void checkProp(String propName, long propValue){
-        if(propValue < 0){
-            throw new IllegalArgumentException(propName + " can not be negative");
-        }
-    }
-
     public Properties toProps() {
         Properties props = new Properties();
         props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_CACHED_INDICES_OFFHEAP_DATA);
@@ -75,9 +69,9 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         if(avgObjectSizeKB == null) {
             avgObjectSizeKB = DEFAULT_AVG_OBJECT_SIZE_KB;
         }
-        checkProp("cacheEntriesPercentage", cacheEntriesPercentage);
-        checkProp("avgObjectSizeKB", avgObjectSizeKB);
-
+        assertPropPositive("cacheEntriesPercentage", cacheEntriesPercentage);
+        assertPropPositive("avgObjectSizeKB", avgObjectSizeKB);
+        assertPropNotZero("avgObjectSizeKB", avgObjectSizeKB);
 
         if(cacheEntriesPercentage != 0){
             long maxMemoryInBytes = Runtime.getRuntime().maxMemory();
@@ -103,5 +97,16 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         return props;
     }
 
+    private void assertPropPositive(String propName, long propValue){
+        if(propValue < 0){
+            throw new IllegalArgumentException(propName + " can not be negative");
+        }
+    }
+
+    private void assertPropNotZero(String propName, long propValue){
+        if(propValue == 0){
+            throw new IllegalArgumentException(propName + " can not be zero");
+        }
+    }
 
 }
