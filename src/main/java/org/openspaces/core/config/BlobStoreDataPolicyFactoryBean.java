@@ -67,7 +67,7 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
         if (cacheEntriesPercentage != null)
             policy.setCacheEntriesPercentage(cacheEntriesPercentage);
         if (blobStoreHandler != null)
-            policy.setOffHeapStorageHandler(blobStoreHandler);
+            policy.setBlobStoreHandler(blobStoreHandler);
         return policy;
     }
      

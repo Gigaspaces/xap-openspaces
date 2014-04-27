@@ -33,7 +33,7 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
-    private OffHeapStorageHandler blobStorageHandler;
+    private OffHeapStorageHandler blobStoreHandler;
 
     private static final long DEFAULT_AVG_OBJECT_SIZE_KB = 5;
     private static final int DEFAULT_CACHE_ENTRIES_PERCENTAGE = 20;
@@ -41,12 +41,8 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
     public BlobStoreDataCachePolicy() {
     }
 
-    public BlobStoreDataCachePolicy(OffHeapStorageHandler offHeapStorageHandler) {
-        this.blobStorageHandler = offHeapStorageHandler;
-    }
-
-    public void setOffHeapStorageHandler(OffHeapStorageHandler offHeapStorageHandler) {
-        this.blobStorageHandler = offHeapStorageHandler;
+    public void setBlobStoreHandler(OffHeapStorageHandler blobStoreHandler) {
+        this.blobStoreHandler = blobStoreHandler;
     }
 
     public void setAvgObjectSizeKB(Long avgObjectSizeKB) {
@@ -90,8 +86,8 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
 
 
-        if(blobStorageHandler != null){
-            props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, blobStorageHandler);
+        if(blobStoreHandler != null){
+            props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, blobStoreHandler);
         }
 
         return props;
