@@ -2327,10 +2327,10 @@
   							</xsd:restriction>
 						</xsd:simpleType>
                     </xsd:attribute>
-                    <xsd:attribute name="disable-offheap-data" type="xsd:boolean" use="optional">
+                    <xsd:attribute name="disable-blob-store" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
-                                Indicator whether this type will disable offheap data even if cache-policy is offheap.
+                                Indicator whether this type will disable blob store even if cache-policy is BlobStore.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
