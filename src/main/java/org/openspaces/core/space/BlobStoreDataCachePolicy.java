@@ -55,7 +55,7 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     public Properties toProps() {
         Properties props = new Properties();
-        props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_CACHED_INDICES_OFFHEAP_DATA);
+        props.setProperty(Constants.CacheManager.FULL_CACHE_POLICY_PROP, "" + Constants.CacheManager.CACHE_POLICY_BLOB_STORE);
 
         long blobStoreCacheSize;
 
@@ -72,7 +72,7 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         if(cacheEntriesPercentage != 0){
             long maxMemoryInBytes = Runtime.getRuntime().maxMemory();
             if(maxMemoryInBytes == Long.MAX_VALUE){
-                blobStoreCacheSize = Long.parseLong(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_DELAULT);
+                blobStoreCacheSize = Long.parseLong(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_CACHE_SIZE_DELAULT);
                 _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
             }else{
                 double percentage = (double)cacheEntriesPercentage/100;
@@ -82,12 +82,12 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
             blobStoreCacheSize = 0;
         }
 
-        props.setProperty(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_CACHE_SIZE_PROP, String.valueOf(blobStoreCacheSize));
+        props.setProperty(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_CACHE_SIZE_PROP, String.valueOf(blobStoreCacheSize));
         _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
 
 
         if(blobStoreHandler != null){
-            props.put(Constants.CacheManager.CACHE_MANAGER_OFFHEAP_STORAGE_HANDLER_PROP, blobStoreHandler);
+            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_STORAGE_HANDLER_PROP, blobStoreHandler);
         }
 
         return props;
