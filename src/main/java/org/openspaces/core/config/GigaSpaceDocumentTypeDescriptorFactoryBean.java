@@ -48,7 +48,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
     private StorageType _storageType;
     private String _fifoGroupingPropertyPath;
     private Set<String> _fifoGroupingIndexesPaths;
-    private Boolean _disableOffHeapData;
+    private Boolean _disableBlobStore;
 
     private String _documentWrapperClassName;
 
@@ -99,8 +99,8 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
             if(_replicable != null)
                 typeDescriptorBuilder.replicable(_replicable);
             
-            if (_disableOffHeapData != null)
-                typeDescriptorBuilder.disableOffHeapData(_disableOffHeapData);
+            if (_disableBlobStore != null)
+                typeDescriptorBuilder.disableBlobStore(_disableBlobStore);
             	
             	
             if(_documentWrapperClassName != null)
@@ -203,13 +203,13 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
         this._fifoGroupingIndexesPaths = fifoGroupingIndexesPaths;
     }
     
-    public boolean getDisableOffHeapData() {
-    	return _disableOffHeapData; 
+    public boolean getDisableBlobStore() {
+    	return _disableBlobStore; 
     			}
 
     
-    public void setDisableOffHeapData(boolean disableOffHeapData) {
-    	_disableOffHeapData = disableOffHeapData;
+    public void setDisableBlobStore(boolean disableOffHeapData) {
+    	_disableBlobStore = disableOffHeapData;
     }
 
 }
