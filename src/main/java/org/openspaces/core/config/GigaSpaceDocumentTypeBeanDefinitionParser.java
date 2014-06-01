@@ -76,7 +76,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             if(propertyName.equals("storageType"))
                 builder.addPropertyValue(propertyName, Enum.valueOf(StorageType.class, attribute.getValue().toUpperCase()));
 
-            if(propertyName.equals("disableBlobStore"))
+            if(propertyName.equals("blobstoreEnabled"))
                 builder.addPropertyValue(propertyName,attribute.getValue());
         }
         
