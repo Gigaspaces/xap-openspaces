@@ -39,12 +39,12 @@
                                 <xsd:attribute name="username" type="xsd:string"/>
                                 <xsd:attribute name="password" type="xsd:string"/>
                                 <xsd:attribute name="user-details" type="xsd:string">
-									<xsd:annotation>
-										<xsd:documentation>
-											Deprecated since 9.5.1 - use credentials-provider attribute instead. 
-										</xsd:documentation>
-									</xsd:annotation>
-								</xsd:attribute>												                                
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Deprecated since 9.5.1 - use credentials-provider attribute instead.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                                 <xsd:attribute name="credentials-provider" type="xsd:string"/>
                                 <xsd:attribute name="secured" type="xsd:string"/>
                                 <!-- TODO: remove -->
@@ -77,18 +77,18 @@
                         </xsd:element>
                         <xsd:element name="custom-cache-policy">
                             <xsd:complexType>
-	                            <xsd:attribute name="space-eviction-strategy" type="xsd:string" use="required">
-			                        <xsd:annotation>
-			                            <xsd:documentation source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
-		                                	The bean name which represent the space eviction strategy class you want to use
-	                                        as your space eviction policy. The class should extend com.gigaspaces.server.eviction.SpaceEvictionStrategy. 
-			                            </xsd:documentation>
-			                            <xsd:appinfo>
-			                                <tool:annotation kind="ref">
-			                                    <tool:expected-type type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
-			                                </tool:annotation>
-			                            </xsd:appinfo>
-			                        </xsd:annotation>
+                                <xsd:attribute name="space-eviction-strategy" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
+                                            The bean name which represent the space eviction strategy class you want to use
+                                            as your space eviction policy. The class should extend com.gigaspaces.server.eviction.SpaceEvictionStrategy.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
                                 </xsd:attribute>
                                 <xsd:attribute name="size" type="xsd:string" use="optional">
                                     <xsd:annotation>
@@ -139,7 +139,7 @@
                                         </xsd:appinfo>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                             </xsd:complexType>
+                            </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
@@ -291,17 +291,17 @@
                             </xsd:annotation>
                         </xsd:element>
                         <xsd:element ref="space-type">
-					       <xsd:annotation>
-					            <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
-					                Defines a single document type for the space
-					            </xsd:documentation>
-					            <xsd:appinfo>
-					                 <tool:annotation kind="ref">
-					                    <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
-					                </tool:annotation>
-					            </xsd:appinfo>
-					        </xsd:annotation>
-					    </xsd:element>
+                            <xsd:annotation>
+                                <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
+                                    Defines a single document type for the space
+                                </xsd:documentation>
+                                <xsd:appinfo>
+                                    <tool:annotation kind="ref">
+                                        <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
+                                    </tool:annotation>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
                     </xsd:choice>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
@@ -384,7 +384,7 @@
                         <xsd:annotation>
                             <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
                                 Allows to provide a Space external data source reference.
-                            	Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes instead.
+                                Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes instead.
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
@@ -416,7 +416,7 @@
                                 </tool:annotation>
                             </xsd:appinfo>
                         </xsd:annotation>
-                    </xsd:attribute>                    
+                    </xsd:attribute>
                     <xsd:attribute name="enable-member-alive-indicator" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -429,7 +429,7 @@
                     <xsd:attribute name="gateway-targets" type="gatewayTargetsRefType">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	A gateway factory bean that creates gateway replication targets for a space.                            	
+                                A gateway factory bean that creates gateway replication targets for a space.
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
@@ -443,7 +443,585 @@
         </xsd:complexType>
     </xsd:element>
 
-   <xsd:element name="mirror">
+    <xsd:element name="embedded-space">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
+                A space factory bean that creates a space (IJSpace) based on a url and additional settings.
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="security" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="username" type="xsd:string"/>
+                                <xsd:attribute name="password" type="xsd:string"/>
+                                <xsd:attribute name="user-details" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Deprecated since 9.5.1 - use credentials-provider attribute instead.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="credentials-provider" type="xsd:string"/>
+                                <xsd:attribute name="secured" type="xsd:string"/>
+                                <!-- TODO: remove -->
+                                <xsd:attribute name="encrypted" type="xsd:string"/>
+                                <!-- TODO: remove -->
+                                <xsd:attribute name="permissions" type="xsd:string"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="all-in-cache-policy"/>
+                        <xsd:element name="lru-cache-policy">
+                            <xsd:complexType >
+                                <xsd:attribute name="size" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the cache.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="initialLoadPercentage" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When a space is running in a persistent mode (i.e. using the
+                                            HibernateDataSource implementation), The initial_load sets the % of the
+                                            space cache data to be loaded (default is 50%) maximum size. To disable this
+                                            initial load phase, you should configure the initial_load value to be 0.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="custom-cache-policy">
+                            <xsd:complexType>
+                                <xsd:attribute name="space-eviction-strategy" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
+                                            The bean name which represent the space eviction strategy class you want to use
+                                            as your space eviction policy. The class should extend com.gigaspaces.server.eviction.SpaceEvictionStrategy.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="size" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the cache.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="initial-load-percentage" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When a space is running in a persistent mode (i.e. using the
+                                            HibernateDataSource implementation), The initial_load sets the % of the
+                                            space cache data to be loaded (default is 50%) maximum size. To disable this
+                                            initial load phase, you should configure the initial_load value to be 0.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="blob-store-data-policy">
+                            <xsd:complexType>
+                                <xsd:attribute name="cache-entries-percentage" type="xsd:decimal" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx configuration
+                                            the cache size is 10000.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="avg-object-size-KB" type="xsd:decimal" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Cverage object size.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="blob-store-handler" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation source="java:com.j_spaces.core.cache.offHeap.OffHeapStorageHandler">
+                                            The bean name which represent the space offheap storage implementation class you want to use.
+                                            The class should extend com.j_spaces.core.cache.offHeap.OffHeapStorageHandler.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type type="com.j_spaces.core.cache.offHeap.OffHeapStorageHandler"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the url properties. Note, most if not all url level properties can be set using
+                                    explicit attributes.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the properties the IJSpace will be created with (same as parameters). Note,
+                                    this
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred
+                                    to as custom properties and allows for example to control the xpath injection to
+                                    space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the parameters the IJSpace will be created with (same as parameters). Note,
+                                    this
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred to as custom properties and allows for example to control the xpath
+                                    injection to space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:map"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element ref="space-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.SpaceFilterProviderFactory">
+                                    Allows to inject a "pure" space filter based on SpaceFilterProviderFactory that
+                                    accepts an ISpaceFilter implementation.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
+                                    Allows to inject a an annotation adapter based on AnnotationFilterFactoryBean that
+                                    accepts a pure pojo with annotations marking filter methods.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.MethodFilterFactoryBean">
+                                    Allows to inject a a method adapter based on MethodFilterFactoryBean that
+                                    accepts a pure pojo with method marking filter methods.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="filter-provider" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.FilterProviderFactory">
+                                    Allows to inject a general implementation of FilterProviderFactory.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Reference to the bean.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type
+                                                        type="org.openspaces.core.space.filter.FilterProviderFactory"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="replication-filter-provider" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory">
+                                    Inject an instance of ReplicationFilterProviderFactory allowing to provide a Space
+                                    replication filter.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Reference to the bean.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type
+                                                        type="org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element ref="space-replication-filter" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.replication.DefaultReplicationFilterProviderFactory">
+                                    Simplified option for injecting space replication filter without using the factory.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="space-type">
+                            <xsd:annotation>
+                                <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
+                                    Defines a single document type for the space
+                                </xsd:documentation>
+                                <xsd:appinfo>
+                                    <tool:annotation kind="ref">
+                                        <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
+                                    </tool:annotation>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:choice>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name that will be used to build the space URL.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="schema" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The schema name associated with the space.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-groups" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jini Lookup Service group to find container or space using multicast (jini
+                                protocol). Groups are comma separated list.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-locators" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jini Lookup locators for the Space. In the form of: host1:port1,host2:port2.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-timeout" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The max timeout in milliseconds to find a Container or Space using multicast (jini
+                                protocol). Defaults to 6000 (i.e. 6 seconds).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="versioned" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When false, optimistic locking is disabled. Default is true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="no-write-lease" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If true - Lease object would not return from the write/writeMultiple operations.
+                                Defaults to false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="mirror" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When setting this URL property to true it will allow the space to connect to the Mirror
+                                service to push its data and operations for asynchronous persistency. Defaults to false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="fifo" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicates that all take/write operations be conducted in FIFO mode. Default is false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="register-for-space-mode-notifications" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicates that this space will register for space mode notifications.
+                                Default behavior (if the flag was not set) will register to primary backup notification
+                                if the space was found using an embedded protocol, and will not register for
+                                notification if the space was found using rmi or jini protocols.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="external-data-source" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
+                                Allows to provide a Space external data source reference.
+                                Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes instead.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.datasource.ManagedDataSource"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="space-data-source" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.datasource.SpaceDataSource">
+                                Allows to provide a Space data source reference.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.datasource.SpaceDataSource"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="space-sync-endpoint" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation source="java:com.gigaspaces.sync.SpaceSynchronizationEndpoint">
+                                Allows to provide a Space synchronization endpoint reference.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="com.gigaspaces.sync.SpaceSynchronizationEndpoint"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="enable-member-alive-indicator" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Should this Space bean control if the cluster member is alive or not. Defaults to true
+                                if the Space started is an embedded Space, and false if the it is connected to a remote
+                                Space.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="gateway-targets" type="gatewayTargetsRefType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A gateway factory bean that creates gateway replication targets for a space.
+                            </xsd:documentation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="org.openspaces.core.gateway.GatewayTargetsFactoryBean"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="space-proxy">
+        <xsd:annotation>
+            <xsd:documentation source="java:org.openspaces.core.space.SpaceProxyFactoryBean">
+                A space factory bean that creates a remote space (IJSpace) based on a prefixless URL and additional
+                settings.
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.j_spaces.core.IJSpace"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="security" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="username" type="xsd:string"/>
+                                <xsd:attribute name="password" type="xsd:string"/>
+                                <xsd:attribute name="user-details" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Deprecated since 9.5.1 - use credentials-provider attribute instead.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="credentials-provider" type="xsd:string"/>
+                                <xsd:attribute name="secured" type="xsd:string"/>
+                                <!-- TODO: remove -->
+                                <xsd:attribute name="encrypted" type="xsd:string"/>
+                                <!-- TODO: remove -->
+                                <xsd:attribute name="permissions" type="xsd:string"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the properties the IJSpace will be created with (same as parameters). Note,
+                                    this
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred
+                                    to as custom properties and allows for example to control the xpath injection to
+                                    space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
+                                    Allows to inject a an annotation adapter based on AnnotationFilterFactoryBean that
+                                    accepts a pure pojo with annotations marking filter methods.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation
+                                        source="java:org.openspaces.core.space.filter.MethodFilterFactoryBean">
+                                    Allows to inject a a method adapter based on MethodFilterFactoryBean that
+                                    accepts a pure pojo with method marking filter methods.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:choice>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name that will be used to build the space URL.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-groups" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jini Lookup Service group to find container or space using multicast (jini
+                                protocol). Groups are comma separated list.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-locators" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jini Lookup locators for the Space. In the form of: host1:port1,host2:port2.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-timeout" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The max timeout in milliseconds to find a Container or Space using multicast (jini
+                                protocol). Defaults to 6000 (i.e. 6 seconds).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="versioned" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When false, optimistic locking is disabled. Default is true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="mirror" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                When setting this URL property to true it will allow the space to connect to the Mirror
+                                service to push its data and operations for asynchronous persistency. Defaults to false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="fifo" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicates that all take/write operations be conducted in FIFO mode. Default is false.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="register-for-space-mode-notifications" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Indicates that this space will register for space mode notifications.
+                                Default behavior (if the flag was not set) will register to primary backup notification
+                                if the space was found using an embedded protocol, and will not register for
+                                notification if the space was found using rmi or jini protocols.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="enable-member-alive-indicator" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Should this Space bean control if the cluster member is alive or not. Defaults to true
+                                if the Space started is an embedded Space, and false if the it is connected to a remote
+                                Space.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="mirror">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
                 A space factory bean that creates a mirror space based on a url and additional settings.
@@ -458,7 +1036,7 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
                     <xsd:choice minOccurs="1" maxOccurs="unbounded">
-                        <xsd:element name="source-space" minOccurs="1" maxOccurs="1" >
+                        <xsd:element name="source-space" minOccurs="1" maxOccurs="1">
                             <xsd:complexType>
                                 <xsd:attribute name="name" type="xsd:string" use="required">
                                     <xsd:annotation>
@@ -483,14 +1061,14 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element name="external-data-source" type="edsType" minOccurs="0" maxOccurs="1"  >
-					       <xsd:annotation>
-					           <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
-                                Allows to provide a Space external data source reference.
-                            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
-					     <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                        <xsd:element name="external-data-source" type="edsType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
+                                    Allows to provide a Space external data source reference.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
                                     Sets the properties the IJSpace will be created with (same as parameters). Note,
@@ -514,39 +1092,40 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
-					    <xsd:element name="tx-support" minOccurs="0" maxOccurs="1">
-					       	<xsd:annotation>
-					    		<xsd:documentation>
-					    			Configures distributed transaction processing configuration for the Mirror component. 
-								</xsd:documentation>
-					    	</xsd:annotation>
-					    	<xsd:complexType>
-						    	<xsd:attribute name="dist-tx-wait-timeout-millis" type="xsd:string" use="optional">
-							       	<xsd:annotation>
-							    		<xsd:documentation>
-											Sets the timeout (in milliseconds) for distributed transaction partial
-											participants commit.
-										</xsd:documentation>
-							    	</xsd:annotation>
-						    	</xsd:attribute>
-						    	<xsd:attribute name="dist-tx-wait-for-opers" type="xsd:string" use="optional">
-							       	<xsd:annotation>
-							    		<xsd:documentation>
-											Sets the number of operations to wait until distributed transaction
-											partial participants commit.
-										</xsd:documentation>
-							    	</xsd:annotation>
-						    	</xsd:attribute>
-						    	<xsd:attribute name="monitor-pending-opers-memory" type="xsd:boolean" use="optional">
-							       	<xsd:annotation>
-							    		<xsd:documentation>
-							    			Sets whether pending operations queue memory monitoring is enabled.
-										</xsd:documentation>
-							    	</xsd:annotation>
-						    	</xsd:attribute>						    	
-					    	</xsd:complexType>
-					    </xsd:element>
-                   </xsd:choice>
+                        <xsd:element name="tx-support" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Configures distributed transaction processing configuration for the Mirror
+                                    component.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="dist-tx-wait-timeout-millis" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the timeout (in milliseconds) for distributed transaction partial
+                                            participants commit.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="dist-tx-wait-for-opers" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the number of operations to wait until distributed transaction
+                                            partial participants commit.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="monitor-pending-opers-memory" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets whether pending operations queue memory monitoring is enabled.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
                     <xsd:attribute name="url" type="xsd:string" use="required">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -554,7 +1133,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                  
+
                     <xsd:attribute name="external-data-source" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
@@ -578,7 +1157,7 @@
                                 </tool:annotation>
                             </xsd:appinfo>
                         </xsd:annotation>
-                    </xsd:attribute>                                        
+                    </xsd:attribute>
                     <xsd:attribute name="operation-grouping" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
@@ -586,13 +1165,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                         <xsd:simpleType>
-                           <xsd:restriction base="xsd:string">
-                               <xsd:enumeration value="group-by-space-transaction"/>
-                               <xsd:enumeration value="group-by-replication-bulk"/>
-                           </xsd:restriction>
-                       </xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="group-by-space-transaction"/>
+                                <xsd:enumeration value="group-by-replication-bulk"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
                     </xsd:attribute>
-               
+
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -768,7 +1347,7 @@
                     <xsd:attribute name="after-read-multiple" type="xsd:string"/>
                     <xsd:attribute name="before-take-multiple" type="xsd:string"/>
                     <xsd:attribute name="after-take-multiple" type="xsd:string"/>
-                    <xsd:attribute name="before-notify-trigger"  type="xsd:string"/>
+                    <xsd:attribute name="before-notify-trigger" type="xsd:string"/>
                     <xsd:attribute name="after-notify-trigger" type="xsd:string"/>
                     <xsd:attribute name="before-all-notify-trigger" type="xsd:string"/>
                     <xsd:attribute name="after-all-notify-trigger" type="xsd:string"/>
@@ -844,33 +1423,34 @@
                     <xsd:attribute name="max-disconnection-duration" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	When the connection between a local cache and remote master space is disrupted, 
-                            	the local cache starts trying to reconnect with the remote space. If the 
-                            	disconnection duration exceeds the max-disconnection-duration, the local cache 
-                            	enters a disconnected state, wherein each operation throws an exception stating 
-                            	the cache is disconnected. When the connection to the remote master space is 
-                            	restored, the local cache state will resume to a connected state.
+                                When the connection between a local cache and remote master space is disrupted,
+                                the local cache starts trying to reconnect with the remote space. If the
+                                disconnection duration exceeds the max-disconnection-duration, the local cache
+                                enters a disconnected state, wherein each operation throws an exception stating
+                                the cache is disconnected. When the connection to the remote master space is
+                                restored, the local cache state will resume to a connected state.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="batch-size" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	Determines the threshold batch size for synchronizing the local cache. 
+                                Determines the threshold batch size for synchronizing the local cache.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="batch-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	Determines the threshold batch time for synchronizing the local cache. 
+                                Determines the threshold batch time for synchronizing the local cache.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="max-time-to-live" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                                The maximum time (in milliseconds) an object will live in the local cache before being evicted.
+                                The maximum time (in milliseconds) an object will live in the local cache before being
+                                evicted.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -912,9 +1492,9 @@
                                 <xsd:enumeration value="NONE">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                        	The local cache will not register for master space updates - If an object 
-                                        	is changed in the master space, it will remain stale in the local cache 
-                                        	until its lease expires.
+                                            The local cache will not register for master space updates - If an object
+                                            is changed in the master space, it will remain stale in the local cache
+                                            until its lease expires.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:enumeration>
@@ -982,37 +1562,38 @@
                     <xsd:attribute name="max-disconnection-duration" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	When the connection between a local view and remote master space is disrupted, 
-                            	the local view starts trying to reconnect with the remote space. If the 
-                            	disconnection duration exceeds the max-disconnection-duration, the local view 
-                            	enters a disconnected state, wherein each operation throws an exception stating 
-                            	the view is disconnected. When the connection to the remote master space is 
-                            	restored, the local view state will resume to a connected state.
+                                When the connection between a local view and remote master space is disrupted,
+                                the local view starts trying to reconnect with the remote space. If the
+                                disconnection duration exceeds the max-disconnection-duration, the local view
+                                enters a disconnected state, wherein each operation throws an exception stating
+                                the view is disconnected. When the connection to the remote master space is
+                                restored, the local view state will resume to a connected state.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="batch-size" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	Determines the threshold batch size for synchronizing the local view. 
+                                Determines the threshold batch size for synchronizing the local view.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="batch-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	Determines the threshold batch time for synchronizing the local view. 
+                                Determines the threshold batch time for synchronizing the local view.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute name="initial-synchronization-timeout" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                            	Determines the initial synchronization process timeout, once exceeded the process is considered failed and 
-								will be retried (Defaults to 5 minutes). 
+                                Determines the initial synchronization process timeout, once exceeded the process is
+                                considered failed and
+                                will be retried (Defaults to 5 minutes).
                             </xsd:documentation>
                         </xsd:annotation>
-                    </xsd:attribute>                                        
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -1034,60 +1615,60 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
                     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-					    <xsd:element ref="space-type">
-					        <xsd:annotation>
-					            <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
-					                Defines a single document type for the space
-					            </xsd:documentation>
-					            <xsd:appinfo>
-					                <tool:annotation kind="ref">
-					                    <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
-					                </tool:annotation>
-					            </xsd:appinfo>
-					        </xsd:annotation>
-					    </xsd:element>
-					    <xsd:element ref="write-modifier">
-					        <xsd:annotation>
-					            <xsd:documentation>
-					            	Defines a single default write modifier for the space proxy
-					            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
-					    <xsd:element ref="read-modifier">
-					        <xsd:annotation>
-					            <xsd:documentation>
-					            	Defines a single default read modifier for the space proxy
-					            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
-					    <xsd:element ref="change-modifier">
-					        <xsd:annotation>
-					            <xsd:documentation>
-					            	Defines a single default change modifier for the space proxy
-					            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
-					    <xsd:element ref="take-modifier">
-					        <xsd:annotation>
-					            <xsd:documentation>
-					            	Defines a single default take modifier for the space proxy
-					            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
-					    <xsd:element ref="clear-modifier">
-					        <xsd:annotation>
-					            <xsd:documentation>
-					            	Defines a single default clear modifier for the space proxy
-					            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
-					    <xsd:element ref="count-modifier">
-					        <xsd:annotation>
-					            <xsd:documentation>
-					            	Defines a single default count modifier for the space proxy
-					            </xsd:documentation>
-					        </xsd:annotation>
-					    </xsd:element>
+                        <xsd:element ref="space-type">
+                            <xsd:annotation>
+                                <xsd:documentation source="java:com.gigaspaces.metadata.SpaceTypeDescriptor">
+                                    Defines a single document type for the space
+                                </xsd:documentation>
+                                <xsd:appinfo>
+                                    <tool:annotation kind="ref">
+                                        <tool:expected-type type="com.gigaspaces.metadata.SpaceTypeDescriptor"/>
+                                    </tool:annotation>
+                                </xsd:appinfo>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="write-modifier">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Defines a single default write modifier for the space proxy
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="read-modifier">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Defines a single default read modifier for the space proxy
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="change-modifier">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Defines a single default change modifier for the space proxy
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="take-modifier">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Defines a single default take modifier for the space proxy
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="clear-modifier">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Defines a single default clear modifier for the space proxy
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element ref="count-modifier">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Defines a single default count modifier for the space proxy
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
                     </xsd:choice>
                     <xsd:attribute name="space" type="spaceRefType" use="required">
                         <xsd:annotation>
@@ -1256,7 +1837,7 @@
                                             </xsd:enumeration>
                                         </xsd:restriction>
                                     </xsd:simpleType>
-                                </xsd:attribute>                                
+                                </xsd:attribute>
                                 <xsd:attribute name="put-first" type="xsd:boolean" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
@@ -1402,12 +1983,11 @@
         </xsd:complexType>
     </xsd:element>
 
-
     <xsd:element name="local-tx-manager">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.transaction.manager.LocalJiniTransactionManager">
                 Spring transaction manager using GigaSpaces LocalJiniTransactionManager.
-				deprecated since 8.0, use distributed-tx-manager instead.                
+                deprecated since 8.0, use distributed-tx-manager instead.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -1762,7 +2342,8 @@
                 <xsd:attribute name="projections" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The properties names (separated by a comma) of the properties the result of this query will contain.
+                            The properties names (separated by a comma) of the properties the result of this query will
+                            contain.
                             non projected properties will be null in the result of this query's execution.
                         </xsd:documentation>
                     </xsd:annotation>
@@ -1902,12 +2483,12 @@
         <xsd:annotation>
             <xsd:appinfo>
                 <tool:annotation kind="ref">
-                    <tool:expected-type type="org.openspaces.core.gateway.GatewayTargetsFactoryBean" />
+                    <tool:expected-type type="org.openspaces.core.gateway.GatewayTargetsFactoryBean"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>
         <xsd:union memberTypes="xsd:string"/>
-	</xsd:simpleType>
+    </xsd:simpleType>
 
     <xsd:simpleType name="spaceRefType">
         <xsd:annotation>
@@ -1942,170 +2523,170 @@
         <xsd:union memberTypes="xsd:string"/>
     </xsd:simpleType>
 
-	<xsd:element name="write-modifier">
-		<xsd:annotation>
-			<xsd:documentation>
-				Defines a single default write modifier for the space proxy
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:attribute name="value" use="required">
-				<xsd:simpleType>
-				    <xsd:annotation>
-			            <xsd:documentation>
-							The modifier constant name as defined in WriteModifiers
-			            </xsd:documentation>
-			        </xsd:annotation>
-			        <xsd:restriction base="xsd:string">
-			            <xsd:enumeration value="NONE"/>
-			            <xsd:enumeration value="WRITE_ONLY"/>
-			            <xsd:enumeration value="UPDATE_ONLY"/>
-			            <xsd:enumeration value="UPDATE_OR_WRITE"/>
-			            <xsd:enumeration value="RETURN_PREV_ON_UPDATE"/>
-			            <xsd:enumeration value="ONE_WAY"/>
-			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
-			            <xsd:enumeration value="PARTIAL_UPDATE"/>
-			        </xsd:restriction>
-			    </xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="write-modifier">
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines a single default write modifier for the space proxy
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required">
+                <xsd:simpleType>
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The modifier constant name as defined in WriteModifiers
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="NONE"/>
+                        <xsd:enumeration value="WRITE_ONLY"/>
+                        <xsd:enumeration value="UPDATE_ONLY"/>
+                        <xsd:enumeration value="UPDATE_OR_WRITE"/>
+                        <xsd:enumeration value="RETURN_PREV_ON_UPDATE"/>
+                        <xsd:enumeration value="ONE_WAY"/>
+                        <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                        <xsd:enumeration value="PARTIAL_UPDATE"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 
-   	<xsd:element name="read-modifier">
-		<xsd:annotation>
-			<xsd:documentation>
-				Defines a single default read modifier for the space proxy
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:attribute name="value" use="required">
-				<xsd:simpleType>
-				    <xsd:annotation>
-			            <xsd:documentation>
-							The modifier constant name as defined in ReadModifiers
-			            </xsd:documentation>
-			        </xsd:annotation>
-			        <xsd:restriction base="xsd:string">
-			            <xsd:enumeration value="NONE"/>
-			            <xsd:enumeration value="REPEATABLE_READ"/>
-			            <xsd:enumeration value="READ_COMMITTED"/>
-			            <xsd:enumeration value="DIRTY_READ"/>
-			            <xsd:enumeration value="EXCLUSIVE_READ_LOCK"/>
-			            <xsd:enumeration value="IGNORE_PARTIAL_FAILURE"/>
-			            <xsd:enumeration value="FIFO"/>
-			            <xsd:enumeration value="FIFO_GROUPING_POLL"/>
-			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
-			        </xsd:restriction>
-			    </xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="read-modifier">
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines a single default read modifier for the space proxy
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required">
+                <xsd:simpleType>
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The modifier constant name as defined in ReadModifiers
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="NONE"/>
+                        <xsd:enumeration value="REPEATABLE_READ"/>
+                        <xsd:enumeration value="READ_COMMITTED"/>
+                        <xsd:enumeration value="DIRTY_READ"/>
+                        <xsd:enumeration value="EXCLUSIVE_READ_LOCK"/>
+                        <xsd:enumeration value="IGNORE_PARTIAL_FAILURE"/>
+                        <xsd:enumeration value="FIFO"/>
+                        <xsd:enumeration value="FIFO_GROUPING_POLL"/>
+                        <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="change-modifier">
-		<xsd:annotation>
-			<xsd:documentation>
-				Defines a single default change modifier for the space proxy
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:attribute name="value" use="required">
-				<xsd:simpleType>
-				    <xsd:annotation>
-			            <xsd:documentation>
-							The modifier constant name as defined in ChangeModifiers
-			            </xsd:documentation>
-			        </xsd:annotation>
-			        <xsd:restriction base="xsd:string">
-			            <xsd:enumeration value="NONE"/>
-			            <xsd:enumeration value="ONE_WAY"/>
-			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
-			            <xsd:enumeration value="RETURN_DETAILED_RESULTS"/>
-			        </xsd:restriction>
-			    </xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines a single default change modifier for the space proxy
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required">
+                <xsd:simpleType>
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The modifier constant name as defined in ChangeModifiers
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="NONE"/>
+                        <xsd:enumeration value="ONE_WAY"/>
+                        <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                        <xsd:enumeration value="RETURN_DETAILED_RESULTS"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="take-modifier">
-		<xsd:annotation>
-			<xsd:documentation>
-				Defines a single default take modifier for the space proxy
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:attribute name="value" use="required">
-				<xsd:simpleType>
-				    <xsd:annotation>
-			            <xsd:documentation>
-							The modifier constant name as defined in TakeModifiers
-			            </xsd:documentation>
-			        </xsd:annotation>
-			        <xsd:restriction base="xsd:string">
-			            <xsd:enumeration value="NONE"/>
-			            <xsd:enumeration value="EVICT_ONLY"/>
-			            <xsd:enumeration value="IGNORE_PARTIAL_FAILURE"/>
-			            <xsd:enumeration value="FIFO"/>
-			            <xsd:enumeration value="FIFO_GROUPING_POLL"/>
-			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
-			        </xsd:restriction>
-			    </xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines a single default take modifier for the space proxy
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required">
+                <xsd:simpleType>
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The modifier constant name as defined in TakeModifiers
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="NONE"/>
+                        <xsd:enumeration value="EVICT_ONLY"/>
+                        <xsd:enumeration value="IGNORE_PARTIAL_FAILURE"/>
+                        <xsd:enumeration value="FIFO"/>
+                        <xsd:enumeration value="FIFO_GROUPING_POLL"/>
+                        <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="count-modifier">
-		<xsd:annotation>
-			<xsd:documentation>
-				Defines a single default count modifier for the space proxy
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:attribute name="value" use="required">
-				<xsd:simpleType>
-				    <xsd:annotation>
-			            <xsd:documentation>
-							The modifier constant name as defined in CountModifiers
-			            </xsd:documentation>
-			        </xsd:annotation>
-			        <xsd:restriction base="xsd:string">
-			            <xsd:enumeration value="NONE"/>
-			            <xsd:enumeration value="REPEATABLE_READ"/>
-			            <xsd:enumeration value="READ_COMMITTED"/>
-			            <xsd:enumeration value="DIRTY_READ"/>
-			            <xsd:enumeration value="EXCLUSIVE_READ_LOCK"/>
-			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
-			        </xsd:restriction>
-			    </xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines a single default count modifier for the space proxy
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required">
+                <xsd:simpleType>
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The modifier constant name as defined in CountModifiers
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="NONE"/>
+                        <xsd:enumeration value="REPEATABLE_READ"/>
+                        <xsd:enumeration value="READ_COMMITTED"/>
+                        <xsd:enumeration value="DIRTY_READ"/>
+                        <xsd:enumeration value="EXCLUSIVE_READ_LOCK"/>
+                        <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="clear-modifier">
-		<xsd:annotation>
-			<xsd:documentation>
-				Defines a single default clear modifier for the space proxy
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:attribute name="value" use="required">
-				<xsd:simpleType>
-				    <xsd:annotation>
-			            <xsd:documentation>
-							The modifier constant name as defined in ClearModifiers
-			            </xsd:documentation>
-			        </xsd:annotation>
-			        <xsd:restriction base="xsd:string">
-			            <xsd:enumeration value="NONE"/>
-			            <xsd:enumeration value="EVICT_ONLY"/>
-			            <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
-			        </xsd:restriction>
-			    </xsd:simpleType>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
+        <xsd:annotation>
+            <xsd:documentation>
+                Defines a single default clear modifier for the space proxy
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required">
+                <xsd:simpleType>
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The modifier constant name as defined in ClearModifiers
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="NONE"/>
+                        <xsd:enumeration value="EVICT_ONLY"/>
+                        <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="space-type">
-       <xsd:annotation>
+        <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.config.GigaSpaceDocumentTypeDescriptorFactoryBean">
                 Defines a custom space type
             </xsd:documentation>
@@ -2119,163 +2700,163 @@
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
                     <xsd:sequence>
-                   		<xsd:element name="id"  minOccurs="0" maxOccurs="1">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 The id property definition.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                         <xsd:complexType>
-					        <xsd:attribute name="property" type="xsd:string"  use="required">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                 Id property name.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-					        <xsd:attribute name="auto-generate" type="xsd:boolean">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                 Id autoGenerate type.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-					    </xsd:complexType>
-                       </xsd:element>
-                   		<xsd:element name="routing"  minOccurs="0" maxOccurs="1">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 The routing property definition.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                         <xsd:complexType>
-					        <xsd:attribute name="property" type="xsd:string" use="required">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                 Routing property name.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-					    </xsd:complexType>
-                       </xsd:element>
+                        <xsd:element name="id" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The id property definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="property" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Id property name.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="auto-generate" type="xsd:boolean">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Id autoGenerate type.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="routing" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The routing property definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="property" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Routing property name.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
 
-                   		<xsd:element name="basic-index"  minOccurs="0" maxOccurs="unbounded">
-	                         <xsd:annotation>
-	                             <xsd:documentation>
-	                                 Basic equality index definition.
-	                             </xsd:documentation>
-	                         </xsd:annotation>
-	                         <xsd:complexType>
-						        <xsd:attribute name="path" type="xsd:string" use="required">
-						            <xsd:annotation>
-						                <xsd:documentation>
-						                The index path.
-						                </xsd:documentation>
-						            </xsd:annotation>
-						        </xsd:attribute>
-						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
-						            <xsd:annotation>
-						                <xsd:documentation>
-						                The index unique indicator.
-						                </xsd:documentation>
-						            </xsd:annotation>
-						        </xsd:attribute>
-						    </xsd:complexType>
-					    </xsd:element>
+                        <xsd:element name="basic-index" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Basic equality index definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="path" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The index path.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="unique" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The index unique indicator.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
 
-                   		<xsd:element name="extended-index"  minOccurs="0" maxOccurs="unbounded">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 Basic equality index definition.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                         <xsd:complexType>
-					        <xsd:attribute name="path" type="xsd:string" use="required">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                The index path.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
-						            <xsd:annotation>
-						                <xsd:documentation>
-						                The index unique indicator.
-						                </xsd:documentation>
-						            </xsd:annotation>
-						        </xsd:attribute>
-					    </xsd:complexType>
-                       </xsd:element>
+                        <xsd:element name="extended-index" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Basic equality index definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="path" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The index path.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="unique" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The index unique indicator.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
 
-                   		<xsd:element name="compound-index"  minOccurs="0" maxOccurs="unbounded">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 compound index definition.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                         <xsd:complexType>
-					        <xsd:attribute name="paths" type="xsd:string" use="required">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                The paths of the index segments, seperated by blank or comma.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-						        <xsd:attribute name="unique" type="xsd:boolean" use="optional">
-						            <xsd:annotation>
-						                <xsd:documentation>
-						                The index unique indicator.
-						                </xsd:documentation>
-						            </xsd:annotation>
-						        </xsd:attribute>
-					    </xsd:complexType>
-                       </xsd:element>
+                        <xsd:element name="compound-index" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    compound index definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="paths" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The paths of the index segments, seperated by blank or comma.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="unique" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The index unique indicator.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
 
-                   		<xsd:element name="document-class"  minOccurs="0" maxOccurs="1">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 Wrapper class for the document.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                       </xsd:element>
+                        <xsd:element name="document-class" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Wrapper class for the document.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
 
-                       <xsd:element name="fifo-grouping-property"  minOccurs="0" maxOccurs="1">
-                         <xsd:annotation>
-                             <xsd:documentation>
-                                 The fifo grouping property definition.
-                             </xsd:documentation>
-                         </xsd:annotation>
-                         <xsd:complexType>
-					        <xsd:attribute name="path" type="xsd:string" use="required">
-					            <xsd:annotation>
-					                <xsd:documentation>
-					                 Fifo grouping property path.
-					                </xsd:documentation>
-					            </xsd:annotation>
-					        </xsd:attribute>
-					    </xsd:complexType>
-                       </xsd:element>
+                        <xsd:element name="fifo-grouping-property" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The fifo grouping property definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="path" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Fifo grouping property path.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
 
-                       <xsd:element name="fifo-grouping-index"  minOccurs="0" maxOccurs="unbounded">
-	                         <xsd:annotation>
-	                             <xsd:documentation>
-	                                 Fifo grouping index definition.
-	                             </xsd:documentation>
-	                         </xsd:annotation>
-	                         <xsd:complexType>
-						        <xsd:attribute name="path" type="xsd:string" use="required">
-						            <xsd:annotation>
-						                <xsd:documentation>
-						                The fifo grouping index path.
-						                </xsd:documentation>
-						            </xsd:annotation>
-						        </xsd:attribute>
-						    </xsd:complexType>
-					    </xsd:element>
+                        <xsd:element name="fifo-grouping-index" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Fifo grouping index definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="path" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The fifo grouping index path.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
 
                     </xsd:sequence>
 
-					<xsd:attribute name="type-name" type="xsd:string" use="required">
+                    <xsd:attribute name="type-name" type="xsd:string" use="required">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The type name.
@@ -2291,7 +2872,7 @@
                         </xsd:annotation>
                     </xsd:attribute>
 
-                     <xsd:attribute name="optimistic-lock" type="xsd:boolean" use="optional">
+                    <xsd:attribute name="optimistic-lock" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Indicator whether this type is using optimistic locking.
@@ -2299,7 +2880,7 @@
                         </xsd:annotation>
                     </xsd:attribute>
 
-                     <xsd:attribute name="fifo-support" type="xsd:string" use="optional">
+                    <xsd:attribute name="fifo-support" type="xsd:string" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Indicator the fifo support for this type.
@@ -2308,24 +2889,24 @@
                     </xsd:attribute>
 
                     <xsd:attribute name="storage-type" use="optional">
-						<xsd:annotation>
-							<xsd:documentation>
-								The storage type of the space-type
-							</xsd:documentation>
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The storage type of the space-type
+                            </xsd:documentation>
                         </xsd:annotation>
                         <xsd:simpleType>
-                         	<xsd:annotation>
-					        	<xsd:documentation>
-					        		Storage type possible types
-								</xsd:documentation>
-							</xsd:annotation>
-							<xsd:restriction base="xsd:string">
-								<xsd:enumeration value="default"/>
-    							<xsd:enumeration value="object"/>
-    							<xsd:enumeration value="binary"/>
-    							<xsd:enumeration value="compressed"/>
-  							</xsd:restriction>
-						</xsd:simpleType>
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Storage type possible types
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="default"/>
+                                <xsd:enumeration value="object"/>
+                                <xsd:enumeration value="binary"/>
+                                <xsd:enumeration value="compressed"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
                     </xsd:attribute>
                     <xsd:attribute name="blobstore-enabled" type="xsd:boolean" use="optional">
                         <xsd:annotation>

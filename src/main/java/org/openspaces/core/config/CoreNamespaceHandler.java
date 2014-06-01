@@ -29,6 +29,8 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("space", new UrlSpaceBeanDefinitionParser());
+        registerBeanDefinitionParser("embedded-space", new EmbeddedSpaceBeanDefinitionParser());
+        registerBeanDefinitionParser("space-proxy", new SpaceProxyBeanDefinitionParser());
         registerBeanDefinitionParser("sql-query", new SQLQueryBeanDefinitionParser());
         registerBeanDefinitionParser("view-query", new SQLQueryBeanDefinitionParser());
         registerBeanDefinitionParser("local-cache", new LocalCacheSpaceBeanDefinitionParser());

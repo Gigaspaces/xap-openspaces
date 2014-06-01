@@ -16,17 +16,6 @@
 
 package org.openspaces.core.space;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.space.filter.FilterProviderFactory;
-import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
-import org.springframework.util.StringUtils;
-
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
@@ -37,6 +26,12 @@ import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.space.filter.FilterProviderFactory;
+import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 /**
  * A simple configurer helper to create {@link IJSpace} instances. The configurer wraps
@@ -55,7 +50,7 @@ import com.j_spaces.core.IJSpace;
  */
 public class UrlSpaceConfigurer implements SpaceConfigurer {
 
-    final private UrlSpaceFactoryBean urlSpaceFactoryBean;
+    protected UrlSpaceFactoryBean urlSpaceFactoryBean;
 
     private IJSpace space;
 
