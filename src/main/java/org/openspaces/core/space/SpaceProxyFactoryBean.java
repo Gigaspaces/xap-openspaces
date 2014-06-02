@@ -16,7 +16,15 @@
 
 package org.openspaces.core.space;
 
+import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.datasource.SpaceDataSource;
+import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
+import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
+import org.openspaces.core.config.CustomCachePolicyFactoryBean;
+import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author yuvalm
@@ -27,12 +35,12 @@ public class SpaceProxyFactoryBean extends UrlSpaceFactoryBean {
 
     public SpaceProxyFactoryBean() {}
 
-    public SpaceProxyFactoryBean(String url) {
-        super(PROXY_URL_PREFIX+url);
+    public SpaceProxyFactoryBean(String name) {
+        super(PROXY_URL_PREFIX+name);
     }
 
-    public SpaceProxyFactoryBean(String url,  Map<String, Object> params) {
-        super(PROXY_URL_PREFIX+url, params);
+    public SpaceProxyFactoryBean(String name,  Map<String, Object> params) {
+        super(PROXY_URL_PREFIX+name, params);
     }
 
     public void setName(String name) {
@@ -41,5 +49,60 @@ public class SpaceProxyFactoryBean extends UrlSpaceFactoryBean {
         } else {
             super.setUrl(PROXY_URL_PREFIX+name);
         }
+    }
+
+    @Override
+    public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setCachePolicy(CachePolicy cachePolicy) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setParameters(Map<String, Object> parameters) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSchema(String schema) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setNoWriteLease(boolean noWriteLease) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setExternalDataSource(ManagedDataSource externalDataSource) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setUrlProperties(Properties urlProperties) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -50,7 +50,7 @@ import java.util.*;
  */
 public class UrlSpaceConfigurer implements SpaceConfigurer {
 
-    protected UrlSpaceFactoryBean urlSpaceFactoryBean;
+    private UrlSpaceFactoryBean urlSpaceFactoryBean;
 
     private IJSpace space;
 
@@ -66,6 +66,10 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
 
     public UrlSpaceConfigurer(String url) {
         this.urlSpaceFactoryBean = new UrlSpaceFactoryBean(url);
+    }
+
+    public void setUrlSpaceFactoryBean(UrlSpaceFactoryBean urlSpaceFactoryBean) {
+        this.urlSpaceFactoryBean = urlSpaceFactoryBean;
     }
 
     /**
