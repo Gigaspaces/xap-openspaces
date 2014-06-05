@@ -445,8 +445,8 @@
 
     <xsd:element name="embedded-space">
         <xsd:annotation>
-            <xsd:documentation source="java:org.openspaces.core.space.UrlSpaceFactoryBean">
-                A space factory bean that creates a space (IJSpace) based on a url and additional settings.
+            <xsd:documentation source="java:org.openspaces.core.space.EmbeddedSpaceFactoryBean">
+                A space factory bean that creates an embedded space.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -565,26 +565,6 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
-                            <xsd:annotation>
-                                <xsd:documentation>
-                                    Sets the url properties. Note, most if not all url level properties can be set using
-                                    explicit attributes.
-                                </xsd:documentation>
-                            </xsd:annotation>
-                            <xsd:complexType>
-                                <xsd:sequence>
-                                    <xsd:element ref="beans:props"/>
-                                </xsd:sequence>
-                                <xsd:attribute name="ref" type="xsd:string">
-                                    <xsd:annotation>
-                                        <xsd:documentation><![CDATA[
-                            A short-cut alternative to a nested "<ref bean='...'/>".
-                                        ]]></xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:attribute>
-                            </xsd:complexType>
-                        </xsd:element>
                         <xsd:element name="properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
@@ -599,29 +579,6 @@
                             <xsd:complexType>
                                 <xsd:sequence>
                                     <xsd:element ref="beans:props"/>
-                                </xsd:sequence>
-                                <xsd:attribute name="ref" type="xsd:string">
-                                    <xsd:annotation>
-                                        <xsd:documentation><![CDATA[
-                            A short-cut alternative to a nested "<ref bean='...'/>".
-                                        ]]></xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:attribute>
-                            </xsd:complexType>
-                        </xsd:element>
-                        <xsd:element name="parameters" minOccurs="0" maxOccurs="1">
-                            <xsd:annotation>
-                                <xsd:documentation>
-                                    Sets the parameters the IJSpace will be created with (same as parameters). Note,
-                                    this
-                                    should not be confused with url-properties. The properties here are the ones
-                                    referred to as custom properties and allows for example to control the xpath
-                                    injection to space schema.
-                                </xsd:documentation>
-                            </xsd:annotation>
-                            <xsd:complexType>
-                                <xsd:sequence>
-                                    <xsd:element ref="beans:map"/>
                                 </xsd:sequence>
                                 <xsd:attribute name="ref" type="xsd:string">
                                     <xsd:annotation>
@@ -730,14 +687,7 @@
                     <xsd:attribute name="name" type="xsd:string" use="required">
                         <xsd:annotation>
                             <xsd:documentation>
-                                The name that will be used to build the space URL.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="schema" type="xsd:string">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                The schema name associated with the space.
+                                The space name.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -771,11 +721,10 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="no-write-lease" type="xsd:boolean">
+                    <xsd:attribute name="schema" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
-                                If true - Lease object would not return from the write/writeMultiple operations.
-                                Defaults to false.
+                                The schema name associated with the space.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -784,13 +733,6 @@
                             <xsd:documentation>
                                 When setting this URL property to true it will allow the space to connect to the Mirror
                                 service to push its data and operations for asynchronous persistency. Defaults to false.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="fifo" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Indicates that all take/write operations be conducted in FIFO mode. Default is false.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -870,8 +812,7 @@
     <xsd:element name="space-proxy">
         <xsd:annotation>
             <xsd:documentation source="java:org.openspaces.core.space.SpaceProxyFactoryBean">
-                A space factory bean that creates a remote space (IJSpace) based on a prefixless URL and additional
-                settings.
+                A space factory bean that creates a remote space proxy.
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
@@ -926,29 +867,11 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element ref="annotation-adapter-filter" minOccurs="0" maxOccurs="unbounded">
-                            <xsd:annotation>
-                                <xsd:documentation
-                                        source="java:org.openspaces.core.space.filter.AnnotationFilterFactoryBean">
-                                    Allows to inject a an annotation adapter based on AnnotationFilterFactoryBean that
-                                    accepts a pure pojo with annotations marking filter methods.
-                                </xsd:documentation>
-                            </xsd:annotation>
-                        </xsd:element>
-                        <xsd:element ref="method-adapter-filter" minOccurs="0" maxOccurs="unbounded">
-                            <xsd:annotation>
-                                <xsd:documentation
-                                        source="java:org.openspaces.core.space.filter.MethodFilterFactoryBean">
-                                    Allows to inject a a method adapter based on MethodFilterFactoryBean that
-                                    accepts a pure pojo with method marking filter methods.
-                                </xsd:documentation>
-                            </xsd:annotation>
-                        </xsd:element>
                     </xsd:choice>
                     <xsd:attribute name="name" type="xsd:string" use="required">
                         <xsd:annotation>
                             <xsd:documentation>
-                                The name that will be used to build the space URL.
+                                The space name.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -979,40 +902,6 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 When false, optimistic locking is disabled. Default is true.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="mirror" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                When setting this URL property to true it will allow the space to connect to the Mirror
-                                service to push its data and operations for asynchronous persistency. Defaults to false.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="fifo" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Indicates that all take/write operations be conducted in FIFO mode. Default is false.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="register-for-space-mode-notifications" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Indicates that this space will register for space mode notifications.
-                                Default behavior (if the flag was not set) will register to primary backup notification
-                                if the space was found using an embedded protocol, and will not register for
-                                notification if the space was found using rmi or jini protocols.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="enable-member-alive-indicator" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Should this Space bean control if the cluster member is alive or not. Defaults to true
-                                if the Space started is an embedded Space, and false if the it is connected to a remote
-                                Space.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
