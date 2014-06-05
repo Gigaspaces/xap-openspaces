@@ -13,82 +13,90 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openspaces.core.space;
 
+import com.gigaspaces.security.directory.CredentialsProvider;
+import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.j_spaces.core.IJSpace;
+import org.springframework.util.StringUtils;
 
 import java.util.Properties;
 
 /**
  * @author yuvalm
+ * @since 10.0
  */
-public class SpaceProxyConfigurer implements SpaceConfigurer {
+public class SpaceProxyConfigurer extends AbstractSpaceConfigurer {
 
-    private UrlSpaceConfigurer urlSpaceConfigurer;
+    private final SpaceProxyFactoryBean factoryBean;
+    private final Properties properties = new Properties();
 
     public SpaceProxyConfigurer(String name) {
-        urlSpaceConfigurer = new UrlSpaceConfigurer(name);
-        urlSpaceConfigurer.setUrlSpaceFactoryBean(new SpaceProxyFactoryBean(name));
+        factoryBean = new SpaceProxyFactoryBean(name);
     }
 
     @Override
-    public IJSpace space() {
-        return urlSpaceConfigurer.space();
+    protected IJSpace createSpace() {
+        factoryBean.setProperties(properties);
+        factoryBean.afterPropertiesSet();
+        return (IJSpace) factoryBean.getObject();
     }
 
     public SpaceProxyConfigurer addProperty(String name, String value) {
-        urlSpaceConfigurer.addProperty(name, value);
+        validate();
+        properties.setProperty(name, value);
         return this;
     }
 
-    public SpaceProxyConfigurer addProperties(Properties props) {
-        urlSpaceConfigurer.addProperties(props);
-        return this;
-    }
-
-    public SpaceProxyConfigurer fifo(boolean fifo) {
-        urlSpaceConfigurer.fifo(fifo);
+    public SpaceProxyConfigurer addProperties(Properties properties) {
+        validate();
+        this.properties.putAll(properties);
         return this;
     }
 
     public SpaceProxyConfigurer lookupGroups(String... lookupGroups) {
-        urlSpaceConfigurer.lookupGroups(lookupGroups);
+        validate();
+        factoryBean.setLookupGroups(StringUtils.arrayToCommaDelimitedString(lookupGroups));
         return this;
     }
 
     public SpaceProxyConfigurer lookupGroups(String lookupGroups) {
-        urlSpaceConfigurer.lookupGroups(lookupGroups);
+        validate();
+        factoryBean.setLookupGroups(lookupGroups);
         return this;
     }
 
     public SpaceProxyConfigurer lookupLocators(String lookupLocators) {
-        urlSpaceConfigurer.lookupLocators(lookupLocators);
+        validate();
+        factoryBean.setLookupLocators(lookupLocators);
         return this;
     }
 
     public SpaceProxyConfigurer lookupLocators(String... lookupLocators) {
-        urlSpaceConfigurer.lookupLocators(lookupLocators);
+        validate();
+        factoryBean.setLookupLocators(StringUtils.arrayToCommaDelimitedString(lookupLocators));
         return this;
     }
 
     public SpaceProxyConfigurer lookupTimeout(int lookupTimeout) {
-        urlSpaceConfigurer.lookupTimeout(lookupTimeout);
+        validate();
+        factoryBean.setLookupTimeout(lookupTimeout);
         return this;
     }
 
     public SpaceProxyConfigurer versioned(boolean versioned) {
-        urlSpaceConfigurer.versioned(versioned);
+        validate();
+        factoryBean.setVersioned(versioned);
         return this;
     }
 
-    public SpaceProxyConfigurer mirror(boolean mirror) {
-        urlSpaceConfigurer.mirror(mirror);
-        return this;
+    public SpaceProxyConfigurer credentials(String userName, String password) {
+        return credentialsProvider(new DefaultCredentialsProvider(userName, password));
     }
 
-    public SpaceProxyConfigurer registerForSpaceModeNotifications(boolean registerForSpaceMode) {
-        urlSpaceConfigurer.registerForSpaceModeNotifications(registerForSpaceMode);
+    public SpaceProxyConfigurer credentialsProvider(CredentialsProvider credentialsProvider) {
+        validate();
+        factoryBean.setCredentialsProvider(credentialsProvider);
         return this;
     }
 }

@@ -22,175 +22,173 @@ import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
-import com.gigaspaces.security.directory.UserDetails;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
  * @author yuvalm
  */
-public class EmbeddedSpaceConfigurer implements SpaceConfigurer {
+public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
 
-    private UrlSpaceConfigurer urlSpaceConfigurer;
+    private final EmbeddedSpaceFactoryBean factoryBean;
+    private final Properties properties = new Properties();
+    private final List<FilterProviderFactory> filterProviderFactories = new ArrayList<FilterProviderFactory>();
+    private final List<SpaceTypeDescriptor> typeDescriptors = new ArrayList<SpaceTypeDescriptor>();
 
     public EmbeddedSpaceConfigurer(String name) {
-        urlSpaceConfigurer = new UrlSpaceConfigurer(name);
-        urlSpaceConfigurer.setUrlSpaceFactoryBean(new EmbeddedSpaceFactoryBean(name));
+        this.factoryBean = new EmbeddedSpaceFactoryBean(name);
     }
 
     @Override
-    public IJSpace space() {
-        return urlSpaceConfigurer.space();
-    }
-
-    public EmbeddedSpaceConfigurer addParameter(String name, String value) {
-        urlSpaceConfigurer.addParameter(name, value);
-        return this;
+    protected IJSpace createSpace() {
+        factoryBean.setProperties(properties);
+        factoryBean.setFilterProviders(filterProviderFactories.toArray(new FilterProviderFactory[filterProviderFactories.size()]));
+        factoryBean.setSpaceTypes(typeDescriptors.toArray(new SpaceTypeDescriptor[typeDescriptors.size()]));
+        factoryBean.afterPropertiesSet();
+        return (IJSpace) factoryBean.getObject();
     }
 
     public EmbeddedSpaceConfigurer addProperty(String name, String value) {
-        urlSpaceConfigurer.addProperty(name, value);
+        validate();
+        properties.setProperty(name, value);
         return this;
     }
 
     public EmbeddedSpaceConfigurer addProperties(Properties properties) {
-        urlSpaceConfigurer.addProperties(properties);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer addUrlProperty(String name, String value) {
-        urlSpaceConfigurer.addUrlProperty(name, value);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer schema(String schema) {
-        urlSpaceConfigurer.schema(schema);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer fifo(boolean fifo) {
-        urlSpaceConfigurer.fifo(fifo);
+        validate();
+        this.properties.putAll(properties);
         return this;
     }
 
     public EmbeddedSpaceConfigurer lookupGroups(String lookupGroups) {
-        urlSpaceConfigurer.lookupGroups(lookupGroups);
+        validate();
+        factoryBean.setLookupGroups(lookupGroups);
         return this;
     }
 
     public EmbeddedSpaceConfigurer lookupGroups(String... lookupGroups) {
-        urlSpaceConfigurer.lookupGroups(lookupGroups);
+        validate();
+        factoryBean.setLookupGroups(StringUtils.arrayToCommaDelimitedString(lookupGroups));
         return this;
     }
 
     public EmbeddedSpaceConfigurer lookupLocators(String lookupLocators) {
-        urlSpaceConfigurer.lookupLocators(lookupLocators);
+        validate();
+        factoryBean.setLookupLocators(lookupLocators);
         return this;
     }
 
     public EmbeddedSpaceConfigurer lookupLocators(String... lookupLocators) {
-        urlSpaceConfigurer.lookupLocators(lookupLocators);
+        validate();
+        factoryBean.setLookupLocators(StringUtils.arrayToCommaDelimitedString(lookupLocators));
         return this;
     }
 
     public EmbeddedSpaceConfigurer lookupTimeout(int lookupTimeout) {
-        urlSpaceConfigurer.lookupTimeout(lookupTimeout);
+        validate();
+        factoryBean.setLookupTimeout(lookupTimeout);
         return this;
     }
 
     public EmbeddedSpaceConfigurer versioned(boolean versioned) {
-        urlSpaceConfigurer.versioned(versioned);
+        validate();
+        factoryBean.setVersioned(versioned);
         return this;
     }
 
-    public EmbeddedSpaceConfigurer noWriteLease(boolean noWriteLease) {
-        urlSpaceConfigurer.noWriteLease(noWriteLease);
-        return this;
+    public EmbeddedSpaceConfigurer credentials(String userName, String password) {
+        return credentialsProvider(new DefaultCredentialsProvider(userName, password));
     }
 
-    public EmbeddedSpaceConfigurer mirror(boolean mirror) {
-        urlSpaceConfigurer.mirror(mirror);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer addFilterProvider(FilterProviderFactory filterProviderFactory) {
-        urlSpaceConfigurer.addFilterProvider(filterProviderFactory);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer addSpaceType(SpaceTypeDescriptor spaceType) {
-        urlSpaceConfigurer.addSpaceType(spaceType);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer replicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
-        urlSpaceConfigurer.replicationFilterProvider(replicationFilterProvider);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer externalDataSource(ManagedDataSource externalDataSource) {
-        urlSpaceConfigurer.externalDataSource(externalDataSource);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer spaceDataSource(SpaceDataSource spaceDataSource) {
-        urlSpaceConfigurer.spaceDataSource(spaceDataSource);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer spaceSynchronizationEndpoint(SpaceSynchronizationEndpoint synchronizationEndpoint) {
-        urlSpaceConfigurer.spaceSynchronizationEndpoint(synchronizationEndpoint);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer cachePolicy(CachePolicy cachePolicy) {
-        urlSpaceConfigurer.cachePolicy(cachePolicy);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer clusterInfo(ClusterInfo clusterInfo) {
-        urlSpaceConfigurer.clusterInfo(clusterInfo);
-        return this;
-    }
-
-    public EmbeddedSpaceConfigurer registerForSpaceModeNotifications(boolean registerForSpaceMode) {
-        urlSpaceConfigurer.registerForSpaceModeNotifications(registerForSpaceMode);
+    public EmbeddedSpaceConfigurer credentialsProvider(CredentialsProvider credentialsProvider) {
+        validate();
+        factoryBean.setCredentialsProvider(credentialsProvider);
         return this;
     }
 
     public EmbeddedSpaceConfigurer secured(boolean secured) {
-        urlSpaceConfigurer.secured(secured);
+        validate();
+        factoryBean.setSecured(secured);
         return this;
     }
 
-    public EmbeddedSpaceConfigurer userDetails(String userName, String password) {
-        return securityConfig(new SecurityConfig(userName, password));
+    public EmbeddedSpaceConfigurer schema(String schema) {
+        validate();
+        factoryBean.setSchema(schema);
+        return this;
     }
 
-    public EmbeddedSpaceConfigurer userDetails(UserDetails userDetails) {
-        return credentialsProvider(new DefaultCredentialsProvider(userDetails));
+    public EmbeddedSpaceConfigurer mirror(boolean mirror) {
+        validate();
+        factoryBean.setMirror(mirror);
+        return this;
     }
 
-    public EmbeddedSpaceConfigurer credentials(String userName, String password) {
-        return securityConfig(new SecurityConfig(userName, password));
+    public EmbeddedSpaceConfigurer addFilterProvider(FilterProviderFactory filterProviderFactory) {
+        validate();
+        filterProviderFactories.add(filterProviderFactory);
+        return this;
     }
 
-    public EmbeddedSpaceConfigurer credentialsProvider(CredentialsProvider credentialsProvider) {
-        return securityConfig(new SecurityConfig(credentialsProvider));
+    public EmbeddedSpaceConfigurer addSpaceType(SpaceTypeDescriptor spaceType) {
+        validate();
+        typeDescriptors.add(spaceType);
+        return this;
     }
 
-    public EmbeddedSpaceConfigurer securityConfig(SecurityConfig securityConfig) {
-        urlSpaceConfigurer.securityConfig(securityConfig);
+    public EmbeddedSpaceConfigurer replicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
+        validate();
+        factoryBean.setReplicationFilterProvider(replicationFilterProvider);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer externalDataSource(ManagedDataSource externalDataSource) {
+        validate();
+        factoryBean.setExternalDataSource(externalDataSource);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer spaceDataSource(SpaceDataSource spaceDataSource) {
+        validate();
+        factoryBean.setSpaceDataSource(spaceDataSource);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer spaceSynchronizationEndpoint(SpaceSynchronizationEndpoint synchronizationEndpoint) {
+        validate();
+        factoryBean.setSpaceSynchronizationEndpoint(synchronizationEndpoint);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer cachePolicy(CachePolicy cachePolicy) {
+        validate();
+        factoryBean.setCachePolicy(cachePolicy);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer clusterInfo(ClusterInfo clusterInfo) {
+        validate();
+        factoryBean.setClusterInfo(clusterInfo);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer registerForSpaceModeNotifications(boolean registerForSpaceMode) {
+        validate();
+        factoryBean.setRegisterForSpaceModeNotifications(registerForSpaceMode);
         return this;
     }
 
     public EmbeddedSpaceConfigurer primaryBackupListener(ISpaceModeListener primaryBackupListener) {
-        urlSpaceConfigurer.primaryBackupListener(primaryBackupListener);
+        validate();
+        factoryBean.setPrimaryBackupListener(primaryBackupListener);
         return this;
     }
 }
