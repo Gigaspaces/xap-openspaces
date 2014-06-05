@@ -111,7 +111,7 @@
                         </xsd:element>
                         <xsd:element name="blob-store-data-policy">
                             <xsd:complexType>
-                                <xsd:attribute name="cache-entries-percentage" type="xsd:decimal" use="optional">
+                                <xsd:attribute name="cache-entries-percentage" type="percentage" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx configuration
@@ -119,22 +119,29 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="avg-object-size-KB" type="xsd:decimal" use="optional">
+                                <xsd:attribute name="avg-object-size-KB" type="xsd:positiveInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Cverage object size.
+                                            Average object size.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="recover-from-blob-store" type="xsd:boolean" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Whether to recover from blob store or not.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
                                 <xsd:attribute name="blob-store-handler" type="xsd:string" use="required">
                                     <xsd:annotation>
-                                        <xsd:documentation source="java:com.j_spaces.core.cache.offHeap.OffHeapStorageHandler">
-                                            The bean name which represent the space offheap storage implementation class you want to use.
-                                            The class should extend com.j_spaces.core.cache.offHeap.OffHeapStorageHandler.
+                                        <xsd:documentation source="java:com.gigaspaces.server.blobstore.BlobStoreStorageHandler">
+                                            The bean name which represent the space blobstore storage implementation class you want to use.
+                                            The class should extend com.gigaspaces.server.blobstore.BlobStoreStorageHandler.
                                         </xsd:documentation>
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
-                                                <tool:expected-type type="com.j_spaces.core.cache.offHeap.OffHeapStorageHandler"/>
+                                                <tool:expected-type type="com.gigaspaces.server.blobstore.BlobStoreStorageHandler"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -2809,4 +2816,10 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+    <xsd:simpleType name="percentage">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minInclusive value="0" />
+            <xsd:maxExclusive value="100" />
+        </xsd:restriction>
+    </xsd:simpleType>
 </xsd:schema>
