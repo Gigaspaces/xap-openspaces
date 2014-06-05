@@ -32,6 +32,7 @@ public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanD
 
     private static final String AVG_OBJECT_SIZE_KB = "avg-object-size-KB";
     private static final String CACHE_ENTRIES_PERCENTAGE = "cache-entries-percentage";
+    private static final String RECOVER_FROM_BLOB_STORE = "recover-from-blob-store";
     private static final String STORAGE_HANDLER = "blob-store-handler";
 
     @Override
@@ -50,11 +51,15 @@ public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanD
         if (StringUtils.hasText(cacheEntriesPercentage))
             builder.addPropertyValue("cacheEntriesPercentage", cacheEntriesPercentage);
 
-        final String offheapStorageHandler = element.getAttribute(STORAGE_HANDLER);
-        if (StringUtils.hasText(offheapStorageHandler))
-            builder.addPropertyReference("blobStoreHandler", offheapStorageHandler);
+        final String recoverFromBlobStore = element.getAttribute(RECOVER_FROM_BLOB_STORE);
+        if (StringUtils.hasText(recoverFromBlobStore))
+            builder.addPropertyValue("recoverFromBlobStore", recoverFromBlobStore);
 
-        if(!StringUtils.hasText(offheapStorageHandler))
+        final String blobStoreStorageHandler = element.getAttribute(STORAGE_HANDLER);
+        if (StringUtils.hasText(blobStoreStorageHandler))
+            builder.addPropertyReference("blobStoreHandler", blobStoreStorageHandler);
+
+        if(!StringUtils.hasText(blobStoreStorageHandler))
             throw new IllegalArgumentException("A reference to a space blob store handler bean must be specified");
     }    
     

@@ -15,7 +15,7 @@
  *******************************************************************************/
 package org.openspaces.core.config;
 
-import com.j_spaces.core.cache.offHeap.OffHeapStorageHandler;
+import com.gigaspaces.server.blobstore.BlobStoreStorageHandler;
 import org.openspaces.core.space.BlobStoreDataCachePolicy;
 import org.openspaces.core.space.CachePolicy;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +30,8 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
 
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
-    private OffHeapStorageHandler blobStoreHandler;
+    private Boolean recoverFromBlobStore;
+    private BlobStoreStorageHandler blobStoreHandler;
 
     public Long getAvgObjectSizeKB() {
         return avgObjectSizeKB;
@@ -48,11 +49,19 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
         this.cacheEntriesPercentage = cacheEntriesPercentage;
     }
 
-    public OffHeapStorageHandler getBlobStoreHandler() {
+    public Boolean getRecoverFromBlobStore() {
+        return recoverFromBlobStore;
+    }
+
+    public void setRecoverFromBlobStore(Boolean recoverFromBlobStore) {
+        this.recoverFromBlobStore = recoverFromBlobStore;
+    }
+
+    public BlobStoreStorageHandler getBlobStoreHandler() {
         return blobStoreHandler;
     }
 
-    public void setBlobStoreHandler(OffHeapStorageHandler blobStoreHandler) {
+    public void setBlobStoreHandler(BlobStoreStorageHandler blobStoreHandler) {
         this.blobStoreHandler = blobStoreHandler;
     }
 
@@ -66,6 +75,8 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
             policy.setAvgObjectSizeKB(avgObjectSizeKB);
         if (cacheEntriesPercentage != null)
             policy.setCacheEntriesPercentage(cacheEntriesPercentage);
+        if (recoverFromBlobStore != null)
+            policy.setRecoverFromBlobStore(recoverFromBlobStore);
         if (blobStoreHandler != null)
             policy.setBlobStoreHandler(blobStoreHandler);
         return policy;

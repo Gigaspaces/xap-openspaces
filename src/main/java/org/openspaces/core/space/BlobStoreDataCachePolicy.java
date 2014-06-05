@@ -17,8 +17,8 @@
  ******************************************************************************/
 package org.openspaces.core.space;
 
+import com.gigaspaces.server.blobstore.BlobStoreStorageHandler;
 import com.j_spaces.core.Constants;
-import com.j_spaces.core.cache.offHeap.OffHeapStorageHandler;
 
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -33,7 +33,8 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
-    private OffHeapStorageHandler blobStoreHandler;
+    private Boolean recoverFromBlobStore;
+    private BlobStoreStorageHandler blobStoreHandler;
 
     private static final long DEFAULT_AVG_OBJECT_SIZE_KB = 5;
     private static final int DEFAULT_CACHE_ENTRIES_PERCENTAGE = 20;
@@ -41,7 +42,7 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
     public BlobStoreDataCachePolicy() {
     }
 
-    public void setBlobStoreHandler(OffHeapStorageHandler blobStoreHandler) {
+    public void setBlobStoreHandler(BlobStoreStorageHandler blobStoreHandler) {
         this.blobStoreHandler = blobStoreHandler;
     }
 
@@ -51,6 +52,10 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     public void setCacheEntriesPercentage(Integer cacheEntriesPercentage) {
         this.cacheEntriesPercentage = cacheEntriesPercentage;
+    }
+
+    public void setRecoverFromBlobStore(Boolean recoverFromBlobStore) {
+        this.recoverFromBlobStore = recoverFromBlobStore;
     }
 
     public Properties toProps() {
@@ -85,6 +90,9 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         props.setProperty(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_CACHE_SIZE_PROP, String.valueOf(blobStoreCacheSize));
         _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
 
+        if(recoverFromBlobStore != null){
+            props.put(Constants.CacheManager.CACHE_MANAGER_RECOVER_FROM_BLOBSTORE_PROP, String.valueOf(recoverFromBlobStore));
+        }
 
         if(blobStoreHandler != null){
             props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_STORAGE_HANDLER_PROP, blobStoreHandler);
