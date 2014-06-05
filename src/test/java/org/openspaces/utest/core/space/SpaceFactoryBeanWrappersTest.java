@@ -31,13 +31,13 @@ public class SpaceFactoryBeanWrappersTest extends TestCase {
 
         Assert.assertNotNull(embeddedSpace);
         String realUrl = embeddedSpace.getFinderURL().getURL();
-        Assert.assertEquals(realUrl.substring(0, realUrl.indexOf('?')), EmbeddedSpaceFactoryBean.EMBEDDED_URL_PREFIX+SPACE_NAME);
+        Assert.assertEquals(realUrl.substring(0, realUrl.indexOf('?')), EmbeddedSpaceFactoryBean.URL_PREFIX +SPACE_NAME);
 
         IJSpace spaceProxy = (IJSpace) applicationContext.getBean(SPACE_PROXY_BEAN_ID);
 
         Assert.assertNotNull(spaceProxy);
         realUrl = spaceProxy.getFinderURL().getURL();
-        Assert.assertEquals(realUrl.substring(0, realUrl.indexOf('?')), SpaceProxyFactoryBean.PROXY_URL_PREFIX+SPACE_NAME);
+        Assert.assertEquals(realUrl.substring(0, realUrl.indexOf('?')), SpaceProxyFactoryBean.URL_PREFIX +SPACE_NAME);
     }
 
 }

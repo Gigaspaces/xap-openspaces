@@ -16,30 +16,107 @@
 
 package org.openspaces.core.space;
 
-import java.util.Map;
+import com.gigaspaces.datasource.ManagedDataSource;
+import com.gigaspaces.datasource.SpaceDataSource;
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
+import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
+import com.j_spaces.core.IJSpace;
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.space.filter.FilterProviderFactory;
+import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.springframework.dao.DataAccessException;
+
+import java.util.Properties;
 
 /**
  * @author yuvalm
+ * @since 10.0
  */
-public class EmbeddedSpaceFactoryBean extends UrlSpaceFactoryBean {
+public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean {
 
-    public static final String EMBEDDED_URL_PREFIX = "/./";
+    public static final String URL_PREFIX = "/./";
 
-    public EmbeddedSpaceFactoryBean() {}
+    private final UrlSpaceFactoryBean factoryBean;
 
-    public EmbeddedSpaceFactoryBean(String url) {
-        super(EMBEDDED_URL_PREFIX+url);
+    public EmbeddedSpaceFactoryBean() {
+        this.factoryBean = new UrlSpaceFactoryBean();
     }
 
-    public EmbeddedSpaceFactoryBean(String url,  Map<String, Object> params) {
-        super(EMBEDDED_URL_PREFIX+url, params);
+    public EmbeddedSpaceFactoryBean(String name) {
+        this();
+        setName(name);
+    }
+
+    @Override
+    protected IJSpace doCreateSpace() throws DataAccessException {
+        return factoryBean.doCreateSpace();
     }
 
     public void setName(String name) {
-        if (name.startsWith(EMBEDDED_URL_PREFIX)) {
-            super.setUrl(name);
-        } else {
-            super.setUrl(EMBEDDED_URL_PREFIX+name);
-        }
+        factoryBean.setUrl(name.startsWith(URL_PREFIX) ? name : URL_PREFIX + name);
+    }
+
+    public void setProperties(Properties properties) {
+        factoryBean.setProperties(properties);
+    }
+
+    public void setLookupGroups(String lookupGroups) {
+        factoryBean.setLookupGroups(lookupGroups);
+    }
+
+    public void setLookupLocators(String lookupLocators) {
+        factoryBean.setLookupLocators(lookupLocators);
+    }
+
+    public void setLookupTimeout(int lookupTimeout) {
+        factoryBean.setLookupTimeout(lookupTimeout);
+    }
+
+    public void setVersioned(boolean versioned) {
+        factoryBean.setVersioned(versioned);
+    }
+
+    public void setSecured(boolean secured) {
+        factoryBean.setSecured(secured);
+    }
+
+    public void setSchema(String schema) {
+        factoryBean.setSchema(schema);
+    }
+
+    public void setMirror(boolean mirror) {
+        factoryBean.setMirror(mirror);
+    }
+
+    public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
+        factoryBean.setReplicationFilterProvider(replicationFilterProvider);
+    }
+
+    public void setExternalDataSource(ManagedDataSource externalDataSource) {
+        factoryBean.setExternalDataSource(externalDataSource);
+    }
+
+    public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
+        factoryBean.setSpaceDataSource(spaceDataSource);
+    }
+
+    public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
+        factoryBean.setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
+    }
+
+    public void setCachePolicy(CachePolicy cachePolicy) {
+        factoryBean.setCachePolicy(cachePolicy);
+    }
+
+    public void setClusterInfo(ClusterInfo clusterInfo) {
+        factoryBean.setClusterInfo(clusterInfo);
+    }
+
+    public void setFilterProviders(FilterProviderFactory[] filterProviders) {
+        factoryBean.setFilterProviders(filterProviders);
+    }
+
+    public void setSpaceTypes(SpaceTypeDescriptor[] spaceTypes) {
+        factoryBean.setSpaceTypes(spaceTypes);
     }
 }

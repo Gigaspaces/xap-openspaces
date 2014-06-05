@@ -16,93 +16,56 @@
 
 package org.openspaces.core.space;
 
-import com.gigaspaces.datasource.ManagedDataSource;
-import com.gigaspaces.datasource.SpaceDataSource;
-import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
-import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
-import org.openspaces.core.config.CustomCachePolicyFactoryBean;
-import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import com.j_spaces.core.IJSpace;
+import org.springframework.dao.DataAccessException;
 
-import java.util.Map;
 import java.util.Properties;
 
 /**
  * @author yuvalm
+ * @since 10.0
  */
-public class SpaceProxyFactoryBean extends UrlSpaceFactoryBean {
+public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean {
 
-    public static final String PROXY_URL_PREFIX = "jini://*/*/";
+    public static final String URL_PREFIX = "jini://*/*/";
 
-    public SpaceProxyFactoryBean() {}
+    private final UrlSpaceFactoryBean factoryBean;
 
-    public SpaceProxyFactoryBean(String name) {
-        super(PROXY_URL_PREFIX+name);
+    public SpaceProxyFactoryBean() {
+        this.factoryBean = new UrlSpaceFactoryBean();
     }
 
-    public SpaceProxyFactoryBean(String name,  Map<String, Object> params) {
-        super(PROXY_URL_PREFIX+name, params);
+    public SpaceProxyFactoryBean(String name) {
+        this();
+        setName(name);
+    }
+
+    @Override
+    protected IJSpace doCreateSpace() throws DataAccessException {
+        return factoryBean.doCreateSpace();
     }
 
     public void setName(String name) {
-        if (name.startsWith(PROXY_URL_PREFIX)) {
-            super.setUrl(name);
-        } else {
-            super.setUrl(PROXY_URL_PREFIX+name);
-        }
+        factoryBean.setUrl(name.startsWith(URL_PREFIX) ? name : URL_PREFIX + name);
     }
 
-    @Override
-    public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
-        throw new UnsupportedOperationException();
+    public void setProperties(Properties properties) {
+        factoryBean.setProperties(properties);
     }
 
-    @Override
-    public void setCachePolicy(CachePolicy cachePolicy) {
-        throw new UnsupportedOperationException();
+    public void setLookupGroups(String lookupGroups) {
+        factoryBean.setLookupGroups(lookupGroups);
     }
 
-    @Override
-    public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
-        throw new UnsupportedOperationException();
+    public void setLookupLocators(String lookupLocators) {
+        factoryBean.setLookupLocators(lookupLocators);
     }
 
-    @Override
-    public void setParameters(Map<String, Object> parameters) {
-        throw new UnsupportedOperationException();
+    public void setLookupTimeout(int lookupTimeout) {
+        factoryBean.setLookupTimeout(lookupTimeout);
     }
 
-    @Override
-    public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSchema(String schema) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setNoWriteLease(boolean noWriteLease) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExternalDataSource(ManagedDataSource externalDataSource) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setUrlProperties(Properties urlProperties) {
-        throw new UnsupportedOperationException();
+    public void setVersioned(boolean versioned) {
+        factoryBean.setVersioned(versioned);
     }
 }
