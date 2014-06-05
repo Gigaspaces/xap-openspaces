@@ -17,15 +17,23 @@
 package org.openspaces.core.config;
 
 import org.openspaces.core.space.SpaceProxyFactoryBean;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
  * @author yuvalm
+ * @since 10.0
  */
-public class SpaceProxyBeanDefinitionParser extends UrlSpaceBeanDefinitionParser {
+public class SpaceProxyBeanDefinitionParser extends AbstractSpaceBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
         return SpaceProxyFactoryBean.class;
+    }
+
+    @Override
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
     }
 }
