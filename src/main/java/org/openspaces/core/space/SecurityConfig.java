@@ -92,11 +92,7 @@ public class SecurityConfig {
     }
     
     public static SecurityConfig fromMarshalledProperties(Properties properties) {
-        try {
-            CredentialsProvider credentials = CredentialsProviderHelper.extractMarshalledCredentials(properties, false);
-            return credentials == null ? null : new SecurityConfig(credentials); 
-        } catch (Exception e) {
-            throw new InvalidDataAccessResourceUsageException("Failed to deserialize security user details", e);
-        }
-    }    
+        CredentialsProvider credentials = CredentialsProviderHelper.extractMarshalledCredentials(properties, false);
+        return credentials == null ? null : new SecurityConfig(credentials);
+    }
 }

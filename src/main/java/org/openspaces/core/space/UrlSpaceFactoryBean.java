@@ -61,9 +61,7 @@ import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
-import com.gigaspaces.security.directory.CredentialsProviderHelper;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
-import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.client.FinderException;
@@ -101,7 +99,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private final SpaceProxyFactory factory = new SpaceProxyFactory();
     private final boolean enableExecutorInjection = true;
     private String url;
-    private Boolean secured;
     private ClusterInfo clusterInfo;
 
     /**
@@ -136,7 +133,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * automatically be secured.
      */
     public void setSecured(boolean secured) {
-        this.secured = secured;
+        factory.setSecured(secured);
+    }
+
+    @Override
+    public void setSecurityConfig(SecurityConfig securityConfig) {
+        super.setSecurityConfig(securityConfig);
+        factory.setCredentialsProvider(securityConfig == null ? null : securityConfig.getCredentialsProvider());
     }
 
     /**
@@ -372,26 +375,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             String url = urls[urlIndex];
             factory.setClusterConfig(toClusterConfig(url, clusterInfo));
             Properties props = factory.createProperties(SpaceUtils.isRemoteProtocol(url));
-
-            // handle security
-            if (factory.beanLevelProperties != null) {
-                SecurityConfig securityConfig = SecurityConfig.fromMarshalledProperties(factory.beanLevelProperties);
-                if (securityConfig != null)
-                    setSecurityConfig(securityConfig);
-            }
-
-            if (getSecurityConfig() == null || !getSecurityConfig().isFilled()) {
-                String username = (String) props.remove(Constants.Security.USERNAME);
-                String password = (String) props.remove(Constants.Security.PASSWORD);
-                setSecurityConfig(new SecurityConfig(username, password));
-            }
-
-            if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
-                props.put(SpaceURL.SECURED, "true");
-                CredentialsProviderHelper.appendCredentials(props, getSecurityConfig().getCredentialsProvider());
-            } else if (secured != null && secured) {
-                props.put(SpaceURL.SECURED, "true");
-            }
+            if ((getSecurityConfig() == null || !getSecurityConfig().isFilled()) && factory.credentialsProvider != null)
+                setCredentialsProvider(factory.credentialsProvider);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");

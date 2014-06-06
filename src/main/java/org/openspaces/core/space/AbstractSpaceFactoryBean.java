@@ -127,7 +127,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
      * @param credentialsProvider a custom credentials provider.
      */
     public void setCredentialsProvider(CredentialsProvider credentialsProvider) {
-        this.securityConfig = new SecurityConfig(credentialsProvider);
+        setSecurityConfig(new SecurityConfig(credentialsProvider));
     }
 
     /**
