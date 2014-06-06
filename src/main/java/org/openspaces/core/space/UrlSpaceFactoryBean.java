@@ -104,12 +104,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private Boolean secured;
 
     private FilterProviderFactory[] filterProviders;
-   
-    private SpaceTypeDescriptor[] typeDescriptors;
 
     private ReplicationFilterProviderFactory replicationFilterProvider;
-
-    private ManagedDataSource externalDataSource;
 
     private CachePolicy cachePolicy;
 
@@ -126,11 +122,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private CustomCachePolicyFactoryBean customCachePolicy;
 
     private BlobStoreDataPolicyFactoryBean blobStoreDataPolicy;
-
-    private SpaceDataSource spaceDataSource;
-    
-    private SpaceSynchronizationEndpoint spaceSynchronizationEndpoint;
-
     
     /**
      * Creates a new url space factory bean. The url parameters is requires so the
@@ -296,7 +287,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * A data source
      */
     public void setExternalDataSource(ManagedDataSource externalDataSource) {
-        this.externalDataSource = externalDataSource;
+        factory.setExternalDataSource(externalDataSource);
     }
     
     /**
@@ -304,14 +295,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param spaceDataSource The {@link SpaceDataSource} instance.
      */
     public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
-        this.spaceDataSource = spaceDataSource;
+        factory.setSpaceDataSource(spaceDataSource);
     }
     
     /**
      * Inject a list of space types.
      */
     public void setSpaceTypes(SpaceTypeDescriptor[] typeDescriptors) {
-        this.typeDescriptors = typeDescriptors;
+        factory.setTypeDescriptors(typeDescriptors);
     }
 
     /**
@@ -381,7 +372,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
             String url = urls[urlIndex];
 
-            Properties props = factory.createProperties();
+            Properties props = factory.createProperties(SpaceUtils.isRemoteProtocol(url));
 
             if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection) {
                 if (filterProviders == null) {
@@ -412,42 +403,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(Constants.ReplicationFilter.REPLICATION_FILTER_PROVIDER, replicationFilterProvider.getFilterProvider());
             }
 
-            if (externalDataSource != null) {
-                if (logger.isWarnEnabled())
-                    logger.warn("externalDataSource is deprecated - instead use spaceDataSource and/or spaceSynchronizationEndpoint");
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("External data source can only be used with an embedded Space");
-                }
-                props.put(Constants.DataAdapter.DATA_SOURCE, externalDataSource);
-                props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Data Source [" + externalDataSource + "] provided, enabling data source");
-                }
-            }
-            
-            if (spaceDataSource != null) {
-                if (SpaceUtils.isRemoteProtocol(url))
-                    throw new IllegalArgumentException("Space data source can only be used with an embedded Space");
-                props.put(Constants.DataAdapter.SPACE_DATA_SOURCE, spaceDataSource);
-                props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
-            }
-            
-            if (spaceSynchronizationEndpoint != null) {
-                if (SpaceUtils.isRemoteProtocol(url))
-                    throw new IllegalArgumentException("Synchronization endpoint interceptor can only be used with an embedded Space");
-                props.put(Constants.DataAdapter.SPACE_SYNC_ENDPOINT, spaceSynchronizationEndpoint);
-                props.put(Constants.StorageAdapter.FULL_STORAGE_PERSISTENT_ENABLED_PROP, "true");
-            }
-            
-            verifyExternalDataSourceIsNotUsedIfNecessary();
-            
-            if (typeDescriptors != null && typeDescriptors.length >0 ) {
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("Space types can only be introduced on embedded Space");
-                }
-                props.put(Constants.Engine.SPACE_TYPES, typeDescriptors);
-            }
-            
             if (customCachePolicy != null)
                 cachePolicy = customCachePolicy.asCachePolicy();
             
@@ -715,17 +670,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         }
     }
 
-    private void verifyExternalDataSourceIsNotUsedIfNecessary() {
-        if (externalDataSource != null && (spaceDataSource != null || spaceSynchronizationEndpoint != null))
-            throw new IllegalArgumentException(
-                    "Cannot set both externalDataSource and spaceDataSource/spaceSynchronizationEndpoint - it is recommended to use spaceDataSource/spaceSynchronizationEndpoint since externalDataSource is deprecated");
-    }
-
     /**
      * @param spaceSynchronizationEndpoint
      */
-    public void setSpaceSynchronizationEndpoint(
-            SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
-                this.spaceSynchronizationEndpoint = spaceSynchronizationEndpoint;
+    public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
+                factory.setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
     }
 }
