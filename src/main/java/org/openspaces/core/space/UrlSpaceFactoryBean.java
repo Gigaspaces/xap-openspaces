@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.gigaspaces.client.ClusterConfig;
 import com.gigaspaces.client.SpaceProxyFactory;
+import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.gigaspaces.internal.sync.mirror.MirrorDistributedTxnConfig;
 import net.jini.core.entry.UnusableEntryException;
 
@@ -132,7 +133,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     protected IJSpace doCreateSpace() throws DataAccessException {
         Assert.notNull(url, "url property is required");
 
-        final boolean isRemote = SpaceUtils.isRemoteProtocol(url);
+        final boolean isRemote = SpaceUrlUtils.isRemoteProtocol(url);
         if (!isRemote && enableExecutorInjection) {
             FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
             filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
@@ -154,7 +155,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     private static ClusterConfig toClusterConfig(String url, ClusterInfo clusterInfo) {
-        if (clusterInfo == null || SpaceUtils.isRemoteProtocol(url))
+        if (clusterInfo == null || SpaceUrlUtils.isRemoteProtocol(url))
             return null;
 
         if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1 && !StringUtils.hasText(clusterInfo.getSchema()))

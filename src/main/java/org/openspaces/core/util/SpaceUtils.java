@@ -19,7 +19,6 @@ package org.openspaces.core.util;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.SpaceURL;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
@@ -56,21 +55,6 @@ public abstract class SpaceUtils {
             return false;
         }
         return space.getFinderURL().isRemoteProtocol();
-    }
-
-    /**
-     * Returns <code>true</code> if the url points at a remote protocol. A remote protocol is
-     * either a <code>jini</code> or a <code>rmi</code> protocol.
-     */
-    public static boolean isRemoteProtocol(SpaceURL spaceUrl) {
-        return spaceUrl.isRemoteProtocol();
-    }
-
-    /**
-     * Returns <code>true</code> if the url points at a remote protocol.
-     */
-    public static boolean isRemoteProtocol(String spaceUrl) {
-        return SpaceUrlUtils.isRemoteProtocol(spaceUrl);
     }
 
     public static String spaceUrlProperty(String propertyName) {
