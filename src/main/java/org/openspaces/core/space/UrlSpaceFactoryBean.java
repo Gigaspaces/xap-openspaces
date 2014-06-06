@@ -368,24 +368,19 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             factory.addFilterProvider(filterProvider);
         }
 
+        factory.setClusterConfig(toClusterConfig(url, clusterInfo));
+
         String[] urls = StringUtils.tokenizeToStringArray(url, ";");
         SpaceURL[] spacesUrls = new SpaceURL[urls.length];
 
-        for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
-            String url = urls[urlIndex];
-            factory.setClusterConfig(toClusterConfig(url, clusterInfo));
-            Properties props = factory.createProperties(SpaceUtils.isRemoteProtocol(url));
-            if ((getSecurityConfig() == null || !getSecurityConfig().isFilled()) && factory.credentialsProvider != null)
-                setCredentialsProvider(factory.credentialsProvider);
+        for (int i = 0; i < urls.length; i++) {
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
-            }
-            
             try {
-                spacesUrls[urlIndex] = SpaceURLParser.parseURL(url, props);
+                spacesUrls[i] = factory.createSpaceURL(urls[i]);
+                if ((getSecurityConfig() == null || !getSecurityConfig().isFilled()) && factory.credentialsProvider != null)
+                    setCredentialsProvider(factory.credentialsProvider);
             } catch (MalformedURLException e) {
-                throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
+                throw new CannotCreateSpaceException("Failed to parse url [" + urls[i] + "]", e);
             }
         }
         return spacesUrls;
