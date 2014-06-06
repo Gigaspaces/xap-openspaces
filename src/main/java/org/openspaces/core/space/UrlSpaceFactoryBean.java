@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.gigaspaces.client.ClusterConfig;
 import com.gigaspaces.client.SpaceProxyFactory;
+import com.gigaspaces.internal.sync.mirror.MirrorDistributedTxnConfig;
 import net.jini.core.entry.UnusableEntryException;
 
 import org.openspaces.core.GigaSpace;
@@ -101,7 +102,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private final boolean enableExecutorInjection = true;
     private String url;
     private Boolean secured;
-    private DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration;
     private ClusterInfo clusterInfo;
 
     /**
@@ -370,9 +370,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
 
         for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
             String url = urls[urlIndex];
-
             factory.setClusterConfig(toClusterConfig(url, clusterInfo));
-
             Properties props = factory.createProperties(SpaceUtils.isRemoteProtocol(url));
 
             // handle security
@@ -395,21 +393,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(SpaceURL.SECURED, "true");
             }
 
-            if (distributedTransactionProcessingConfiguration != null) {
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("Distributed transaction processing configuration can only be used with an embedded Space");
-                }
-                if (factory.schema == null || !factory.schema.equalsIgnoreCase(Constants.Schemas.MIRROR_SCHEMA)) {
-                    throw new IllegalStateException("Distributed transaction processing configuration can only be set for a Mirror component");
-                }
-                if (distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout() != null)
-                    props.put(Constants.Mirror.FULL_MIRROR_DISTRIBUTED_TRANSACTION_TIMEOUT,
-                            distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout().toString());
-                if (distributedTransactionProcessingConfiguration.getDistributedTransactionWaitForOperations() != null)
-                    props.put(Constants.Mirror.FULL_MIRROR_DISTRIBUTED_TRANSACTION_WAIT_FOR_OPERATIONS,
-                            distributedTransactionProcessingConfiguration.getDistributedTransactionWaitForOperations().toString());
-            }
-            
             if (logger.isDebugEnabled()) {
                 logger.debug("Finding Space with URL [" + url + "] and properties [" + props + "]");
             }
@@ -459,7 +442,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      */
     public void setDistributedTransactionProcessingConfiguration(
             DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
-        this.distributedTransactionProcessingConfiguration = distributedTransactionProcessingConfiguration;
+        MirrorDistributedTxnConfig mirrorDistributedTxnConfig = null;
+        if (distributedTransactionProcessingConfiguration != null) {
+            mirrorDistributedTxnConfig = new MirrorDistributedTxnConfig()
+                    .setDistributedTransactionWaitForOperations(distributedTransactionProcessingConfiguration.getDistributedTransactionWaitForOperations())
+                    .setDistributedTransactionWaitTimeout(distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout());
+        }
+        factory.setMirrorDistributedTxnConfig(mirrorDistributedTxnConfig);
     }
 
     public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
