@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.gigaspaces.client.SpaceProxyFactory;
 import net.jini.core.entry.UnusableEntryException;
 
 import org.openspaces.core.GigaSpace;
@@ -55,7 +56,6 @@ import org.springframework.util.StringUtils;
 
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
-import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.gigaspaces.internal.reflection.IField;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
@@ -94,34 +94,12 @@ import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
  * inject additional properties in the Space creation/finding process.
  *
  * @author kimchy
- * @see com.j_spaces.core.client.SpaceURLParser
- * @see com.j_spaces.core.client.SpaceFinder
  */
 public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
+    private final SpaceProxyFactory factory = new SpaceProxyFactory();
+
     private String url;
-
-    private Map<String, Object> parameters;
-
-    private Properties properties;
-
-    private Properties urlProperties;
-
-    private String schema;
-
-    private String lookupGroups;
-
-    private String lookupLocators;
-
-    private Integer lookupTimeout;
-
-    private Boolean versioned;
-
-    private Boolean noWriteLease;
-
-    private Boolean mirror;
-
-    private Boolean fifo;
 
     private Boolean secured;
 
@@ -179,7 +157,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      */
     public UrlSpaceFactoryBean(String url, Map<String, Object> params) {
         this.url = url;
-        this.parameters = params;
+        setParameters(params);
     }
 
     /**
@@ -212,7 +190,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param parameters The parameters to create the {@link com.j_spaces.core.IJSpace} with.
      */
     public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
+        factory.setParameters(parameters);
     }
 
     /**
@@ -220,7 +198,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * configuration.
      */
     public void setProperties(Properties properties) {
-        this.properties = properties;
+        factory.setProperties(properties);
     }
 
     /**
@@ -228,7 +206,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * setters.
      */
     public void setUrlProperties(Properties urlProperties) {
-        this.urlProperties = urlProperties;
+        factory.setUrlProperties(urlProperties);
     }
 
     /**
@@ -240,7 +218,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * used.
      */
     public void setSchema(String schema) {
-        this.schema = schema;
+        factory.setSchema(schema);
     }
 
     /**
@@ -248,7 +226,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * the Space default (<code>false</code>).
      */
     public void setFifo(boolean fifo) {
-        this.fifo = fifo;
+        factory.setFifo(fifo);
     }
 
     /**
@@ -256,14 +234,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * Groups are comma separated list.
      */
     public void setLookupGroups(String lookupGroups) {
-        this.lookupGroups = lookupGroups;
+        factory.setLookupGroups(lookupGroups);
     }
 
     /**
      * The Jini Lookup locators for the Space. In the form of: <code>host1:port1,host2:port2</code>.
      */
     public void setLookupLocators(String lookupLocators) {
-        this.lookupLocators = lookupLocators;
+        factory.setLookupLocators(lookupLocators);
     }
 
     /**
@@ -271,14 +249,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * protocol). Defaults to <code>6000</code> (i.e. 6 seconds).
      */
     public void setLookupTimeout(Integer lookupTimeout) {
-        this.lookupTimeout = lookupTimeout;
+        factory.setLookupTimeout(lookupTimeout);
     }
 
     /**
      * When <code>false</code>, optimistic lock is disabled. Default to the Space default value.
      */
     public void setVersioned(boolean versioned) {
-        this.versioned = versioned;
+        factory.setVersioned(versioned);
     }
 
     /**
@@ -286,7 +264,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * operations. Defaults to the Space default value (<code>false</code>).
      */
     public void setNoWriteLease(boolean noWriteLease) {
-        this.noWriteLease = noWriteLease;
+        factory.setNoWriteLease(noWriteLease);
     }
 
     /**
@@ -295,7 +273,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * the Space default (which defaults to <code>false</code>).
      */
     public void setMirror(boolean mirror) {
-        this.mirror = mirror;
+        factory.setMirror(mirror);
     }
 
     /**
@@ -403,50 +381,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
             String url = urls[urlIndex];
 
-            Properties props = new Properties();
-            // copy over the parameters
-            if (parameters != null) {
-                props.putAll(parameters);
-            }
-            if (properties != null) {
-                props.putAll(properties);
-            }
-
-            // copy over the space properties
-            if (urlProperties != null) {
-                for (Map.Entry<Object, Object> entry : urlProperties.entrySet()) {
-                    props.put(SpaceUrlUtils.toCustomUrlProperty((String)entry.getKey()), entry.getValue());
-                }
-            }
-
-            if (schema != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.SCHEMA_NAME), schema);
-            }
-
-            if (lookupGroups != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.GROUPS), lookupGroups);
-            }
-
-            if (lookupLocators != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.LOCATORS), lookupLocators);
-            }
-
-            if (lookupTimeout != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.TIMEOUT), lookupTimeout.toString());
-            }
-
-            if (fifo != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.FIFO_MODE), Boolean.toString(fifo));
-            }
-            if (versioned != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.VERSIONED), Boolean.toString(versioned));
-            }
-            if (noWriteLease != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.NO_WRITE_LEASE), Boolean.toString(noWriteLease));
-            }
-            if (mirror != null) {
-                props.put(SpaceUtils.spaceUrlProperty(SpaceURL.MIRROR), Boolean.toString(mirror));
-            }
+            Properties props = factory.createProperties();
 
             if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection) {
                 if (filterProviders == null) {
@@ -583,7 +518,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 if (SpaceUtils.isRemoteProtocol(url)) {
                     throw new IllegalArgumentException("Distributed transaction processing configuration can only be used with an embedded Space");
                 }
-                if (schema == null || !schema.equalsIgnoreCase(Constants.Schemas.MIRROR_SCHEMA)) {
+                if (factory.schema == null || !factory.schema.equalsIgnoreCase(Constants.Schemas.MIRROR_SCHEMA)) {
                     throw new IllegalStateException("Distributed transaction processing configuration can only be set for a Mirror component");
                 }
                 if (distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout() != null)
