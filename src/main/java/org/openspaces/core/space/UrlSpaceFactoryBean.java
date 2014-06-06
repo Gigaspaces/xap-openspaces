@@ -18,7 +18,6 @@ package org.openspaces.core.space;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -98,37 +97,17 @@ import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
     private final SpaceProxyFactory factory = new SpaceProxyFactory();
-
-    private String url;
-
-    private Boolean secured;
-
-    private FilterProviderFactory[] filterProviders;
-
-    private ReplicationFilterProviderFactory replicationFilterProvider;
-
-    private CachePolicy cachePolicy;
-
-    private GatewayTargetsFactoryBean gatewayTargets;
-    
-    private DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration;
-
     private final boolean enableExecutorInjection = true;
-
-    private Properties beanLevelProperties;
-
+    private String url;
+    private Boolean secured;
+    private DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration;
     private ClusterInfo clusterInfo;
-    
-    private CustomCachePolicyFactoryBean customCachePolicy;
 
-    private BlobStoreDataPolicyFactoryBean blobStoreDataPolicy;
-    
     /**
      * Creates a new url space factory bean. The url parameters is requires so the
      * {@link #setUrl(String)} must be called before the bean is initialized.
      */
     public UrlSpaceFactoryBean() {
-
     }
 
     /**
@@ -137,7 +116,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param url The url to create the {@link com.j_spaces.core.IJSpace} with.
      */
     public UrlSpaceFactoryBean(String url) {
-        this(url, null);
+        this.url = url;
     }
 
     /**
@@ -147,7 +126,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param params The parameters to create the {@link IJSpace} with.
      */
     public UrlSpaceFactoryBean(String url, Map<String, Object> params) {
-        this.url = url;
+        this(url);
         setParameters(params);
     }
 
@@ -272,7 +251,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * inject actual Space filters.
      */
     public void setFilterProviders(FilterProviderFactory[] filterProviders) {
-        this.filterProviders = filterProviders;
+        FilterProvider[] spaceFilterProviders = null;
+        if (filterProviders != null) {
+            spaceFilterProviders = new FilterProvider[filterProviders.length];
+            for (int i = 0; i < filterProviders.length; i++) {
+                spaceFilterProviders[i] = filterProviders[i].getFilterProvider();
+            }
+        }
+        factory.setFilterProviders(spaceFilterProviders);
     }
 
     /**
@@ -280,7 +266,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * filters.
      */
     public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
-        this.replicationFilterProvider = replicationFilterProvider;
+        factory.setReplicationFilterProvider(replicationFilterProvider == null ? null : replicationFilterProvider.getFilterProvider());
     }
 
     /**
@@ -297,7 +283,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
         factory.setSpaceDataSource(spaceDataSource);
     }
-    
+
+    /**
+     * @param spaceSynchronizationEndpoint
+     */
+    public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
+        factory.setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
+    }
+
     /**
      * Inject a list of space types.
      */
@@ -315,7 +308,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @see org.openspaces.core.space.BlobStoreDataCachePolicy
      */
     public void setCachePolicy(CachePolicy cachePolicy) {
-        this.cachePolicy = cachePolicy;
+        factory.setCachePolicyProperties(cachePolicy == null ? null : cachePolicy.toProps());
     }
 
     /**
@@ -323,7 +316,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * be set directly but allowed for different Spring context container to set it.
      */
     public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
-        this.beanLevelProperties = beanLevelProperties;
+        factory.setBeanLevelProperties(beanLevelProperties);
     }
 
     /**
@@ -365,58 +358,19 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     protected SpaceURL[] doGetSpaceUrls() throws DataAccessException {
         Assert.notNull(url, "url property is required");
 
+        if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection) {
+            FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
+            filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
+            factory.addFilterProvider(filterProvider);
+        }
+
         String[] urls = StringUtils.tokenizeToStringArray(url, ";");
         SpaceURL[] spacesUrls = new SpaceURL[urls.length];
-
 
         for (int urlIndex = 0; urlIndex < urls.length; urlIndex++) {
             String url = urls[urlIndex];
 
             Properties props = factory.createProperties(SpaceUtils.isRemoteProtocol(url));
-
-            if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection) {
-                if (filterProviders == null) {
-                    filterProviders = new FilterProviderFactory[]{new ExecutorFilterProviderFactory()};
-                } else {
-                    ArrayList<FilterProviderFactory> tmpProviders = new ArrayList<FilterProviderFactory>(filterProviders.length + 1);
-                    tmpProviders.addAll(Arrays.asList(filterProviders));
-                    tmpProviders.add(new ExecutorFilterProviderFactory());
-                    filterProviders = tmpProviders.toArray(new FilterProviderFactory[tmpProviders.size()]);
-                }
-            }
-
-            if (filterProviders != null && filterProviders.length > 0) {
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("Filters can only be used with an embedded Space");
-                }
-                FilterProvider[] spaceFilterProvider = new FilterProvider[filterProviders.length];
-                for (int i = 0; i < filterProviders.length; i++) {
-                    spaceFilterProvider[i] = filterProviders[i].getFilterProvider();
-                }
-                props.put(Constants.Filter.FILTER_PROVIDERS, spaceFilterProvider);
-            }
-
-            if (replicationFilterProvider != null) {
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("Replication filter provider can only be used with an embedded Space");
-                }
-                props.put(Constants.ReplicationFilter.REPLICATION_FILTER_PROVIDER, replicationFilterProvider.getFilterProvider());
-            }
-
-            if (customCachePolicy != null)
-                cachePolicy = customCachePolicy.asCachePolicy();
-            
-            if (blobStoreDataPolicy != null)
-                cachePolicy = blobStoreDataPolicy.asCachePolicy();
-
-            if (cachePolicy != null) {
-                props.putAll(cachePolicy.toProps());
-            }
-
-            // copy over the external config overrides
-            if (beanLevelProperties != null) {
-                props.putAll(beanLevelProperties);
-            }
 
             // if deploy info is provided, apply it to the space url (only if it is an embedde Space).
             if (shouldApplyClusterInfo()) {
@@ -438,12 +392,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 }
             }
 
-            // no need for a shutdown hook in the space as well
-            props.setProperty(Constants.Container.CONTAINER_SHUTDOWN_HOOK_PROP, "false");
-
             // handle security
-            if (beanLevelProperties != null) {
-                SecurityConfig securityConfig = SecurityConfig.fromMarshalledProperties(beanLevelProperties);
+            if (factory.beanLevelProperties != null) {
+                SecurityConfig securityConfig = SecurityConfig.fromMarshalledProperties(factory.beanLevelProperties);
                 if (securityConfig != null)
                     setSecurityConfig(securityConfig);
             }
@@ -454,7 +405,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 setSecurityConfig(new SecurityConfig(username, password));
             }
 
-
             if (getSecurityConfig() != null && getSecurityConfig().isFilled()) {
                 props.put(SpaceURL.SECURED, "true");
                 CredentialsProviderHelper.appendCredentials(props, getSecurityConfig().getCredentialsProvider());
@@ -462,13 +412,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
                 props.put(SpaceURL.SECURED, "true");
             }
 
-            if (gatewayTargets != null) {
-                if (SpaceUtils.isRemoteProtocol(url)) {
-                    throw new IllegalArgumentException("Gateway targets can only be used with an embedded Space");
-                }
-                props.put(Constants.Replication.REPLICATION_GATEWAYS, gatewayTargets.asGatewaysPolicy());
-            }
-            
             if (distributedTransactionProcessingConfiguration != null) {
                 if (SpaceUtils.isRemoteProtocol(url)) {
                     throw new IllegalArgumentException("Distributed transaction processing configuration can only be used with an embedded Space");
@@ -519,7 +462,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param gatewayTargets The gateway targets.
      */
     public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
-        this.gatewayTargets = gatewayTargets;
+        factory.setGatewayPolicy(gatewayTargets == null ? null : gatewayTargets.asGatewaysPolicy());
     }
 
     /**
@@ -532,26 +475,18 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     }
 
     public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
-        this.customCachePolicy = customCachePolicy;
+        if (customCachePolicy != null)
+            setCachePolicy(customCachePolicy.asCachePolicy());
     }
 
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
-        this.blobStoreDataPolicy = blobStoreDataPolicy;
-    }
-
-    private class ExecutorFilterProviderFactory implements FilterProviderFactory {
-
-        public FilterProvider getFilterProvider() {
-            FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
-            filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
-            return filterProvider;
-        }
+        if (blobStoreDataPolicy != null)
+            setCachePolicy(blobStoreDataPolicy.asCachePolicy());
     }
 
     private final Map<Class, Object> tasksGigaSpaceInjectionMap = new CopyOnUpdateMap<Class, Object>();
 
     private static Object NO_FIELD = new Object();
-
 
     private class ExecutorSpaceFilter implements ISpaceFilter {
 
@@ -668,12 +603,5 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
             return obj.getClass().isAnnotationPresent(AutowireTask.class);
         }
-    }
-
-    /**
-     * @param spaceSynchronizationEndpoint
-     */
-    public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
-                factory.setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
     }
 }
