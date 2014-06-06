@@ -182,16 +182,6 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
      */
     public synchronized void afterPropertiesSet() throws DataAccessException {
         this.space = (ISpaceProxy) doCreateSpace();
-        // apply security configuration if set, only for remote; Security is applied to embedded when space is created
-        if (securityConfig != null && securityConfig.isFilled() && SpaceUtils.isRemoteProtocol(space)) {
-            try {
-                if (space.isServiceSecured()) {
-                    space.login(securityConfig.getCredentialsProvider());
-                }
-            } catch (Exception e) {
-                throw new CannotCreateSpaceException("Failed to login to secured space", e);
-            }
-        }
 
         // register the space mode listener with the space
         if (isRegisterForSpaceModeNotifications()) {

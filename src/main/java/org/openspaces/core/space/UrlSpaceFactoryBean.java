@@ -18,7 +18,6 @@ package org.openspaces.core.space;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
@@ -65,9 +64,7 @@ import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.client.FinderException;
-import com.j_spaces.core.client.SpaceFinder;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.client.SpaceURLParser;
 import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.FilterProvider;
 import com.j_spaces.core.filters.ISpaceFilter;
@@ -126,6 +123,56 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public UrlSpaceFactoryBean(String url, Map<String, Object> params) {
         this(url);
         setParameters(params);
+    }
+
+    /**
+     * Creates the space.
+     */
+    @Override
+    protected IJSpace doCreateSpace() throws DataAccessException {
+        Assert.notNull(url, "url property is required");
+
+        final boolean isRemote = SpaceUtils.isRemoteProtocol(url);
+        if (!isRemote && enableExecutorInjection) {
+            FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
+            filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
+            factory.addFilterProvider(filterProvider);
+        }
+
+        factory.setClusterConfig(toClusterConfig(url, clusterInfo));
+
+        try {
+            return factory.createSpaceProxy(url);
+        } catch (MalformedURLException e) {
+            throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
+        } catch (FinderException e) {
+            if (isRemote) {
+                throw new CannotFindSpaceException("Failed to find space with url " + url + "", e);
+            }
+            throw new CannotCreateSpaceException("Failed to create space with url " + url + "", e);
+        }
+    }
+
+    private static ClusterConfig toClusterConfig(String url, ClusterInfo clusterInfo) {
+        if (clusterInfo == null || SpaceUtils.isRemoteProtocol(url))
+            return null;
+
+        if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1 && !StringUtils.hasText(clusterInfo.getSchema()))
+            return null;
+        ClusterConfig clusterConfig = new ClusterConfig();
+        if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1)
+            clusterConfig.setSchema(clusterInfo.getSchema());
+        if (url.indexOf("&" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1) {
+            clusterConfig.setNumberOfInstances(clusterInfo.getNumberOfInstances());
+            clusterConfig.setNumberOfBackups(clusterInfo.getNumberOfBackups());
+        }
+        if (url.indexOf("&" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1)
+            clusterConfig.setInstanceId(clusterInfo.getInstanceId());
+
+        if (url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1)
+            clusterConfig.setBackupId(clusterInfo.getBackupId());
+
+        return clusterConfig;
     }
 
     /**
@@ -329,83 +376,6 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      */
     public void setClusterInfo(ClusterInfo clusterInfo) {
         this.clusterInfo = clusterInfo;
-    }
-
-    /**
-     * Creates the space by calling {@link #doGetSpaceUrls()} and then using the returned
-     * {@link SpaceURL} a space is found using {@link SpaceFinder#find(SpaceURL)}.
-     */
-    @Override
-    protected IJSpace doCreateSpace() throws DataAccessException {
-        SpaceURL[] spaceURLs = doGetSpaceUrls();
-        try {
-            return (IJSpace) SpaceFinder.find(spaceURLs, spaceURLs[0].getCustomProperties());
-        } catch (FinderException e) {
-            if (SpaceUtils.isRemoteProtocol(spaceURLs[0])) {
-                throw new CannotFindSpaceException("Failed to find space with url " + Arrays.toString(spaceURLs) + "", e);
-            }
-            throw new CannotCreateSpaceException("Failed to create space with url " + Arrays.toString(spaceURLs) + "", e);
-        }
-    }
-
-    /**
-     * Parses the given space url using {@link SpaceURLParser} and returns the parsed
-     * {@link SpaceURL}.
-     *
-     * <p>
-     * Uses the {@link #setUrlProperties(java.util.Properties)} and
-     * {@link #setParameters(java.util.Map)} as parameters for the space. Also uses the
-     * {@link #setClusterInfo(org.openspaces.core.cluster.ClusterInfo)} by automatically translating
-     * the cluster information into relevant Space url properties.
-     */
-    @SuppressWarnings("deprecation")
-    protected SpaceURL[] doGetSpaceUrls() throws DataAccessException {
-        Assert.notNull(url, "url property is required");
-
-        if (!SpaceUtils.isRemoteProtocol(url) && enableExecutorInjection) {
-            FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
-            filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
-            factory.addFilterProvider(filterProvider);
-        }
-
-        factory.setClusterConfig(toClusterConfig(url, clusterInfo));
-
-        String[] urls = StringUtils.tokenizeToStringArray(url, ";");
-        SpaceURL[] spacesUrls = new SpaceURL[urls.length];
-
-        for (int i = 0; i < urls.length; i++) {
-
-            try {
-                spacesUrls[i] = factory.createSpaceURL(urls[i]);
-                if ((getSecurityConfig() == null || !getSecurityConfig().isFilled()) && factory.credentialsProvider != null)
-                    setCredentialsProvider(factory.credentialsProvider);
-            } catch (MalformedURLException e) {
-                throw new CannotCreateSpaceException("Failed to parse url [" + urls[i] + "]", e);
-            }
-        }
-        return spacesUrls;
-    }
-
-    private static ClusterConfig toClusterConfig(String url, ClusterInfo clusterInfo) {
-        if (clusterInfo == null || SpaceUtils.isRemoteProtocol(url))
-            return null;
-
-        if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1 && !StringUtils.hasText(clusterInfo.getSchema()))
-            return null;
-        ClusterConfig clusterConfig = new ClusterConfig();
-        if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1)
-            clusterConfig.setSchema(clusterInfo.getSchema());
-        if (url.indexOf("&" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1) {
-            clusterConfig.setNumberOfInstances(clusterInfo.getNumberOfInstances());
-            clusterConfig.setNumberOfBackups(clusterInfo.getNumberOfBackups());
-        }
-        if (url.indexOf("&" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1)
-            clusterConfig.setInstanceId(clusterInfo.getInstanceId());
-
-        if (url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1)
-            clusterConfig.setBackupId(clusterInfo.getBackupId());
-
-        return clusterConfig;
     }
 
     /**
