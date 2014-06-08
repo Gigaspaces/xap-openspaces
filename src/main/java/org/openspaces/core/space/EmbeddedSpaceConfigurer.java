@@ -25,8 +25,12 @@ import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
+import org.openspaces.core.config.CustomCachePolicyFactoryBean;
+import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -126,9 +130,9 @@ public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
         return this;
     }
 
-    public EmbeddedSpaceConfigurer mirror(boolean mirror) {
+    public EmbeddedSpaceConfigurer mirrored(boolean mirrored) {
         validate();
-        factoryBean.setMirror(mirror);
+        factoryBean.setMirrored(mirrored);
         return this;
     }
 
@@ -189,6 +193,31 @@ public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
     public EmbeddedSpaceConfigurer primaryBackupListener(ISpaceModeListener primaryBackupListener) {
         validate();
         factoryBean.setPrimaryBackupListener(primaryBackupListener);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer gatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
+        validate();
+        factoryBean.setGatewayTargets(gatewayTargets);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer distributedTransactionProcessingConfiguration(
+            DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
+        validate();
+        factoryBean.setDistributedTransactionProcessingConfiguration(distributedTransactionProcessingConfiguration);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer customCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
+        validate();
+        factoryBean.setCustomCachePolicy(customCachePolicy);
+        return this;
+    }
+
+    public EmbeddedSpaceConfigurer blobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
+        validate();
+        factoryBean.setBlobStoreDataPolicy(blobStoreDataPolicy);
         return this;
     }
 }

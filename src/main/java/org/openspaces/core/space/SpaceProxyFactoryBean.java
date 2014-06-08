@@ -49,6 +49,12 @@ public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean {
         factoryBean.setUrl(name.startsWith(URL_PREFIX) ? name : URL_PREFIX + name);
     }
 
+    @Override
+    public void setSecurityConfig(SecurityConfig securityConfig) {
+        super.setSecurityConfig(securityConfig);
+        factoryBean.setSecurityConfig(securityConfig);
+    }
+
     public void setProperties(Properties properties) {
         factoryBean.setProperties(properties);
     }

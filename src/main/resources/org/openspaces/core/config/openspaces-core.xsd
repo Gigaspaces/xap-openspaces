@@ -735,7 +735,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="mirror" type="xsd:boolean">
+                    <xsd:attribute name="mirrored" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:documentation>
                                 When setting this URL property to true it will allow the space to connect to the Mirror

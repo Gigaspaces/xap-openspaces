@@ -46,7 +46,6 @@ import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
 import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
-import org.openspaces.core.util.SpaceUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

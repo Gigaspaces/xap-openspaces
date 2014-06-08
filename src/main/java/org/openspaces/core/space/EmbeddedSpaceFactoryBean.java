@@ -22,8 +22,12 @@ import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
 import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
+import org.openspaces.core.config.CustomCachePolicyFactoryBean;
+import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
+import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
 import org.springframework.dao.DataAccessException;
 
 import java.util.Properties;
@@ -56,6 +60,12 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean {
         factoryBean.setUrl(name.startsWith(URL_PREFIX) ? name : URL_PREFIX + name);
     }
 
+    @Override
+    public void setSecurityConfig(SecurityConfig securityConfig) {
+        super.setSecurityConfig(securityConfig);
+        factoryBean.setSecurityConfig(securityConfig);
+    }
+
     public void setProperties(Properties properties) {
         factoryBean.setProperties(properties);
     }
@@ -84,8 +94,8 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean {
         factoryBean.setSchema(schema);
     }
 
-    public void setMirror(boolean mirror) {
-        factoryBean.setMirror(mirror);
+    public void setMirrored(boolean mirrored) {
+        factoryBean.setMirror(mirrored);
     }
 
     public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
@@ -118,5 +128,22 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean {
 
     public void setSpaceTypes(SpaceTypeDescriptor[] spaceTypes) {
         factoryBean.setSpaceTypes(spaceTypes);
+    }
+
+    public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
+        factoryBean.setGatewayTargets(gatewayTargets);
+    }
+
+    public void setDistributedTransactionProcessingConfiguration(
+            DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
+        factoryBean.setDistributedTransactionProcessingConfiguration(distributedTransactionProcessingConfiguration);
+    }
+
+    public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
+        factoryBean.setCustomCachePolicy(customCachePolicy);
+    }
+
+    public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
+        factoryBean.setBlobStoreDataPolicy(blobStoreDataPolicy);
     }
 }
