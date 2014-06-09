@@ -196,6 +196,10 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
             return new SpaceMemoryShortageException((MemoryShortageException) e);
         }
 
+        if (e instanceof com.gigaspaces.client.EntryLockedException) {
+            return new EntryLockedException(e.getMessage(), e);
+        }
+
         if (e instanceof OperationTimeoutException) {
             return new UpdateOperationTimeoutException((OperationTimeoutException) e);
         }
