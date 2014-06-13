@@ -63,6 +63,7 @@ public class DefaultReadModifiersTest {
                                                        "EXCLUSIVE_READ_LOCK",
                                                        "FIFO_GROUPING_POLL",
                                                        "FIFO",
+                                                       "IF_EXISTS",
                                                        "IGNORE_PARTIAL_FAILURE",
                                                        "MEMORY_ONLY_SEARCH",
                                                        "READ_COMMITTED",

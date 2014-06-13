@@ -56,6 +56,7 @@ public class DefaultTakeModifiersTest {
                                                        "EVICT_ONLY",
                                                        "FIFO_GROUPING_POLL",
                                                        "FIFO",
+                                                       "IF_EXISTS",
                                                        "IGNORE_PARTIAL_FAILURE",
                                                        "MEMORY_ONLY_SEARCH");
         

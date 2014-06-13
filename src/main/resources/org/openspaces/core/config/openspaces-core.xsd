@@ -2472,6 +2472,7 @@
                         <xsd:enumeration value="FIFO"/>
                         <xsd:enumeration value="FIFO_GROUPING_POLL"/>
                         <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                        <xsd:enumeration value="IF_EXISTS"/>
                     </xsd:restriction>
                 </xsd:simpleType>
             </xsd:attribute>
@@ -2524,6 +2525,7 @@
                         <xsd:enumeration value="FIFO"/>
                         <xsd:enumeration value="FIFO_GROUPING_POLL"/>
                         <xsd:enumeration value="MEMORY_ONLY_SEARCH"/>
+                        <xsd:enumeration value="IF_EXISTS"/>
                     </xsd:restriction>
                 </xsd:simpleType>
             </xsd:attribute>
