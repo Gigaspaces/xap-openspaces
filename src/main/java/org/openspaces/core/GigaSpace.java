@@ -21,6 +21,8 @@ import java.util.concurrent.Future;
 
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.EventSessionConfig;
+import com.gigaspaces.query.aggregators.AggregationResult;
+import com.gigaspaces.query.aggregators.AggregationSet;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -2792,6 +2794,17 @@ public interface GigaSpace {
     GigaSpaceTypeManager getTypeManager();
 
     /**
+     * Executes the specified query along with the specified aggregations collocated at the space.
+     * @param query Query to search by
+     * @param aggregationSet aggregations to execute
+     * @param <T>
+     * @return Aggregations result
+     * @see org.openspaces.extensions.QueryExtension
+     * @since 10.0
+     */
+    <T> AggregationResult aggregate(ISpaceQuery<T> query, AggregationSet aggregationSet);
+
+    /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
      * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
      * with regular updating write operation which usually requires reading the object before applying to update to it. 
@@ -2803,8 +2816,9 @@ public interface GigaSpace {
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
-     * @since 9.1
      * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
+     * @since 9.1
      */
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet);
     /**
@@ -2821,8 +2835,9 @@ public interface GigaSpace {
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
-     * @since 9.1
      * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
+     * @since 9.1
      */
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, long timeout);
     /**
@@ -2838,8 +2853,9 @@ public interface GigaSpace {
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
-     * @since 9.1
      * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
+     * @since 9.1
      */
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
     /**
@@ -2857,8 +2873,9 @@ public interface GigaSpace {
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
-     * @since 9.1
      * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
+     * @since 9.1
      */
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout);
 
@@ -2875,8 +2892,9 @@ public interface GigaSpace {
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet);
     /**
@@ -2893,8 +2911,9 @@ public interface GigaSpace {
      * @param changeSet Changes to apply to the matched entry.
      * @param listener A listener to be notified when a result arrives.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, AsyncFutureListener<ChangeResult<T>> listener);
     /**
@@ -2912,8 +2931,9 @@ public interface GigaSpace {
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, long timeout);
     /**
@@ -2932,8 +2952,9 @@ public interface GigaSpace {
      * wait for the specified number of milliseconds for it to be released.
      * @param listener A listener to be notified when a result arrives.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, long timeout, AsyncFutureListener<ChangeResult<T>> listener);
     /**
@@ -2950,8 +2971,9 @@ public interface GigaSpace {
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
     /**
@@ -2969,8 +2991,9 @@ public interface GigaSpace {
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param listener A listener to be notified when a result arrives.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, AsyncFutureListener<ChangeResult<T>> listener);
     /**
@@ -2989,8 +3012,9 @@ public interface GigaSpace {
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout);
     /**
@@ -3010,12 +3034,12 @@ public interface GigaSpace {
      * wait for the specified number of milliseconds for it to be released.
      * @param listener A listener to be notified when a result arrives.
      * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @throws ChangeException In event of a change error.
+     * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
-     * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
     <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout, AsyncFutureListener<ChangeResult<T>> listener);
 
-//YPFUCK    
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
      * The change operation is designed for performance optimization, By allowing to change an existing object unlike 

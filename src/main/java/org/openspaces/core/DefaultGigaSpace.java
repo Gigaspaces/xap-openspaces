@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.DataEventSessionFactory;
 import com.gigaspaces.events.EventSessionConfig;
+import com.gigaspaces.query.aggregators.AggregationResult;
+import com.gigaspaces.query.aggregators.AggregationSet;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -1200,7 +1202,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }        
     }
-    
+
+    @Override
+    public <T> AggregationResult aggregate(ISpaceQuery<T> query, AggregationSet aggregationSet) {
+        try {
+            return space.aggregate(query, aggregationSet, getCurrentTransaction(), getDefaultReadModifiers().getCode());
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
     @Override
     public <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet) {
         try {
