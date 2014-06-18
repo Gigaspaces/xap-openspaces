@@ -17,6 +17,9 @@
 package org.openspaces.core.space;
 
 import com.j_spaces.core.IJSpace;
+
+import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.springframework.dao.DataAccessException;
 
 import java.util.Properties;
@@ -25,7 +28,7 @@ import java.util.Properties;
  * @author yuvalm
  * @since 10.0
  */
-public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean {
+public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware {
 
     public static final String URL_PREFIX = "jini://*/*/";
 
@@ -74,4 +77,9 @@ public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean {
     public void setVersioned(boolean versioned) {
         factoryBean.setVersioned(versioned);
     }
+    
+    @Override
+	public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
+		factoryBean.setMergedBeanLevelProperties(beanLevelProperties);
+	}
 }

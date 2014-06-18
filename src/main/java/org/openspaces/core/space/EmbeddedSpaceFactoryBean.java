@@ -21,10 +21,13 @@ import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
+
 import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
 import org.openspaces.core.config.CustomCachePolicyFactoryBean;
 import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
+import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
 import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
@@ -36,7 +39,7 @@ import java.util.Properties;
  * @author yuvalm
  * @since 10.0
  */
-public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean {
+public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
     public static final String URL_PREFIX = "/./";
 
@@ -146,4 +149,9 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean {
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
         factoryBean.setBlobStoreDataPolicy(blobStoreDataPolicy);
     }
+
+	@Override
+	public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
+		factoryBean.setMergedBeanLevelProperties(beanLevelProperties);
+	}
 }
