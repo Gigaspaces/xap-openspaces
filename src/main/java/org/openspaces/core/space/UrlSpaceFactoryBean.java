@@ -285,7 +285,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * operations. Defaults to the Space default value (<code>false</code>).
      */
     public void setNoWriteLease(boolean noWriteLease) {
-        factory.setNoWriteLease(noWriteLease);
+        // Ignore - NoWriteLease is no longer supported.
     }
 
     /**
