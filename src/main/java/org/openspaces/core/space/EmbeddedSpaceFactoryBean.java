@@ -41,12 +41,10 @@ import java.util.Properties;
  */
 public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
-    public static final String URL_PREFIX = "/./";
-
     private final UrlSpaceFactoryBean factoryBean;
 
     public EmbeddedSpaceFactoryBean() {
-        this.factoryBean = new UrlSpaceFactoryBean();
+        this.factoryBean = new UrlSpaceFactoryBean(false);
     }
 
     public EmbeddedSpaceFactoryBean(String name) {
@@ -60,7 +58,7 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implemen
     }
 
     public void setName(String name) {
-        factoryBean.setUrl(name.startsWith(URL_PREFIX) ? name : URL_PREFIX + name);
+        factoryBean.setName(name);
     }
 
     @Override

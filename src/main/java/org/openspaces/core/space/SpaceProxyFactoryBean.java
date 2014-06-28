@@ -30,12 +30,10 @@ import java.util.Properties;
  */
 public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware {
 
-    public static final String URL_PREFIX = "jini://*/*/";
-
     private final UrlSpaceFactoryBean factoryBean;
 
     public SpaceProxyFactoryBean() {
-        this.factoryBean = new UrlSpaceFactoryBean();
+        this.factoryBean = new UrlSpaceFactoryBean(true);
     }
 
     public SpaceProxyFactoryBean(String name) {
@@ -49,7 +47,7 @@ public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements B
     }
 
     public void setName(String name) {
-        factoryBean.setUrl(name.startsWith(URL_PREFIX) ? name : URL_PREFIX + name);
+        factoryBean.setName(name);
     }
 
     @Override

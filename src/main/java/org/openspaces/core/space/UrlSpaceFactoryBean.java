@@ -96,6 +96,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     private final SpaceProxyFactory factory = new SpaceProxyFactory();
     private final boolean enableExecutorInjection = true;
     private String url;
+    private String name;
+    private Boolean isRemote;
     private ClusterInfo clusterInfo;
 
     /**
@@ -125,31 +127,50 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         setParameters(params);
     }
 
+    UrlSpaceFactoryBean(boolean isRemote) {
+        this.isRemote = isRemote;
+    }
     /**
      * Creates the space.
      */
     @Override
     protected IJSpace doCreateSpace() throws DataAccessException {
-        Assert.notNull(url, "url property is required");
+        if (isRemote == null) {
+            Assert.notNull(url, "url property is required");
+            isRemote = SpaceUrlUtils.isRemoteProtocol(url);
+            factory.setClusterConfig(toClusterConfig(url, clusterInfo));
+            beforeCreateSpace();
+            try {
+                return factory.createSpaceProxy(url);
+            } catch (MalformedURLException e) {
+                throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
+            } catch (FinderException e) {
+                if (isRemote) {
+                    throw new CannotFindSpaceException("Failed to find space with url " + url + "", e);
+                }
+                throw new CannotCreateSpaceException("Failed to create space with url " + url + "", e);
+            }
+        } else {
+            Assert.notNull(name, "name property is required");
+            beforeCreateSpace();
+            try {
+                return factory.createSpaceProxy(name, isRemote);
+            } catch (MalformedURLException e) {
+                throw new CannotCreateSpaceException("Failed to build url for space [" + name + "]", e);
+            } catch (FinderException e) {
+                if (isRemote) {
+                    throw new CannotFindSpaceException("Failed to find space " + name + "", e);
+                }
+                throw new CannotCreateSpaceException("Failed to create space " + name + "", e);
+            }
+        }
+    }
 
-        final boolean isRemote = SpaceUrlUtils.isRemoteProtocol(url);
+    private void beforeCreateSpace() {
         if (!isRemote && enableExecutorInjection) {
             FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
             filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
             factory.addFilterProvider(filterProvider);
-        }
-
-        factory.setClusterConfig(toClusterConfig(url, clusterInfo));
-
-        try {
-            return factory.createSpaceProxy(url);
-        } catch (MalformedURLException e) {
-            throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
-        } catch (FinderException e) {
-            if (isRemote) {
-                throw new CannotFindSpaceException("Failed to find space with url " + url + "", e);
-            }
-            throw new CannotCreateSpaceException("Failed to create space with url " + url + "", e);
         }
     }
 
@@ -197,6 +218,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    void setName(String name) {
+        this.name = name;
     }
 
     /**
