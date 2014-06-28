@@ -54,6 +54,12 @@ public class SpaceProxyConfigurer extends AbstractSpaceConfigurer {
         return this;
     }
 
+    public SpaceProxyConfigurer instanceId(String instanceID) {
+        validate();
+        factoryBean.setInstanceId(instanceID);
+        return this;
+    }
+
     public SpaceProxyConfigurer lookupGroups(String... lookupGroups) {
         validate();
         factoryBean.setLookupGroups(StringUtils.arrayToCommaDelimitedString(lookupGroups));

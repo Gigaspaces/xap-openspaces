@@ -882,6 +882,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="instance-id" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Optional - the id of the space instance within a cluster to connect to.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                     <xsd:attribute name="lookup-groups" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>

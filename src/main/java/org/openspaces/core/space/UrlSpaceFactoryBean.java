@@ -224,6 +224,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.name = name;
     }
 
+    void setInstanceId(String instanceId) {
+        factory.setInstanceId(instanceId);
+    }
+
     /**
      * Sets the parameters the {@link IJSpace} will be created with. Note this parameters does not
      * take affect after the bean has been initialized.

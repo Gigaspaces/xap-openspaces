@@ -50,6 +50,10 @@ public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements B
         factoryBean.setName(name);
     }
 
+    void setInstanceId(String instanceId) {
+        factoryBean.setInstanceId(instanceId);
+    }
+
     @Override
     public void setSecurityConfig(SecurityConfig securityConfig) {
         super.setSecurityConfig(securityConfig);
