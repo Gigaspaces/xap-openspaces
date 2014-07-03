@@ -152,6 +152,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             }
         } else {
             Assert.notNull(name, "name property is required");
+            factory.setClusterConfig(toClusterConfig(clusterInfo));
             beforeCreateSpace();
             try {
                 return factory.createSpaceProxy(name, isRemote);
@@ -193,6 +194,20 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         if (url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1)
             clusterConfig.setBackupId(clusterInfo.getBackupId());
 
+        return clusterConfig;
+    }
+
+    private static ClusterConfig toClusterConfig(ClusterInfo clusterInfo) {
+        if (clusterInfo == null)
+            return null;
+        if (!StringUtils.hasText(clusterInfo.getSchema()))
+            return null;
+        ClusterConfig clusterConfig = new ClusterConfig();
+        clusterConfig.setSchema(clusterInfo.getSchema());
+        clusterConfig.setNumberOfInstances(clusterInfo.getNumberOfInstances());
+        clusterConfig.setNumberOfBackups(clusterInfo.getNumberOfBackups());
+        clusterConfig.setInstanceId(clusterInfo.getInstanceId());
+        clusterConfig.setBackupId(clusterInfo.getBackupId());
         return clusterConfig;
     }
 
