@@ -105,4 +105,8 @@ public class SpaceProxyConfigurer extends AbstractSpaceConfigurer {
         factoryBean.setCredentialsProvider(credentialsProvider);
         return this;
     }
+
+    public void destroy() throws Exception {
+        factoryBean.destroy();
+    }
 }
