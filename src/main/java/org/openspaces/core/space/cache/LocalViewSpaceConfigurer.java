@@ -124,7 +124,16 @@ public class LocalViewSpaceConfigurer implements SpaceConfigurer {
     public IJSpace localView() {
         return create();
     }
+
+    /**
+     * @deprecated Sinde 10.0 - use close instead.
+     */
     public void destroy() {
+        localViewSpaceFactoryBean.destroy();
+    }
+
+    @Override
+    public void close() {
         localViewSpaceFactoryBean.destroy();
     }
 

@@ -135,7 +135,14 @@ public class LocalCacheSpaceConfigurer implements SpaceConfigurer {
         return create();
     }
 
+    /**
+     * @deprecated Sinde 10.0 - use close instead.
+     */
     public void destroy() {
+        localCacheSpaceFactoryBean.destroy();
+    }
+
+    public void close() {
         localCacheSpaceFactoryBean.destroy();
     }
 

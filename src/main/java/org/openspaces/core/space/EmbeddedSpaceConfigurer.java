@@ -52,6 +52,11 @@ public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
     }
 
     @Override
+    public void close() {
+        factoryBean.close();
+    }
+
+    @Override
     protected IJSpace createSpace() {
         factoryBean.setProperties(properties);
         factoryBean.setFilterProviders(filterProviderFactories.toArray(new FilterProviderFactory[filterProviderFactories.size()]));

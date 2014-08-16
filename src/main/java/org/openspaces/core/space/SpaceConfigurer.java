@@ -27,4 +27,6 @@ import com.j_spaces.core.IJSpace;
 public interface SpaceConfigurer {
 
     IJSpace space();
+
+    void close();
 }

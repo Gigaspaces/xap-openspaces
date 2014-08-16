@@ -208,7 +208,14 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     /**
      * Destroys the space and unregisters the internal space mode listener (if registered).
      */
-    public synchronized void destroy() throws Exception {
+    public void destroy() throws Exception {
+        close();
+    }
+
+    /**
+     * Destroys the space and unregisters the internal space mode listener (if registered).
+     */
+    public synchronized void close() {
         if (space == null) {
             return;
         }
@@ -229,7 +236,9 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
                 space.getDirectProxy().shutdown();
             }
             space.close();
-            
+
+        } catch (RemoteException e) {
+            throw new CannotCloseSpaceException("Failed to close space", e);
         } finally {
             space = null;
         }

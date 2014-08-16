@@ -36,6 +36,11 @@ public class SpaceProxyConfigurer extends AbstractSpaceConfigurer {
     }
 
     @Override
+    public void close() {
+        factoryBean.close();
+    }
+
+    @Override
     protected IJSpace createSpace() {
         factoryBean.setProperties(properties);
         factoryBean.afterPropertiesSet();
@@ -104,9 +109,5 @@ public class SpaceProxyConfigurer extends AbstractSpaceConfigurer {
         validate();
         factoryBean.setCredentialsProvider(credentialsProvider);
         return this;
-    }
-
-    public void destroy() throws Exception {
-        factoryBean.destroy();
     }
 }
