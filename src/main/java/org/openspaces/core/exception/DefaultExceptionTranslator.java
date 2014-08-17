@@ -18,6 +18,8 @@ package org.openspaces.core.exception;
 
 import java.rmi.RemoteException;
 
+import com.gigaspaces.cluster.replication.ConsistencyLevelCompromisedException;
+import com.gigaspaces.cluster.replication.TakeConsistencyLevelCompromisedException;
 import net.jini.core.transaction.TransactionException;
 
 import org.openspaces.core.*;
@@ -223,7 +225,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         if (e instanceof com.gigaspaces.cluster.replication.ConsistencyLevelViolationException) {
             return new ConsistencyLevelViolationException((com.gigaspaces.cluster.replication.ConsistencyLevelViolationException)e);
         }
-
         return null;
     }
 }

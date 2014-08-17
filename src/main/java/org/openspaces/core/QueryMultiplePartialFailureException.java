@@ -16,6 +16,7 @@
 
 package org.openspaces.core;
 
+import com.gigaspaces.cluster.replication.TakeConsistencyLevelCompromisedException;
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
@@ -45,7 +46,13 @@ public class QueryMultiplePartialFailureException extends InvalidDataAccessResou
         } else {
             this.causes = new Throwable[cause.getCauses().length];
             for (int i = 0; i < cause.getCauses().length; i++) {
-                this.causes[i] = exceptionTranslator.translate(cause.getCauses()[i]);
+                if((cause.getCauses()[i] instanceof TakeConsistencyLevelCompromisedException)) {
+                    // do not translate nested TakeConsistencyLevelCompromisedException
+                    // it is the same exception in os as in the gigaspaces core.
+                    this.causes[i] = cause.getCauses()[i];
+                }else {
+                    this.causes[i] = exceptionTranslator.translate(cause.getCauses()[i]);
+                }
             }
         }
     }
