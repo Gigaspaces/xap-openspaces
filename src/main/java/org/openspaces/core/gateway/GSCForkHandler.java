@@ -1,19 +1,19 @@
 /*******************************************************************************
- * 
+ *
  * Copyright (c) 2012 GigaSpaces Technologies Ltd. All rights reserved
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  ******************************************************************************/
 package org.openspaces.core.gateway;
 
@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  * A class responsible for forking a new GSC for the WAN Gateway, and relocating
  * this PU instance (the gateway) to the new container. Forking is performed
  * with the admin api, or by calling the GSC script directly.
- * 
+ *
  * @author barakme
  * @author eitany
  * @since 8.0.3
@@ -67,13 +67,13 @@ public class GSCForkHandler {
     private final String customJvmProperties;
 
 	/****
-	 * 
+	 *
 	 * Constructor.
 	 * @param lrmiPort the target GSC port.
 	 * @param discoveryPort the target discovery port.
-	 * @param startEmbeddedLus 
-	 * @param pui the PU instance object of the current PU.  
-	 * @param customJvmProperties 
+	 * @param startEmbeddedLus
+	 * @param pui the PU instance object of the current PU.
+	 * @param customJvmProperties
 	 */
 	public GSCForkHandler(int lrmiPort, int discoveryPort,
 			boolean startEmbeddedLus, ProcessingUnitInstance pui, String customJvmProperties) {
@@ -83,7 +83,7 @@ public class GSCForkHandler {
 		this.pui = pui;
 		this.discoveryPort = discoveryPort;
         this.customJvmProperties = customJvmProperties;
-	}	
+	}
 
 	private String createDiscoveryPortProperty(final int discoveryPort) {
 		return DISCOVERY_PORT_PROPERTY_TEMPLATE
@@ -127,7 +127,7 @@ public class GSCForkHandler {
                 logger.error(exceptionMessage);
                 throw new IllegalArgumentException(exceptionMessage);
             }
-    
+
     		GridServiceAgent gsa = null;
     		logger.info("Looking up GSA on local machine");
     		gsa = findLocalGSA();
@@ -135,7 +135,7 @@ public class GSCForkHandler {
     			logger.error("Could not find local GSA. Cannot start alternative GSC");
     			throw new IllegalStateException("Could not find local GSA. Cannot start alternative GSC");
     		}
-    
+
             logger.info("Found local GSA - starting new GSC");
             gsc = createGSCWithGsa(gsa);
             logger.info("Created new GSC: " + gsc.getUid() + ", relocating this instance into it");
@@ -145,41 +145,19 @@ public class GSCForkHandler {
 
         logger.info("Relocating " + pui.getProcessingUnitInstanceName() +" to GSC uid=" + gsc.getUid() + " machine="+gsc.getMachine().getHostAddress()+" pid="+gsc.getVirtualMachine().getDetails().getPid());
         pui.relocate(gsc);
-        
+
 
 
 	}
 
 	private GridServiceContainer locateExistingGSCWithPorts() {
 	    for (GridServiceContainer gsc : this.pui.getAdmin().getGridServiceContainers()) {
-            Map<String, String> systemProperties = gsc.getVirtualMachine().getDetails().getSystemProperties();
-            if (matchPorts(systemProperties))
+            int gscPort = gsc.getTransport().getPort();
+            if(gscPort == lrmiPort){
                 return gsc;
-        } 
-	    return null;
-    }
-
-    private boolean matchPorts(Map<String, String> systemProperties) {
-        try
-        {            
-            String discoveryPortSetting = systemProperties.get(DISCOVERY_PORT_SYSTEM_PROPERTY);
-            if (discoveryPortSetting != null && Integer.parseInt(discoveryPortSetting) == discoveryPort)
-            {
-                if (lrmiPort == 0)
-                    return true;
-                String lrmiPortSettings = systemProperties.get(LRMI_PORT_SYSTEM_PROPERTY);
-                if (lrmiPortSettings != null && Integer.parseInt(lrmiPortSettings) == lrmiPort)
-                {
-                    return true;
-                }
             }
-            return false;
         }
-        catch(Exception e)
-        {
-            logger.warn("error while checking matching ports of gsc", e);
-            return false;
-        }
+	    return null;
     }
 
     private GridServiceContainer createGSCWithGsa(final GridServiceAgent gsa) {
@@ -192,7 +170,7 @@ public class GSCForkHandler {
 		for (final String prop : props) {
 			gsco.vmInputArgument(prop);
 		}
-		
+
 		logger.info("starting GSC with parameters: " + Arrays.toString(props));
 
 		// start the GSC
@@ -216,5 +194,4 @@ public class GSCForkHandler {
 		return gsa;
 
 	}
-	
 }
