@@ -104,7 +104,7 @@ public class SQLQueryFactoryBean implements FactoryBean, InitializingBean {
     }
 
     protected void validate() throws IllegalArgumentException {
-        Assert.notNull(where, "where property is requried");
+        Assert.notNull(where, "where property is required");
         if (getTemplate() == null && getType() == null && getClassName() == null) {
             throw new IllegalArgumentException("either template property or type property or className must be set");
         }

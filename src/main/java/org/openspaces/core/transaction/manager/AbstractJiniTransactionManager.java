@@ -162,7 +162,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
             leaseRenewalManagers = new LeaseRenewalManager[leaseRenewalConfig.getPoolSize()];
             for (int i = 0; i < leaseRenewalConfig.getPoolSize(); i++)
                 leaseRenewalManagers[i] = new LeaseRenewalManager(leaseRenewalConfig.getRenewRTT(), 2);
-            logger.debug(logMessage("Creatred transaction manager with lease renewal pool [" + leaseRenewalConfig.getPoolSize() + "] and RTT [" + leaseRenewalConfig.getRenewRTT() + "]"));
+            logger.debug(logMessage("Created transaction manager with lease renewal pool [" + leaseRenewalConfig.getPoolSize() + "] and RTT [" + leaseRenewalConfig.getRenewRTT() + "]"));
         }
     }
 
@@ -360,7 +360,7 @@ public abstract class AbstractJiniTransactionManager extends AbstractPlatformTra
                 try {
                     txObject.getJiniHolder().getLeaseRenewalManager().remove(txObject.getJiniHolder().getTxCreated().lease);
                 } catch (UnknownLeaseException e) {
-                    logger.debug(logMessage("Got an unknowkn lease exception for [" + txObject + "]"), e);
+                    logger.debug(logMessage("Got an unknown lease exception for [" + txObject + "]"), e);
                 }
             }
         }

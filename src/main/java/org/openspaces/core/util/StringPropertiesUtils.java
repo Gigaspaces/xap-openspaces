@@ -167,7 +167,7 @@ public class StringPropertiesUtils {
                 String value = array[i];
                 if (value != null && value.length() > 0) {
                     if (value.contains(separator)) {
-                        throw new IllegalArgumentException("array contains an element '"+value+"' that contains the seperator '"+separator+"'");
+                        throw new IllegalArgumentException("array contains an element '"+value+"' that contains the separator '"+separator+"'");
                     }
                     concat.append(value);
                     if (i < array.length-1) {

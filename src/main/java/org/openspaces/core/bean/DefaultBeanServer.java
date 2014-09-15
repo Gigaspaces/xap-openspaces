@@ -280,7 +280,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
                 beanInstances.add(this.enabledBeans.get(beanClassName));
             }
         } catch (ClassNotFoundException e) {
-            logger.error("Problem occured while scanning list of enabled containers", e);
+            logger.error("Problem occurred while scanning list of enabled containers", e);
         }
         return beanInstances;
     }
