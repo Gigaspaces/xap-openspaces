@@ -231,12 +231,9 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
         
         LicenseManager licenseManager = new LicenseManager();
         licenseManager.verifyLicense();
-        
-        if (!licenseManager.isLicensedForWAN()) 
-        {
-            throw new LicenseException("This license does not permits GigaSpaces WAN module. Please contact support for more details: http://www.gigaspaces.com/supportcenter");
-        }
-        
+        if (!licenseManager.isLicensedForWAN())
+            throw LicenseException.invalid(licenseManager.getLicenseKey(), "This license does not permits GigaSpaces WAN module. Please contact support for more details: http://www.gigaspaces.com/supportcenter");
+
         // Security details provided on deployment
         if (beanLevelProperties != null) {
             SecurityConfig securityConfig = SecurityConfig.fromMarshalledProperties(beanLevelProperties);
