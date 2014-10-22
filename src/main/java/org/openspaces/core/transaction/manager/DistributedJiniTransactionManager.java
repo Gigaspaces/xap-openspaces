@@ -50,7 +50,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
     protected TransactionManager doCreateTransactionManager() throws Exception {
         URL mahaloConfig = ResourceLoader.getServicesConfigUrl();
 
-        Class mahaloClass = ClassUtils.forName("com.sun.jini.mahalo.TransientMahaloImpl");
+        Class mahaloClass = ClassUtils.forName("com.sun.jini.mahalo.TransientMahaloImpl", Thread.currentThread().getContextClassLoader());
         Constructor constructor = mahaloClass.getDeclaredConstructor(String[].class, LifeCycle.class, boolean.class);
         constructor.setAccessible(true);
         impl = (TxnManager) constructor.newInstance(new String[] {mahaloConfig.toExternalForm()}, null, false);
