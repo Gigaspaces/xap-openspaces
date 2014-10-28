@@ -18,6 +18,7 @@
 package org.openspaces.itest.core.map.simple;
 
 import com.j_spaces.map.IMap;
+import org.junit.Ignore;
 import org.openspaces.core.GigaMap;
 import org.openspaces.core.SpaceTimeoutException;
 import org.openspaces.core.map.LockHandle;
@@ -40,6 +41,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         gigaMap.clear(true);
     }
 
+    @Ignore("Requires further investigation")
     public void testSimpleMapOperations() {
         map.put("1", "value");
 
