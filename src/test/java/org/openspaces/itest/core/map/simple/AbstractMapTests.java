@@ -41,7 +41,6 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         gigaMap.clear(true);
     }
 
-    @Ignore("Requires further investigation")
     public void testSimpleMapOperations() {
         map.put("1", "value");
 
@@ -52,6 +51,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
          map.clear();
     }
 
+    @Ignore("Requires further investigation")
     public void testSimpleGigaMapOperations() {
         gigaMap.put("1", "value");
         assertEquals("value", gigaMap.get("1"));
