@@ -16,18 +16,29 @@
 
 package org.openspaces.itest.core.space.view;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.itest.utils.TestUtils;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * @author kobi
  */
-public class LocalViewTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/view/simple-view.xml")
+public class LocalViewTests   { 
 
-    protected GigaSpace remoteGigaSpace;
-    protected GigaSpace gigaSpace;
-    protected GigaSpace localViewGigaSpace;
+     @Autowired protected GigaSpace remoteGigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace localViewGigaSpace;
 
     private static int OBJECTS = 100;
 
@@ -36,20 +47,20 @@ public class LocalViewTests extends AbstractDependencyInjectionSpringContextTest
     }
 
     public LocalViewTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
-    protected void onSetUp() throws Exception {
+     @Before public  void onSetUp() throws Exception {
         gigaSpace.clear(new Object());
     }
 
-    protected void onTearDown() {
+     @After public  void onTearDown() {
         gigaSpace.clear(new Object());
     }
 
     Message message;
 
-    public void testBasicLocalView() {
+     @Test public void testBasicLocalView() {
         for (int i = 0; i < OBJECTS; i++) {
 
             if (i % 2 == 0) {
@@ -73,3 +84,4 @@ public class LocalViewTests extends AbstractDependencyInjectionSpringContextTest
 
 
 }
+

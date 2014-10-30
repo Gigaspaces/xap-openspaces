@@ -16,11 +16,11 @@
 
 package org.openspaces.utest.core.properties;
 
-import java.util.Properties;
-
 import org.openspaces.core.properties.BeanLevelMergedPropertiesContext;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesContext;
+
+import java.util.Properties;
 
 /**
  * @author shaiw

@@ -17,34 +17,45 @@
  ******************************************************************************/
 package org.openspaces.itest.core.simple;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.executor.support.WaitForAllListener;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.*;
+
 
 /**
  * @author kimchy
  */
-public class SimpleOperationsTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/simple/context.xml")
+public class SimpleOperationsTests   { 
 
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
     public SimpleOperationsTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/simple/context.xml"};
     }
 
-    protected void onSetUp() throws Exception {
+     @Before public  void onSetUp() throws Exception {
         gigaSpace.clear(null);
     }
 
-    protected void onTearDown() throws Exception {
+     @After public  void onTearDown() throws Exception {
         gigaSpace.clear(null);
     }
 
-    public void testSimpleOperations() throws Exception {
+     @Test public void testSimpleOperations() throws Exception {
         assertEquals(0, gigaSpace.count(null));
         gigaSpace.write(new Message("test"));
         assertEquals(1, gigaSpace.count(null));
@@ -56,7 +67,7 @@ public class SimpleOperationsTests extends AbstractDependencyInjectionSpringCont
         assertNotNull(val);
     }
 
-    public void testAsyncOperations() throws Exception {
+     @Test public void testAsyncOperations() throws Exception {
         assertEquals(0, gigaSpace.count(null));
         assertNull(gigaSpace.asyncRead(new Message()).get());
         assertNull(gigaSpace.asyncRead(new Message(), 0).get());
@@ -98,3 +109,4 @@ public class SimpleOperationsTests extends AbstractDependencyInjectionSpringCont
         assertEquals(0, gigaSpace.count(null));
     }
 }
+

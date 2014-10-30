@@ -20,7 +20,6 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.core.filters.ISpaceFilter;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
-
 import org.junit.Assert;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceLateContext;

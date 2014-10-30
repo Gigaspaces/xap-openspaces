@@ -16,8 +16,15 @@
 
 package org.openspaces.itest.core.context;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertSame;
+
 
 /**
  * The test verifies that two different {@link org.openspaces.core.GigaSpace} instances defined
@@ -25,26 +32,29 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  *
  * @author kimchy
  */
-public class DoubleGigaSpaceContextTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/context/double-context.xml")
+public class DoubleGigaSpaceContextTests   { 
 
-    protected GigaSpace gs1;
-    protected GigaSpace gs2;
+     @Autowired protected GigaSpace gs1;
+     @Autowired protected GigaSpace gs2;
 
-    protected DoubleContextTestBean testBean;
+     @Autowired protected DoubleContextTestBean testBean;
 
     public DoubleGigaSpaceContextTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/context/double-context.xml"};
     }
 
-    public void testFieldInjectedGs1() {
+     @Test public void testFieldInjectedGs1() {
         assertSame(gs1, testBean.gs1);
     }
 
-    public void testSetterInjectionGs2() {
+     @Test public void testSetterInjectionGs2() {
         assertSame(gs2, testBean.gs2);
     }
 }
+

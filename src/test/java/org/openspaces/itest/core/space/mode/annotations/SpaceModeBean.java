@@ -16,16 +16,10 @@
 
 package org.openspaces.itest.core.space.mode.annotations;
 
-import java.util.HashMap;
-
-import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
-import org.openspaces.core.space.mode.PostBackup;
-import org.openspaces.core.space.mode.PostPrimary;
-import org.openspaces.core.space.mode.PreBackup;
-import org.openspaces.core.space.mode.PrePrimary;
-
 import com.gigaspaces.cluster.activeelection.SpaceMode;
+import org.openspaces.core.space.mode.*;
+
+import java.util.HashMap;
 
 /**
  * @author shaiw

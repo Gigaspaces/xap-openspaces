@@ -17,22 +17,32 @@
 package org.openspaces.itest.core.space.filter.replication;
 
 import com.j_spaces.core.cluster.IReplicationFilter;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  * @author kimchy
  */
-public class SimpleReplicationFilterTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/replication/simple-filter.xml")
+public class SimpleReplicationFilterTests   { 
 
-    protected SimpleReplicationFilter simpleFilter;
+     @Autowired protected SimpleReplicationFilter simpleFilter;
 
-    protected GigaSpace gigaSpace1;
+     @Autowired protected GigaSpace gigaSpace1;
 
-    protected GigaSpace gigaSpace2;
+     @Autowired protected GigaSpace gigaSpace2;
 
     public SimpleReplicationFilterTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
@@ -40,7 +50,7 @@ public class SimpleReplicationFilterTests extends AbstractDependencyInjectionSpr
     }
 
 
-    public void testFilter() {
+     @Test public void testFilter() {
         assertNotNull(simpleFilter.gigaSpace1);
         assertNotNull(simpleFilter.gigaSpace2);
         assertEquals(2, simpleFilter.initCalled.intValue());
@@ -54,3 +64,4 @@ public class SimpleReplicationFilterTests extends AbstractDependencyInjectionSpr
         assertEquals(IReplicationFilter.FILTER_DIRECTION_INPUT, simpleFilter.processEntries.get(1).direction);
     }
 }
+

@@ -17,17 +17,12 @@
  ******************************************************************************/
 package org.openspaces.utest.core.util;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openspaces.core.util.StringPropertiesUtils;
+
+import java.util.*;
 
 public class StringPropertiesUtilsTest extends TestCase {
 

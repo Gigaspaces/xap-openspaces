@@ -17,7 +17,16 @@
  ******************************************************************************/
 package org.openspaces.itest.core.space.mirror;
 
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertNotNull;
+
+
+
 
 /**
  * 
@@ -25,21 +34,25 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * @since 8.0.4
  *
  */
-public class DistributedTransactionProcessingParametersTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/mirror/mirror-dist-tx.xml")
+
+public class DistributedTransactionProcessingParametersTest   { 
 
 
-    protected Object mirror;
+     @Autowired protected Object mirror;
 
     public DistributedTransactionProcessingParametersTest() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[] { "/org/openspaces/itest/core/space/mirror/mirror-dist-tx.xml" };
     }
 
-    public void testDataSource() {
+     @Test public void testDataSource() {
         assertNotNull(mirror);
     }
 
 }
+

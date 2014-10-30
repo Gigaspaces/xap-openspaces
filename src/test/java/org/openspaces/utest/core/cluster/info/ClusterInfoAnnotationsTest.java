@@ -16,24 +16,39 @@
 
 package org.openspaces.utest.core.cluster.info;
 
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertNotNull;
+
+
+
 
 /**
  * @author shaiw
  */
-public class ClusterInfoAnnotationsTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/utest/core/cluster/info/cluster-info.xml")
+public class ClusterInfoAnnotationsTest   { 
+@Autowired
+    protected ApplicationContext ac;
 
     public ClusterInfoAnnotationsTest() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/utest/core/cluster/info/cluster-info.xml"};
     }
 
-    public void testClusterInfoAnnotations() {
-        ClusterInfoBean clusterInfo = (ClusterInfoBean)getApplicationContext().getBean("clusterInfoBean");
+     @Test public void testClusterInfoAnnotations() {
+        ClusterInfoBean clusterInfo = (ClusterInfoBean)ac.getBean("clusterInfoBean");
         assertNotNull(clusterInfo);
         assertNotNull(clusterInfo.info);
     }
 }
+

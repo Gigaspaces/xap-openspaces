@@ -16,20 +16,29 @@
 
 package org.openspaces.itest.core.space.datasource;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * @author kimchy
  */
-public class MockManagedDataSourceTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/datasource/datasource.xml")
+public class MockManagedDataSourceTests   { 
 
-    protected MockManagedDataSource ds;
+     @Autowired protected MockManagedDataSource ds;
 
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
     public MockManagedDataSourceTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
@@ -37,7 +46,8 @@ public class MockManagedDataSourceTests extends AbstractDependencyInjectionSprin
     }
 
 
-    public void testDataSource() {
+     @Test public void testDataSource() {
         assertTrue(ds.isInitCalled());
     }
 }
+

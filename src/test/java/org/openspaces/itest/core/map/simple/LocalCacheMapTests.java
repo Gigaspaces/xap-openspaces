@@ -18,17 +18,24 @@
 package org.openspaces.itest.core.map.simple;
 
 import com.j_spaces.core.client.cache.map.MapCache;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author kimchy
  */
-public class LocalCacheMapTests extends AbstractMapTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/map/simple/local-cache-map.xml")
+public class LocalCacheMapTests  extends AbstractMapTests {
 
-    protected String[] getConfigLocations() {
-        return new String[] {"/org/openspaces/itest/core/map/simple/local-cache-map.xml"};
-    }
 
     public void testIMapType() {
         assertTrue(map instanceof MapCache);
     }
+
+
 }
+

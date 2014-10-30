@@ -19,37 +19,47 @@ package org.openspaces.itest.core.space.filter.adapter;
 import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import net.jini.core.entry.UnusableEntryException;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.*;
+
 
 /**
  * @author kobi
  */
-public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/adapter/adapter-annotation-custom-filter.xml")
+public class AnnotationAdapterCustomFilterTests   { 
 
-    protected CustomFilter customFilter;
+     @Autowired protected CustomFilter customFilter;
 
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/filter/adapter/adapter-annotation-custom-filter.xml"};
     }
 
     public AnnotationAdapterCustomFilterTests(){
-        setPopulateProtectedVariables(true);
+ 
     }
 
 
-    protected void onSetUp() throws Exception {
+     @Before public  void onSetUp() throws Exception {
         gigaSpace.clear(new Object());
         customFilter.clearExecutions();
     }
 
-    public void testOnInit() {
+     @Test public void testOnInit() {
         assertTrue(customFilter.isOnInitCalled());
     }
 
-    public void testWrite() throws UnusableEntryException {
+     @Test public void testWrite() throws UnusableEntryException {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message);
@@ -69,7 +79,7 @@ public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInject
         gigaSpace.clear(null);
     }
 
-    public void testRead() throws UnusableEntryException {
+     @Test public void testRead() throws UnusableEntryException {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message);
@@ -101,3 +111,4 @@ public class AnnotationAdapterCustomFilterTests extends AbstractDependencyInject
     }
 
 }
+

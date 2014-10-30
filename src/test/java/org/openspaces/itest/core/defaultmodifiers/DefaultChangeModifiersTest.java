@@ -1,11 +1,8 @@
 package org.openspaces.itest.core.defaultmodifiers;
 
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.gigaspaces.client.ChangeModifiers;
+import com.google.common.collect.Sets;
 import junit.framework.Assert;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
@@ -13,8 +10,8 @@ import org.springframework.core.Constants;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.gigaspaces.client.ChangeModifiers;
-import com.google.common.collect.Sets;
+import javax.annotation.Resource;
+import java.util.Set;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/org/openspaces/itest/core/defaultmodifiers/change-modifiers-context.xml")

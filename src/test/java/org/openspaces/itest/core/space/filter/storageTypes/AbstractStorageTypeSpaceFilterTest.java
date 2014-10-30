@@ -1,15 +1,19 @@
 package org.openspaces.itest.core.space.filter.storageTypes;
 
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 
 /**
  * User: hagai
  * Date: 2/20/14
  */
-public abstract class AbstractStorageTypeSpaceFilterTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+public abstract class AbstractStorageTypeSpaceFilterTest   { 
 	protected final int NUMBER_OF_OBJECTS = 100;
-	protected GigaSpace gigaSpace;
+	 @Autowired protected GigaSpace gigaSpace;
 
 
 	protected abstract String[] getConfigLocations();
@@ -29,3 +33,4 @@ public abstract class AbstractStorageTypeSpaceFilterTest extends AbstractDepende
 	 */
 	public abstract void verifyAndPrintFilterStats();
 }
+

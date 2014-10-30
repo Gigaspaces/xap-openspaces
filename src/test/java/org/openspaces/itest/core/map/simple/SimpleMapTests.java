@@ -18,17 +18,26 @@
 package org.openspaces.itest.core.map.simple;
 
 import com.j_spaces.map.GSMapImpl;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author kimchy
  */
-public class SimpleMapTests extends AbstractMapTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/map/simple/simple-map.xml")
+public class SimpleMapTests  extends AbstractMapTests {
 
     protected String[] getConfigLocations() {
         return new String[] {"/org/openspaces/itest/core/map/simple/simple-map.xml"};
     }
 
-    public void testIMapType() {
+     @Test public void testIMapType() {
         assertTrue(map instanceof GSMapImpl);
     }
 }
+

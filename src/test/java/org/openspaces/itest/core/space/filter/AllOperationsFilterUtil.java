@@ -17,13 +17,12 @@
  ******************************************************************************/
 package org.openspaces.itest.core.space.filter;
 
-import java.util.Map;
-
+import com.j_spaces.core.filters.FilterOperationCodes;
+import junit.framework.Assert;
 import org.openspaces.core.executor.Task;
 import org.openspaces.itest.core.space.filter.security.SecurityFilter;
 
-import com.j_spaces.core.filters.FilterOperationCodes;
-import junit.framework.Assert;
+import java.util.Map;
 
 public class AllOperationsFilterUtil {
 

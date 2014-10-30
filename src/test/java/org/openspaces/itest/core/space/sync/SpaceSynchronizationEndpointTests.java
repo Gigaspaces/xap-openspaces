@@ -15,16 +15,18 @@
  *******************************************************************************/
 package org.openspaces.itest.core.space.sync;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.TimeoutException;
-
-import junit.framework.Assert;
-
-import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-
 import com.gigaspaces.document.SpaceDocument;
 import com.gigaspaces.metadata.SpaceTypeDescriptorBuilder;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openspaces.core.GigaSpace;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Idan Moyal
@@ -32,20 +34,23 @@ import com.gigaspaces.metadata.SpaceTypeDescriptorBuilder;
  *
  */
 @SuppressWarnings("deprecation")
-public class SpaceSynchronizationEndpointTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/sync/space-sync-endpoint.xml")
 
-    protected GigaSpace gigaSpace;
+public class SpaceSynchronizationEndpointTests   { 
+
+     @Autowired protected GigaSpace gigaSpace;
     
     public SpaceSynchronizationEndpointTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
     
-    @Override
-    protected String[] getConfigLocations() {
+    //@Override
+    protected String[] getConfigLocations () {
         return new String[] { "/org/openspaces/itest/core/space/sync/space-sync-endpoint.xml" };
     }
     
-    public void test() throws InterruptedException, BrokenBarrierException, TimeoutException  {
+     @Test public void test() throws InterruptedException, BrokenBarrierException, TimeoutException  {
         gigaSpace.getTypeManager().registerTypeDescriptor(
                 new SpaceTypeDescriptorBuilder("MockDocument").idProperty("id").create());
         SpaceDocument document = new SpaceDocument("MockDocument");
@@ -58,3 +63,4 @@ public class SpaceSynchronizationEndpointTests extends AbstractDependencyInjecti
 
     
 }
+

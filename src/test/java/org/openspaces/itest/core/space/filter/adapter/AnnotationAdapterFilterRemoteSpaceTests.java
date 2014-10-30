@@ -16,16 +16,27 @@
 
 package org.openspaces.itest.core.space.filter.adapter;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertNotNull;
+
+
 /**
  * @author kimchy
  */
-public class AnnotationAdapterFilterRemoteSpaceTests extends AbstractAdapterFilterTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/adapter/adapter-annotation-filter-remote.xml")
+public class AnnotationAdapterFilterRemoteSpaceTests  extends AbstractAdapterFilterTests { 
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/filter/adapter/adapter-annotation-filter-remote.xml"};
     }
 
-    public void testGigaSpacesLateContext() {
+     @Test public void testGigaSpacesLateContext() {
         assertNotNull(simpleFilter.gigaSpace);
     }
 }
+

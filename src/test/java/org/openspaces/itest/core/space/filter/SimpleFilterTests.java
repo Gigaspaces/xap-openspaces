@@ -17,21 +17,30 @@
 package org.openspaces.itest.core.space.filter;
 
 import com.j_spaces.core.filters.FilterOperationCodes;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.itest.utils.EmptySpaceDataObject;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.*;
+
 
 /**
  * @author kimchy
  */
-public class SimpleFilterTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/simple-filter.xml")
+public class SimpleFilterTests   { 
 
-    protected SimpleFilter simpleFilter;
+     @Autowired protected SimpleFilter simpleFilter;
 
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
     public SimpleFilterTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
@@ -39,7 +48,7 @@ public class SimpleFilterTests extends AbstractDependencyInjectionSpringContextT
     }
 
 
-    public void testFilter() {
+     @Test public void testFilter() {
         assertNotNull(simpleFilter.gigaSpace);
         assertNull(simpleFilter.getStats().get(FilterOperationCodes.BEFORE_WRITE));
         assertNull(simpleFilter.getStats().get(FilterOperationCodes.AFTER_WRITE));
@@ -53,3 +62,4 @@ public class SimpleFilterTests extends AbstractDependencyInjectionSpringContextT
         assertNull(simpleFilter.getStats().get(FilterOperationCodes.BEFORE_TAKE));
     }
 }
+

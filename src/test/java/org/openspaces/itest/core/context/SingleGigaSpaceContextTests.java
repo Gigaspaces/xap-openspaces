@@ -16,8 +16,15 @@
 
 package org.openspaces.itest.core.context;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertSame;
+
 
 /**
  * A simple test that verifies that {@link org.openspaces.core.GigaSpace} gets injected using
@@ -26,25 +33,28 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  *
  * @author kimchy
  */
-public class SingleGigaSpaceContextTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/context/single-context.xml")
+public class SingleGigaSpaceContextTests   { 
 
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
-    protected SingleContextTestBean testBean;
+     @Autowired protected SingleContextTestBean testBean;
 
     public SingleGigaSpaceContextTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/context/single-context.xml"};
     }
 
-    public void testFieldInjected() {
+     @Test public void testFieldInjected() {
         assertSame(gigaSpace, testBean.gs1);
     }
 
-    public void testSeterInjection() {
+     @Test public void testSeterInjection() {
         assertSame(gigaSpace, testBean.gs2);
     }
 }
+

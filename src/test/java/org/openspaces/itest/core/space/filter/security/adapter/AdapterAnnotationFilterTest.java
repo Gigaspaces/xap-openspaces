@@ -17,10 +17,24 @@
  ******************************************************************************/
 package org.openspaces.itest.core.space.filter.security.adapter;
 
-public class AdapterAnnotationFilterTest extends AbstractSecurityAdapterCustomFilterTests {
-        
-    protected String[] getConfigLocations() {
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/security/adapter/adapter-annotation-custom-filter.xml")
+public class AdapterAnnotationFilterTest  extends AbstractSecurityAdapterCustomFilterTests { 
+
+    @BeforeClass
+    public static void setUp()
+    {
         System.setProperty("com.gs.security.properties-file", "org/openspaces/itest/core/space/filter/security/spring-security.properties");
+
+    }
+    protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/filter/security/adapter/adapter-annotation-custom-filter.xml"};
     }
 }
+

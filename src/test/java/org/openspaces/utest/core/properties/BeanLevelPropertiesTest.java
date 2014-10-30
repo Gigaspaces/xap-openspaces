@@ -16,23 +16,37 @@
 
 package org.openspaces.utest.core.properties;
 
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.*;
+
+
+
 
 /**
  * @author shaiw
  */
-public class BeanLevelPropertiesTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/utest/core/properties/properties.xml")
+public class BeanLevelPropertiesTest   { 
+@Autowired
+    protected ApplicationContext ac;
 
     public BeanLevelPropertiesTest() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/utest/core/properties/properties.xml"};
     }
 
-    public void testClusterInfoAnnotations() {
-        BeanLevelPropertiesBean bean = (BeanLevelPropertiesBean)getApplicationContext().getBean("beanLevelPropertiesBean");
+     @Test public void testClusterInfoAnnotations() {
+        BeanLevelPropertiesBean bean = (BeanLevelPropertiesBean)ac.getBean("beanLevelPropertiesBean");
         assertNotNull(bean);
         assertNotNull(bean.beanLevelMergedProperties);
         assertNotNull(bean.beanLevelProperties);
@@ -43,3 +57,4 @@ public class BeanLevelPropertiesTest extends AbstractDependencyInjectionSpringCo
         assertEquals("value2", bean.beanLevelMergedProperties.getProperty("key2"));
     }
 }
+

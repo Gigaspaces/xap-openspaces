@@ -17,31 +17,41 @@
  ******************************************************************************/
 package org.openspaces.itest.core.space.support;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * @author kimchy
  */
-public class WorkerAdapterTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/support/context.xml")
+public class WorkerAdapterTests   { 
 
-    protected GigaSpace gigaSpace1;
+     @Autowired protected GigaSpace gigaSpace1;
 
-    protected GigaSpace gigaSpace2;
+     @Autowired protected GigaSpace gigaSpace2;
 
-    protected MyWorker worker1;
+     @Autowired protected MyWorker worker1;
 
-    protected MyWorker worker2;
+     @Autowired protected MyWorker worker2;
 
     public WorkerAdapterTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/support/context.xml"};
     }
 
-    public void testCorrectCalls() throws Exception {
+     @Test public void testCorrectCalls() throws Exception {
         assertTrue(worker1.isInitCalled());
         
         assertFalse(worker2.isInitCalled());
@@ -53,4 +63,5 @@ public class WorkerAdapterTests extends AbstractDependencyInjectionSpringContext
         assertFalse(worker2.isRunCalled());
     }
 }
+
 

@@ -1,13 +1,19 @@
 package org.openspaces.itest.core.space.filter.storageTypes;
 
-
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.metadata.StorageType;
 import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.ISpaceFilter;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -16,21 +22,23 @@ import java.util.Map;
  * User: hagai
  * Date: 2/20/14
  */
-public class StorageTypeISpaceFilterTest extends AbstractStorageTypeSpaceFilterTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/storageTypes/space-ISpace-filter.xml")
+public class StorageTypeISpaceFilterTest  extends AbstractStorageTypeSpaceFilterTest { 
 
-	protected SimpleFilter simpleSpaceFilter;
+	 @Autowired protected SimpleFilter simpleSpaceFilter;
 
-	@Override
-	protected String[] getConfigLocations() {
+	//@Override
+	protected String[] getConfigLocations () {
 		return new String[]{"/org/openspaces/itest/core/space/filter/storageTypes/space-ISpace-filter.xml"};
 	}
 
 	public StorageTypeISpaceFilterTest() {
-		setPopulateProtectedVariables(true);
+ 
 	}
 
 	@Override
-	public void testBasicSpaceOperations(){
+	 @Test public void testBasicSpaceOperations(){
 		beforeTest();
 
 		//write objects to the space
@@ -116,3 +124,4 @@ public class StorageTypeISpaceFilterTest extends AbstractStorageTypeSpaceFilterT
 	}
 
 }
+

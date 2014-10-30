@@ -16,44 +16,62 @@
 
 package org.openspaces.itest.core.space.filter.security;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.ExecutionException;
-
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.security.SecurityException;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.UpdateModifiers;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil;
 import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil.MyTask;
 import org.openspaces.itest.core.space.filter.adapter.Message;
 import org.openspaces.security.spring.SpringSecurityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.rmi.RemoteException;
+import java.util.concurrent.ExecutionException;
+
+import static org.junit.Assert.*;
+
 
 /**
  * @author kimchy
  */
-public class SecurityOperationCodeFilterTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/security/securityFilter.xml")
+public class SecurityOperationCodeFilterTest   { 
 
-    protected SecurityFilter securityFilterCodeName;
-    protected SecurityFilter securityFilterCode;
-    protected ProviderManager authenticationManager;
-    protected GigaSpace gigaSpace;
+     @Autowired protected SecurityFilter securityFilterCodeName;
+     @Autowired protected SecurityFilter securityFilterCode;
+     protected ProviderManager authenticationManager;
+     @Autowired protected GigaSpace gigaSpace;
     private SpringSecurityManager securityManager;
     protected SecurityFilter[] filters = new SecurityFilter[2];
     
     public SecurityOperationCodeFilterTest() {
-        setPopulateProtectedVariables(true );
+ 
     }
 
-    @Override
-    protected String[] getConfigLocations() {
+    @BeforeClass
+    public static void setUp()
+    {
         System.setProperty("com.gs.security.properties-file", "org/openspaces/itest/core/space/filter/security/spring-security.properties");
-        return new String[]{"/org/openspaces/itest/core/space/filter/security/securityFilter.xml"};                      
+
     }
-    
+    //@Override
+    protected String[] getConfigLocations () {
+        return new String[]{"/org/openspaces/itest/core/space/filter/security/securityFilter.xml"};
+    }
+
+    @Before
     public void beforeTest(){
+
         filters[0] = securityFilterCodeName;
         filters[1] = securityFilterCode;
         
@@ -63,7 +81,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.initialAssert(securityFilterCode.getStats() , "simpleFilterCode"); 
     }
     
-    public void testWrite() throws SecurityException, RemoteException {
+     @Test public void testWrite() throws SecurityException, RemoteException {
         beforeTest();
         Message message = new Message(1);
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -72,7 +90,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.assertAfterWriteWithAuthentication(securityFilterCode.getStats(), "securityFilterCode");
     }
     
-    public void testRead() {
+     @Test public void testRead() {
         beforeTest();
         Message message = new Message(1);        
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -84,7 +102,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.assertAfterReadWithAuthentication(securityFilterCode.getStats(), "securityFilterCode");
     }
     
-    public void testTake() {
+     @Test public void testTake() {
         beforeTest();
         Message message = new Message(1);        
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -96,7 +114,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.assertAfterTakeWithAuthentication(securityFilterCode.getStats(), "securityFilterCode");
     }
     
-    public void testTakeMultiple(){
+     @Test public void testTakeMultiple(){
         beforeTest();
         Message[] messages = {new Message(1),new Message(2)};
         LeaseContext<Message>[] leases = gigaSpace.writeMultiple(messages ,Integer.MAX_VALUE);
@@ -110,7 +128,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.assertAfterTakeMultipleWithAuthentication(securityFilterCode.getStats() , "simpleFilterCodeName");
     }
     
-    public void testExecute() throws InterruptedException, ExecutionException{
+     @Test public void testExecute() throws InterruptedException, ExecutionException{
         beforeTest(); 
         
         AsyncFuture<Integer> future = gigaSpace.execute(new MyTask());
@@ -118,7 +136,7 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.assertAfterExecuteWithAuthentication(securityFilterCodeName.getStats() , "simpleFilterCodeName");
     }
     
-    public void testUpdate(){
+     @Test public void testUpdate(){
         beforeTest();
         Message message = new Message(1);        
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -131,3 +149,4 @@ public class SecurityOperationCodeFilterTest extends AbstractDependencyInjection
         AllOperationsFilterUtil.assertAfterUpdateWithAuthentication(securityFilterCodeName.getStats() , "simpleFilterCodeName");
     }
 }
+

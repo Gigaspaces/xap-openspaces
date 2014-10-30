@@ -4,8 +4,6 @@ import com.j_spaces.core.IJSpace;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openspaces.core.space.EmbeddedSpaceFactoryBean;
-import org.openspaces.core.space.SpaceProxyFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -18,7 +18,6 @@
 package org.openspaces.utest.core.util;
 
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.openspaces.core.util.MemoryUnit;
 

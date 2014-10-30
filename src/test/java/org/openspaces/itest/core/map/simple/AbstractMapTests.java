@@ -1,43 +1,55 @@
 /*******************************************************************************
- * 
+ *
  * Copyright (c) 2012 GigaSpaces Technologies Ltd. All rights reserved
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  ******************************************************************************/
 package org.openspaces.itest.core.map.simple;
 
 import com.j_spaces.map.IMap;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaMap;
 import org.openspaces.core.SpaceTimeoutException;
 import org.openspaces.core.map.LockHandle;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
+
 
 /**
  * @author kimchy
  */
-public abstract class AbstractMapTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+public abstract class AbstractMapTests {
 
+    @Resource
     protected IMap map;
 
+    @Resource
     protected GigaMap gigaMap;
 
     protected AbstractMapTests() {
-        setPopulateProtectedVariables(true);
+
     }
 
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
         gigaMap.clear(true);
     }
 
@@ -48,7 +60,6 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
 
         assertEquals("value", map.remove("1"));
 
-         map.clear();
     }
 
     @Ignore("Requires further investigation")
@@ -58,6 +69,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         assertEquals("value", gigaMap.remove("1"));
     }
 
+    @Test
     public void testSimpleLock() {
         gigaMap.put("2", "value");
         gigaMap.lock("2");
@@ -72,6 +84,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         gigaMap.put("2", "value2");
     }
 
+    @Test
     public void testLockOnNonExistingValue() {
         gigaMap.lock("2");
         assertTrue(gigaMap.isLocked("2"));
@@ -85,6 +98,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         gigaMap.put("2", "value2");
     }
 
+    @Test
     public void testSimpleLockWithLockHandle() {
         gigaMap.put("1", "value");
         LockHandle lockHandle = gigaMap.lock("1");
@@ -100,6 +114,7 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         gigaMap.put("1", "value3");
     }
 
+    @Test
     public void testMultiThreadedLockAndUnlock() {
         gigaMap.put("1", "value");
         gigaMap.lock("1");
@@ -115,5 +130,8 @@ public abstract class AbstractMapTests extends AbstractDependencyInjectionSpring
         thread.start();
         gigaMap.unlock("1");
     }
+
+
 }
-                        
+
+

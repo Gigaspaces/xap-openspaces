@@ -23,40 +23,48 @@ import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ExecutionFilterEntry;
 import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 import net.jini.core.entry.UnusableEntryException;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.executor.Task;
 import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil.MyTask;
 import org.openspaces.itest.core.space.filter.adapter.CustomFilter;
 import org.openspaces.itest.core.space.filter.adapter.Message;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author gal
  */
-public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class AbstractSecurityAdapterCustomFilterTests   { 
 
-    protected CustomFilter customFilter;
+     @Resource
+     protected CustomFilter customFilter;
 
-    protected GigaSpace gigaSpace;
+     @Resource protected GigaSpace gigaSpace;
 
     
 
     public AbstractSecurityAdapterCustomFilterTests(){
-        setPopulateProtectedVariables(true);
+ 
     }
 
-    protected void onSetUp() throws Exception {
+     @Before public  void onSetUp() throws Exception {
         gigaSpace.clear(new Object());
         customFilter.clearExecutions();
     }
 
-    public void testOnInit() {
+     @Test public void testOnInit() {
         assertTrue(customFilter.isOnInitCalled());
     }
 
-    public void testWrite() throws UnusableEntryException {
+     @Test public void testWrite() throws UnusableEntryException {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message);
@@ -76,7 +84,7 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         gigaSpace.clear(null);
     }
 
-    public void testRead() throws UnusableEntryException {
+     @Test public void testRead() throws UnusableEntryException {
         Message message = new Message(1);
         message.setMessage("test1");
         gigaSpace.write(message);
@@ -102,7 +110,7 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         gigaSpace.clear(null);
     }
     
-    public void testTake() throws UnusableEntryException {
+     @Test public void testTake() throws UnusableEntryException {
         Message message = new Message(1);
         message.setMessage("test1");
         gigaSpace.write(message);
@@ -125,7 +133,7 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         gigaSpace.clear(null);
     }
     
-    public void testTakeMultiple() throws UnusableEntryException{
+     @Test public void testTakeMultiple() throws UnusableEntryException{
         Message[] messages = {new Message(1),new Message(2)};
         LeaseContext<Message>[] leases = gigaSpace.writeMultiple(messages ,Integer.MAX_VALUE);
         assertNotNull(leases);
@@ -156,7 +164,7 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         gigaSpace.clear(null);
     }
     
-    public void testExecute() throws InterruptedException, ExecutionException, UnusableEntryException{
+     @Test public void testExecute() throws InterruptedException, ExecutionException, UnusableEntryException{
         AsyncFuture<Integer> future = gigaSpace.execute(new MyTask());
         assertEquals(2, future.get().intValue());
         
@@ -173,7 +181,7 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         assertEquals(FilterOperationCodes.AFTER_EXECUTE, params[1]);
     }
     
-    public void testUpdate() throws UnusableEntryException{      
+     @Test public void testUpdate() throws UnusableEntryException{      
         Message message = new Message(1);        
         LeaseContext<Message> lease = gigaSpace.write(message);
         assertNotNull(lease);
@@ -199,3 +207,4 @@ public class AbstractSecurityAdapterCustomFilterTests extends AbstractDependency
         gigaSpace.clear(null);
     }
 }
+

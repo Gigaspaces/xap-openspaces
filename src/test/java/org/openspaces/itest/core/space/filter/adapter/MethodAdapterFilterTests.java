@@ -16,12 +16,20 @@
 
 package org.openspaces.itest.core.space.filter.adapter;
 
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
 /**
  * @author kimchy
  */
-public class MethodAdapterFilterTests extends AbstractAdapterFilterTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/adapter/adapter-method-filter.xml")
+public class MethodAdapterFilterTests  extends AbstractAdapterFilterTests { 
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/filter/adapter/adapter-method-filter.xml"};
     }
 }
+

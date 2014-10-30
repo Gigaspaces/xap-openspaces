@@ -16,33 +16,40 @@
 
 package org.openspaces.itest.core.space.filter;
 
-import java.util.concurrent.ExecutionException;
-
+import com.gigaspaces.async.AsyncFuture;
+import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.UpdateModifiers;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.events.adapter.SpaceDataEvent;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
 import org.openspaces.events.notify.SimpleNotifyEventListenerContainer;
 import org.openspaces.itest.core.space.filter.AllOperationsFilterUtil.MyTask;
 import org.openspaces.itest.core.space.filter.adapter.Message;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.gigaspaces.async.AsyncFuture;
-import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.UpdateModifiers;
+import java.util.concurrent.ExecutionException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author gal
  */
-public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/filter/all-filter.xml")
+public class AllOperationsFilterTest   { 
     
  
-    protected SimpleFilter simpleFilterCode;
-    protected SimpleFilter simpleFilterCodeName;
+     @Autowired protected SimpleFilter simpleFilterCode;
+     @Autowired protected SimpleFilter simpleFilterCodeName;
     protected SimpleFilter[] filters = new SimpleFilter[2];
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
     public AllOperationsFilterTest() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
@@ -59,7 +66,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.initialAssert(simpleFilterCode.getStats() , "simpleFilterCode"); 
     }
     
-    public void testWrite(){
+     @Test public void testWrite(){
         beforeTest();
         Message message = new Message(1);        
         
@@ -69,7 +76,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.assertAfterWrite(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
-    public void testRead(){
+     @Test public void testRead(){
         beforeTest();
         Message message = new Message(1);              
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -82,7 +89,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.assertAfterRead(simpleFilterCode.getStats() , "simpleFilterCode");
      }
     
-    public void testTake(){ 
+     @Test public void testTake(){ 
         beforeTest();
         Message message = new Message(1);        
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -96,7 +103,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
     }
     
 
-    public void testUpdate(){
+     @Test public void testUpdate(){
         beforeTest();
         Message message = new Message(1);        
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -110,7 +117,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.assertAfterUpdate(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
-    public void testReadMultiple(){
+     @Test public void testReadMultiple(){
         beforeTest(); 
         Message[] messages = {new Message(1),new Message(2)};        
         LeaseContext<Message>[] leases = gigaSpace.writeMultiple(messages);
@@ -125,7 +132,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.assertAfterReadMultiple(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
-    public void testTakeMultiple(){
+     @Test public void testTakeMultiple(){
         beforeTest();
         Message[] messages = {new Message(1),new Message(2)};
         LeaseContext<Message>[] leases = gigaSpace.writeMultiple(messages ,Integer.MAX_VALUE);
@@ -140,7 +147,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.assertAfterTakeMultiple(simpleFilterCode.getStats() , "simpleFilterCode");    
     }
     
-    public void testExecute() throws InterruptedException, ExecutionException{
+     @Test public void testExecute() throws InterruptedException, ExecutionException{
         beforeTest(); 
         
         AsyncFuture<Integer> future = gigaSpace.execute(new MyTask());
@@ -149,7 +156,7 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
         AllOperationsFilterUtil.assertAfterExecute(simpleFilterCode.getStats() , "simpleFilterCode");
     }
     
-    public void testNotify() throws InterruptedException, ExecutionException{
+     @Test public void testNotify() throws InterruptedException, ExecutionException{
         beforeTest();
         Message message = new Message(1);
         message.setMessage("hello");
@@ -174,3 +181,4 @@ public class AllOperationsFilterTest extends AbstractDependencyInjectionSpringCo
 
    
 }
+

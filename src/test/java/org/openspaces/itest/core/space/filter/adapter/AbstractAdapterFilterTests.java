@@ -25,50 +25,58 @@ import com.j_spaces.core.filters.FilterOperationCodes;
 import com.j_spaces.core.filters.entry.ExecutionFilterEntry;
 import junit.framework.Assert;
 import net.jini.core.lease.Lease;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.executor.Task;
 import org.openspaces.events.adapter.SpaceDataEvent;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
 import org.openspaces.events.notify.SimpleNotifyEventListenerContainer;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.*;
+
 /**
  * @author kimchy
  */
-public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+public abstract class AbstractAdapterFilterTests   { 
 
-    protected SimpleFilter simpleFilter;
+     @Autowired protected SimpleFilter simpleFilter;
 
-    protected GigaSpace gigaSpace;
+     @Autowired protected GigaSpace gigaSpace;
 
-    protected GigaSpace txnGigaSpace;
+     @Autowired protected GigaSpace txnGigaSpace;
 
-    protected PlatformTransactionManager mahaloTxManager;
+     @Autowired protected PlatformTransactionManager mahaloTxManager;
 
     public AbstractAdapterFilterTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
-    protected void onSetUp() throws Exception {
+     @Before public  void onSetUp() throws Exception {
         gigaSpace.clear(new Object());
         simpleFilter.clearExecutions();
     }
 
-    protected void onTearDown() {
+     @After public  void onTearDown() {
         gigaSpace.clear(new Object());
         simpleFilter.clearExecutions();
     }
 
-    public void testOnInit() {
+     @Test public void testOnInit() {
         assertTrue(simpleFilter.isOnInitCalled());
     }
 
-    public void testWrite() {
+     @Test public void testWrite() {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message);
@@ -88,7 +96,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testNotify() throws Exception {
+     @Test public void testNotify() throws Exception {
         SimpleNotifyEventListenerContainer notifyEventListenerContainer = new SimpleNotifyContainerConfigurer(gigaSpace)
                 .template(new Message())
                 .eventListenerAnnotation(new Object() {
@@ -142,7 +150,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testUpdate() {
+     @Test public void testUpdate() {
         Message message = new Message(1);
         message.setMessage("test");
         message.setData("1");
@@ -171,7 +179,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testUpdateOrWriteUpdateWithTimeout() {
+     @Test public void testUpdateOrWriteUpdateWithTimeout() {
         Message message = new Message(1);
         message.setMessage("test");
         message.setData("1");
@@ -200,7 +208,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testUpdateOrWriteWriteWithTimeout() {
+     @Test public void testUpdateOrWriteWriteWithTimeout() {
         Message message = new Message(1);
         message.setMessage("test");
         message.setData("1");
@@ -219,7 +227,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testUpdateOrWriteWithTimeoutWhenObjectIsMissing() throws Exception {
+     @Test public void testUpdateOrWriteWithTimeoutWhenObjectIsMissing() throws Exception {
         final Message message = new Message(1);
         message.setMessage("test");
         message.setData("1");
@@ -262,7 +270,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testUpdateWithTimeoutWhenObjectIsMissing() throws Exception {
+     @Test public void testUpdateWithTimeoutWhenObjectIsMissing() throws Exception {
         final Message message = new Message(1);
         message.setMessage("test");
         message.setData("1");
@@ -304,7 +312,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testRead() throws Exception {
+     @Test public void testRead() throws Exception {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message);
@@ -326,7 +334,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testReadWithTimeout() throws Exception {
+     @Test public void testReadWithTimeout() throws Exception {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -366,7 +374,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testTake() {
+     @Test public void testTake() {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message);
@@ -386,7 +394,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testTakeWithTimeout() throws Exception {
+     @Test public void testTakeWithTimeout() throws Exception {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -441,7 +449,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testExecute() throws Exception {
+     @Test public void testExecute() throws Exception {
         AsyncFuture<String> result = gigaSpace.execute(new MyTask("test"));
         assertEquals("return", result.get(30000, TimeUnit.MILLISECONDS));
         Thread.sleep(2000);
@@ -457,7 +465,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testReadMultiple() throws Exception {
+     @Test public void testReadMultiple() throws Exception {
         Message message = new Message(1);
         message.setMessage("test1");
         gigaSpace.write(message);
@@ -491,7 +499,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testTakeMultiple() throws Exception {
+     @Test public void testTakeMultiple() throws Exception {
         Message message = new Message(1);
         message.setMessage("test1");
         gigaSpace.write(message);
@@ -543,7 +551,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         }
     }
 
-    public void testRemoveByLeaseCancel() throws Exception {
+     @Test public void testRemoveByLeaseCancel() throws Exception {
         Message message = new Message(1);
         message.setMessage("test");
         LeaseContext<Message> lease = gigaSpace.write(message);
@@ -564,7 +572,7 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 
-    public void testRemoveByLeaseExpiration() throws Exception {
+     @Test public void testRemoveByLeaseExpiration() throws Exception {
         Message message = new Message(1);
         message.setMessage("test");
         gigaSpace.write(message, 1000);
@@ -585,3 +593,4 @@ public abstract class AbstractAdapterFilterTests extends AbstractDependencyInjec
         simpleFilter.getLastExecutions().clear();
     }
 }
+

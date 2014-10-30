@@ -15,7 +15,13 @@
  *******************************************************************************/
 package org.openspaces.itest.core.space.eviction;
 
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
+
 
 /**
  * 
@@ -23,19 +29,22 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * @since 9.1
  *
  */
-public class CustomSpaceEvictionStrategyTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/eviction/space-custom-eviction.xml")
+public class CustomSpaceEvictionStrategyTest   { 
 
     public CustomSpaceEvictionStrategyTest() {
-        setPopulateProtectedVariables(true);
+ 
     }
     
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/eviction/space-custom-eviction.xml"};
     }
     
-    public void test() {
+     @Test public void test() {
         
     }
     
 
 }
+

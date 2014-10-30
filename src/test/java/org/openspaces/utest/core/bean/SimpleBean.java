@@ -17,10 +17,10 @@
  ******************************************************************************/
 package org.openspaces.utest.core.bean;
 
-import java.util.Map;
-
 import org.openspaces.admin.Admin;
 import org.openspaces.core.bean.Bean;
+
+import java.util.Map;
 
 public class SimpleBean implements Bean {
 

@@ -16,9 +16,13 @@
 package org.openspaces.itest.core.space.datasource;
 
 import junit.framework.Assert;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 
 /**
  * 
@@ -28,22 +32,26 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  *
  */
 @SuppressWarnings("deprecation")
-public class SpaceDataSourceTests extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/datasource/space-data-source.xml")
 
-    protected GigaSpace gigaSpace;
+public class SpaceDataSourceTests   { 
+
+     @Autowired protected GigaSpace gigaSpace;
     
     public SpaceDataSourceTests() {
-        setPopulateProtectedVariables(true);
+ 
     }
     
-    @Override
-    protected String[] getConfigLocations() {
+    //@Override
+    protected String[] getConfigLocations () {
         return new String[] { "/org/openspaces/itest/core/space/datasource/space-data-source.xml" };
     }
     
-    public void test() {
+     @Test public void test() {
         int count = gigaSpace.count(null);
         Assert.assertEquals(1, count);
     }
     
 }
+

@@ -16,33 +16,40 @@
 
 package org.openspaces.itest.core.space.mode.listeners;
 
-import org.openspaces.core.GigaSpace;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-
 import com.gigaspaces.cluster.activeelection.SpaceMode;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openspaces.core.GigaSpace;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.*;
 
 /**
  * @author shaiw
  */
-public class SpaceModeListenerTest extends AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/space/mode/listeners/mode-listener.xml")
+public class SpaceModeListenerTest   { 
 
     private static final int TIMEOUT = 10000;
     
-    protected SpaceModeListenerBean modeListener;
+     @Autowired protected SpaceModeListenerBean modeListener;
 
-    protected GigaSpace gigaSpace1;
+     @Autowired protected GigaSpace gigaSpace1;
 
-    protected GigaSpace gigaSpace2;
+     @Autowired protected GigaSpace gigaSpace2;
 
     public SpaceModeListenerTest() {
-        setPopulateProtectedVariables(true);
+ 
     }
 
     protected String[] getConfigLocations() {
         return new String[]{"/org/openspaces/itest/core/space/mode/listeners/mode-listener.xml"};
     }
 
-    public void testModeListener() {
+     @Test public void testModeListener() {
         assertNotNull(modeListener.state);
         assertNotNull(gigaSpace1);
         assertNotNull(gigaSpace2);
@@ -64,3 +71,4 @@ public class SpaceModeListenerTest extends AbstractDependencyInjectionSpringCont
         assertEquals(SpaceMode.PRIMARY, modeListener.state.get(gigaSpace2.getSpace().getURL().toString()));
     }
 }
+

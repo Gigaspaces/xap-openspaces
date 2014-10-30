@@ -1,6 +1,4 @@
 package org.openspaces.itest.core.space.filter.storageTypes;
-
-
 /**
  * Tests the ability of space-filters to work with complicated objects that contain Object,Binary and Compressed storage-types.<br/>
  * Uses the annotations-based filter.
@@ -8,9 +6,9 @@ package org.openspaces.itest.core.space.filter.storageTypes;
  * Date: 2/19/14
  * Known issue GS-11642
  */
-//public class StorageTypeFieldsSpaceFilterTest extends AbstractStorageTypeSpaceFilterTest {
+//public class StorageTypeFieldsSpaceFilterTest  extends AbstractStorageTypeSpaceFilterTest {
 
-//	protected SimpleAnnotationsSpaceFilter simpleSpaceFilter;
+//	 @Autowired protected SimpleAnnotationsSpaceFilter simpleSpaceFilter;
 //
 //	@Override
 //	protected String[] getConfigLocations() {
@@ -18,11 +16,11 @@ package org.openspaces.itest.core.space.filter.storageTypes;
 //	}
 //
 //	public StorageTypeFieldsSpaceFilterTest() {
-//		setPopulateProtectedVariables(true);
+ 
 //	}
 //
 //	@Override
-//	public void testBasicSpaceOperations(){
+//	 @Test public void testBasicSpaceOperations(){
 //		beforeTest();
 //
 //		//write objects to the space
@@ -113,3 +111,4 @@ package org.openspaces.itest.core.space.filter.storageTypes;
 //	}
 
 //}
+
