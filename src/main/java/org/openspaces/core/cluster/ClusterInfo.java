@@ -96,8 +96,9 @@ public class ClusterInfo implements Cloneable, Serializable {
      * Sets the schema the cluster operates under. Usually maps to a Space cluster schema. Can have
      * <code>null</code> value which means that it was not set.
      */
-    public void setSchema(String schema) {
+    public ClusterInfo setSchema(String schema) {
         this.schema = schema;
+        return this;
     }
 
     /**
@@ -113,11 +114,12 @@ public class ClusterInfo implements Cloneable, Serializable {
      * means that it was not set and should not be taken into account.
      * @throws IllegalArgumentException if value not greater than zero.
      */
-    public void setInstanceId(Integer instanceId) {
+    public ClusterInfo setInstanceId(Integer instanceId) {
         if (instanceId!=null && instanceId.intValue() < 1) {
             throw new IllegalArgumentException("Cluster member instance-id should be greater than zero");
         }
         this.instanceId = instanceId;
+        return this;
     }
 
     /**
@@ -133,11 +135,12 @@ public class ClusterInfo implements Cloneable, Serializable {
      * means that it was not set and should not be taken into account.
      * @throws IllegalArgumentException if value not greater than zero.
      */
-    public void setBackupId(Integer backupId) {
+    public ClusterInfo setBackupId(Integer backupId) {
         if (backupId!=null && backupId.intValue() < 1) {
             throw new IllegalArgumentException("Cluster member backup-id should be greater than zero");
         }
         this.backupId = backupId;
+        return this;
     }
 
     /**
@@ -156,8 +159,9 @@ public class ClusterInfo implements Cloneable, Serializable {
      * by {@link #setNumberOfBackups(Integer) numberOfBackups}. Can have <code>null</code> value
      * which means that it was not set and should not be taken into account.
      */
-    public void setNumberOfInstances(Integer numberOfInstances) {
+    public ClusterInfo setNumberOfInstances(Integer numberOfInstances) {
         this.numberOfInstances = numberOfInstances;
+        return this;
     }
 
     /**
@@ -174,8 +178,9 @@ public class ClusterInfo implements Cloneable, Serializable {
      * <code>null</code> value which means that it was not set and should not be taken into
      * account.
      */
-    public void setNumberOfBackups(Integer numberOfBackups) {
+    public ClusterInfo setNumberOfBackups(Integer numberOfBackups) {
         this.numberOfBackups = numberOfBackups;
+        return this;
     }
 
     /**
@@ -185,8 +190,9 @@ public class ClusterInfo implements Cloneable, Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    public ClusterInfo setName(String name) {
         this.name = name;
+        return this;
     }
 
     /**
