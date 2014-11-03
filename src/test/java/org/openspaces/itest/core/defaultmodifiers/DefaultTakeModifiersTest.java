@@ -49,14 +49,14 @@ public class DefaultTakeModifiersTest {
     // sanity test so that something fails when a new modifier is added as
     // a reminder to update the xsd
     private void assertAllModifiersCovered() {
-        Set<String> coveredModifiers = Sets.newHashSet("NONE", 
+        Set<String> coveredModifiers = Sets.newHashSet("NONE",
                                                        "EVICT_ONLY",
                                                        "FIFO_GROUPING_POLL",
                                                        "FIFO",
                                                        "IF_EXISTS",
                                                        "IGNORE_PARTIAL_FAILURE",
                                                        "MEMORY_ONLY_SEARCH");
-        
+
         Set<String> actualModifiers = new Constants(TakeModifiers.class).getNames("");
         
         Assert.assertEquals("Missing modifier should be added to openspaces-core.xsd!", 

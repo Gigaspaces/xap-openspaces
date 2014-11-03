@@ -53,7 +53,7 @@ public class DefaultWriteModifiersTest {
     // sanity test so that something fails when a new modifier is added as
     // a reminder to update the xsd
     private void assertAllModifiersCovered() {
-        Set<String> coveredModifiers = Sets.newHashSet("NONE", 
+        Set<String> coveredModifiers = Sets.newHashSet("NONE",
                                                        "MEMORY_ONLY_SEARCH",
                                                        "ONE_WAY",
                                                        "RETURN_PREV_ON_UPDATE",
@@ -61,7 +61,7 @@ public class DefaultWriteModifiersTest {
                                                        "WRITE_ONLY",
                                                        "UPDATE_OR_WRITE",
                                                        "PARTIAL_UPDATE");
-        
+
         Set<String> actualModifiers = new Constants(WriteModifiers.class).getNames("");
         
         Assert.assertEquals("Missing modifier should be added to openspaces-core.xsd!", 
