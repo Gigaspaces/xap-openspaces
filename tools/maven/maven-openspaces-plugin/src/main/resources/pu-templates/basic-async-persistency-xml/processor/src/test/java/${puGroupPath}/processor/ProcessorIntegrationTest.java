@@ -1,9 +1,9 @@
-package $
+package ${puGroupId}.processor;
 
 import org.junit.After;
 import org.junit.Before;
 
-{puGroupId}.processor;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +34,12 @@ public class ProcessorIntegrationTest   {
     }
 
     @Before
-    protected void onSetUp() throws Exception {
+    public void onSetUp() throws Exception {
         gigaSpace.clear(null);
     }
 
     @After
-    protected void onTearDown() throws Exception {
+    public void onTearDown() throws Exception {
         gigaSpace.clear(null);
     }
     

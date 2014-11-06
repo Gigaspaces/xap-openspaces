@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 import ${puGroupId}.common.Data;
 
 
-import org.junit.Before
+import org.junit.Before;
 import org.openspaces.core.GigaSpace;
 
 
@@ -33,7 +33,7 @@ public class ProcessorIntegrationTest   {
         gigaSpace.clear(null);
     }
 
-    @
+
     protected void onTearDown() throws Exception {
         gigaSpace.clear(null);
     }
