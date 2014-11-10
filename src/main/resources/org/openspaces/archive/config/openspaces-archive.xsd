@@ -6,14 +6,15 @@
             xmlns:tool="http://www.springframework.org/schema/tool"
             xmlns:os-core="http://www.openspaces.org/schema/core"
             xmlns:os-events="http://www.openspaces.org/schema/events"
+
             targetNamespace="http://www.openspaces.org/schema/archive"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified">
 
     <xsd:import namespace="http://www.springframework.org/schema/beans"/>
     <xsd:import namespace="http://www.springframework.org/schema/tool"/>
-    <xsd:import namespace="http://www.openspaces.org/schema/core"/>
-    <xsd:import namespace="http://www.openspaces.org/schema/events"/>
+    <xsd:import namespace="http://www.openspaces.org/schema/core" schemaLocation="http://www.openspaces.org/schema/10.0/core/openspaces-core.xsd"/>
+    <xsd:import namespace="http://www.openspaces.org/schema/events" schemaLocation="http://www.openspaces.org/schema/10.0/events/openspaces-events.xsd"/>
 
     <xsd:element name="annotation-support">
         <xsd:annotation>
