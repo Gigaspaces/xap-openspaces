@@ -17,13 +17,21 @@ package org.openspaces.admin.pu.elastic.config;
 
 import org.openspaces.admin.internal.pu.elastic.config.AbstractElasticProcessingUnitConfig;
 import org.openspaces.admin.pu.config.ProcessingUnitConfig;
+import org.openspaces.admin.pu.config.UserDetailsConfig;
+import org.openspaces.admin.pu.dependency.ProcessingUnitDependency;
+import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
  * @author itaif
  * @since 9.0.1
  */
+@XmlRootElement(name = "elastic-stateless-pu")
 public class ElasticStatelessProcessingUnitConfig extends AbstractElasticProcessingUnitConfig 
     implements ProcessingUnitConfigHolder {
 
@@ -39,5 +47,51 @@ public class ElasticStatelessProcessingUnitConfig extends AbstractElasticProcess
         processingUnitConfig.setMaxInstancesPerMachine(0);
         
         return processingUnitConfig;
+    }
+
+    @XmlAttribute(name = "file")
+    public void setProcessingUnitFile(String processingUnitFilePath) {
+        super.setProcessingUnit(processingUnitFilePath);
+    }
+
+    @XmlAttribute(name = "puname")
+    public void setProcessingUnitName(String processingUnitName) {
+        super.setProcessingUnit(processingUnitName);
+    }
+
+    @Override
+    @XmlAttribute(name = "memory-capacity-per-container-in-mb")
+    public void setMemoryCapacityPerContainerInMB(long memoryInMB) {
+        super.setMemoryCapacityPerContainerInMB(memoryInMB);
+    }
+
+    @Override
+    @XmlElement(type = UserDetailsConfig.class)
+    public void setUserDetails(UserDetailsConfig userDetails) {
+        super.setUserDetails(userDetails);
+    }
+
+    @Override
+    @XmlAttribute(name = "secured")
+    public void setSecured(Boolean secured) {
+        super.setSecured(secured);
+    }
+
+    @Override
+    @XmlElement(type = ScaleStrategyConfig.class)
+    public void setScaleStrategy(ScaleStrategyConfig scaleStrategy) {
+        super.setScaleStrategy(scaleStrategy);
+    }
+
+    @Override
+    @XmlElement(type = ElasticMachineProvisioningConfig.class)
+    public void setMachineProvisioning(ElasticMachineProvisioningConfig machineProvisioningConfig) {
+        super.setMachineProvisioning(machineProvisioningConfig);
+    }
+
+    @Override
+    @XmlElement(type = ProcessingUnitDependency.class)
+    public void setDeploymentDependencies(ProcessingUnitDependency[] dependencies) {
+        super.setDeploymentDependencies(dependencies);
     }
 }

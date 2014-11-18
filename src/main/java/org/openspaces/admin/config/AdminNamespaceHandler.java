@@ -24,6 +24,8 @@ import org.openspaces.admin.pu.config.MaxInstancesPerZoneConfig;
 import org.openspaces.admin.pu.config.ProcessingUnitConfig;
 import org.openspaces.admin.pu.config.UserDetailsConfig;
 import org.openspaces.admin.pu.dependency.config.ProcessingUnitDependencyConfig;
+import org.openspaces.admin.pu.elastic.config.*;
+import org.openspaces.admin.space.ElasticSpaceConfig;
 import org.openspaces.admin.space.config.SpaceConfig;
 import org.openspaces.core.config.xmlparser.AbstractXmlBeanNamespaceHandler;
 
@@ -48,5 +50,13 @@ public class AdminNamespaceHandler extends AbstractXmlBeanNamespaceHandler {
         register(ContextPropertyConfig.class);
         register(UserDetailsConfig.class);
         register(MaxInstancesPerZoneConfig.class);
+
+        register(ElasticSpaceConfig.class);
+        register(DiscoveredMachineProvisioningConfig.class);
+        register(EagerScaleConfig.class);
+        register(ManualCapacityScaleConfig.class);
+
+        register(ElasticStatefulProcessingUnitConfig.class);
+        register(ElasticStatelessProcessingUnitConfig.class);
     }
 }

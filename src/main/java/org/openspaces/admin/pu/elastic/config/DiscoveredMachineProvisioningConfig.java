@@ -16,11 +16,6 @@
  *  
  ******************************************************************************/
 package org.openspaces.admin.pu.elastic.config;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminException;
@@ -32,12 +27,17 @@ import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.AtLeastOneZoneConfigurer;
 import org.openspaces.admin.zone.config.RequiredZonesConfig;
 import org.openspaces.core.util.StringProperties;
-import org.openspaces.grid.gsm.capacity.CapacityRequirement;
-import org.openspaces.grid.gsm.capacity.CapacityRequirements;
-import org.openspaces.grid.gsm.capacity.CpuCapacityRequirement;
-import org.openspaces.grid.gsm.capacity.DriveCapacityRequirement;
-import org.openspaces.grid.gsm.capacity.MemoryCapacityRequirement;
+import org.openspaces.grid.gsm.capacity.*;
 import org.openspaces.grid.gsm.machines.plugins.discovered.DiscoveredMachineProvisioningBean;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Allows to configure an Elastic Processing Unit machine provisioning that discovers existing machines.
@@ -47,6 +47,7 @@ import org.openspaces.grid.gsm.machines.plugins.discovered.DiscoveredMachineProv
  * @see ElasticDeploymentTopology#dedicatedMachineProvisioning(org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig)
  * @see ElasticDeploymentTopology#sharedMachineProvisioning(String, org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig)
   */
+@XmlRootElement(name = "dedicated-machine-provisioning")
 public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvisioningConfig {
 
     private static final String MINIMUM_NUMBER_OF_CPU_CORES_PER_MACHINE_KEY = "minimum-number-of-cpu-cores-per-machine";
@@ -109,7 +110,7 @@ public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvis
     public void setMinimumNumberOfCpuCoresPerMachine(double minimumNumberOfCpuCoresPerMachine) {
         this.properties.putDouble(MINIMUM_NUMBER_OF_CPU_CORES_PER_MACHINE_KEY, minimumNumberOfCpuCoresPerMachine);       
     }
-    
+
     public RequiredZonesConfig getGridServiceAgentZones() {
         String[] zones = this.properties.getArray(MACHINE_AGENT_ZONES_KEY, RESREVED_DRIVES_CAPACITY_MEGABYTES_PER_MACHINE_PAIR_SEPERATOR, MACHINE_AGENT_ZONES_DEFAULT);
         if (zones.length == 0) {
@@ -117,23 +118,36 @@ public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvis
         }
         return new AtLeastOneZoneConfigurer().addZones(zones).create();
     }
-    
-    
+
+
     /**
      * Sets the list of zones that can be discovered and started by this machine provisioning.
-     * 
+     *
      * For example:
      * String[] {}                  - Grid Service Agents are started without -Dcom.gs.zones (requires that {@link #isGridServiceAgentZoneMandatory()} is false)
      * String[] {"zoneA"}           - Grid Service Agents are started with -Dcom.gs.zones=zoneA (or without -Dcom.gs.zones if {@link #isGridServiceAgentZoneMandatory()} is false)
      * String[] {"zoneA","zoneB"}   - Grid Service Agents are started with -Dcom.gs.zones=zoneA or -Dcom.gs.zones=zoneB or -Dcom.gs.zones=zoneA,zoneB (or without -Dcom.gs.zones if {@link #isGridServiceAgentZoneMandatory()} is false)
-     * 
+     *
      * @since 8.0.1
-     * 
+     *
      */
+    @XmlTransient
     public void setGridServiceAgentZones(String[] zones) {
         this.properties.putArray(MACHINE_AGENT_ZONES_KEY, zones, RESREVED_DRIVES_CAPACITY_MEGABYTES_PER_MACHINE_PAIR_SEPERATOR);
     }
-    
+
+    /**
+     * Sets the list of zones that can be discovered and started by this machine provisioning.
+     * @see #setGridServiceAgentZones(String[])
+     *
+     * @param zones comma separated list of zones
+     * @since 10.1.0
+     */
+    @XmlAttribute(name = "grid-service-agents-zones")
+    public void setGridServiceAgentsZones(String zones) {
+        setGridServiceAgentZones(zones.split(","));
+    }
+
     /**
      * Sets the expected amount of memory per machine that is reserved for processes other than grid containers.
      * These include Grid Service Manager, Lookup Service or any other daemon running on the system.
@@ -148,6 +162,7 @@ public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvis
      * @since 8.0.1
      * @see #setReservedCapacityPerMachine(CapacityRequirements)
      */
+    @XmlAttribute(name = "reserved-memory-capacity-per-machine-in-mb")
     public void setReservedMemoryCapacityPerMachineInMB(long reservedInMB) {
         this.properties.putLong(RESERVED_MEMORY_CAPACITY_PER_MACHINE_MEGABYTES_KEY,reservedInMB);
     }
@@ -166,6 +181,7 @@ public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvis
      * @since 9.5.0
      * @see #setReservedCapacityPerMachine(CapacityRequirements)
      */
+    @XmlAttribute(name = "reserved-memory-capacity-per-management-machine-in-mb")
     public void setReservedMemoryCapacityPerManagementMachineInMB(long reservedInMB) {
 		this.properties.putLong(RESERVED_MEMORY_CAPACITY_PER_MANAGEMENT_MACHINE_MEGABYTES_KEY, reservedInMB);
 	}

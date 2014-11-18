@@ -16,12 +16,20 @@
 package org.openspaces.admin.space;
 
 import org.openspaces.admin.pu.config.ProcessingUnitConfig;
+import org.openspaces.admin.pu.config.UserDetailsConfig;
+import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 import org.openspaces.admin.pu.elastic.config.ElasticStatefulProcessingUnitConfig;
+import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author itaif
  * @since 9.0.1
  */
+@XmlRootElement(name = "elastic-space")
 public class ElasticSpaceConfig extends ElasticStatefulProcessingUnitConfig {
 
     public ElasticSpaceConfig() {
@@ -34,4 +42,79 @@ public class ElasticSpaceConfig extends ElasticStatefulProcessingUnitConfig {
         super.addContextProperty("dataGridName", getName());
         return super.toProcessingUnitConfig();
     }
+
+    @Override
+    @XmlAttribute(name = "name")
+    public void setName(String name) {
+        super.setName(name);
+    }
+
+    @Override
+    @XmlAttribute(name = "memory-capacity-per-container-in-mb")
+    public void setMemoryCapacityPerContainerInMB(long memoryInMB) {
+        super.setMemoryCapacityPerContainerInMB(memoryInMB);
+    }
+
+    @Override
+    @XmlAttribute(name = "max-memory-capacity-in-mb")
+    public void setMaxMemoryCapacityInMB(long maxMemoryCapacityInMB) {
+        super.setMaxMemoryCapacityInMB(maxMemoryCapacityInMB);
+    }
+
+    @Override
+    @XmlAttribute(name = "number-of-partitions")
+    public void setNumberOfPartitions(int numberOfPartitions) {
+        super.setNumberOfPartitions(numberOfPartitions);
+    }
+
+    @Override
+    @XmlAttribute(name = "max-number-of-cpu-cores")
+    public void setMaxNumberOfCpuCores(double maxNumberOfCpuCores) {
+        super.setMaxNumberOfCpuCores(maxNumberOfCpuCores);
+    }
+
+    /**
+     * @see org.openspaces.admin.space.ElasticSpaceDeployment#highlyAvailable(boolean)
+     */
+    @XmlAttribute(name = "highly-available")
+    public void setHighlyAvailable(boolean highlyAvailable) {
+        super.setNumberOfBackupInstancesPerPartition((highlyAvailable? 1:0));
+    }
+
+    /**
+     * @see org.openspaces.admin.space.ElasticSpaceDeployment#singleMachineDeployment()
+     */
+    @XmlAttribute(name = "single-machine-deployment")
+    public void setSingleMachineDeployment(boolean singleMachineDeployment) {
+        if (singleMachineDeployment) {
+            super.setMaxProcessingUnitInstancesFromSamePartitionPerMachine(0);
+        }
+    }
+
+    @Override
+    @XmlAttribute(name = "secured")
+    public void setSecured(Boolean secured) {
+        super.setSecured(secured);
+    }
+
+
+    @Override
+    @XmlElement(type = UserDetailsConfig.class)
+    public void setUserDetails(UserDetailsConfig userDetails) {
+        super.setUserDetails(userDetails);
+    }
+
+    @Override
+    @XmlElement(type = ElasticMachineProvisioningConfig.class)
+    public void setMachineProvisioning(ElasticMachineProvisioningConfig machineProvisioningConfig) {
+        super.setMachineProvisioning(machineProvisioningConfig);
+    }
+
+    @Override
+    @XmlElement(type = ScaleStrategyConfig.class)
+    public void setScaleStrategy(ScaleStrategyConfig scaleStrategy) {
+        super.setScaleStrategy(scaleStrategy);
+    }
+
+
 }

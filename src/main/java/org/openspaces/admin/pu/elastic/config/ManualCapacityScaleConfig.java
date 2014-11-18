@@ -17,17 +17,19 @@
  ******************************************************************************/
 package org.openspaces.admin.pu.elastic.config;
 
+import org.openspaces.admin.internal.pu.elastic.ScaleStrategyConfigUtils;
+import org.openspaces.core.util.StringProperties;
+import org.openspaces.grid.gsm.capacity.CapacityRequirements;
+import org.openspaces.grid.gsm.strategy.ManualCapacityScaleStrategyBean;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.openspaces.admin.internal.pu.elastic.ScaleStrategyConfigUtils;
-import org.openspaces.core.util.StringProperties;
-import org.openspaces.grid.gsm.capacity.CapacityRequirements;
-import org.openspaces.grid.gsm.strategy.ManualCapacityScaleStrategyBean;
 
 /**
  * Defines a manual scaling strategy that consumes the specified memory capacity.
@@ -40,6 +42,7 @@ import org.openspaces.grid.gsm.strategy.ManualCapacityScaleStrategyBean;
  * @since 8.0
  * @author itaif
  */
+@XmlRootElement(name = "manual-scale")
 public class ManualCapacityScaleConfig 
     implements ScaleStrategyConfig , ScaleStrategyCapacityRequirementConfig, ScaleStrategyAgentZonesAwareConfig, Externalizable {
 
@@ -71,6 +74,7 @@ public class ManualCapacityScaleConfig
     }
 
     @Override
+    @XmlAttribute(name = "memory-capacity-in-mb")
     public void setMemoryCapacityInMB(long memory) {
         capacityRequirementConfig.setMemoryCapacityInMB(memory);
     }
@@ -81,6 +85,7 @@ public class ManualCapacityScaleConfig
     }
     
     @Override
+    @XmlAttribute(name = "number-of-cpu-cores")
     public void setNumberOfCpuCores(double cpuCores) {
         capacityRequirementConfig.setNumberOfCpuCores(cpuCores);
     }
@@ -106,6 +111,7 @@ public class ManualCapacityScaleConfig
     }
     
     @Override
+    @XmlAttribute(name = "max-concurrent-relocations-per-machine")
     public void setMaxConcurrentRelocationsPerMachine(int maxNumberOfConcurrentRelocationsPerMachine) {
         ScaleStrategyConfigUtils.setMaxConcurrentRelocationsPerMachine(properties, maxNumberOfConcurrentRelocationsPerMachine);
     }

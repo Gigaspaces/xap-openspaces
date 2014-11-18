@@ -15,19 +15,26 @@
  *******************************************************************************/
 package org.openspaces.admin.pu.elastic.config;
 
-import java.util.Map;
-
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.internal.pu.elastic.GridServiceContainerConfig;
 import org.openspaces.admin.internal.pu.elastic.ProcessingUnitSchemaConfig;
 import org.openspaces.admin.internal.pu.elastic.config.AbstractElasticProcessingUnitConfig;
 import org.openspaces.admin.pu.config.ProcessingUnitConfig;
+import org.openspaces.admin.pu.config.UserDetailsConfig;
+import org.openspaces.admin.pu.dependency.ProcessingUnitDependency;
+import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 import org.openspaces.admin.pu.topology.ElasticStatefulProcessingUnitConfigHolder;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 
 /**
  * @author itaif
  * @since 9.0.1
  */
+@XmlRootElement(name = "elastic-stateful-pu")
 public class ElasticStatefulProcessingUnitConfig 
     extends AbstractElasticProcessingUnitConfig 
     implements ElasticStatefulProcessingUnitConfigHolder {
@@ -140,10 +147,6 @@ public class ElasticStatefulProcessingUnitConfig
         return maxMemoryCapacityInMB;
     }
 
-    public void setMaxMemoryCapacityInMB(long maxMemoryCapacityInMB) {
-        this.maxMemoryCapacityInMB = maxMemoryCapacityInMB;
-    }
-
     public int getNumberOfBackupInstancesPerPartition() {
         return numberOfBackupInstancesPerPartition;
     }
@@ -154,10 +157,6 @@ public class ElasticStatefulProcessingUnitConfig
 
     public int getNumberOfPartitions() {
         return numberOfPartitions;
-    }
-
-    public void setNumberOfPartitions(int numberOfPartitions) {
-        this.numberOfPartitions = numberOfPartitions;
     }
 
     public int getMaxProcessingUnitInstancesFromSamePartitionPerMachine() {
@@ -173,9 +172,7 @@ public class ElasticStatefulProcessingUnitConfig
         return maxNumberOfCpuCores;
     }
 
-    public void setMaxNumberOfCpuCores(double maxNumberOfCpuCores) {
-        this.maxNumberOfCpuCores = maxNumberOfCpuCores;
-    }
+
 
     @Deprecated
     public double getMinNumberOfCpuCoresPerMachine() {
@@ -198,5 +195,84 @@ public class ElasticStatefulProcessingUnitConfig
     @Override
     public void setAdmin(Admin admin) {
         this.admin = admin;
+    }
+
+    @XmlAttribute(name = "max-number-of-cpu-cores")
+    public void setMaxNumberOfCpuCores(double maxNumberOfCpuCores) {
+        this.maxNumberOfCpuCores = maxNumberOfCpuCores;
+    }
+
+    @XmlAttribute(name = "number-of-partitions")
+    public void setNumberOfPartitions(int numberOfPartitions) {
+        this.numberOfPartitions = numberOfPartitions;
+    }
+
+    @XmlAttribute(name = "file")
+    public void setProcessingUnitFile(String processingUnitFilePath) {
+        super.setProcessingUnit(processingUnitFilePath);
+    }
+
+    @XmlAttribute(name = "puname")
+    public void setProcessingUnitName(String processingUnitName) {
+        super.setProcessingUnit(processingUnitName);
+    }
+
+    @XmlAttribute(name = "max-memory-capacity-in-mb")
+    public void setMaxMemoryCapacityInMB(long maxMemoryCapacityInMB) {
+        this.maxMemoryCapacityInMB = maxMemoryCapacityInMB;
+    }
+
+    @Override
+    @XmlElement(type = UserDetailsConfig.class)
+    public void setUserDetails(UserDetailsConfig userDetails) {
+        super.setUserDetails(userDetails);
+    }
+
+    @Override
+    @XmlAttribute(name = "secured")
+    public void setSecured(Boolean secured) {
+        super.setSecured(secured);
+    }
+
+    @Override
+    @XmlAttribute(name = "memory-capacity-per-container-in-mb")
+    public void setMemoryCapacityPerContainerInMB(long memoryInMB) {
+        super.setMemoryCapacityPerContainerInMB(memoryInMB);
+    }
+
+    @Override
+    @XmlElement(type = ElasticMachineProvisioningConfig.class)
+    public void setMachineProvisioning(ElasticMachineProvisioningConfig machineProvisioningConfig) {
+        super.setMachineProvisioning(machineProvisioningConfig);
+    }
+
+    @Override
+    @XmlElement(type = ScaleStrategyConfig.class)
+    public void setScaleStrategy(ScaleStrategyConfig scaleStrategy) {
+        super.setScaleStrategy(scaleStrategy);
+    }
+
+    /**
+     * @see org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment#highlyAvailable(boolean)
+     */
+    @XmlAttribute(name = "highly-available")
+    public void setHighlyAvailable(boolean highlyAvailable) {
+        setNumberOfBackupInstancesPerPartition((highlyAvailable? 1:0));
+    }
+
+    /**
+     * @see org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment#singleMachineDeployment()
+     */
+    @XmlAttribute(name = "single-machine-deployment")
+    public void setSingleMachineDeployment(boolean singleMachineDeployment) {
+        if (singleMachineDeployment) {
+            setMaxProcessingUnitInstancesFromSamePartitionPerMachine(0);
+        }
+    }
+
+    @Override
+    @XmlElement(type = ProcessingUnitDependency.class)
+    public void setDeploymentDependencies(ProcessingUnitDependency[] dependencies) {
+        super.setDeploymentDependencies(dependencies);
     }
 }

@@ -17,16 +17,18 @@
  ******************************************************************************/
 package org.openspaces.admin.pu.elastic.config;
 
+import org.openspaces.admin.internal.pu.elastic.ScaleStrategyConfigUtils;
+import org.openspaces.core.util.StringProperties;
+import org.openspaces.grid.gsm.strategy.EagerScaleStrategyBean;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.openspaces.admin.internal.pu.elastic.ScaleStrategyConfigUtils;
-import org.openspaces.core.util.StringProperties;
-import org.openspaces.grid.gsm.strategy.EagerScaleStrategyBean;
 
 /*
  * Defines an automatic scaling strategy that consumes capacity eagerly.
@@ -35,6 +37,7 @@ import org.openspaces.grid.gsm.strategy.EagerScaleStrategyBean;
  * @see EagerScaleStrategyConfigurer
  * @author itaif
  */
+@XmlRootElement(name = "eager-scale")
 public class EagerScaleConfig 
         implements ScaleStrategyConfig , Externalizable {
 
@@ -75,6 +78,7 @@ public class EagerScaleConfig
     }
     
     @Override
+    @XmlAttribute(name = "max-concurrent-relocations-per-machine")
     public void setMaxConcurrentRelocationsPerMachine(int maxNumberOfConcurrentRelocationsPerMachine) {
         ScaleStrategyConfigUtils.setMaxConcurrentRelocationsPerMachine(properties, maxNumberOfConcurrentRelocationsPerMachine);
     }
