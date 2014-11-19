@@ -806,14 +806,14 @@
                 </xsd:annotation>
             </xsd:attribute>
             <xsd:attribute name="memory-capacity-per-container-in-mb" type="xsd:positiveInteger"
-                           use="optional" default="32">
+                           use="required">
                 <xsd:annotation>
                     <xsd:documentation>
                         Specifies the the heap size per container (operating system process).
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
-            <xsd:attribute name="max-memory-capacity-in-mb" type="xsd:positiveInteger" use="optional" default="256">
+            <xsd:attribute name="max-memory-capacity-in-mb" type="xsd:positiveInteger" use="optional">
                 <xsd:annotation>
                     <xsd:documentation>
 						Specifies an estimate of the maximum memory capacity for this processing unit.
@@ -924,14 +924,14 @@
 				</xsd:annotation>
 			</xsd:attribute>
             <xsd:attribute name="memory-capacity-per-container-in-mb" type="xsd:positiveInteger"
-                           use="optional" default="32">
+                           use="required">
                 <xsd:annotation>
                     <xsd:documentation>
                         Specifies the the heap size per container (operating system process).
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
-            <xsd:attribute name="max-memory-capacity-in-mb" use="optional" default="256">
+            <xsd:attribute name="max-memory-capacity-in-mb" use="optional">
                 <xsd:annotation>
                     <xsd:documentation>
 						Specifies an estimate of the maximum memory capacity for this processing unit.
@@ -1042,7 +1042,7 @@
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="memory-capacity-per-container-in-mb" type="xsd:positiveInteger"
-						   use="optional" default="32">
+						   use="required">
 				<xsd:annotation>
 					<xsd:documentation>
 						Specifies the the heap size per container (operating system process).
