@@ -49,6 +49,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
     private String _fifoGroupingPropertyPath;
     private Set<String> _fifoGroupingIndexesPaths;
     private Boolean _blobstoreEnabled;
+    private String _sequenceNumberProperty;
 
     private String _documentWrapperClassName;
 
@@ -138,6 +139,9 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
                     typeDescriptorBuilder.addFifoGroupingIndex(fifoGroupingIndexPath);
                 }
             }
+            if(_sequenceNumberProperty != null)
+                typeDescriptorBuilder.sequenceNumberProperty(_sequenceNumberProperty);
+
             
             typeDescriptor = typeDescriptorBuilder.create();
         }
@@ -194,6 +198,15 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
     public void setFifoGroupingPropertyPath(String fifoGroupingPropertyPath) {
         this._fifoGroupingPropertyPath = fifoGroupingPropertyPath;
     }
+
+    public String getSequenceNumberProperty() {
+        return _sequenceNumberProperty;
+    }
+
+    public void setSequenceNumberProperty(String sequenceNumberProperty) {
+        this._sequenceNumberProperty = sequenceNumberProperty;
+    }
+
 
     public Set<String> getFifoGroupingIndexesPaths() {
         return _fifoGroupingIndexesPaths;

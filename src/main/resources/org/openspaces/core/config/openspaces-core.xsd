@@ -2759,6 +2759,24 @@
                             </xsd:complexType>
                         </xsd:element>
 
+                        <xsd:element name="sequence-number-property" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The sequence-number property definition.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="property-name" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            property name.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+
+
                     </xsd:sequence>
 
                     <xsd:attribute name="type-name" type="xsd:string" use="required">
