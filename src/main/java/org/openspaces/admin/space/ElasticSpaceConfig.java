@@ -116,5 +116,9 @@ public class ElasticSpaceConfig extends ElasticStatefulProcessingUnitConfig {
         super.setScaleStrategy(scaleStrategy);
     }
 
-
+    @Override
+    @XmlAttribute(name = "number-of-backups-per-partition")
+    public void setNumberOfBackupInstancesPerPartition(int numberOfBackupInstancesPerPartition) {
+        super.setNumberOfBackupInstancesPerPartition(numberOfBackupInstancesPerPartition);
+    }
 }

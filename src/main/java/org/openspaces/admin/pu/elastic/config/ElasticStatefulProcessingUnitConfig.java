@@ -151,6 +151,7 @@ public class ElasticStatefulProcessingUnitConfig
         return numberOfBackupInstancesPerPartition;
     }
 
+    @XmlAttribute(name = "number-of-backups-per-partition")
     public void setNumberOfBackupInstancesPerPartition(int numberOfBackupInstancesPerPartition) {
         this.numberOfBackupInstancesPerPartition = numberOfBackupInstancesPerPartition;
     }

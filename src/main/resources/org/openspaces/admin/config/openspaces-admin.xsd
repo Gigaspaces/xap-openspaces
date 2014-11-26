@@ -827,6 +827,14 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="number-of-backups-per-partitions" type="xsd:positiveInteger" use="optional" default="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Specifies the number of backup processing unit instances per partition.
+						Default is 1, this is an advanced property.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
             <xsd:attribute name="max-number-of-cpu-cores" type="xsd:positiveInteger" use="optional">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -839,6 +847,7 @@
                 <xsd:annotation>
                     <xsd:documentation>
                         Specifies if the space should duplicate each information on two different machines.
+						Default is true.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
@@ -945,6 +954,14 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="number-of-backups-per-partitions" type="xsd:positiveInteger" use="optional" default="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						Specifies the number of backup processing unit instances per partition.
+						Default is 1, this is an advanced property.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
             <xsd:attribute name="max-number-of-cpu-cores" type="xsd:positiveInteger" use="optional">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -957,6 +974,7 @@
                 <xsd:annotation>
                     <xsd:documentation>
                         Specifies if the space should duplicate each information on two different machines.
+						Default is true.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
