@@ -173,7 +173,7 @@ public class RunStandalonePUMojo extends AbstractOpenSpacesMojo {
 
         Utils.handleSecurity();
         try {
-            ClassUtils.forName("com.gigaspaces.logger.GSLogConfigLoader").getMethod("getLoader", new Class[0]).invoke(null, new Object[0]);
+            ClassUtils.forName("com.gigaspaces.logger.GSLogConfigLoader",null).getMethod("getLoader", new Class[0]).invoke(null, new Object[0]);
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to configure logging", e);
         }
