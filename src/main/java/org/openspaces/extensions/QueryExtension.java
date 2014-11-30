@@ -21,6 +21,8 @@ import com.gigaspaces.query.ISpaceQuery;
 import com.gigaspaces.query.aggregators.*;
 import org.openspaces.core.GigaSpace;
 
+import java.util.List;
+
 /**
  * @author Niv Ingberg
  * @since 10.0
@@ -57,6 +59,12 @@ public class QueryExtension {
 
     public static GroupByResult groupBy(GigaSpace gigaSpace, ISpaceQuery query, GroupByAggregator aggregator) {
         return (GroupByResult) gigaSpace.aggregate(query, new AggregationSet().groupBy(aggregator)).get(0);
+    }
+    public static <T> List<T> orderBy(GigaSpace gigaSpace, ISpaceQuery query, OrderByAggregator aggregator) {
+        return (List<T>) gigaSpace.aggregate(query, new AggregationSet().orderBy(aggregator)).get(0);
+    }
+    public static <T> List<T> distinct(GigaSpace gigaSpace, ISpaceQuery query, DistinctAggregator<T> aggregator) {
+        return (List<T>) gigaSpace.aggregate(query, new AggregationSet().distinct(aggregator)).get(0);
     }
 
     public static SpaceEntriesAggregator count() {
