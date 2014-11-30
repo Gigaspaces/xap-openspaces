@@ -73,6 +73,7 @@ import org.openspaces.core.space.SpaceType;
 import org.openspaces.core.util.ClassLoaderUtils;
 import org.openspaces.core.util.PlaceholderReplacer;
 import org.openspaces.core.util.PlaceholderReplacer.PlaceholderResolutionException;
+import org.openspaces.interop.DotnetProcessingUnitContainer;
 import org.openspaces.interop.DotnetProcessingUnitContainerProvider;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ClassLoaderAwareProcessingUnitContainerProvider;
@@ -1056,10 +1057,19 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     private void buildMembersAliveIndicators() {
         // Handle Member Alive Indicators
         ArrayList<Callable<Boolean>> maIndicators = new ArrayList<Callable<Boolean>>();
+        Collection<MemberAliveIndicator> puIndicators;
         if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
-            Map<String, MemberAliveIndicator> map = applicationContext.getBeansOfType(MemberAliveIndicator.class);
-            for (final MemberAliveIndicator memberAliveIndicator : map.values()) {
+            puIndicators = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext().getBeansOfType(MemberAliveIndicator.class).values();
+        } else if (container instanceof DotnetProcessingUnitContainer) {
+            puIndicators = ((DotnetProcessingUnitContainer) container).getMemberAliveIndicators();
+        } else {
+            puIndicators = null;
+            if (logger.isDebugEnabled())
+                logger.debug("Processing Unit container does not support getMemberAliveIndicators - " + container.getClass().getName());
+        }
+
+        if (puIndicators != null) {
+            for (final MemberAliveIndicator memberAliveIndicator : puIndicators) {
                 if (memberAliveIndicator.isMemberAliveEnabled()) {
                     maIndicators.add(new Callable<Boolean>() {
                         public Boolean call() throws Exception {
@@ -1076,7 +1086,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 maIndicators.add(c);
             }
         }
-        memberAliveIndicators = maIndicators.toArray(new Callable[maIndicators.size()]);
+        memberAliveIndicators =  maIndicators.toArray(new Callable[maIndicators.size()]);
     }
 
     private org.openspaces.pu.sla.SLA getSLA(ServiceBeanContext context) throws IOException, ClassNotFoundException {
@@ -1160,11 +1170,15 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             return true;
         }
         if (memberAliveIndicators == null || memberAliveIndicators.length == 0) {
+            logger.info("PUServiceBeanImpl.isAlive() returned true - no memberAliveIndicators");
             return true;
         }
         boolean alive = false;
+
+        int count = 0;
         for (Callable<Boolean> memberAliveIndicator : memberAliveIndicators) {
             alive = memberAliveIndicator.call();
+            logger.info("PUServiceBeanImpl.isAlive() memberAliveIndicators[" + count++ +"] returned " + alive);
             if (!alive) {
                 break;
             }

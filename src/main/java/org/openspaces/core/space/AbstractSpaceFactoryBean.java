@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.MemberAliveIndicator;
+import org.openspaces.core.cluster.SpaceMemberAliveIndicator;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.SpaceAfterBackupListener;
@@ -55,7 +56,6 @@ import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.SpaceHealthStatus;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.SpaceRuntimeInfo;
 
@@ -101,6 +101,8 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     private Boolean registerForSpaceMode;
 
     private Boolean enableMemberAliveIndicator;
+
+    private MemberAliveIndicator memberAliveIndicator;
 
     private SecurityConfig securityConfig;
 
@@ -200,9 +202,7 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
             currentSpaceMode = SpaceMode.PRIMARY;
         }
 
-        if (enableMemberAliveIndicator == null) {
-            enableMemberAliveIndicator = !SpaceUtils.isRemoteProtocol(space);
-        }
+        memberAliveIndicator = new SpaceMemberAliveIndicator(space, enableMemberAliveIndicator);
     }
 
     /**
@@ -301,27 +301,17 @@ ApplicationContextAware, ApplicationListener, MemberAliveIndicator, ServiceDetai
     }
 
     /**
-     * Returns the {@link #setEnableMemberAliveIndicator(Boolean)} flag.
+     * Should this space be checked to see if it is alive or not.
      */
     public boolean isMemberAliveEnabled() {
-        return enableMemberAliveIndicator;
+        return memberAliveIndicator.isMemberAliveEnabled();
     }
 
     /**
      * Returns if this space is alive or not by pinging the Space and if it is considered healthy.
      */
     public boolean isAlive() throws Exception {
-        ISpaceProxy spaceToPing;
-        if (!SpaceUtils.isRemoteProtocol(space)) {
-            spaceToPing = (ISpaceProxy) SpaceUtils.getClusterMemberSpace(space);
-        } else {
-            spaceToPing = space;
-        }
-        //Check if the space is considered healthy
-        SpaceHealthStatus spaceHealthStatus = spaceToPing.getSpaceHealthStatus();
-        if (!spaceHealthStatus.isHealthy())
-            throw spaceHealthStatus.getUnhealthyReason();
-        return true;
+        return memberAliveIndicator.isAlive();
     }
 
     /**

@@ -18,6 +18,7 @@
 package org.openspaces.interop;
 
 import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.CannotCreateContainerException;
@@ -26,6 +27,8 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.openspaces.pu.service.ServiceMonitorsProvider;
+
+import java.util.Collection;
 
 /**
  * @author kimchy
@@ -68,5 +71,9 @@ public class DotnetProcessingUnitContainer implements ProcessingUnitContainer, S
 
     public ServiceMonitors[] getServicesMonitors() {
         return dotnetProcessingUnitBean.getServicesMonitors();
+    }
+
+    public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
+        return dotnetProcessingUnitBean.getMemberAliveIndicators();
     }
 }

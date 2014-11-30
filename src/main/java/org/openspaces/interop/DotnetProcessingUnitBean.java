@@ -17,17 +17,14 @@
  ******************************************************************************/
 package org.openspaces.interop;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.cluster.MemberAliveIndicator;
+import org.openspaces.core.cluster.SpaceMemberAliveIndicator;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.space.SpaceServiceDetails;
@@ -305,6 +302,16 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
         ServiceMonitors[] result = new ServiceMonitors[servicesMonitors.getIds().length];
         for(int i = 0; i < result.length; ++i)
             result[i] = transformMonitors(servicesMonitors.getInteropId()[i], servicesMonitors.getIds()[i], servicesMonitors.getServicesMonitors()[i]);
+        return result;
+    }
+
+    public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
+        Collection<MemberAliveIndicator> result = new ArrayList<MemberAliveIndicator>();
+        IJSpace[] spaceProxies = proxy.getContextProxies();
+        if (spaceProxies != null) {
+            for (IJSpace spaceProxy : spaceProxies)
+                result.add(new SpaceMemberAliveIndicator(spaceProxy, null));
+        }
         return result;
     }
 
