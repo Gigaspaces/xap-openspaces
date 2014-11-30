@@ -1170,7 +1170,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             return true;
         }
         if (memberAliveIndicators == null || memberAliveIndicators.length == 0) {
-            logger.info("PUServiceBeanImpl.isAlive() returned true - no memberAliveIndicators");
+            if (logger.isDebugEnabled())
+                logger.debug("PUServiceBeanImpl.isAlive() returned true - no memberAliveIndicators");
             return true;
         }
         boolean alive = false;
@@ -1178,7 +1179,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         int count = 0;
         for (Callable<Boolean> memberAliveIndicator : memberAliveIndicators) {
             alive = memberAliveIndicator.call();
-            logger.info("PUServiceBeanImpl.isAlive() memberAliveIndicators[" + count++ +"] returned " + alive);
+            if (logger.isDebugEnabled())
+                logger.debug("PUServiceBeanImpl.isAlive() memberAliveIndicators[" + count++ +"] returned " + alive);
             if (!alive) {
                 break;
             }
