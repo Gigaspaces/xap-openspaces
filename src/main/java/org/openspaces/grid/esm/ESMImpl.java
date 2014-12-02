@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.gigaspaces.metrics.MetricManager;
 import net.jini.export.Exporter;
 
 import org.jini.rio.boot.BootUtil;
@@ -128,6 +129,7 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
     private static final long CHECK_SINGLE_THREAD_EVENT_PUMP_EVERY_SECONDS= Long.getLong(EsmSystemProperties.ESM_INIT_EVENTLOOP_KEEPALIVE_ERROR_SECONDS, EsmSystemProperties.ESM_INIT_EVENTLOOP_KEEPALIVE_ERROR_SECONDS_DEFAULT);
     private static final String CONFIG_COMPONENT = "org.openspaces.grid.esm";
     private static final Logger logger = Logger.getLogger(CONFIG_COMPONENT);
+    private final MetricManager metricManager;
     private Admin admin;
     private MachinesSlaEnforcement machinesSlaEnforcement;
     private ContainersSlaEnforcement containersSlaEnforcement;
@@ -154,6 +156,7 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
      */
     public ESMImpl() throws Exception {
         super();
+        this.metricManager = MetricManager.initialize("esm");
         nonBlockingAdapterFactory = new NonBlockingElasticMachineProvisioningAdapterFactory();        
         scaleBeanServerPerProcessingUnit = new HashMap<ProcessingUnit,ScaleBeanServer>();
         elasticPropertiesPerProcessingUnit = new ConcurrentHashMap<String, Map<String,String>>();
@@ -342,6 +345,7 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
         if (lifeCycle != null) {
             lifeCycle.unregister(this);
         }
+        metricManager.close();
         super.destroy(force);
         logger.info("ESM stopped successfully");
     }
