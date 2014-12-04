@@ -171,7 +171,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
 
         Element sequenceNumberPropertyElem = DomUtils.getChildElementByTagName(element, "sequence-number-property");
         if (sequenceNumberPropertyElem != null) {
-            String name = sequenceNumberPropertyElem.getAttribute("property-name");
+            String name = sequenceNumberPropertyElem.getAttribute("name");
 
             builder.addPropertyValue("sequenceNumberProperty", name);
         }
