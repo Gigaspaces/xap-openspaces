@@ -169,7 +169,7 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         
         builder.addPropertyValue("fifoGroupingIndexesPaths", fifoGroupingIndexes);
 
-        Element sequenceNumberPropertyElem = DomUtils.getChildElementByTagName(element, "sequence-number-property");
+        Element sequenceNumberPropertyElem = DomUtils.getChildElementByTagName(element, "sequence-number");
         if (sequenceNumberPropertyElem != null) {
             String name = sequenceNumberPropertyElem.getAttribute("name");
 
