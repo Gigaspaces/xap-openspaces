@@ -17,12 +17,6 @@
  ******************************************************************************/
 package org.openspaces.core.config;
 
-import java.util.Set;
-import java.util.SortedMap;
-
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
-
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.document.SpaceDocument;
 import com.gigaspaces.metadata.SpacePropertyDescriptor;
@@ -31,6 +25,11 @@ import com.gigaspaces.metadata.SpaceTypeDescriptorBuilder;
 import com.gigaspaces.metadata.StorageType;
 import com.gigaspaces.metadata.index.SpaceIndexType;
 import com.j_spaces.kernel.ClassLoaderHelper;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.Set;
+import java.util.SortedMap;
 
 public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<SpaceTypeDescriptor>, InitializingBean {
 
@@ -140,7 +139,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
                 }
             }
             if(_sequenceNumberProperty != null)
-                typeDescriptorBuilder.sequenceNumberProperty(_sequenceNumberProperty);
+                typeDescriptorBuilder.sequenceNumberProperty(_sequenceNumberProperty, true);
 
             
             typeDescriptor = typeDescriptorBuilder.create();
