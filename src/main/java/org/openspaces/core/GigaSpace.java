@@ -148,7 +148,9 @@ public interface GigaSpace {
      * transaction isolation is
      * {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT} will use the
      * default isolation level associated with this class.
+     * @deprecated since 10.1.0 - use {@link #getDefaultReadModifiers()} instead.
      */
+    @Deprecated
     int getModifiersForIsolationLevel();
 
     /**
