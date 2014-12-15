@@ -20,7 +20,6 @@ import com.gigaspaces.internal.reflection.IMethod;
 import com.gigaspaces.internal.reflection.ReflectionUtil;
 import com.gigaspaces.internal.reflection.standard.StandardMethod;
 
-import com.j_spaces.core.client.EntryArrivedRemoteEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
@@ -87,7 +86,7 @@ InitializingBean, EventListenerAdapter {
 
     private boolean useFastReflection = true;
 
-    private boolean notifyPreviousValueOnUpdate = false;
+    //private boolean notifyPreviousValueOnUpdate = false;
 
     /**
      * The event listener delegate that will be searched for event listening methods and will have
@@ -107,16 +106,20 @@ InitializingBean, EventListenerAdapter {
     /**
      * Returns the flag that indicates whether the listener method(s) should get the old and new values (on event notifications).
      */
+    /*
     protected boolean isNotifyPreviousValueOnUpdate() {
         return notifyPreviousValueOnUpdate;
     }
+    */
 
     /**
      * The flag that indicates whether the listener method(s) should get the old and new values (from event notifications).
      */
+    /*
     public void setNotifyPreviousValueOnUpdate(boolean notifyPreviousValueOnUpdate) {
         this.notifyPreviousValueOnUpdate = notifyPreviousValueOnUpdate;
     }
+    */
 
     /**
      * Controls if the listener will be invoked using fast reflection or not. Defaults to <code>true</code>.
@@ -171,6 +174,7 @@ InitializingBean, EventListenerAdapter {
     protected Object onEventWithResult(Object data, GigaSpace gigaSpace, TransactionStatus txStatus, Object source) {
         Method listenerMethod = listenerMethods[0];
 
+        /*
         Object newValue = null, oldValue = null;
         boolean doubleParameter = false;
         if (notifyPreviousValueOnUpdate && source instanceof EntryArrivedRemoteEvent) {
@@ -209,6 +213,18 @@ InitializingBean, EventListenerAdapter {
             }
         } else if (numberOfParameters == 5 && doubleParameter) {
             listenerArguments = new Object[] { oldValue, newValue, gigaSpace, txStatus, source};
+        }
+        */
+        // set up the arguments passed to the method
+        Object[] listenerArguments = null;
+        if (numberOfParameters == 1) {
+            listenerArguments = new Object[] { data };
+        } else if (numberOfParameters == 2) {
+            listenerArguments = new Object[] { data, gigaSpace };
+        } else if (numberOfParameters == 3) {
+            listenerArguments = new Object[] { data, gigaSpace, txStatus };
+        } else if (numberOfParameters == 4) {
+            listenerArguments = new Object[] { data, gigaSpace, txStatus, source };
         }
 
         Object result = null;

@@ -122,7 +122,7 @@ public abstract class AbstractNotifyEventListenerContainer extends AbstractTrans
 
     private int comType = COM_TYPE_MULTIPLEX;
 
-    private boolean notifyPreviousValueOnUpdate = false;
+    //private boolean notifyPreviousValueOnUpdate = false;
 
     private boolean fifo = false;
 
@@ -203,6 +203,7 @@ public abstract class AbstractNotifyEventListenerContainer extends AbstractTrans
      * Determines whether the previous value should be sent with the new one upon update notification.
      * @param notifyPreviousValueOnUpdate
      */
+    /*
     public void setNotifyPreviousValueOnUpdate(boolean notifyPreviousValueOnUpdate) {
         this.notifyPreviousValueOnUpdate = notifyPreviousValueOnUpdate;
     }
@@ -210,6 +211,7 @@ public abstract class AbstractNotifyEventListenerContainer extends AbstractTrans
     public boolean isNotifyPreviousValueOnUpdate() {
         return notifyPreviousValueOnUpdate;
     }
+    */
 
     /**
      * Determines if events arrives in the same order they were triggered by the space "server".
@@ -721,7 +723,7 @@ public abstract class AbstractNotifyEventListenerContainer extends AbstractTrans
             default:
                 throw new IllegalArgumentException("Unknown com type [" + comType + "]");
         }
-        eventSessionConfig.setNotifyPreviousValueOnUpdate(notifyPreviousValueOnUpdate);
+        //eventSessionConfig.setNotifyPreviousValueOnUpdate(notifyPreviousValueOnUpdate);
         eventSessionConfig.setFifo(fifo);
         if (batchSize != null && batchTime != null) {
             if (batchPendingThreshold != null && batchPendingThreshold != -1) {

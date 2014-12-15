@@ -101,7 +101,7 @@ public @interface Notify {
     /**
      * @see org.openspaces.events.notify.SimpleNotifyEventListenerContainer#setNotifyPreviousValueOnUpdate(boolean)
      */
-    boolean notifyPreviousValueOnUpdate() default false;
+    //boolean notifyPreviousValueOnUpdate() default false;
 
     /**
      * When batching is turned on, should the batch of events be passed as an <code>Object[]</code> to

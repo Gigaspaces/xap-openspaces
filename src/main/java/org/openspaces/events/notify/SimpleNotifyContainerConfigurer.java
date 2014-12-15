@@ -103,10 +103,12 @@ public class SimpleNotifyContainerConfigurer {
     /**
      * @see org.openspaces.events.notify.SimpleNotifyEventListenerContainer#setNotifyPreviousValueOnUpdate(boolean)
      */
+    /*
     public SimpleNotifyContainerConfigurer notifyPreviousValueOnUpdate(boolean notifyPreviousValueOnUpdate) {
         notifyEventListenerContainer.setNotifyPreviousValueOnUpdate(notifyPreviousValueOnUpdate);
         return this;
     }
+    */
 
     /**
      * @see org.openspaces.events.notify.SimpleNotifyEventListenerContainer#setPassArrayAsIs(boolean) 
@@ -374,8 +376,8 @@ public class SimpleNotifyContainerConfigurer {
     public SimpleNotifyContainerConfigurer eventListenerAnnotation(Object eventListener) {
         AnnotationEventListenerAdapter annotationEventListenerAdapter = new AnnotationEventListenerAdapter();
         annotationEventListenerAdapter.setDelegate(eventListener);
-        if (notifyEventListenerContainer.isNotifyPreviousValueOnUpdate())
-            annotationEventListenerAdapter.setNotifyPreviousValueOnUpdate(true);
+        //if (notifyEventListenerContainer.isNotifyPreviousValueOnUpdate())
+        //    annotationEventListenerAdapter.setNotifyPreviousValueOnUpdate(true);
         annotationEventListenerAdapter.afterPropertiesSet();
         notifyEventListenerContainer.setEventListener(annotationEventListenerAdapter);
         return this;
