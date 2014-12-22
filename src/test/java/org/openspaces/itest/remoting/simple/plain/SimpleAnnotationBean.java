@@ -19,6 +19,7 @@ package org.openspaces.itest.remoting.simple.plain;
 
 import org.openspaces.remoting.EventDrivenProxy;
 import org.openspaces.remoting.ExecutorProxy;
+import org.openspaces.utest.remoting.SimpleService;
 
 /**
  * @author kimchy

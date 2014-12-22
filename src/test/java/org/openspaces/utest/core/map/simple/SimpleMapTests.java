@@ -15,42 +15,29 @@
  * limitations under the License.
  *  
  ******************************************************************************/
-package org.openspaces.itest.remoting.simple.plain;
+package org.openspaces.utest.core.map.simple;
 
-import org.openspaces.remoting.AutowireArguments;
-import org.openspaces.remoting.Routing;
+import com.j_spaces.map.GSMapImpl;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author kimchy
  */
-@AutowireArguments
-public interface SimpleService extends SuperSimpleService{
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/org/openspaces/itest/core/map/simple/simple-map.xml")
+public class SimpleMapTests  extends AbstractMapTests {
 
-    String say(@Routing String message);
+    protected String[] getConfigLocations() {
+        return new String[] {"/org/openspaces/itest/core/map/simple/simple-map.xml"};
+    }
 
-    Future<String> asyncSay(String message);
-
-    boolean wire(WiredParameter wiredParameter);
-
-    void testException() throws MyException;
-
-    Future asyncTestException() throws MyException;
-
-    String overloaded(List list);
-
-    Future<String> asyncOverloaded(List list);
-
-    String overloaded(Map map);
-
-    Future<String> asyncOverloaded(Map map);
-
-    class MyException extends RuntimeException {
-
-        private static final long serialVersionUID = 4286999982167551193L;
-
+     @Test public void testIMapType() {
+        assertTrue(map instanceof GSMapImpl);
     }
 }
+

@@ -30,14 +30,14 @@
     </os-events:polling-container>
 
     <os-remoting:executor-proxy id="simpleService" giga-space="gigaSpace"
-                             interface="org.openspaces.itest.remoting.simple.plain.SimpleService" timeout="150000"/>
+                             interface="org.openspaces.utest.remoting.SimpleService" timeout="150000"/>
 
     <os-remoting:event-driven-proxy id="simpleServiceAsync" giga-space="gigaSpace"
                                     interface="org.openspaces.itest.remoting.simple.plain.SimpleServiceAsync"
                                     timeout="150000"/>
 
     <os-remoting:executor-proxy id="simpleServiceExecutor" giga-space="gigaSpace"
-                                interface="org.openspaces.itest.remoting.simple.plain.SimpleService"/>
+                                interface="org.openspaces.utest.remoting.SimpleService"/>
 
 <os-remoting:executor-proxy id="superSimpleService" giga-space="gigaSpace"
                              interface="org.openspaces.itest.remoting.simple.plain.SuperSimpleService" timeout="150000"/>

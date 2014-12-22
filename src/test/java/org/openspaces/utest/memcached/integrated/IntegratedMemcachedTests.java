@@ -15,7 +15,7 @@
  * limitations under the License.
  *  
  ******************************************************************************/
-package org.openspaces.itest.memcached.integrated;
+package org.openspaces.utest.memcached.integrated;
 
 import junit.framework.TestCase;
 import net.spy.memcached.*;

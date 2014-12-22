@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  ******************************************************************************/
-package org.openspaces.itest.core.map.simple;
+package org.openspaces.utest.core.map.simple;
 
 import com.j_spaces.map.IMap;
 import org.junit.Before;

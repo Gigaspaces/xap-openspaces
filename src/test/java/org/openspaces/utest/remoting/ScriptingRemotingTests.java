@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.openspaces.itest.remoting.scripting;
+package org.openspaces.utest.remoting;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.itest.remoting.scripting.ScriptingAnnotationBean;
 import org.openspaces.remoting.scripting.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

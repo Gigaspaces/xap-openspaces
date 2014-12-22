@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.executor.support.WaitForAnyListener;
 import org.openspaces.remoting.*;
+import org.openspaces.utest.remoting.SimpleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/org/openspaces/itest/remoting/simple/plain/simple-remoting.xml")
-public class SimpleRemotingTests   { 
+public class SimpleRemotingTests   {
 
      @Autowired protected SimpleService simpleService;
 

@@ -941,6 +941,9 @@
                                 <include>**/PersistentQueueTests*</include>
                                 <include>**/PersistentSedaTests*</include>
                             </includes>
+                            <excludes>
+                                <exclude>**/InitAbstractBeanTest*</exclude>
+                            </excludes>
                         </configuration>
                         <executions>
                             <execution>

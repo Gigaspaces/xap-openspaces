@@ -18,6 +18,7 @@
 package org.openspaces.itest.remoting.simple.plain;
 
 import org.openspaces.remoting.RemotingService;
+import org.openspaces.utest.remoting.SimpleService;
 
 import java.util.List;
 import java.util.Map;
