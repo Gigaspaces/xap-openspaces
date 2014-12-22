@@ -518,9 +518,6 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
-                        <configuration>
-                            <finalName>gs-openspaces</finalName>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
