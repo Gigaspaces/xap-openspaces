@@ -85,7 +85,7 @@ public class ScriptingRemotingTests   {
     }
 
      @Test public void testSyncJsr223Execution() {
-        Double value = (Double) executorScriptingExecutor.execute(new StaticScript("testSyncJsr223Execution", "JavaScript", "1"));
+        Double value = (Double) executorScriptingExecutor.execute(new StaticScript("testSyncJsr223Execution", "JavaScript", "1.0"));
         assertEquals(1, value.intValue());
     }
 
