@@ -562,6 +562,7 @@
                         <include>**/*TestCase.java</include>
                         <include>**/*TestSuite.java</include>
                         <include>**/Test*.java</include>
+                        <exclude>**/SimpleRemotingTests*</exclude>
                     </includes>
                     <excludes>
                         <!--Running org.openspaces.itest.events.polling.sqlqueryrouting.SQLQueryRoutingPollingContainerTest-->
@@ -942,7 +943,10 @@
                                 <include>**/PersistentSedaTests*</include>
                             </includes>
                             <excludes>
+                                <exclude>**/utest/**</exclude>
+                                <exclude>**/Abstract*</exclude>
                                 <exclude>**/InitAbstractBeanTest*</exclude>
+                                <exclude>**/SimpleRemotingTests*</exclude>
                             </excludes>
                         </configuration>
                         <executions>

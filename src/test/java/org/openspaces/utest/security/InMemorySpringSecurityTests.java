@@ -15,7 +15,7 @@
  * limitations under the License.
  *  
  ******************************************************************************/
-package org.openspaces.itest.security;
+package org.openspaces.utest.security;
 
 import com.gigaspaces.security.Authentication;
 import com.gigaspaces.security.AuthenticationException;
