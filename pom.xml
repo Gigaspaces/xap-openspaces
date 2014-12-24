@@ -558,7 +558,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12.4</version>
                 <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
+                    <testFailureIgnore>false</testFailureIgnore>
                     <parallel>classes</parallel>
                     <forkMode>pertest</forkMode>
                     <argLine>-Xms1024m -Xmx1024m</argLine>
@@ -569,6 +569,7 @@
                         <include>**/*TestCase.java</include>
                         <include>**/*TestSuite.java</include>
                         <include>**/Test*.java</include>
+                        <exclude>**/SimpleRemotingTests*</exclude>
                     </includes>
                     <excludes>
                         <!--Running org.openspaces.itest.events.polling.sqlqueryrouting.SQLQueryRoutingPollingContainerTest-->
@@ -948,6 +949,12 @@
                                 <include>**/PersistentQueueTests*</include>
                                 <include>**/PersistentSedaTests*</include>
                             </includes>
+                            <excludes>
+                                <exclude>**/utest/**</exclude>
+                                <exclude>**/Abstract*</exclude>
+                                <exclude>**/InitAbstractBeanTest*</exclude>
+                                <exclude>**/SimpleRemotingTests*</exclude>
+                            </excludes>
                         </configuration>
                         <executions>
                             <execution>
