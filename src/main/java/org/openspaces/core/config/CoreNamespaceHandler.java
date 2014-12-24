@@ -28,6 +28,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class CoreNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
+        registerBeanDefinitionParser("rest", new RestBeanDefinitionParser());
         registerBeanDefinitionParser("space", new UrlSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("embedded-space", new EmbeddedSpaceBeanDefinitionParser());
         registerBeanDefinitionParser("space-proxy", new SpaceProxyBeanDefinitionParser());

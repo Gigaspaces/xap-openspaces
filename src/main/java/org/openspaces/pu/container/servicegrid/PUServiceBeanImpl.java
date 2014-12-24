@@ -701,6 +701,33 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             // no mule
         }
 
+        //apply the following only if the pu has the rest element
+        if (springXml.contains("<os-core:rest")) {
+            String jeeContainer = JeeProcessingUnitContainerProvider.getJeeContainer(beanLevelProperties);
+            // pre load the jetty server class so the static shutdown thread will be loaded under it
+
+            String[] classesToLoad = new String[]{"org.eclipse.jetty.server.Server"};
+            String jettyJars = System.getProperty("com.gigaspaces.rest.jetty", JeeProcessingUnitContainerProvider.getJeeContainerJarPath(jeeContainer));
+            // setup class loaders correctly
+            try {
+                Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
+                ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{jettyJars,
+                        Environment.getHomeDirectory() + "/lib/platform/jetty/org.apache.jasper.glassfish-2.2.2.v201112011158.jar",
+                        Environment.getHomeDirectory() + "/lib/optional/spring/spring-web-4.1.1.RELEASE.jar",
+                        Environment.getHomeDirectory() + "/lib/optional/spring/spring-webmvc-4.1.1.RELEASE.jar",
+                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-core-2.3.0.jar",
+                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-databind-2.3.0.jar",
+                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-annotations-2.3.0.jar"
+                }));
+                ((ServiceClassLoader) contextClassLoader).setParentClassLoader(SharedServiceData.getJeeClassLoader(jeeContainer, classesToLoad));
+            } catch (Exception e) {
+                throw new CannotCreateContainerException("Failed to configure class loader", e);
+            } finally {
+                //TODO check if we need this
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+            }
+        }
+
         factory = createContainerProvider(processingUnitContainerProviderClass);
         if (factory instanceof DeployableProcessingUnitContainerProvider) {
             ((DeployableProcessingUnitContainerProvider) factory).setDeployPath(deployPath);
