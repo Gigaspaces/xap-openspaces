@@ -160,11 +160,15 @@ public class RestBean implements InitializingBean, ClusterInfoAware, DisposableB
         webAppContext.setWar(Environment.getHomeDirectory() + "/lib/platform/rest/RESTData.war");
         webAppContext.setInitParameter("port", port);
         webAppContext.setInitParameter("spaceName", ispaceName);
-        if (igroups != null)
+        if (igroups != null && !igroups.equalsIgnoreCase("null")) {
+            logger.debug("Applying groups "+igroups);
             webAppContext.setInitParameter("lookupGroups", igroups);
+        }
 
-        if (ilocators != null)
+        if (ilocators != null && !ilocators.equalsIgnoreCase("null")) {
+            logger.debug("Applying locators "+ilocators);
             webAppContext.setInitParameter("lookupLocators", ilocators);
+        }
         server.setHandler(webAppContext);
         try {
             server.start();
