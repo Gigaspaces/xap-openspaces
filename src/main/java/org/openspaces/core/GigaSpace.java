@@ -209,10 +209,11 @@ public interface GigaSpace {
      * <p>Notice: The clear operation does not remove notify templates, i.e. registration for notifications.
      *
      * @param template the template to use for matching
+     * @return The number of cleared entries
      * @throws DataAccessException In the event of an error, DataAccessException will
      *         wrap a ClearException, accessible via DataAccessException.getRootCause().
      */
-    void clear(Object template) throws DataAccessException;
+    int clear(Object template) throws DataAccessException;
 
     /**
      * @deprecated since 9.0.1 - use {@link #clear(Object, ClearModifiers)} instead.
@@ -235,7 +236,7 @@ public interface GigaSpace {
      *
      * @param template the template to use for matching
      * @param modifiers one or a union of {@link ClearModifiers}.
-     * 
+     * @return The number of cleared entries
      * @throws DataAccessException In the event of an error, DataAccessException will
      *         wrap a ClearException, accessible via DataAccessException.getRootCause().
      * @since 9.0.1
@@ -1297,7 +1298,7 @@ public interface GigaSpace {
     <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query) throws DataAccessException;
     
     /**
-     * @deprecated since 9.0.1 - use {@link #readByIds(IdQuery, ReadModifiers)} instead.
+     * @deprecated since 9.0.1 - use {@link #readByIds(IdsQuery, ReadModifiers)} instead.
      */
     @Deprecated
     <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
@@ -1422,7 +1423,7 @@ public interface GigaSpace {
     <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query) throws DataAccessException;
     
     /**
-     * @deprecated since 9.0.1 - use {@link #takeByIds(IdQuery, TakeModifiers)} instead.
+     * @deprecated since 9.0.1 - use {@link #takeByIds(IdsQuery, TakeModifiers)} instead.
      */
     @Deprecated
     <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query, int modifiers) throws DataAccessException;
