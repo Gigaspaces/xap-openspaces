@@ -593,13 +593,21 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
     @Override
     public void incrementInstance() {
         if (!isManaged()) {
-            throw new AdminException("No managing grid service manager for processing unit");
+            throw new AdminException("Processing Unit " + getName() + " does not have an associated managing GSM");
         }
         ((InternalGridServiceManager) managingGridServiceManager).incrementInstance(this);
     }
 
     @Override
     public void decrementInstance() {
+        if (!isManaged()) {
+            throw new AdminException("Processing Unit " + getName() + " does not have an associated managing GSM");
+        }
+
+        if (decrementPlannedInstances()) {
+            return;
+        }
+
         Iterator<ProcessingUnitInstance> it = iterator();
         if (it.hasNext()) {
             ((InternalGridServiceManager) managingGridServiceManager).decrementInstance(it.next());
