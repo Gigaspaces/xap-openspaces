@@ -250,6 +250,7 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      * Removes a randomly chosen instance from the processing unit, and decrements the number of instances. 
      * For finer control use {@link ProcessingUnitInstance#decrement()} instead.
      * Does not apply for partitioned nor replicated topologies.
+     * @since 10.1.0 decrements planned instances before decrementing an actual instance
      */
     void decrementInstance();
 
