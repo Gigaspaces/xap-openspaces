@@ -15,13 +15,7 @@
  *******************************************************************************/
 package org.openspaces.admin.space.config;
 
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
+import com.gigaspaces.security.directory.UserDetails;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.openspaces.admin.pu.config.ContextPropertyConfig;
 import org.openspaces.admin.pu.config.MaxInstancesPerZoneConfig;
@@ -32,7 +26,11 @@ import org.openspaces.admin.pu.dependency.ProcessingUnitDependency;
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.gigaspaces.security.directory.UserDetails;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.Map;
 
 
 /**
@@ -102,6 +100,18 @@ public class SpaceConfig implements ProcessingUnitConfigHolder {
      */
     public void setNumberOfBackups(Integer numberOfBackups) {
         config.setNumberOfBackups(numberOfBackups);
+    }
+
+    public Boolean isRequiresIsolation() {
+        return config.isRequiresIsolation();
+    }
+
+    /**
+     * @see ProcessingUnitDeployment#requiresIsolation(boolean)
+     */
+    @XmlAttribute(name="requires-isolation")
+    public void setRequiresIsolation(Boolean requiresIsolation) {
+        config.setRequiresIsolation(requiresIsolation);
     }
 
     public Integer getMaxInstancesPerVM() {

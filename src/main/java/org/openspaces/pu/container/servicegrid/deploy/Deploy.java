@@ -148,13 +148,14 @@ public class Deploy {
     public static final String KEY_APPLICATION_NAME 	= "application-name";
     public static final String KEY_ELASTIC_PROPERTIES 	= "elastic-properties";
     public static final String KEY_DEPLOY_TIMEOUT     			= "deploy-timeout";
+    public static final String KEY_REQUIRES_ISOLATION     	= "requires-isolation";
     public static final String KEY_MAX_INSTANCES_PER_VM     	= "max-instances-per-vm";
     public static final String KEY_MAX_INSTANCES_PER_MACHINE    = "max-instances-per-machine";
     public static final String KEY_MAX_INSTANCES_PER_ZONE     	= "max-instances-per-zone";
 
     public final static String[] validOptionsArray = { KEY_HELP1, KEY_HELP2, KEY_USER, KEY_PASSWORD, KEY_SECURED, KEY_SLA,
             KEY_CLUSTER, /*KEY_SCHEMA, KEY_TOTAL_MEMBERS,*/ KEY_GROUPS, KEY_LOCATORS, KEY_TIMEOUT, KEY_PROPERTIES,
-            KEY_OVERRIDE_NAME, KEY_ZONES, KEY_DEPLOY_TIMEOUT, KEY_APPLICATION_NAME, KEY_MAX_INSTANCES_PER_VM,
+            KEY_OVERRIDE_NAME, KEY_ZONES, KEY_DEPLOY_TIMEOUT, KEY_APPLICATION_NAME, KEY_REQUIRES_ISOLATION, KEY_MAX_INSTANCES_PER_VM,
             KEY_MAX_INSTANCES_PER_MACHINE, KEY_MAX_INSTANCES_PER_ZONE };
 
     public static void setDisableInfoLogging(boolean disableInfoLogging) {
@@ -559,15 +560,20 @@ public class Deploy {
         }
         
         for (CommandLineParser.Parameter param : params) {
+            if (param.getName().equalsIgnoreCase( KEY_REQUIRES_ISOLATION )) {
+                String requiresIsolation = param.getArguments()[0];
+                sla.setRequiresIsolation(Boolean.parseBoolean(requiresIsolation));
+                info("Overriding SLA requiresIsolation with [" + requiresIsolation + "]");
+            }
             if (param.getName().equalsIgnoreCase( KEY_MAX_INSTANCES_PER_VM )) {
                 String maxInstancePerVm = param.getArguments()[0];
                 sla.setMaxInstancesPerVM(Integer.valueOf(maxInstancePerVm));
-                info("Overrding SLA maxInstancesPerVM with [" + maxInstancePerVm + "]");
+                info("Overriding SLA maxInstancesPerVM with [" + maxInstancePerVm + "]");
             }
             if (param.getName().equalsIgnoreCase( KEY_MAX_INSTANCES_PER_MACHINE )) {
                 String maxInstancePerMachine = param.getArguments()[0];
                 sla.setMaxInstancesPerMachine(Integer.valueOf(maxInstancePerMachine));
-                info("Overrding SLA maxInstancesPerMachine with [" + maxInstancePerMachine + "]");
+                info("Overriding SLA maxInstancesPerMachine with [" + maxInstancePerMachine + "]");
             }
             if (param.getName().equalsIgnoreCase( KEY_MAX_INSTANCES_PER_ZONE )) {
                 Map<String, Integer> map = new HashMap<String, Integer>();
@@ -575,7 +581,7 @@ public class Deploy {
                     map.putAll(ZoneHelper.parse(arg));
                 }
                 sla.setMaxInstancesPerZone(map);
-                info("Overrding SLA maxInstancesPerZone with [" + ZoneHelper.unparse(map) + "]");
+                info("Overriding SLA maxInstancesPerZone with [" + ZoneHelper.unparse(map) + "]");
             }
             if (param.getName().equalsIgnoreCase( KEY_ZONES )) {
                 for (String arg : param.getArguments()) {
@@ -912,6 +918,8 @@ public class Deploy {
         if (sla.getMaxInstancesPerMachine() > 0) {
             element.setMaxPerPhysicalMachine(sla.getMaxInstancesPerMachine());
         }
+        element.setRequiresIsolation(sla.isRequiresIsolation());
+
         element.setMaxPerZone(sla.getMaxInstancesPerZone());
         
         element.setElasticProperties(elasticProperties);
@@ -1140,6 +1148,7 @@ public class Deploy {
         sb.append("\n    -" + KEY_PROPERTIES + " [properties-loc]             : Location of context level properties");
         sb.append("\n    -" + KEY_PROPERTIES + " [bean-name] [properties-loc] : Location of properties used applied only for a specified bean");
         sb.append("\n    -" + KEY_OVERRIDE_NAME + " [override pu name]        : An override pu name, useful when using pu as a template");
+        sb.append("\n    -" + KEY_REQUIRES_ISOLATION + " [true/false]           : Allows to set the SLA requires isolation");
         sb.append("\n    -" + KEY_MAX_INSTANCES_PER_VM + " [number]           : Allows to set the SLA number of instances per VM");
         sb.append("\n    -" + KEY_MAX_INSTANCES_PER_MACHINE + " [number]      : Allows to set the SLA number of instances per machine");
         sb.append("\n    -" + KEY_MAX_INSTANCES_PER_ZONE + " [zone/number,...]: Allows to set the SLA number of instances per zone");

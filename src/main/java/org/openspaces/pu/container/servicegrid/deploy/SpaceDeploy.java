@@ -17,15 +17,14 @@
  ******************************************************************************/
 package org.openspaces.pu.container.servicegrid.deploy;
 
-import java.util.ArrayList;
-
-import org.jini.rio.core.OperationalString;
-import org.jini.rio.core.ServiceProvisionListener;
-
 import com.gigaspaces.grid.gsm.GSM;
 import com.gigaspaces.logger.GSLogConfigLoader;
 import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
+import org.jini.rio.core.OperationalString;
+import org.jini.rio.core.ServiceProvisionListener;
+
+import java.util.ArrayList;
 
 /**
  * @author kimchy
@@ -157,6 +156,7 @@ public class SpaceDeploy {
         sb.append("\n    -" + Deploy.KEY_SECURED + " true                            : Deploys a secured space (implicit when using -user/-password)");
         sb.append("\n    -" + Deploy.KEY_PROPERTIES + " [properties-loc]             : Location of context level properties");
         sb.append("\n    -" + Deploy.KEY_PROPERTIES + " [bean-name] [properties-loc] : Location of properties used applied only for a specified bean");
+        sb.append("\n    -" + Deploy.KEY_REQUIRES_ISOLATION + " [true/false]           : Allows to set the SLA requires isolation");
         sb.append("\n    -" + Deploy.KEY_MAX_INSTANCES_PER_VM + " [number]           : Allows to set the SLA number of instances per VM");
         sb.append("\n    -" + Deploy.KEY_MAX_INSTANCES_PER_MACHINE + " [number]      : Allows to set the SLA number of instances per machine");
         sb.append("\n    -" + Deploy.KEY_MAX_INSTANCES_PER_ZONE + " [zone/number,...]: Allows to set the SLA number of instances per zone");

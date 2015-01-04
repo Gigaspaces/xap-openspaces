@@ -161,6 +161,13 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      */
     int getMaxInstancesPerMachine();
 
+ /**
+  * @return  true if isolation is required per virtual machine. No processing unit instances can run on the same
+  * virtual machine. Default false.
+  * @since 10.1.0
+  */
+    boolean isRequiresIsolation();
+
     /**
      * Returns a map containing the zone name and the maximum number of instances for that zone.
      */

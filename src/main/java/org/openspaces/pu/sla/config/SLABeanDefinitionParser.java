@@ -71,6 +71,10 @@ public class SLABeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
         if (StringUtils.hasLength(maxInstancesPerMachine)) {
             builder.addPropertyValue("maxInstancesPerMachine", maxInstancesPerMachine);
         }
+        String requiresIsolation = element.getAttribute("requires-isolation");
+        if (StringUtils.hasLength(requiresIsolation)) {
+            builder.addPropertyValue("requiresIsolation", requiresIsolation);
+        }
         String maxInstancesPerZone = element.getAttribute("max-instances-per-zone");
         if (StringUtils.hasLength(maxInstancesPerZone)) {
             builder.addPropertyValue("maxInstancesPerZoneAsString", maxInstancesPerZone);

@@ -32,8 +32,7 @@
 
 package org.openspaces.admin.memcached;
 
-import java.io.File;
-
+import com.gigaspaces.security.directory.UserDetails;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependencies;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependency;
 import org.openspaces.admin.internal.pu.dependency.ProcessingUnitDetailedDependencies;
@@ -44,7 +43,7 @@ import org.openspaces.admin.pu.dependency.ProcessingUnitDeploymentDependenciesCo
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
 
-import com.gigaspaces.security.directory.UserDetails;
+import java.io.File;
 
 /**
  * A deployment of a pure memcached processing unit (comes built in
@@ -165,6 +164,14 @@ public class MemcachedDeployment implements ProcessingUnitDeploymentTopology {
      */
     public MemcachedDeployment maxInstancesPerMachine(int maxInstancesPerMachine) {
         config.setMaxInstancesPerMachine(maxInstancesPerMachine);
+        return this;
+    }
+
+    /**
+     * Sets the requires Isolation.If true only a single service can run in this virtual machine.
+     */
+    public MemcachedDeployment requiresIsolation(boolean requiresIsolation) {
+        config.setRequiresIsolation(requiresIsolation);
         return this;
     }
 
