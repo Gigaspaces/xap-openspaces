@@ -51,7 +51,7 @@ public class OutputVersion {
     
     public static String computeXapVersion() {
         
-        XapVersion xapVersion = new XapVersion();
+        XapVersion xapVersion = XapVersion.getInstance();
         
         if (xapVersion.getBuildNumber().indexOf("-") != -1) {
             return xapVersion.getVersion() + "-SNAPSHOT";

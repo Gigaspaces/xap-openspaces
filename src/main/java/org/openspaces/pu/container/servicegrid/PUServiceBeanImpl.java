@@ -70,7 +70,7 @@ import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.core.space.SpaceType;
-import org.openspaces.core.util.ClassLoaderUtils;
+import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import org.openspaces.core.util.PlaceholderReplacer;
 import org.openspaces.core.util.PlaceholderReplacer.PlaceholderResolutionException;
 import org.openspaces.interop.DotnetProcessingUnitContainer;
@@ -726,6 +726,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 //TODO check if we need this
                 Thread.currentThread().setContextClassLoader(contextClassLoader);
             }
+        }
+
+        //apply the following only if the pu has the mapdb-blob-store element
+        if (springXml.contains("<blob-store:mapdb-blob-store")) {
+            String mapdbJar = System.getProperty("com.gigaspaces.blobstore.mapdb", Environment.getHomeDirectory() + "/lib/optional/blobstore/mapdb-blobstore.jar");
+
+            Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
+            ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
         }
 
         factory = createContainerProvider(processingUnitContainerProviderClass);
