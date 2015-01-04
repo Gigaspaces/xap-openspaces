@@ -70,7 +70,7 @@ import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.core.space.SpaceType;
-import org.openspaces.core.util.ClassLoaderUtils;
+import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import org.openspaces.core.util.PlaceholderReplacer;
 import org.openspaces.core.util.PlaceholderReplacer.PlaceholderResolutionException;
 import org.openspaces.interop.DotnetProcessingUnitContainer;
