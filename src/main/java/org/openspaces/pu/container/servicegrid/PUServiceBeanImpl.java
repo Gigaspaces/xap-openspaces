@@ -728,6 +728,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             }
         }
 
+        //apply the following only if the pu has the mapdb-blob-store element
+        if (springXml.contains("<blob-store:mapdb-blob-store")) {
+            String mapdbJar = System.getProperty("com.gigaspaces.blobstore.mapdb", Environment.getHomeDirectory() + "/lib/optional/blobstore/mapdb-blobstore.jar");
+
+            Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
+            ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
+        }
+
         factory = createContainerProvider(processingUnitContainerProviderClass);
         if (factory instanceof DeployableProcessingUnitContainerProvider) {
             ((DeployableProcessingUnitContainerProvider) factory).setDeployPath(deployPath);
