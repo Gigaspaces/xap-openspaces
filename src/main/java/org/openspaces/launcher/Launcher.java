@@ -17,16 +17,15 @@
  ******************************************************************************/
 package org.openspaces.launcher;
 
-import java.io.File;
-import java.util.logging.Logger;
-
+import com.gigaspaces.admin.cli.RuntimeInfo;
 import com.gigaspaces.internal.io.FileUtils;
 import com.gigaspaces.internal.utils.StringUtils;
-import com.j_spaces.kernel.*;
+import com.gigaspaces.logger.GSLogConfigLoader;
+import com.j_spaces.kernel.ClassLoaderHelper;
 import org.openspaces.pu.container.support.CommandLineParser;
 
-import com.gigaspaces.admin.cli.RuntimeInfo;
-import com.gigaspaces.logger.GSLogConfigLoader;
+import java.io.File;
+import java.util.logging.Logger;
 
 /**
  * @author Guy Korland
@@ -40,6 +39,7 @@ public class Launcher {
         String name = System.getProperty("org.openspaces.launcher.name", "launcher");
         String loggerName = System.getProperty("org.openspaces.launcher.logger", "org.openspaces.launcher");
         String webLauncherClass = System.getProperty("org.openspaces.launcher.class", "org.openspaces.launcher.JettyLauncher");
+        String hostAddress = null;
 
         CommandLineParser.Parameter[] params = CommandLineParser.parse(args);
         for (CommandLineParser.Parameter param : params) {
@@ -54,6 +54,10 @@ public class Launcher {
                 name = param.getArguments()[0];
             else if ("logger".equals(paramName))
             	loggerName = param.getArguments()[0];
+            else if ("hostaddress".equals(paramName)) {
+                hostAddress = param.getArguments()[0];
+                config.setHostAddress(hostAddress);
+            }
             else if("help".equals(paramName) || "h".equals(paramName)) {
             	printHelpMessage();
             	return;
@@ -71,7 +75,7 @@ public class Launcher {
         logger.info(RuntimeInfo.getShortEnvironmentInfo());
         WebLauncher webLauncher = ClassLoaderHelper.newInstance(webLauncherClass);
         webLauncher.launch(config);
-        logger.info(name + " server started on port [" + config.getPort() + "]");
+        logger.info(name + " server started on" + hostAddress == null ? "localhost" : " [" + hostAddress + "]" + " port [" + config.getPort() + "]");
     }
 
     private static void printHelpMessage() {

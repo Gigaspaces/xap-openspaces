@@ -26,6 +26,8 @@ public class WebLauncherConfig {
     private int port;
     private String warFilePath;
     private String tempDirPath;
+    /** @since 10.1 GS-12102 */
+    private String hostAddress;
 
     public WebLauncherConfig() {
         this.port = Integer.getInteger("org.openspaces.launcher.port", 8099);
@@ -53,5 +55,19 @@ public class WebLauncherConfig {
     }
     public void setWarFilePath(String warFilePath) {
         this.warFilePath = warFilePath;
+    }
+    /**
+`   `* @since 10.1
+     * @author evgenyf
+     */
+    public String getHostAddress() {
+        return hostAddress;
+    }
+    /**
+     * @since 10.1
+     * @author evgenyf
+     */
+    public void setHostAddress(String hostAddress) {
+        this.hostAddress = hostAddress;
     }
 }
