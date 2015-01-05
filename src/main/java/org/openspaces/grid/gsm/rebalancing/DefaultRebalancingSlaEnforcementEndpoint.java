@@ -557,6 +557,16 @@ class DefaultRebalancingSlaEnforcementEndpoint implements RebalancingSlaEnforcem
                         }
                     }
 
+                    //check if pu requires isolation is satisfied
+                    if (pu.isRequiresIsolation()) {
+                        if (target.getProcessingUnitInstances().length != 0) {
+                            logger.debug("Cannot relocate " + RebalancingUtils.puInstanceToString(candidateInstance)
+                                    + " to container " + RebalancingUtils.gscToString(target)
+                                    + " since container already hosts an instance and processing unit requires isolation");
+                            continue;
+                        }
+                    }
+
                     // check limit of pu instances from same partition per container
                     if (pu.getMaxInstancesPerVM() > 0) {
                         int numberOfOtherInstancesFromPartitionInTargetContainer = RebalancingUtils.getOtherInstancesFromSamePartitionInContainer(
