@@ -15,17 +15,8 @@
  *******************************************************************************/
 package org.openspaces.admin.pu.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
+import com.gigaspaces.grid.zone.ZoneHelper;
+import com.gigaspaces.security.directory.UserDetails;
 import org.openspaces.admin.internal.pu.dependency.DefaultProcessingUnitDependencies;
 import org.openspaces.admin.internal.pu.dependency.DefaultProcessingUnitDeploymentDependencies;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependencies;
@@ -37,8 +28,11 @@ import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.openspaces.pu.container.support.CommandLineParser.Parameter;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.gigaspaces.grid.zone.ZoneHelper;
-import com.gigaspaces.security.directory.UserDetails;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.*;
 
 /**
  * @author itaif
@@ -56,6 +50,8 @@ public class ProcessingUnitConfig implements ProcessingUnitConfigHolder {
     private Integer numberOfInstances;
 
     private Integer numberOfBackups;
+
+    private Boolean requiresIsolation;
 
     private Integer maxInstancesPerVM;
 
@@ -135,6 +131,18 @@ public class ProcessingUnitConfig implements ProcessingUnitConfigHolder {
      */
     public void setNumberOfBackups(Integer numberOfBackups) {
         this.numberOfBackups = numberOfBackups;
+    }
+
+    public Boolean isRequiresIsolation() {
+        return requiresIsolation;
+    }
+
+    /**
+     * @see ProcessingUnitDeployment#requiresIsolation(boolean)
+     */
+    @XmlAttribute(name="requires-isolation")
+    public void setRequiresIsolation(Boolean requiresIsolation) {
+        this.requiresIsolation = requiresIsolation;
     }
 
     public Integer getMaxInstancesPerVM() {
@@ -284,6 +292,10 @@ public class ProcessingUnitConfig implements ProcessingUnitConfigHolder {
                 deployOptions.add(totalMembers);
             }
         }
+        if (requiresIsolation != null) {
+            deployOptions.add("-requires-isolation");
+            deployOptions.add(requiresIsolation.toString());
+        }
         if (maxInstancesPerVM != null) {
             deployOptions.add("-max-instances-per-vm");
             deployOptions.add(maxInstancesPerVM.toString());
@@ -399,6 +411,7 @@ public class ProcessingUnitConfig implements ProcessingUnitConfigHolder {
         result = prime * result + ((elasticProperties == null) ? 0 : elasticProperties.hashCode());
         result = prime * result + ((maxInstancesPerMachine == null) ? 0 : maxInstancesPerMachine.hashCode());
         result = prime * result + ((maxInstancesPerVM == null) ? 0 : maxInstancesPerVM.hashCode());
+        result = prime * result + ((requiresIsolation == null) ? 0 : requiresIsolation.hashCode());
         result = prime * result + ((maxInstancesPerZone == null) ? 0 : maxInstancesPerZone.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((numberOfBackups == null) ? 0 : numberOfBackups.hashCode());
@@ -447,6 +460,11 @@ public class ProcessingUnitConfig implements ProcessingUnitConfigHolder {
             if (other.maxInstancesPerMachine != null)
                 return false;
         } else if (!maxInstancesPerMachine.equals(other.maxInstancesPerMachine))
+            return false;
+        if (requiresIsolation == null) {
+            if (other.requiresIsolation != null)
+                return false;
+        } else if (!requiresIsolation.equals(other.requiresIsolation))
             return false;
         if (maxInstancesPerVM == null) {
             if (other.maxInstancesPerVM != null)
@@ -513,6 +531,7 @@ public class ProcessingUnitConfig implements ProcessingUnitConfigHolder {
                 + (clusterSchema != null ? "clusterSchema=" + clusterSchema + ", " : "")
                 + (numberOfInstances != null ? "numberOfInstances=" + numberOfInstances + ", " : "")
                 + (numberOfBackups != null ? "numberOfBackups=" + numberOfBackups + ", " : "")
+                + (requiresIsolation != null ? "requiresIsolation=" + requiresIsolation + ", " : "")
                 + (maxInstancesPerVM != null ? "maxInstancesPerVM=" + maxInstancesPerVM + ", " : "")
                 + (maxInstancesPerMachine != null ? "maxInstancesPerMachine=" + maxInstancesPerMachine + ", " : "")
                 + (maxInstancesPerZone != null ? "maxInstancesPerZone=" + maxInstancesPerZone + ", " : "")

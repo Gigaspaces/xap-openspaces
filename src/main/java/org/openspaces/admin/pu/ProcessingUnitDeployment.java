@@ -32,9 +32,8 @@
 
 package org.openspaces.admin.pu;
 
-import java.io.File;
-import java.util.Map;
-
+import com.gigaspaces.security.directory.User;
+import com.gigaspaces.security.directory.UserDetails;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependencies;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependency;
 import org.openspaces.admin.internal.pu.dependency.ProcessingUnitDetailedDependencies;
@@ -46,8 +45,8 @@ import org.openspaces.admin.pu.dependency.ProcessingUnitDeploymentDependenciesCo
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
 
-import com.gigaspaces.security.directory.User;
-import com.gigaspaces.security.directory.UserDetails;
+import java.io.File;
+import java.util.Map;
 
 /**
  * A deployment of processing unit.
@@ -159,6 +158,16 @@ public class ProcessingUnitDeployment implements ProcessingUnitDeploymentTopolog
      */
     public ProcessingUnitDeployment numberOfBackups(int numberOfBackups) {
         config.setNumberOfBackups(numberOfBackups);
+        return this;
+    }
+
+    /**
+     * @param requiresIsolation set true if isolation is required per virtual machine. No processing unit instances can
+     *                          run on the same virtual machine. Default false.
+     * @since 10.1.0
+     */
+    public ProcessingUnitDeployment requiresIsolation(boolean requiresIsolation) {
+        config.setRequiresIsolation(requiresIsolation);
         return this;
     }
 

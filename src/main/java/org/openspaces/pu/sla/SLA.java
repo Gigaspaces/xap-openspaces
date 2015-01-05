@@ -16,20 +16,14 @@
 
 package org.openspaces.pu.sla;
 
+import com.gigaspaces.grid.zone.ZoneHelper;
 import org.openspaces.pu.sla.monitor.Monitor;
 import org.openspaces.pu.sla.requirement.Requirement;
 import org.openspaces.pu.sla.requirement.ZoneRequirement;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-
-import com.gigaspaces.grid.zone.ZoneHelper;
+import java.util.*;
 
 /**
  * A set of definitions controlling the nature of a processing unit deployment
@@ -94,6 +88,8 @@ public class SLA implements Serializable ,InitializingBean{
     private int maxInstancesPerVM;
 
     private int maxInstancesPerMachine;
+
+    private boolean requiresIsolation;
 
     private Map<String, Integer> maxInstancesPerZone = EMPTY_MAP;
 
@@ -260,6 +256,24 @@ public class SLA implements Serializable ,InitializingBean{
     public void setPrimaryZone(String primaryZone)
     {
         this.primaryZone = primaryZone;
+    }
+
+    /**
+     * @return  true if isolation is required per virtual machine. No processing unit instances can run on the same
+     * virtual machine. Default false.
+     * @since 10.1.0
+     */
+    public boolean isRequiresIsolation() {
+        return requiresIsolation;
+    }
+
+    /**
+     * @param requiresIsolation set true if isolation is required per virtual machine. No processing unit instances can
+     *                          run on the same virtual machine. Default false.
+     * @since 10.1.0
+     */
+    public void setRequiresIsolation(boolean requiresIsolation) {
+        this.requiresIsolation = requiresIsolation;
     }
 
     /**

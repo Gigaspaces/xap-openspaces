@@ -293,6 +293,14 @@
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
+            <xsd:attribute name="requires-isolation" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        true if isolation is required per virtual machine. No processing unit instances can run
+                        on the same virtual machine. Default false.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
             <xsd:attribute name="max-instances-per-zone" type="xsd:string" use="optional">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -423,7 +431,7 @@
             <xsd:element name="system">
                 <xsd:annotation>
                     <xsd:documentation>
-                        System reqreuiemtns use custom attributes specified in the processing unit container that can
+                        System requirements use custom attributes specified in the processing unit container that can
                         then be referenced by this deployment if it can be deployed to.
                     </xsd:documentation>
                 </xsd:annotation>

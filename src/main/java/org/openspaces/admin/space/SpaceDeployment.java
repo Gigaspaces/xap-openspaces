@@ -32,8 +32,7 @@
 
 package org.openspaces.admin.space;
 
-import java.io.File;
-
+import com.gigaspaces.security.directory.UserDetails;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependencies;
 import org.openspaces.admin.internal.pu.dependency.InternalProcessingUnitDependency;
 import org.openspaces.admin.internal.pu.dependency.ProcessingUnitDetailedDependencies;
@@ -44,7 +43,7 @@ import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
 import org.openspaces.admin.space.config.SpaceConfig;
 
-import com.gigaspaces.security.directory.UserDetails;
+import java.io.File;
 
 /**
  * A deployment of a pure {@link org.openspaces.admin.space.Space} processing unit (comes built in
@@ -139,6 +138,11 @@ public class SpaceDeployment implements ProcessingUnitDeploymentTopology {
      */
     public SpaceDeployment numberOfBackups(int numberOfBackups) {
         config.setNumberOfBackups(numberOfBackups);
+        return this;
+    }
+
+    public SpaceDeployment requiresIsolation(boolean requiresIsolation) {
+        config.setRequiresIsolation(requiresIsolation);
         return this;
     }
 
