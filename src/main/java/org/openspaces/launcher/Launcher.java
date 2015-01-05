@@ -75,7 +75,8 @@ public class Launcher {
         logger.info(RuntimeInfo.getShortEnvironmentInfo());
         WebLauncher webLauncher = ClassLoaderHelper.newInstance(webLauncherClass);
         webLauncher.launch(config);
-        logger.info(name + " server started on" + hostAddress == null ? "localhost" : " [" + hostAddress + "]" + " port [" + config.getPort() + "]");
+        String host = ( ( hostAddress == null ) ? "localhost" : " [" + hostAddress + "]" );
+        logger.info(name + " server started on" + host + " port [" + config.getPort() + "]");
     }
 
     private static void printHelpMessage() {
