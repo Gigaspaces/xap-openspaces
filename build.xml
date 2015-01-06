@@ -124,7 +124,7 @@
     <!--
         Generate javadoc for the main and JDK 1.5 sources.
     -->
-    <target name="javadoc" description="Generate framework Javadocs">
+    <target name="javadoc" description="Generate framework Javadocs" unless="env.minimal">
     	<echo message="${gs.product.version}" />
         <delete dir="${target.javadoc.dir}" failonerror="false"/>
         <mkdir dir="${target.javadoc.dir}"/>
