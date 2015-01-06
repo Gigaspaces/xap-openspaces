@@ -54,7 +54,7 @@ public class Launcher {
                 name = param.getArguments()[0];
             else if ("logger".equals(paramName))
             	loggerName = param.getArguments()[0];
-            else if ("hostaddress".equals(paramName)) {
+            else if ("host".equals(paramName)) {
                 hostAddress = param.getArguments()[0];
                 config.setHostAddress(hostAddress);
             }
