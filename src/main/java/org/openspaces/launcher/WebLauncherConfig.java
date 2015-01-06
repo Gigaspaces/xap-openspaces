@@ -34,6 +34,7 @@ public class WebLauncherConfig {
         this.warFilePath = System.getProperty("org.openspaces.launcher.path", null);
         //this.warFilePath = System.getProperty("org.openspaces.launcher.path", "D:\\GigaSpaces\\gigaspaces-xap-premium-10.0.0-m2\\tools\\gs-webui");
         this.tempDirPath = System.getProperty("org.openspaces.launcher.work", "./work");
+        this.hostAddress = System.getProperty("org.openspaces.launcher.host", "localhost");
     }
 
     public int getPort() {
