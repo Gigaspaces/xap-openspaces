@@ -39,7 +39,7 @@ public class Launcher {
         String name = System.getProperty("org.openspaces.launcher.name", "launcher");
         String loggerName = System.getProperty("org.openspaces.launcher.logger", "org.openspaces.launcher");
         String webLauncherClass = System.getProperty("org.openspaces.launcher.class", "org.openspaces.launcher.JettyLauncher");
-        String hostAddress = null;
+        String bindAddress = null;
 
         CommandLineParser.Parameter[] params = CommandLineParser.parse(args);
         for (CommandLineParser.Parameter param : params) {
@@ -54,9 +54,9 @@ public class Launcher {
                 name = param.getArguments()[0];
             else if ("logger".equals(paramName))
             	loggerName = param.getArguments()[0];
-            else if ("host".equals(paramName)) {
-                hostAddress = param.getArguments()[0];
-                config.setHostAddress(hostAddress);
+            else if ("bind-address".equals(paramName)) {
+                bindAddress = param.getArguments()[0];
+                config.setHostAddress(bindAddress);
             }
             else if("help".equals(paramName) || "h".equals(paramName)) {
             	printHelpMessage();
@@ -75,8 +75,7 @@ public class Launcher {
         logger.info(RuntimeInfo.getShortEnvironmentInfo());
         WebLauncher webLauncher = ClassLoaderHelper.newInstance(webLauncherClass);
         webLauncher.launch(config);
-        String host = config.getHostAddress();
-        logger.info(name + " server started on [" + host + "] port [" + config.getPort() + "]");
+        logger.info( "Starting the " + name + " server, bind address: " + config.getHostAddress() + ", port: " + config.getPort() );
     }
 
     private static void printHelpMessage() {
