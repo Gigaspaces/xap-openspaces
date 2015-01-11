@@ -28,6 +28,7 @@ import com.gigaspaces.internal.jvm.JVMStatistics;
 import com.gigaspaces.internal.os.OSDetails;
 import com.gigaspaces.internal.os.OSHelper;
 import com.gigaspaces.internal.os.OSStatistics;
+import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import com.gigaspaces.lrmi.LRMIMonitoringDetails;
 import com.gigaspaces.lrmi.nio.info.NIODetails;
 import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
@@ -48,11 +49,7 @@ import com.j_spaces.kernel.Environment;
 import net.jini.core.lookup.ServiceID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jini.rio.boot.BootUtil;
-import org.jini.rio.boot.CommonClassLoader;
-import org.jini.rio.boot.PUZipUtils;
-import org.jini.rio.boot.ServiceClassLoader;
-import org.jini.rio.boot.SharedServiceData;
+import org.jini.rio.boot.*;
 import org.jini.rio.core.JSBInstantiationException;
 import org.jini.rio.core.SLA;
 import org.jini.rio.core.ServiceLevelAgreements;
@@ -61,26 +58,16 @@ import org.jini.rio.jsb.ServiceBeanAdapter;
 import org.jini.rio.watch.Calculable;
 import org.jini.rio.watch.GaugeWatch;
 import org.jini.rio.watch.Watch;
-import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
-import org.openspaces.core.cluster.MemberAliveIndicator;
-import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
+import org.openspaces.core.cluster.*;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.core.space.SpaceType;
-import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import org.openspaces.core.util.PlaceholderReplacer;
 import org.openspaces.core.util.PlaceholderReplacer.PlaceholderResolutionException;
 import org.openspaces.interop.DotnetProcessingUnitContainer;
 import org.openspaces.interop.DotnetProcessingUnitContainerProvider;
-import org.openspaces.pu.container.CannotCreateContainerException;
-import org.openspaces.pu.container.ClassLoaderAwareProcessingUnitContainerProvider;
-import org.openspaces.pu.container.DeployableProcessingUnitContainerProvider;
-import org.openspaces.pu.container.ProcessingUnitContainer;
-import org.openspaces.pu.container.ProcessingUnitContainerProvider;
-import org.openspaces.pu.container.UndeployingEventProcessingUnitContainer;
+import org.openspaces.pu.container.*;
 import org.openspaces.pu.container.integrated.IntegratedProcessingUnitContainerProvider;
 import org.openspaces.pu.container.jee.JeeProcessingUnitContainerProvider;
 import org.openspaces.pu.container.jee.context.BootstrapWebApplicationContextListener;
@@ -90,12 +77,7 @@ import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainer
 import org.openspaces.pu.container.support.BeanLevelPropertiesUtils;
 import org.openspaces.pu.container.support.ClusterInfoParser;
 import org.openspaces.pu.container.support.WebsterFile;
-import org.openspaces.pu.service.InvocableService;
-import org.openspaces.pu.service.InvocableServiceLookupFailureException;
-import org.openspaces.pu.service.ServiceDetails;
-import org.openspaces.pu.service.ServiceDetailsProvider;
-import org.openspaces.pu.service.ServiceMonitors;
-import org.openspaces.pu.service.ServiceMonitorsProvider;
+import org.openspaces.pu.service.*;
 import org.openspaces.pu.sla.monitor.ApplicationContextMonitor;
 import org.openspaces.pu.sla.monitor.Monitor;
 import org.springframework.context.ApplicationContext;
@@ -106,37 +88,15 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -717,7 +677,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                         Environment.getHomeDirectory() + "/lib/optional/spring/spring-webmvc-4.1.1.RELEASE.jar",
                         Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-core-2.3.0.jar",
                         Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-databind-2.3.0.jar",
-                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-annotations-2.3.0.jar"
+                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-annotations-2.3.0.jar",
+                        Environment.getHomeDirectory() + "/lib/platform/rest/xap-rest.jar"
                 }));
                 ((ServiceClassLoader) contextClassLoader).setParentClassLoader(SharedServiceData.getJeeClassLoader(jeeContainer, classesToLoad));
             } catch (Exception e) {

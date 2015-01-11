@@ -1,6 +1,5 @@
 package org.openspaces.core.config;
 
-import org.openspaces.core.space.RestBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -9,7 +8,8 @@ import org.w3c.dom.Element;
 
 
 /**
- * Created by yohana on 12/9/14.
+ * @since 10.1.0
+ * @author yohana
  */
 public class RestBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private static final String GIGA_SPACE = "giga-space";
@@ -49,7 +49,7 @@ public class RestBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
     }
 
     @Override
-    protected Class<?> getBeanClass(Element element) {
-        return RestBean.class;
+    protected String getBeanClassName(Element element) {
+        return "org.openspaces.core.space.RestBean";
     }
 }
