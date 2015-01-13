@@ -13,6 +13,7 @@
             <props>
                 <prop key="rest.spaceName">dataGrid</prop>
                 <prop key="rest.port">8080</prop>
+                <prop key="rest.datetime_format">yyyy-MM-dd HH:mm:ss</prop>
             </props>
         </property>
     </bean>
@@ -20,5 +21,9 @@
     <!--
         A bean representing a rest service
     -->
-    <os-core:rest id="rest" space-name="${rest.spaceName}" port="${rest.port}" lookup-groups="${rest.lookup-groups:null}" lookup-locators="${rest.lookup-locators:null}"/>
+    <os-core:rest id="rest" space-name="${rest.spaceName}" port="${rest.port}" lookup-groups="${rest.lookup-groups:null}" lookup-locators="${rest.lookup-locators:null}">
+        <os-core:properties>
+            <props><prop key="datetime_format">${rest.datetime_format}</prop></props>
+        </os-core:properties>
+            </os-core:rest>
 </beans>

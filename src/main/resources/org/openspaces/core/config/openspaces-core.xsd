@@ -28,52 +28,78 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
-                <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="optional">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <tool:annotation kind="ref">
-                                <tool:expected-type type="org.openspaces.core.GigaSpace"/>
-                            </tool:annotation>
-                        </xsd:appinfo>
-                        <xsd:documentation>
-                            The GigaSpace which controls which Space this event container will use.
-                            You can use either giga-space or space-name attribute but you can't use both.
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-                <xsd:attribute name="port" use="required">
-                    <xsd:annotation>
-                        <xsd:documentation>
-                            The port number that the rest will be available on.
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-                <xsd:attribute name="space-name" type="xsd:string" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation>
-                            Name of the Space that the rest should connect to.
-                            You can use either space-name or giga-space attribute but you can't use both.
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-                <xsd:attribute name="lookup-groups" type="xsd:string" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation>
-                            The lookup groups to be used when looking for the specified space.
-                            Use with space-name attribute only.
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-                <xsd:attribute name="lookup-locators" type="xsd:string" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation>
-                            The lookup locators to be used when looking for the specified space.
-                            Use with space-name attribute only.
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-            </xsd:extension>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="properties" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Sets the properties the IJSpace will be created with (same as parameters). Note,
+                                    this
+                                    should not be confused with url-properties. The properties here are the ones
+                                    referred
+                                    to as custom properties and allows for example to control the xpath injection to
+                                    space schema.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element ref="beans:props"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="ref" type="xsd:string">
+                                    <xsd:annotation>
+                                        <xsd:documentation><![CDATA[
+                            A short-cut alternative to a nested "<ref bean='...'/>".
+                                        ]]></xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+                    <xsd:attribute name="giga-space" type="gigaSpaceRefType" use="optional">
+                        <xsd:annotation>
+                            <xsd:appinfo>
+                                <tool:annotation kind="ref">
+                                    <tool:expected-type type="org.openspaces.core.GigaSpace"/>
+                                </tool:annotation>
+                            </xsd:appinfo>
+                            <xsd:documentation>
+                                The GigaSpace which controls which Space this event container will use.
+                                You can use either giga-space or space-name attribute but you can't use both.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="port" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The port number that the rest will be available on.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="space-name" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Name of the Space that the rest should connect to.
+                                You can use either space-name or giga-space attribute but you can't use both.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-groups" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The lookup groups to be used when looking for the specified space.
+                                Use with space-name attribute only.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lookup-locators" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The lookup locators to be used when looking for the specified space.
+                                Use with space-name attribute only.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
@@ -114,7 +140,7 @@
                         </xsd:element>
                         <xsd:element name="all-in-cache-policy"/>
                         <xsd:element name="lru-cache-policy">
-                            <xsd:complexType >
+                            <xsd:complexType>
                                 <xsd:attribute name="size" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
@@ -138,13 +164,17 @@
                             <xsd:complexType>
                                 <xsd:attribute name="space-eviction-strategy" type="xsd:string" use="required">
                                     <xsd:annotation>
-                                        <xsd:documentation source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
-                                            The bean name which represent the space eviction strategy class you want to use
-                                            as your space eviction policy. The class should extend com.gigaspaces.server.eviction.SpaceEvictionStrategy.
+                                        <xsd:documentation
+                                                source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
+                                            The bean name which represent the space eviction strategy class you want to
+                                            use
+                                            as your space eviction policy. The class should extend
+                                            com.gigaspaces.server.eviction.SpaceEvictionStrategy.
                                         </xsd:documentation>
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
-                                                <tool:expected-type type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
+                                                <tool:expected-type
+                                                        type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -173,7 +203,8 @@
                                 <xsd:attribute name="cache-entries-percentage" type="percentage" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx configuration
+                                            Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx
+                                            configuration
                                             the cache size is 10000.
                                         </xsd:documentation>
                                     </xsd:annotation>
@@ -194,13 +225,17 @@
                                 </xsd:attribute>
                                 <xsd:attribute name="blob-store-handler" type="xsd:string" use="required">
                                     <xsd:annotation>
-                                        <xsd:documentation source="java:com.gigaspaces.server.blobstore.BlobStoreStorageHandler">
-                                            The bean name which represent the space blobstore storage implementation class you want to use.
-                                            The class should extend com.gigaspaces.server.blobstore.BlobStoreStorageHandler.
+                                        <xsd:documentation
+                                                source="java:com.gigaspaces.server.blobstore.BlobStoreStorageHandler">
+                                            The bean name which represent the space blobstore storage implementation
+                                            class you want to use.
+                                            The class should extend
+                                            com.gigaspaces.server.blobstore.BlobStoreStorageHandler.
                                         </xsd:documentation>
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
-                                                <tool:expected-type type="com.gigaspaces.server.blobstore.BlobStoreStorageHandler"/>
+                                                <tool:expected-type
+                                                        type="com.gigaspaces.server.blobstore.BlobStoreStorageHandler"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -450,7 +485,8 @@
                         <xsd:annotation>
                             <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
                                 Allows to provide a Space external data source reference.
-                                Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes instead.
+                                Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes
+                                instead.
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
@@ -545,7 +581,7 @@
                         </xsd:element>
                         <xsd:element name="all-in-cache-policy"/>
                         <xsd:element name="lru-cache-policy">
-                            <xsd:complexType >
+                            <xsd:complexType>
                                 <xsd:attribute name="size" type="xsd:string" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
@@ -569,13 +605,17 @@
                             <xsd:complexType>
                                 <xsd:attribute name="space-eviction-strategy" type="xsd:string" use="required">
                                     <xsd:annotation>
-                                        <xsd:documentation source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
-                                            The bean name which represent the space eviction strategy class you want to use
-                                            as your space eviction policy. The class should extend com.gigaspaces.server.eviction.SpaceEvictionStrategy.
+                                        <xsd:documentation
+                                                source="java:com.gigaspaces.server.eviction.SpaceEvictionStrategy">
+                                            The bean name which represent the space eviction strategy class you want to
+                                            use
+                                            as your space eviction policy. The class should extend
+                                            com.gigaspaces.server.eviction.SpaceEvictionStrategy.
                                         </xsd:documentation>
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
-                                                <tool:expected-type type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
+                                                <tool:expected-type
+                                                        type="com.gigaspaces.server.eviction.SpaceEvictionStrategy"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -604,7 +644,8 @@
                                 <xsd:attribute name="cache-entries-percentage" type="xsd:decimal" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx configuration
+                                            Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx
+                                            configuration
                                             the cache size is 10000.
                                         </xsd:documentation>
                                     </xsd:annotation>
@@ -618,13 +659,17 @@
                                 </xsd:attribute>
                                 <xsd:attribute name="blob-store-handler" type="xsd:string" use="required">
                                     <xsd:annotation>
-                                        <xsd:documentation source="java:com.j_spaces.core.cache.offHeap.OffHeapStorageHandler">
-                                            The bean name which represent the space offheap storage implementation class you want to use.
-                                            The class should extend com.j_spaces.core.cache.offHeap.OffHeapStorageHandler.
+                                        <xsd:documentation
+                                                source="java:com.j_spaces.core.cache.offHeap.OffHeapStorageHandler">
+                                            The bean name which represent the space offheap storage implementation class
+                                            you want to use.
+                                            The class should extend
+                                            com.j_spaces.core.cache.offHeap.OffHeapStorageHandler.
                                         </xsd:documentation>
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
-                                                <tool:expected-type type="com.j_spaces.core.cache.offHeap.OffHeapStorageHandler"/>
+                                                <tool:expected-type
+                                                        type="com.j_spaces.core.cache.offHeap.OffHeapStorageHandler"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -816,7 +861,8 @@
                         <xsd:annotation>
                             <xsd:documentation source="java:com.gigaspaces.datasource.ManagedDataSource">
                                 Allows to provide a Space external data source reference.
-                                Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes instead.
+                                Deprecated since 9.5 - use the 'space-data-source' and 'space-sync-endpoint' attributes
+                                instead.
                             </xsd:documentation>
                             <xsd:appinfo>
                                 <tool:annotation kind="ref">
@@ -2893,7 +2939,8 @@
                     <xsd:attribute name="blobstore-enabled" type="xsd:boolean" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
-                                Indicator whether blobstore will be enabled for this class when cache-policy is BlobStore.
+                                Indicator whether blobstore will be enabled for this class when cache-policy is
+                                BlobStore.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -2904,8 +2951,8 @@
     </xsd:element>
     <xsd:simpleType name="percentage">
         <xsd:restriction base="xsd:decimal">
-            <xsd:minInclusive value="0" />
-            <xsd:maxExclusive value="100" />
+            <xsd:minInclusive value="0"/>
+            <xsd:maxExclusive value="100"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

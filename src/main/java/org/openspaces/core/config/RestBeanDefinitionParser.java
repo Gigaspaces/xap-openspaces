@@ -4,8 +4,10 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+import java.util.Properties;
 
 /**
  * @since 10.1.0
@@ -17,6 +19,7 @@ public class RestBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
     private static final String SPACE_NAME = "space-name";
     private static final String GROUPS = "lookup-groups";
     private static final String LOCATORS = "lookup-locators";
+    private static final String PROPERTIES = "properties";
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -45,6 +48,15 @@ public class RestBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
         String port = element.getAttribute(PORT);
         if (StringUtils.hasLength(port)) {
                 builder.addPropertyValue("port", port);
+        }
+
+        Element propertiesEle = DomUtils.getChildElementByTagName(element, PROPERTIES);
+        if (propertiesEle != null) {
+            Element propsEle = DomUtils.getChildElementByTagName(propertiesEle, "props");
+            if (propsEle != null) {
+                Properties props = parserContext.getDelegate().parsePropsElement(propsEle);
+                builder.addPropertyValue("properties", props);
+            }
         }
     }
 
