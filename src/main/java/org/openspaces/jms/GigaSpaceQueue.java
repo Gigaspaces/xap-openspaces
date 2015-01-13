@@ -16,13 +16,13 @@
 
 package org.openspaces.jms;
 
-import com.j_spaces.jms.GSQueueImpl;
+import com.gigaspaces.internal.jms.JmsFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * A Spring factory bean to create {@link com.j_spaces.jms.GSQueueImpl} based on
+ * A Spring factory bean to create {@link javax.jms.Queue} based on
  * a queue name.
  *
  * @author kimchy
@@ -31,8 +31,7 @@ public class GigaSpaceQueue implements FactoryBean, InitializingBean {
 
     private String queueName;
 
-
-    private GSQueueImpl queue;
+    private Object queue;
 
     /**
      * The queue name for this JMS queue.
@@ -43,7 +42,7 @@ public class GigaSpaceQueue implements FactoryBean, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(queueName, "queueName property is required");
-        queue = new GSQueueImpl(queueName);
+        queue = JmsFactory.getInstance().createQueue(queueName);
     }
 
     public Object getObject() throws Exception {
@@ -51,7 +50,7 @@ public class GigaSpaceQueue implements FactoryBean, InitializingBean {
     }
 
     public Class getObjectType() {
-        return queue == null ? GSQueueImpl.class : queue.getClass();
+        return queue == null ? JmsFactory.getInstance().getQueueClass() : queue.getClass();
     }
 
     public boolean isSingleton() {

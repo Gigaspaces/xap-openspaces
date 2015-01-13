@@ -16,13 +16,13 @@
 
 package org.openspaces.jms;
 
-import com.j_spaces.jms.GSTopicImpl;
+import com.gigaspaces.internal.jms.JmsFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * A Spring factory bean to create {@link com.j_spaces.jms.GSTopicImpl} based on
+ * A Spring factory bean to create {@link javax.jms.Topic} based on
  * a topic name.
  *
  * @author kimchy
@@ -31,8 +31,7 @@ public class GigaSpaceTopic implements FactoryBean, InitializingBean {
 
     private String topicName;
 
-
-    private GSTopicImpl topic;
+    private Object topic;
 
     /**
      * The topic name for this JMS topic.
@@ -43,7 +42,7 @@ public class GigaSpaceTopic implements FactoryBean, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(topicName, "topicName property is required");
-        topic = new GSTopicImpl(topicName);
+        topic = JmsFactory.getInstance().createTopic(topicName);
     }
 
     public Object getObject() throws Exception {
@@ -51,7 +50,7 @@ public class GigaSpaceTopic implements FactoryBean, InitializingBean {
     }
 
     public Class getObjectType() {
-        return topic == null ? GSTopicImpl.class : topic.getClass();
+        return topic == null ? JmsFactory.getInstance().getTopicClass() : topic.getClass();
     }
 
     public boolean isSingleton() {
