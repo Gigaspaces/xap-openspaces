@@ -17,6 +17,7 @@
 package org.openspaces.core;
 
 import com.j_spaces.core.MemoryShortageException;
+import com.j_spaces.core.cache.offHeap.SpaceInternalBlobStoreMemoryShortageException;
 
 /**
  * This Exception indicates that the space server process reached
@@ -42,5 +43,10 @@ public class SpaceMemoryShortageException extends ResourceCapacityExceededExcept
 
     public String getSpaceName() {
         return e.getSpaceName();
+    }
+
+    public boolean isFromBlobStore()
+    {
+        return (e instanceof SpaceInternalBlobStoreMemoryShortageException);
     }
 }
