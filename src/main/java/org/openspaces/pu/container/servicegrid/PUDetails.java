@@ -78,21 +78,27 @@ public class PUDetails implements Externalizable {
      *         <tt>service-name</tt> [<tt>instance-id</tt>]
      */
     public String getPresentationName() {
-        String name = "null";
-        if (clusterInfo != null) {
-            name = clusterInfo.getName();
-            Integer id = clusterInfo.getInstanceId();
-            if (clusterInfo.getNumberOfBackups() > 0) {
-                Integer bid = clusterInfo.getBackupId();
-                if (bid == null) {
-                    bid = Integer.valueOf(0);
-                }
-                name += "."+id+" ["+(bid+1)+"]";
-            } else {
-                name += " ["+id+"]";
-            }
-        }
-        return name;
+        if (clusterInfo == null)
+            return "null";
+        Integer id = clusterInfo.getInstanceId();
+        if (clusterInfo.getNumberOfBackups() == 0)
+            return clusterInfo.getName() + " [" + id + "]";
+        Integer bid = clusterInfo.getBackupId();
+        if (bid == null)
+            bid = Integer.valueOf(0);
+        return clusterInfo.getName() + "." + id + " [" + (bid+1) + "]";
+    }
+
+    public String getMetricPrefix() {
+        if (clusterInfo == null)
+            return "null";
+        Integer id = clusterInfo.getInstanceId();
+        if (clusterInfo.getNumberOfBackups() == 0)
+            return clusterInfo.getName() + "." + id;
+        Integer bid = clusterInfo.getBackupId();
+        if (bid == null)
+            bid = Integer.valueOf(0);
+        return clusterInfo.getName() + "." + id + "_" + (bid+1);
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {

@@ -34,6 +34,10 @@ import com.gigaspaces.lrmi.nio.info.NIODetails;
 import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.lrmi.nio.info.NIOStatistics;
 import com.gigaspaces.management.entry.JMXConnection;
+import com.gigaspaces.metrics.Gauge;
+import com.gigaspaces.metrics.Metric;
+import com.gigaspaces.metrics.MetricManager;
+import com.gigaspaces.metrics.ServiceMetric;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
 import com.gigaspaces.start.SystemBoot;
@@ -90,6 +94,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.rmi.MarshalledObject;
@@ -108,6 +113,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     private static final Log logger = LogFactory.getLog(PUServiceBeanImpl.class);
 
     private volatile ProcessingUnitContainer container;
+
+    private MetricManager metricManager;
+
+    private String puMetricPrefix;
 
     private int clusterGroup;
 
@@ -177,6 +186,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         String springXML = (String) context.getInitParameter("pu");
+        metricManager = MetricManager.acquire();
         clusterGroup = Integer.parseInt((String) context.getInitParameter("clusterGroup"));
         String sInstanceId = (String) context.getInitParameter("instanceId");
         if (sInstanceId != null) {
@@ -754,6 +764,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         buildInvocableServices();
 
         this.puDetails = new PUDetails(context.getParentServiceID(), clusterInfo, beanLevelProperties, serviceDetails.toArray(new Object[serviceDetails.size()]));
+        this.puMetricPrefix = "pu." + puDetails.getMetricPrefix() + ".";
+
+        buildMetrics();
 
         if (container instanceof ApplicationContextProcessingUnitContainer) {
             ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
@@ -772,6 +785,76 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 executorService.scheduleAtFixedRate(watchTask, watchTask.getMonitor().getPeriod(), watchTask.getMonitor().getPeriod(), TimeUnit.MILLISECONDS);
             }
         }
+    }
+
+    private void buildMetrics() {
+        if (container instanceof ApplicationContextProcessingUnitContainer) {
+            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
+            for (String beanName : applicationContext.getBeanDefinitionNames()) {
+                Object bean = applicationContext.getBean(beanName);
+                Class<?> objClz = bean.getClass();
+                if (logger.isDebugEnabled())
+                    logger.debug("Scanning Bean " + beanName + " [class " + objClz.getName() + "] for @ServiceMetric methods");
+                for (Method m : objClz.getDeclaredMethods()) {
+                    ServiceMetric annotation = m.getAnnotation(ServiceMetric.class);
+                    if (annotation != null)
+                        processMetricMethod(beanName, bean, m, annotation);
+                }
+            }
+        }
+    }
+
+    private void processMetricMethod(String beanName, Object bean, Method method, ServiceMetric annotation) {
+        if (logger.isDebugEnabled())
+            logger.debug("Bean " + beanName + " [class " + bean.getClass().getName() + "] has metric method " + method.getName());
+
+        final Metric metric = getMetricFromMethod(method, bean);
+        if (metric != null) {
+            String name = puMetricPrefix + annotation.name();
+            if (logger.isDebugEnabled())
+                logger.debug("Registering ServiceMetric '" + name + "' => " + metric);
+            metricManager.register(name, metric);
+        }
+    }
+
+    private static Metric getMetricFromMethod(final Method method, final Object bean) {
+        if (method.getParameters().length != 0) {
+            if (logger.isWarnEnabled())
+                logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName()+
+                        " is skipped - metric method cannot have parameters");
+            return null;
+        }
+        if (method.getReturnType().equals(Void.TYPE)) {
+            if (logger.isWarnEnabled())
+                logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
+                        " is skipped - metric method cannot return void");
+            return null;
+        }
+
+        // TODO: Check not static
+
+        if (Metric.class.isAssignableFrom(method.getReturnType())) {
+            try {
+                return (Metric) method.invoke(bean);
+            } catch (IllegalAccessException e) {
+                if (logger.isWarnEnabled())
+                    logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
+                            " is skipped - failed to get metric - " + e.getMessage());
+                return null;
+            } catch (InvocationTargetException e) {
+                if (logger.isWarnEnabled())
+                    logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
+                            " is skipped - failed to get metric - " + e.getMessage());
+                return null;
+            }
+        }
+
+        return new Gauge<Object>() {
+            @Override
+            public Object getValue() throws Exception {
+                return method.invoke(bean);
+            }
+        };
     }
 
     private long copyPu(String puPath, File puWorkFolder) throws IOException {
@@ -1091,6 +1174,11 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private void stopPU() {
+        if (metricManager != null) {
+            metricManager.unregisterMetricsByPrefix(puMetricPrefix);
+            metricManager.close();
+        }
+
         // make sure to clean shared services
         if (clusterInfo != null) {
             SharedServiceData.removeWebAppClassLoader(clusterInfo.getUniqueName());
