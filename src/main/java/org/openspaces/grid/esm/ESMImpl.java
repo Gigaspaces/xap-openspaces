@@ -156,7 +156,7 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
      */
     public ESMImpl() throws Exception {
         super();
-        this.metricManager = MetricManager.initialize("esm");
+        this.metricManager = MetricManager.acquire();
         nonBlockingAdapterFactory = new NonBlockingElasticMachineProvisioningAdapterFactory();        
         scaleBeanServerPerProcessingUnit = new HashMap<ProcessingUnit,ScaleBeanServer>();
         elasticPropertiesPerProcessingUnit = new ConcurrentHashMap<String, Map<String,String>>();
