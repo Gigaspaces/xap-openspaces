@@ -96,6 +96,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.*;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
@@ -831,7 +832,12 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             return null;
         }
 
-        // TODO: Check not static
+        if (Modifier.isStatic(method.getModifiers())) {
+            if (logger.isWarnEnabled())
+                logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
+                        " is skipped - metric method cannot be static");
+            return null;
+        }
 
         if (Metric.class.isAssignableFrom(method.getReturnType())) {
             try {
