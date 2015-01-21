@@ -29,8 +29,4 @@
     <os-core:embedded-space id="space" name="${dataGridName}">
     </os-core:embedded-space>
 
-    <os-sla:sla cluster-schema="partitioned-sync2backup"
-                number-of-instances="2" number-of-backups="0" max-instances-per-vm="1" requires-isolation="true">
-    </os-sla:sla>
-
 </beans>
