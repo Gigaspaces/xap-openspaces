@@ -17,15 +17,10 @@
  ******************************************************************************/
 package org.openspaces.maven.support;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
+import com.j_spaces.kernel.PlatformVersion;
 import org.springframework.core.JdkVersion;
 
-import com.j_spaces.kernel.PlatformVersion;
+import java.io.*;
 
 /**
  * @author kimchy
@@ -36,7 +31,7 @@ public class POMGenerator {
 	public static final String GS_GROUP = "com.gigaspaces";
     public static final String CLOUDIFY_GROUP = "org.cloudifysource";
     private static final String SPRING_GROUP = "org.springframework";
-    public static final String SPRING_VERSION = "3.2.4.RELEASE";
+    public static final String SPRING_VERSION = "4.1.1.RELEASE";
     public static final String SPRING_SECURITY_VERSION = "3.1.4.RELEASE";
     public static final String SPRING_LDAP_VERSION = "1.3.2.RELEASE";
 	private static final String SPRING_SECURITY_GROUP = "org.springframework.security";
