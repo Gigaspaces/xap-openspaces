@@ -1237,9 +1237,6 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     @Override
     public void undeployEvent() {
         super.undeployEvent();
-        if (container instanceof UndeployingEventProcessingUnitContainer) {
-            ((UndeployingEventProcessingUnitContainer) container).processingUnitUndeploying();
-        }
         for (Callable c : undeployingEventListeners) {
             try {
                 c.call();
