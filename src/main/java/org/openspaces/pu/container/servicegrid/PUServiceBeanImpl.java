@@ -450,7 +450,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             beanLevelProperties.getContextProperties().setProperty("jee.deployPath", deployPath.getAbsolutePath());
             beanLevelProperties.getContextProperties().setProperty("dotnet.deployPath", deployPath.getAbsolutePath());
 
-            beanLevelProperties.getContextProperties().setProperty(DeployableProcessingUnitContainerProvider.CONTEXT_PROPERTY_DEPLOY_PATH, deployPath.getAbsolutePath());
+            beanLevelProperties.getContextProperties().setProperty(ProcessingUnitContainerProvider.CONTEXT_PROPERTY_DEPLOY_PATH, deployPath.getAbsolutePath());
 
             try {
                 if (isOnGsmHost()) {
@@ -709,16 +709,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         factory = createContainerProvider(processingUnitContainerProviderClass);
-        if (factory instanceof DeployableProcessingUnitContainerProvider) {
-            ((DeployableProcessingUnitContainerProvider) factory).setDeployPath(deployPath);
-        }
-        if (factory instanceof ClassLoaderAwareProcessingUnitContainerProvider) {
-            ((ClassLoaderAwareProcessingUnitContainerProvider) factory).setClassLoader(contextClassLoader);
-        }
-        if (factory instanceof JeeProcessingUnitContainerProvider) {
-            ((JeeProcessingUnitContainerProvider) factory).setManifestUrls(manifestClassPathJars);
-        }
-        
+        factory.setDeployPath(deployPath);
+        factory.setClassLoader(contextClassLoader);
+        factory.setManifestUrls(manifestClassPathJars);
+
         // only load the spring xml file if it is not a web application (if it is a web application, we will load it with the Bootstrap servlet context loader)
         if (webXml == null && factory instanceof ApplicationContextProcessingUnitContainerProvider) {
             if (StringUtils.hasText(springXml)) {
@@ -737,12 +731,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 ((ApplicationContextProcessingUnitContainerProvider) factory).addConfigLocation(resource);
             }
         }
-        if (factory instanceof ClusterInfoAware) {
-            ((ClusterInfoAware) factory).setClusterInfo(clusterInfo);
-        }
-        if (factory instanceof BeanLevelPropertiesAware) {
-            ((BeanLevelPropertiesAware) factory).setBeanLevelProperties(beanLevelProperties);
-        }
+        factory.setClusterInfo(clusterInfo);
+        factory.setBeanLevelProperties(beanLevelProperties);
 
         container = factory.createContainer();
 

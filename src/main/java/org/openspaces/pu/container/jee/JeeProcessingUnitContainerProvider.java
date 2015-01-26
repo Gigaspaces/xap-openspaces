@@ -18,14 +18,11 @@ package org.openspaces.pu.container.jee;
 
 import com.gigaspaces.start.Locator;
 import org.jini.rio.boot.SharedServiceData;
-import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
 import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
 import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
-import org.openspaces.pu.container.DeployableProcessingUnitContainerProvider;
-import org.openspaces.pu.container.ManifestClasspathAwareProcessingUnitContainerProvider;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainerProvider;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -44,10 +41,7 @@ import java.util.List;
  *
  * @author kimchy
  */
-public abstract class JeeProcessingUnitContainerProvider implements
-    ApplicationContextProcessingUnitContainerProvider, 
-    DeployableProcessingUnitContainerProvider,
-    ManifestClasspathAwareProcessingUnitContainerProvider {
+public abstract class JeeProcessingUnitContainerProvider extends ApplicationContextProcessingUnitContainerProvider {
 
     /**
      * The {@link javax.servlet.ServletContext} key under which the {@link org.openspaces.core.cluster.ClusterInfo}
@@ -71,10 +65,6 @@ public abstract class JeeProcessingUnitContainerProvider implements
 
     public static final String DEFAULT_JEE_CONTAINER = "jetty";
 
-    private BeanLevelProperties beanLevelProperties;
-
-    private ClusterInfo clusterInfo;
-
     private ClassLoader classLoader;
 
     private File deployPath;
@@ -93,37 +83,6 @@ public abstract class JeeProcessingUnitContainerProvider implements
 
     public void setManifestUrls(Iterable<URL> manifestURLs) {
         this.manifestURLs = manifestURLs;
-    }
-
-    /**
-     * Sets the {@link org.openspaces.core.properties.BeanLevelProperties} that will be used to
-     * configure this processing unit. When constructing the container this provider will
-     * automatically add to the application context both
-     * {@link org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor} and
-     * {@link org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer} based on this
-     * bean level properties.
-     */
-    public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
-        this.beanLevelProperties = beanLevelProperties;
-    }
-
-    public BeanLevelProperties getBeanLevelProperties() {
-        return beanLevelProperties;
-    }
-
-    /**
-     * Sets the {@link org.openspaces.core.cluster.ClusterInfo} that will be used to configure this
-     * processing unit. When constructing the container this provider will automatically add to the
-     * application context the {@link org.openspaces.core.cluster.ClusterInfoBeanPostProcessor} in
-     * order to allow injection of cluster info into beans that implement
-     * {@link org.openspaces.core.cluster.ClusterInfoAware}.
-     */
-    public void setClusterInfo(ClusterInfo clusterInfo) {
-        this.clusterInfo = clusterInfo;
-    }
-
-    public ClusterInfo getClusterInfo() {
-        return clusterInfo;
     }
 
     /**

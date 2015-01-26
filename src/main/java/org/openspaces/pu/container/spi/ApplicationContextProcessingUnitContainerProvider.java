@@ -16,9 +16,6 @@
 
 package org.openspaces.pu.container.spi;
 
-import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.properties.BeanLevelPropertiesAware;
-import org.openspaces.pu.container.ClassLoaderAwareProcessingUnitContainerProvider;
 import org.openspaces.pu.container.ProcessingUnitContainerProvider;
 import org.springframework.core.io.Resource;
 
@@ -27,14 +24,13 @@ import java.io.IOException;
 /**
  * @author kimchy
  */
-public interface ApplicationContextProcessingUnitContainerProvider extends ProcessingUnitContainerProvider,
-        ClusterInfoAware, BeanLevelPropertiesAware, ClassLoaderAwareProcessingUnitContainerProvider {
+public abstract class ApplicationContextProcessingUnitContainerProvider extends ProcessingUnitContainerProvider {
 
-    static final String DEFAULT_PU_CONTEXT_LOCATION = "classpath*:/META-INF/spring/pu.xml";
+    public static final String DEFAULT_PU_CONTEXT_LOCATION = "classpath*:/META-INF/spring/pu.xml";
     
-    static final String DEFAULT_FS_PU_CONTEXT_LOCATION = "META-INF/spring/pu.xml";
+    protected static final String DEFAULT_FS_PU_CONTEXT_LOCATION = "META-INF/spring/pu.xml";
     
-    void addConfigLocation(String configLocation) throws IOException;
+    public abstract void addConfigLocation(String configLocation) throws IOException;
 
-    void addConfigLocation(Resource resource) throws IOException;
+    public abstract void addConfigLocation(Resource resource) throws IOException;
 }

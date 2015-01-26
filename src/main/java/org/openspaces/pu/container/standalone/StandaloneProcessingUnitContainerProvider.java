@@ -19,7 +19,6 @@ package org.openspaces.pu.container.standalone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainerProvider;
@@ -79,18 +78,13 @@ import java.util.jar.JarFile;
  *
  * @author kimchy
  */
-public class StandaloneProcessingUnitContainerProvider implements ApplicationContextProcessingUnitContainerProvider {
+public class StandaloneProcessingUnitContainerProvider extends ApplicationContextProcessingUnitContainerProvider {
 
     private static Log logger = LogFactory.getLog(StandaloneProcessingUnitContainerProvider.class);
 
     private String location;
 
     private List<String> configLocations = new ArrayList<String>();
-
-    private BeanLevelProperties beanLevelProperties;
-
-    private ClusterInfo clusterInfo;
-
 
     private boolean addedSharedLibToClassLoader = false;
 
@@ -106,29 +100,6 @@ public class StandaloneProcessingUnitContainerProvider implements ApplicationCon
     }
 
     /**
-     * Sets the {@link org.openspaces.core.properties.BeanLevelProperties} that will be used to
-     * configure this processing unit. When constructing the container this provider will
-     * automatically add to the application context both
-     * {@link org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor} and
-     * {@link org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer} based on this
-     * bean level properties.
-     */
-    public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
-        this.beanLevelProperties = beanLevelProperties;
-    }
-
-    /**
-     * Sets the {@link org.openspaces.core.cluster.ClusterInfo} that will be used to configure this
-     * processing unit. When constructing the container this provider will automatically add to the
-     * application context the {@link org.openspaces.core.cluster.ClusterInfoBeanPostProcessor} in
-     * order to allow injection of cluster info into beans that implement
-     * {@link org.openspaces.core.cluster.ClusterInfoAware}.
-     */
-    public void setClusterInfo(ClusterInfo clusterInfo) {
-        this.clusterInfo = clusterInfo;
-    }
-
-    /**
      * Adds a config location based on a String description using Springs
      * {@link org.springframework.core.io.support.PathMatchingResourcePatternResolver}.
      *
@@ -140,10 +111,6 @@ public class StandaloneProcessingUnitContainerProvider implements ApplicationCon
 
     public void addConfigLocation(Resource resource) throws IOException {
         throw new UnsupportedOperationException();
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        // do nothing here
     }
 
     /**
@@ -183,6 +150,7 @@ public class StandaloneProcessingUnitContainerProvider implements ApplicationCon
         }
 
         // in case we don't have a cluster info specific members
+        final ClusterInfo clusterInfo = getClusterInfo();
         if (clusterInfo != null && clusterInfo.getInstanceId() == null) {
             ClusterInfo origClusterInfo = clusterInfo;
             List<ProcessingUnitContainer> containers = new ArrayList<ProcessingUnitContainer>();
@@ -318,7 +286,7 @@ public class StandaloneProcessingUnitContainerProvider implements ApplicationCon
 
         addUrlsToContextClassLoader(allUrls.toArray(new URL[allUrls.size()]));
 
-        StandaloneContainerRunnable containerRunnable = new StandaloneContainerRunnable(beanLevelProperties,
+        StandaloneContainerRunnable containerRunnable = new StandaloneContainerRunnable(getBeanLevelProperties(),
                 clusterInfo, configLocations);
         Thread standaloneContainerThread = new Thread(containerRunnable, "Standalone Container Thread");
         standaloneContainerThread.setDaemon(false);

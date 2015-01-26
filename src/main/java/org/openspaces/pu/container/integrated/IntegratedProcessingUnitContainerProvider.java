@@ -69,17 +69,13 @@ import com.j_spaces.core.client.SpaceURL;
  *
  * @author kimchy
  */
-public class IntegratedProcessingUnitContainerProvider implements ApplicationContextProcessingUnitContainerProvider {
+public class IntegratedProcessingUnitContainerProvider extends ApplicationContextProcessingUnitContainerProvider {
 
     private static final Log logger = LogFactory.getLog(IntegratedProcessingUnitContainerProvider.class);
 
     private ApplicationContext parentContext;
 
     private final List<Resource> configResources = new ArrayList<Resource>();
-
-    private BeanLevelProperties beanLevelProperties;
-
-    private ClusterInfo clusterInfo;
 
     private ClassLoader classLoader;
     
@@ -93,29 +89,6 @@ public class IntegratedProcessingUnitContainerProvider implements ApplicationCon
      */
     public void setParentContext(ApplicationContext parentContext) {
         this.parentContext = parentContext;
-    }
-
-    /**
-     * Sets the {@link org.openspaces.core.properties.BeanLevelProperties} that will be used to
-     * configure this processing unit. When constructing the container this provider will
-     * automatically add to the application context both
-     * {@link org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor} and
-     * {@link org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer} based on this
-     * bean level properties.
-     */
-    public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
-        this.beanLevelProperties = beanLevelProperties;
-    }
-
-    /**
-     * Sets the {@link org.openspaces.core.cluster.ClusterInfo} that will be used to configure this
-     * processing unit. When constructing the container this provider will automatically add to the
-     * application context the {@link org.openspaces.core.cluster.ClusterInfoBeanPostProcessor} in
-     * order to allow injection of cluster info into beans that implement
-     * {@link org.openspaces.core.cluster.ClusterInfoAware}.
-     */
-    public void setClusterInfo(ClusterInfo clusterInfo) {
-        this.clusterInfo = clusterInfo;
     }
 
     /**
@@ -226,6 +199,8 @@ public class IntegratedProcessingUnitContainerProvider implements ApplicationCon
                 throw new CannotCreateContainerException("Failed to read config files from " + DEFAULT_PU_CONTEXT_LOCATION, e);
             }
         }
+
+        final ClusterInfo clusterInfo = getClusterInfo();
         if (clusterInfo != null) {
             ClusterInfoParser.guessSchema(clusterInfo);
         }
@@ -254,6 +229,7 @@ public class IntegratedProcessingUnitContainerProvider implements ApplicationCon
         }
 
         // handle security
+        final BeanLevelProperties beanLevelProperties = getBeanLevelProperties();
         if (credentialsProvider != null) {
             try {
                 CredentialsProviderHelper.appendMarshalledCredentials(beanLevelProperties.getContextProperties(), null, credentialsProvider);

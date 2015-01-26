@@ -32,7 +32,7 @@ import org.openspaces.events.notify.NotifyEventContainerServiceDetails;
 import org.openspaces.events.notify.NotifyEventContainerServiceMonitors;
 import org.openspaces.events.polling.PollingEventContainerServiceDetails;
 import org.openspaces.events.polling.PollingEventContainerServiceMonitors;
-import org.openspaces.pu.container.DeployableProcessingUnitContainerProvider;
+import org.openspaces.pu.container.ProcessingUnitContainerProvider;
 import org.openspaces.pu.service.CustomServiceDetails;
 import org.openspaces.pu.service.CustomServiceMonitors;
 import org.openspaces.pu.service.ServiceDetails;
@@ -135,10 +135,10 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
         //Try to get deployment path if not set, relevant for interop pu scenario.
         if (this.deploymentPath == null && beanLevelProperties != null)
         {
-            this.deploymentPath = beanLevelProperties.getContextProperties().getProperty(DeployableProcessingUnitContainerProvider.CONTEXT_PROPERTY_DEPLOY_PATH);            
+            this.deploymentPath = beanLevelProperties.getContextProperties().getProperty(ProcessingUnitContainerProvider.CONTEXT_PROPERTY_DEPLOY_PATH);
         }
         if (deploymentPath != null)
-            log.info("Deployment path taken from " + DeployableProcessingUnitContainerProvider.CONTEXT_PROPERTY_DEPLOY_PATH + " property (" + this.deploymentPath + ")");
+            log.info("Deployment path taken from " + ProcessingUnitContainerProvider.CONTEXT_PROPERTY_DEPLOY_PATH + " property (" + this.deploymentPath + ")");
         
         //Merge beanLevelProperties with custom properties
         if (this.beanLevelProperties != null)

@@ -16,6 +16,14 @@
 
 package org.openspaces.pu.container;
 
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.properties.BeanLevelProperties;
+import org.openspaces.core.properties.BeanLevelPropertiesAware;
+
+import java.io.File;
+import java.net.URL;
+
 /**
  * A processing unit container provider is responsible for creating
  * {@link org.openspaces.pu.container.ProcessingUnitContainer}. Usually concrete implementation
@@ -23,15 +31,49 @@ package org.openspaces.pu.container;
  * 
  * @author kimchy
  */
-public interface ProcessingUnitContainerProvider {
+public abstract class ProcessingUnitContainerProvider implements ClusterInfoAware, BeanLevelPropertiesAware {
 
     public static final String CONTAINER_CLASS_PROP = "pu.container.class";
-    
+    public static final String CONTEXT_PROPERTY_DEPLOY_PATH = "deployPath";
+
+    private ClusterInfo clusterInfo;
+    private BeanLevelProperties beanLevelProperties;
+
     /**
      * Creates a processing unit container.
      * 
      * @return A newly created processing unit container.
      * @throws CannotCreateContainerException
      */
-    ProcessingUnitContainer createContainer() throws CannotCreateContainerException;
+    public abstract ProcessingUnitContainer createContainer() throws CannotCreateContainerException;
+
+    /**
+     * Sets the path where the processing unit deployment was extracted to.
+     */
+    public void setDeployPath(File deployPath) {
+    }
+
+    public void setManifestUrls(Iterable<URL> libs) {
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+    }
+
+    public ClusterInfo getClusterInfo() {
+        return clusterInfo;
+    }
+
+    @Override
+    public void setClusterInfo(ClusterInfo clusterInfo) {
+        this.clusterInfo = clusterInfo;
+    }
+
+    public BeanLevelProperties getBeanLevelProperties() {
+        return beanLevelProperties;
+    }
+
+    @Override
+    public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
+        this.beanLevelProperties = beanLevelProperties;
+    }
 }
