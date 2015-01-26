@@ -34,7 +34,7 @@ import java.util.Collection;
  * @author kimchy
  * @since 6.6
  */
-public class DotnetProcessingUnitContainer implements ProcessingUnitContainer, ServiceDetailsProvider, ServiceMonitorsProvider {
+public class DotnetProcessingUnitContainer extends ProcessingUnitContainer implements ServiceDetailsProvider, ServiceMonitorsProvider {
        
     private DotnetProcessingUnitBean dotnetProcessingUnitBean;
     
@@ -49,12 +49,14 @@ public class DotnetProcessingUnitContainer implements ProcessingUnitContainer, S
         } 
     }
 
+    @Override
     public void close() throws CannotCloseContainerException {
         try {
             dotnetProcessingUnitBean.destroy();
         } catch (Exception e) {
             throw new CannotCloseContainerException(e.getMessage(), e);
         }
+        super.close();
     }
     
     public ServiceDetails[] getServicesDetails() {

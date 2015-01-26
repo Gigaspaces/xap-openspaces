@@ -25,6 +25,6 @@ import org.openspaces.pu.service.ServiceDetailsProvider;
  *
  * @author kimchy
  */
-public interface JeeProcessingUnitContainer extends ApplicationContextProcessingUnitContainer, ServiceDetailsProvider {
+public abstract class JeeProcessingUnitContainer extends ApplicationContextProcessingUnitContainer implements ServiceDetailsProvider {
 
 }

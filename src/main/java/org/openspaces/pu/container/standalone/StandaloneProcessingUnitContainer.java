@@ -42,7 +42,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @author kimchy
  */
-public class StandaloneProcessingUnitContainer implements ApplicationContextProcessingUnitContainer {
+public class StandaloneProcessingUnitContainer extends ApplicationContextProcessingUnitContainer {
 
     private static final Log logger = LogFactory.getLog(StandaloneProcessingUnitContainer.class);
 
@@ -56,9 +56,11 @@ public class StandaloneProcessingUnitContainer implements ApplicationContextProc
         return this.containerRunnable.getApplicationContext();
     }
 
+    @Override
     public void close() throws CannotCloseContainerException {
         containerRunnable.stop();
         // TODO wait till it shuts down
+        super.close();
     }
 
     /**

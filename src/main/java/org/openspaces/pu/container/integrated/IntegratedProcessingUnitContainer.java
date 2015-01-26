@@ -50,7 +50,7 @@ import java.util.Arrays;
  *
  * @author kimchy
  */
-public class IntegratedProcessingUnitContainer implements ApplicationContextProcessingUnitContainer {
+public class IntegratedProcessingUnitContainer extends ApplicationContextProcessingUnitContainer {
 
     private static final Log logger = LogFactory.getLog(IntegratedProcessingUnitContainer.class);
 
@@ -74,6 +74,7 @@ public class IntegratedProcessingUnitContainer implements ApplicationContextProc
     /**
      * Closes the processing unit container by destroying the Spring application context.
      */
+    @Override
     public void close() throws CannotCloseContainerException {
         if (applicationContext instanceof DisposableBean) {
             try {
@@ -83,6 +84,7 @@ public class IntegratedProcessingUnitContainer implements ApplicationContextProc
                         + applicationContext + "]", e);
             }
         }
+        super.close();
     }
 
     /**

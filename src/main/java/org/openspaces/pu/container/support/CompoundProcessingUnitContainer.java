@@ -25,7 +25,7 @@ import org.openspaces.pu.container.ProcessingUnitContainer;
  *
  * @author kimchy
  */
-public class CompoundProcessingUnitContainer implements ProcessingUnitContainer {
+public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
 
     private final ProcessingUnitContainer[] containers;
 
@@ -41,9 +41,11 @@ public class CompoundProcessingUnitContainer implements ProcessingUnitContainer 
         return containers;
     }
 
+    @Override
     public void close() throws CannotCloseContainerException {
         for (ProcessingUnitContainer container : containers) {
             container.close();
         }
+        super.close();
     }
 }

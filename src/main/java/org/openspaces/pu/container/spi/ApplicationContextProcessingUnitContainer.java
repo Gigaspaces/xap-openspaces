@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContext;
  * 
  * @author kimchy
  */
-public interface ApplicationContextProcessingUnitContainer extends ProcessingUnitContainer {
+public abstract class ApplicationContextProcessingUnitContainer extends ProcessingUnitContainer {
 
-    ApplicationContext getApplicationContext();
+    public abstract ApplicationContext getApplicationContext();
 }

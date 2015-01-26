@@ -21,12 +21,13 @@ package org.openspaces.pu.container;
  *
  * @author kimchy
  */
-public interface ProcessingUnitContainer {
+public abstract class ProcessingUnitContainer {
 
     /**
      * Closes the given processing unit container.
      *
      * @throws CannotCloseContainerException
      */
-    void close() throws CannotCloseContainerException;
+    public void close() throws CannotCloseContainerException {
+    }
 }
