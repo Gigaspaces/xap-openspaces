@@ -41,17 +41,15 @@ public class DefaultSpaceInstanceTransactionDetails implements SpaceInstanceTran
     
     @Override
     public int getActiveTransactionCount() {
-        int count = 0;
         IInternalRemoteJSpaceAdmin spaceAdmin = defaultSpaceInstance.getSpaceAdmin();
         if (spaceAdmin != null) {
             try {
-                TransactionInfo[] transactionsInfo = spaceAdmin.getTransactionsInfo(TransactionInfo.Types.ALL, TransactionConstants.ACTIVE);
-                count = transactionsInfo.length;
+                return spaceAdmin.countTransactions(TransactionInfo.Types.ALL, TransactionConstants.ACTIVE);
             } catch (RemoteException e) {
                 logger.debug("RemoteException caught while trying to get Space transaction information from "
                         + defaultSpaceInstance.getSpaceName(), e);
             }
         }
-        return count;
+        return 0;
     }
 }
