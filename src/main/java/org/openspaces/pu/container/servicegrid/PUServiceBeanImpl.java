@@ -64,7 +64,6 @@ import org.jini.rio.watch.GaugeWatch;
 import org.jini.rio.watch.Watch;
 import org.openspaces.core.cluster.*;
 import org.openspaces.core.properties.BeanLevelProperties;
-import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.core.space.SpaceType;
 import org.openspaces.core.util.PlaceholderReplacer;
@@ -117,7 +116,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private MetricManager metricManager;
 
-    private String puMetricPrefix;
+    private String metricsPuPrefix;
 
     private int clusterGroup;
 
@@ -708,6 +707,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
         }
 
+        this.metricsPuPrefix = "pu." + buildMetricsPrefix(clusterInfo) + ".";
+        beanLevelProperties.getContextProperties().setProperty("metrics.pu-prefix", metricsPuPrefix);
+
         factory = createContainerProvider(processingUnitContainerProviderClass);
         factory.setDeployPath(deployPath);
         factory.setClassLoader(contextClassLoader);
@@ -754,10 +756,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
         buildInvocableServices();
 
-        this.puDetails = new PUDetails(context.getParentServiceID(), clusterInfo, beanLevelProperties, serviceDetails.toArray(new Object[serviceDetails.size()]));
-        this.puMetricPrefix = "pu." + puDetails.getMetricPrefix() + ".";
-
         buildMetrics();
+
+        this.puDetails = new PUDetails(context.getParentServiceID(), clusterInfo, beanLevelProperties, serviceDetails.toArray(new Object[serviceDetails.size()]));
 
         if (container instanceof ApplicationContextProcessingUnitContainer) {
             ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
@@ -777,6 +778,19 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             }
         }
     }
+
+    private static String buildMetricsPrefix(ClusterInfo clusterInfo) {
+        if (clusterInfo == null)
+            return "null";
+        Integer id = clusterInfo.getInstanceId();
+        if (clusterInfo.getNumberOfBackups() == 0)
+            return clusterInfo.getName() + "." + id;
+        Integer bid = clusterInfo.getBackupId();
+        if (bid == null)
+            bid = Integer.valueOf(0);
+        return clusterInfo.getName() + "." + id + "_" + (bid+1);
+    }
+
 
     private void buildMetrics() {
         if (container instanceof ApplicationContextProcessingUnitContainer) {
@@ -801,7 +815,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
         final Metric metric = getMetricFromMethod(method, bean);
         if (metric != null) {
-            String name = puMetricPrefix + annotation.name();
+            String name = metricsPuPrefix + annotation.name();
             if (logger.isDebugEnabled())
                 logger.debug("Registering ServiceMetric '" + name + "' => " + metric);
             metricManager.register(name, metric);
@@ -1171,7 +1185,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private void stopPU() {
         if (metricManager != null) {
-            metricManager.unregisterMetricsByPrefix(puMetricPrefix);
+            metricManager.unregisterMetricsByPrefix(metricsPuPrefix);
             metricManager.close();
         }
 

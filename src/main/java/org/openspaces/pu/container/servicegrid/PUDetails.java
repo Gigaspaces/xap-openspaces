@@ -89,18 +89,6 @@ public class PUDetails implements Externalizable {
         return clusterInfo.getName() + "." + id + " [" + (bid+1) + "]";
     }
 
-    public String getMetricPrefix() {
-        if (clusterInfo == null)
-            return "null";
-        Integer id = clusterInfo.getInstanceId();
-        if (clusterInfo.getNumberOfBackups() == 0)
-            return clusterInfo.getName() + "." + id;
-        Integer bid = clusterInfo.getBackupId();
-        if (bid == null)
-            bid = Integer.valueOf(0);
-        return clusterInfo.getName() + "." + id + "_" + (bid+1);
-    }
-
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(gscServiceID);
         out.writeObject(clusterInfo);
