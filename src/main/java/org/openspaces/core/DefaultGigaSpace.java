@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;
 
+import com.gigaspaces.client.iterator.SpaceIterator;
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.DataEventSessionFactory;
 import com.gigaspaces.events.EventSessionConfig;
@@ -1514,6 +1515,44 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     
     public IteratorBuilder iterator() {
         return new IteratorBuilder(this);
+    }
+
+    @Override
+    public <T> SpaceIterator<T> iterator(T template) {
+        return iterator(template, SpaceIterator.getDefaultBatchSize(), getDefaultReadModifiers());
+    }
+
+    @Override
+    public <T> SpaceIterator<T> iterator(T template, int batchSize) {
+        return iterator(template, batchSize, getDefaultReadModifiers());
+    }
+
+    @Override
+    public <T> SpaceIterator<T> iterator(T template, int batchSize, ReadModifiers modifiers) {
+        try {
+            return new SpaceIterator<T>(space, template, getCurrentTransaction(), batchSize, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+
+    @Override
+    public <T> SpaceIterator<T> iterator(ISpaceQuery<T> template) {
+        return iterator(template, SpaceIterator.getDefaultBatchSize(), getDefaultReadModifiers());
+    }
+
+    @Override
+    public <T> SpaceIterator<T> iterator(ISpaceQuery<T> template, int batchSize) {
+        return iterator(template, batchSize, getDefaultReadModifiers());
+    }
+
+    @Override
+    public <T> SpaceIterator<T> iterator(ISpaceQuery<T> template, int batchSize, ReadModifiers modifiers) {
+        try {
+            return new SpaceIterator<T>(space, template, getCurrentTransaction(), batchSize, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
     }
 
     public <T extends Serializable> AsyncFuture<T> execute(Task<T> task) {

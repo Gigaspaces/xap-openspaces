@@ -19,6 +19,7 @@ package org.openspaces.core;
 import java.io.Serializable;
 import java.util.concurrent.Future;
 
+import com.gigaspaces.client.iterator.SpaceIterator;
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.EventSessionConfig;
 import com.gigaspaces.query.aggregators.AggregationResult;
@@ -2558,6 +2559,69 @@ public interface GigaSpace {
      * over the Space.
      */
     IteratorBuilder iterator();
+
+    /**
+     * Returns an iterator over the entries in the space which match the specified template.
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @return An iterator over the entries which match the template.
+     */
+    <T> SpaceIterator<T> iterator(T template);
+
+    /**
+     * Returns an iterator over the entries in the space which match the specified template.
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param batchSize Maximum number of entries to fetch on each batch.
+     * @return An iterator over the entries which match the template.
+     */
+    <T> SpaceIterator<T> iterator(T template, int batchSize);
+
+    /**
+     * Returns an iterator over the entries in the space which match the specified template.
+     * @param template   The template used for matching. Matching is done against
+     *                   the template with <code>null</code> fields being.
+     *                   wildcards ("match anything") other fields being values ("match
+     *                   exactly on the serialized form"). The template can also be one
+     *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
+     * @param batchSize Maximum number of entries to fetch on each batch.
+     * @param modifiers one or a union of {@link ReadModifiers}.
+     * @return An iterator over the entries which match the template.
+     */
+    <T> SpaceIterator<T> iterator(T template, int batchSize, ReadModifiers modifiers);
+
+    /**
+     * Returns an iterator over the entries in the space which match the specified template.
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @return An iterator over the entries which match the template.
+     */
+    <T> SpaceIterator<T> iterator(ISpaceQuery<T> template);
+
+    /**
+     * Returns an iterator over the entries in the space which match the specified template.
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param batchSize Maximum number of entries to fetch on each batch.
+     * @return An iterator over the entries which match the template.
+     */
+    <T> SpaceIterator<T> iterator(ISpaceQuery<T> template, int batchSize);
+
+    /**
+     * Returns an iterator over the entries in the space which match the specified template.
+     * @param template A query to be executed against the space. Most common one is
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     * @param batchSize Maximum number of entries to fetch on each batch.
+     * @param modifiers one or a union of {@link ReadModifiers}.
+     * @return An iterator over the entries which match the template.
+     */
+    <T> SpaceIterator<T> iterator(ISpaceQuery<T> template, int batchSize, ReadModifiers modifiers);
 
     /**
      * Executes a task on a specific space node. The space node it will
