@@ -216,7 +216,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="recover-from-blob-store" type="xsd:boolean" use="required">
+                                <xsd:attribute name="recover-from-blob-store" type="xsd:boolean" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Whether to recover from blob store or not.
@@ -2952,7 +2952,7 @@
     <xsd:simpleType name="percentage">
         <xsd:restriction base="xsd:decimal">
             <xsd:minInclusive value="0"/>
-            <xsd:maxExclusive value="100"/>
+            <xsd:maxInclusive value="100"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

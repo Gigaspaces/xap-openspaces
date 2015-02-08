@@ -75,8 +75,11 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
             policy.setAvgObjectSizeKB(avgObjectSizeKB);
         if (cacheEntriesPercentage != null)
             policy.setCacheEntriesPercentage(cacheEntriesPercentage);
-        if (recoverFromBlobStore != null)
+        if (recoverFromBlobStore != null) {
             policy.setRecoverFromBlobStore(recoverFromBlobStore);
+        } else {
+            policy.setRecoverFromBlobStore(true);
+        }
         if (blobStoreHandler != null)
             policy.setBlobStoreHandler(blobStoreHandler);
         return policy;
