@@ -20,6 +20,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import com.gigaspaces.quiesce.QuiesceStateListener;
 import net.jini.core.lookup.ServiceID;
 
 import org.jini.rio.core.jsb.ServiceState;
@@ -43,7 +44,7 @@ import com.sun.jini.start.ServiceProxyAccessor;
 /**
  * @author kimchy
  */
-public interface PUServiceBean extends NIOInfoProvider, OSInfoProvider, JVMInfoProvider, GridZoneProvider, Remote, ServiceState, ServiceProxyAccessor, Service {
+public interface PUServiceBean extends NIOInfoProvider, OSInfoProvider, JVMInfoProvider, GridZoneProvider, Remote, ServiceState, ServiceProxyAccessor, Service, QuiesceStateListener {
 
     /**
      * Should this member be checked to see if it is alive or not.

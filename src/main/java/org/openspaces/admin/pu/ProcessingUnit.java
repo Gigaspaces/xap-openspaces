@@ -54,6 +54,8 @@ import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventManager;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceStatisticsChangedEventManager;
 import org.openspaces.admin.pu.events.ProcessingUnitSpaceCorrelatedEventManager;
 import org.openspaces.admin.pu.events.ProcessingUnitStatusChangedEventManager;
+import org.openspaces.admin.pu.quiesce.QuiesceRequest;
+import org.openspaces.admin.pu.quiesce.QuiesceResult;
 import org.openspaces.admin.space.Space;
 import org.openspaces.admin.zone.config.RequiredZonesConfig;
 import org.openspaces.core.properties.BeanLevelProperties;
@@ -464,4 +466,7 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      * @since 8.0.6
      */
     ProcessingUnitDependencies<ProcessingUnitDependency> getDependencies();
+
+    QuiesceResult quiesce(QuiesceRequest request);
+
 }

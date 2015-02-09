@@ -19,6 +19,7 @@ package org.openspaces.pu.container.servicegrid;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.lrmi.nio.async.FutureContext;
+import com.gigaspaces.quiesce.InternalQuiesceDetails;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.RuntimeHolder;
 import com.j_spaces.core.client.SpaceURL;
@@ -138,5 +139,10 @@ public class PUServiceBeanProxy extends AbstractProxy implements PUServiceBean {
         ((PUServiceBean) server).invoke(serviceBeanName, namedArgs);
         return FutureContext.getFutureResult();
 
+    }
+
+    @Override
+    public void quiesceStateChanged(InternalQuiesceDetails quiesceDetails) throws RemoteException {
+        ((PUServiceBean) server).quiesceStateChanged(quiesceDetails);
     }
 }

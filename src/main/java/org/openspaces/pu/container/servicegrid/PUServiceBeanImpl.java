@@ -28,13 +28,19 @@ import com.gigaspaces.internal.jvm.JVMStatistics;
 import com.gigaspaces.internal.os.OSDetails;
 import com.gigaspaces.internal.os.OSHelper;
 import com.gigaspaces.internal.os.OSStatistics;
+import com.gigaspaces.internal.server.space.quiesce.QuiesceModes;
 import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import com.gigaspaces.lrmi.LRMIMonitoringDetails;
 import com.gigaspaces.lrmi.nio.info.NIODetails;
 import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.lrmi.nio.info.NIOStatistics;
 import com.gigaspaces.management.entry.JMXConnection;
-import com.gigaspaces.metrics.*;
+import com.gigaspaces.metrics.Gauge;
+import com.gigaspaces.metrics.Metric;
+import com.gigaspaces.metrics.MetricManager;
+import com.gigaspaces.metrics.ServiceMetric;
+import com.gigaspaces.quiesce.InternalQuiesceDetails;
+import com.gigaspaces.quiesce.InternalQuiesceState;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
 import com.gigaspaces.start.SystemBoot;
@@ -1677,5 +1683,35 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     
     public boolean isStopping() {
         return stopping;
+    }
+
+    @Override
+    public void quiesceStateChanged(InternalQuiesceDetails quiesceDetails) throws RemoteException {
+        QuiesceModes mode = null;
+        if (quiesceDetails.getStatus().equals(InternalQuiesceState.QUIESCING)) {
+            mode = QuiesceModes.ON;
+        } else if (quiesceDetails.getStatus().equals(InternalQuiesceState.UNQUIESCING)) {
+            mode = QuiesceModes.OFF;
+        }
+        if (mode != null) {
+            for (Object serviceDetails : puDetails.getDetails()) {
+                if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+                    try {
+                        Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
+                        if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
+                            Field spaceDetails = serviceDetails.getClass().getDeclaredField("space");
+                            spaceDetails.setAccessible(true);
+                            IJSpace space = (IJSpace) spaceDetails.get(serviceDetails);
+                            space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode);
+                        }
+                    } catch (UnsupportedOperationException e) {
+                        //todo
+                        throw new RemoteException("setOperationalMode failed", e);
+                    } catch (Exception e) {
+                        throw new RemoteException("setOperationalMode failed", e);
+                    }
+                }
+            }
+        }
     }
 }

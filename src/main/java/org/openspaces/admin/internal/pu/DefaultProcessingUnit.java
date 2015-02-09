@@ -49,6 +49,8 @@ import org.openspaces.admin.pu.dependency.ProcessingUnitDependencies;
 import org.openspaces.admin.pu.dependency.ProcessingUnitDependency;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.admin.pu.events.*;
+import org.openspaces.admin.pu.quiesce.QuiesceRequest;
+import org.openspaces.admin.pu.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.statistics.*;
 import org.openspaces.admin.space.Space;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
@@ -1255,5 +1257,13 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
     @Override
     public void setBackupGsmInSync(boolean backupGsmIsInSync) {
     	this.backupGsmIsInSync = backupGsmIsInSync;
+    }
+
+    @Override
+    public QuiesceResult quiesce(QuiesceRequest request) {
+        if (!isManaged()) {
+            throw new AdminException("No managing GSM to execute quiesce");
+        }
+        return ((InternalGridServiceManager) managingGridServiceManager).quiesce(this, request);
     }
 }

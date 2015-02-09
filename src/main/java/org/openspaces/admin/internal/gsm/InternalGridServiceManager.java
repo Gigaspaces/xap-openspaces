@@ -31,6 +31,8 @@ import org.openspaces.admin.internal.support.InternalAgentGridComponent;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
+import org.openspaces.admin.pu.quiesce.QuiesceRequest;
+import org.openspaces.admin.pu.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
 
 import com.gigaspaces.grid.gsm.GSM;
@@ -89,4 +91,6 @@ public interface InternalGridServiceManager extends GridServiceManager, Internal
     
     /** @since 8.0.6 */
     Events getEvents(int maxEvents);
+
+    QuiesceResult quiesce(ProcessingUnit processingUnit, QuiesceRequest request);
 }
