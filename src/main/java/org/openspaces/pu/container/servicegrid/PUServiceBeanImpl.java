@@ -1183,7 +1183,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private void stopPU() {
         if (metricRegistrator != null)
-            metricRegistrator.close();
+            metricRegistrator.clear();
 
         if (metricManager != null)
             metricManager.close();
