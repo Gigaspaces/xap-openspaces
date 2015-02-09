@@ -34,10 +34,7 @@ import com.gigaspaces.lrmi.nio.info.NIODetails;
 import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.lrmi.nio.info.NIOStatistics;
 import com.gigaspaces.management.entry.JMXConnection;
-import com.gigaspaces.metrics.Gauge;
-import com.gigaspaces.metrics.Metric;
-import com.gigaspaces.metrics.MetricManager;
-import com.gigaspaces.metrics.ServiceMetric;
+import com.gigaspaces.metrics.*;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
 import com.gigaspaces.start.SystemBoot;
@@ -116,7 +113,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private MetricManager metricManager;
 
-    private String metricsPuPrefix;
+    private MetricRegistrator metricRegistrator;
 
     private int clusterGroup;
 
@@ -707,7 +704,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
         }
 
-        this.metricsPuPrefix = "pu." + buildMetricsPrefix(clusterInfo) + ".";
+        String metricsPuPrefix = "pu." + buildMetricsPrefix(clusterInfo) + ".";
+        this.metricRegistrator = metricManager.getDefaultRegistrator().extend(metricsPuPrefix);
         beanLevelProperties.getContextProperties().setProperty("metrics.pu-prefix", metricsPuPrefix);
 
         factory = createContainerProvider(processingUnitContainerProviderClass);
@@ -815,10 +813,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
         final Metric metric = getMetricFromMethod(method, bean);
         if (metric != null) {
-            String name = metricsPuPrefix + annotation.name();
+            String name = annotation.name();
             if (logger.isDebugEnabled())
                 logger.debug("Registering ServiceMetric '" + name + "' => " + metric);
-            metricManager.register(name, metric);
+            metricRegistrator.register(name, metric);
         }
     }
 
@@ -1184,10 +1182,11 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private void stopPU() {
-        if (metricManager != null) {
-            metricManager.unregisterMetricsByPrefix(metricsPuPrefix);
+        if (metricRegistrator != null)
+            metricRegistrator.close();
+
+        if (metricManager != null)
             metricManager.close();
-        }
 
         // make sure to clean shared services
         if (clusterInfo != null) {
