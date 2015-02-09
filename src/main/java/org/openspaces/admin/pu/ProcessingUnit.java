@@ -67,80 +67,79 @@ import org.openspaces.core.properties.BeanLevelProperties;
 public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminAware, StatisticsMonitor {
 
     /**
-     * Returns the handle to all the different processing units.
+     * @return Returns the handle to all the different processing units.
      */
     ProcessingUnits getProcessingUnits();
     
     /**
-     * Returns the name of the processing unit.
+     * @return Returns the name of the processing unit.
      */
     String getName();
 
     /**
-     * @deprecated - since 9.5.0 - 
-     * For retrieving planned number of stateless pu instances use {@link #getPlannedNumberOfInstances()}. 
-     * For retrieving planned number of primary space instances use {@link #getPlannedNumberOfParitions()}.
-     * For retrieving planned number of all space instances (primary+backup) use {@link #getPlannedNumberOfInstances()}
-     *
-     * Returns the number of required instances as defined in the processing unit's SLA.
-     * If there are backups, it will only return the number of primary instances and not the
-     * number of backup. To get the total number of instances please use the method {@link #getTotalNumberOfInstances()}.
-     * Note that this method does not count the number of running instances, but rather the number of planned
-     * instances for the processing unit. To count the number of active processing unit instances please use the method
-     * {@link #getInstances()}.   
+     * @return Returns the number of required instances as defined in the processing unit's SLA.
+     * If there are backups, it will only return the number of primary instances and not the number of backup.
+     * @deprecated - since 9.5.0 - please use the following alternatives:
+     * For retrieving planned number of partitions use {@link #getPlannedNumberOfPartitions()}.
+     * Otherwise use {@link #getPlannedNumberOfInstances()} for retrieving planned number of
+     * stateful (primary+backup Space instances) -or- stateless pu instances.
+     * <p/>
+     * <b>Note</b> that this method does not count the number of running instances, but rather the number of planned
+     * instances for the processing unit. To count the number of currently <b>discovered</b> running processing unit
+     * instances use the method {@link #getInstances()}.
      */
     @Deprecated
     int getNumberOfInstances();
 
-   /**
-    * Returns the number of primary instances excluding backup instances.
-    * Note that this method does not count the number of running instances, but rather the number of planned
-    * primary instances for the processing unit. To count the number of active processing unit partitions please use the method
-    * {@link #getPartitions()}.
-    * 
-    * @since 9.6
-    * @author itaif
-    */
+    /**
+     * For stateful processing unit (primary+backup Space) will return the planned partition count - i.e. the number of planned primary
+     * instances (excluding backups). If called for a stateless processing unit, will return the planned number of instances.
+     * <p/>
+     * <b>Note</b> that this method does not count the number of running instances, but rather the number of planned
+     * primary instances for the processing unit. To count the number of currently <b>discovered</b> running processing unit partitions
+     * use the method {@link #getPartitions()}.
+     *
+     * @return Returns the number of planned primary instances excluding backup instances.
+     * @since 9.6
+     */
     int getPlannedNumberOfPartitions();
 
     /**
+     * For stateful processing unit (primary+backup Space) will return the <b>current</b> planned number of instances (including backups).
+     * For stateless processing unit will return the number of <b>current</b> planned instances. The plan denoted by the initial SLA may
+     * change due to increments/decrements either performed manually or enforced by the elasticity properties (e.g. scaling rules, re-balancing, etc).
+     * <p/>
+     * <b>Note</b> that this method does not count the number of running instances, but rather the number of planned
+     * number of instances for the processing unit. To count the number of currently <b>discovered</b> running processing unit instances
+     * use the method {@link #getInstances()}.
      *
-     * @return the number of required instances as defined in the processing unit's SLA.
-     * If there are backups, it will only return the number of primary instances and not the
-     * number of backup. To get the total number of instances please use the method {@link #getTotalNumberOfInstances()}.
-     * Note that this method does not count the number of running instances, but rather the number of planned
-     * instances for the processing unit. To count the number of active processing unit instances please use the method
-     * {@link #getInstances()}.
-     * If the processing unit is elastic return value may reflect updated planned number of instances based on
-     * scaling rules.
-     *
+     * @return Returns the number of required instances as defined in the processing unit's <b>current</b> SLA.
      * @since 9.5.0
-     * @author guym
-     **/
+     */
     int getPlannedNumberOfInstances();
 
     /**
-     * Returns the number of backups (if the topology is a backup one) per instance, as defined in the
+     * @return Returns the number of backups (if the topology is a backup one) per instance, as defined in the
      * processing unit's SLA. Note that this method does not return he number of running backup instances, but
-     * rather the number of planned backup instances per primary.
+     * rather the number of planned backup instances per primary as defined by the initial SLA.
      */
     int getNumberOfBackups();
 
     /**
-     * @deprecated - since 9.6.0 - please use {@link #getPlannedNumberOfInstances()} }
-     * 
-     * Returns the total required number of instances as defined in the processing SLA.
+     * @return Returns the total required number of instances as defined in the processing SLA.
      * If there are no backups, will return{@link #getNumberOfInstances()}. If there are backups,
      * will return {@link #getNumberOfInstances()} * ({@link #getNumberOfBackups()}  + 1)
-     * Note that this method does not count the number of running instances, but rather the total number of planned
+     * @deprecated - since 9.6.0 - please use {@link #getPlannedNumberOfInstances()}
+     * <p/>
+     * <b>Note</b> that this method does not count the number of running instances, but rather the total number of planned
      * instances for the processing unit. To count the number of active processing unit instances please use the method
-     * {@link #getInstances()}.  
+     * {@link #getInstances()}.
      */
     @Deprecated
     int getTotalNumberOfInstances();
 
     /**
-     * Returns the number of instances of this processing unit that can run within a VM.
+     * @return Returns the number of instances of this processing unit that can run within a VM.
      *
      * <p>In case of a partitioned with backup topology, it applies on a per partition level (meaning that a
      * primary and backup will not run on the same VM).
@@ -151,7 +150,7 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
     int getMaxInstancesPerVM();
 
     /**
-     * Returns the number of instances of this processing unit that can run within a Machine.
+     * @return Returns the number of instances of this processing unit that can run within a Machine.
      *
      * <p>In case of a partitioned with backup topology, it applies on a per partition level (meaning that a
      * primary and backup will not run on the same Machine).
@@ -161,23 +160,22 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      */
     int getMaxInstancesPerMachine();
 
- /**
-  * @return  true if isolation is required per virtual machine. No processing unit instances can run on the same
-  * virtual machine. Default false.
-  * @since 10.1.0
-  */
+    /**
+     * @return true if isolation is required per virtual machine. No processing unit instances can run on the same
+     * virtual machine. Default false.
+     * @since 10.1.0
+     */
     boolean isRequiresIsolation();
 
     /**
-     * Returns a map containing the zone name and the maximum number of instances for that zone.
+     * @return Returns a map containing the zone name and the maximum number of instances for that zone.
      */
     Map<String, Integer> getMaxInstancesPerZone();
 
     /**
-     * Returns the list of zones this processing units are required to run on. If there is more than
+     * @return Returns the list of zones this processing units are required to run on. If there is more than
      * one zone, the processing unit can run on either of the zones.
-     * 
-     * This method is deprecated in favor of {@link #getRequiredContainerZones()} 
+     * @deprecated This method is deprecated in favor of {@link #getRequiredContainerZones()}
      */
     @Deprecated
     String[] getRequiredZones();
@@ -186,64 +184,82 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      * @return the @{link GridServiceContainer} zones that can satisfy this processing unit.
      * 
      * For example:
-     * boolean gscMatch = pu.getRequiredContainerZones().isStatisfiedBy(gsc.getExactZones());
+     * boolean gscMatch = pu.getRequiredContainerZones().isSatisfiedBy(gsc.getExactZones());
      */
     RequiredZonesConfig getRequiredContainerZones();
     
     /**
-     * Returns the deployment status of the processing unit.
+     * @return Returns the deployment status of the processing unit.
      */
     DeploymentStatus getStatus();
 
     /**
-     * Return the deploy time properties of the processing unit.
+     * @return Return the deploy time properties of the processing unit.
      */
     BeanLevelProperties getBeanLevelProperties();
     
     /**
-     * Returns the type of processing unit: stateless, stateful, mirror, web.
+     * @return Returns the type of processing unit: stateless, stateful, mirror, web.
      * @since 8.0.3
      */
     ProcessingUnitType getType();
 
     /**
      * Waits till at least the provided number of Processing Unit Instances are up.
+     *
+     * @return {@code true} if discovered the required number of instances within the default timeout and {@code false}
+     * if the waiting time elapsed before the discovery took place
      */
     boolean waitFor(int numberOfProcessingUnitInstances);
 
     /**
      * Waits till at least the provided number of Processing Unit Instances are up for the specified timeout.
+     *
+     * @return {@code true} if discovered the required number of instances within the specified timeout and {@code false}
+     * if the waiting time elapsed before the discovery took place
      */
     boolean waitFor(int numberOfProcessingUnitInstances, long timeout, TimeUnit timeUnit);
 
     /**
      * Waits till an embedded Space is correlated with the processing unit.
+     *
+     * @return {@code true} if Space was correlated within the default timeout and {@code false}
+     * if the waiting time elapsed before correlation took place
      */
     Space waitForSpace();
 
     /**
      * Waits till an embedded Space is correlated with the processing unit for the specified timeout.
+     *
+     * @return {@code true} if Space was correlated within the specified timeout and {@code false}
+     * if the waiting time elapsed before correlation took place
      */
     Space waitForSpace(long timeout, TimeUnit timeUnit);
 
     /**
-     * Waits till there is a managing {@link org.openspaces.admin.gsm.GridServiceManager} for the processing unit.  
+     * Waits till there is a managing {@link org.openspaces.admin.gsm.GridServiceManager} for the processing unit.
+     *
+     * @return {@code true} if GSM was discovered within the default timeout and {@code false}
+     * if the waiting time elapsed before discovery took place
      */
     GridServiceManager waitForManaged();
 
     /**
      * Waits till there is a managing {@link org.openspaces.admin.gsm.GridServiceManager} for the processing unit
      * for the specified timeout.
+     *
+     * @return {@code true} if GSM was discovered within the specified timeout and {@code false}
+     * if the waiting time elapsed before discovery took place
      */
     GridServiceManager waitForManaged(long timeout, TimeUnit timeUnit);
 
     /**
-     * Returns <code>true</code> if this processing unit allows to increment instances on it.
+     * @return Returns <code>true</code> if this processing unit allows to increment instances on it.
      */
     boolean canIncrementInstance();
 
     /**
-     * Returns <code>true</code> if this processing unit allows to decrement instances on it.
+     * @return Returns <code>true</code> if this processing unit allows to decrement instances on it.
      */
     boolean canDecrementInstance();
 
@@ -262,22 +278,22 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
     void decrementInstance();
 
     /**
-     * Returns <code>true</code> if there is a managing GSM for it.
+     * @return Returns <code>true</code> if there is a managing GSM for it.
      */
     boolean isManaged();
 
     /**
-     * Returns the managing (primary) GSM for the processing unit.
+     * @return Returns the managing (primary) GSM for the processing unit.
      */
     GridServiceManager getManagingGridServiceManager();
 
     /**
-     * Returns the backup GSMs for the processing unit.
+     * @return Returns the backup GSMs for the processing unit.
      */
     GridServiceManager[] getBackupGridServiceManagers();
 
     /**
-     * Returns the backup GSM matching the provided UID.
+     * @return Returns the backup GSM matching the provided UID.
      */
     GridServiceManager getBackupGridServiceManager(String gridServiceManagerUID);
 
@@ -300,7 +316,7 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
     void undeployAndWait();
     
     /**
-     * Undeploys the processing unit and waits until all instances have been undeployed.
+     * Undeploy the processing unit and wait until all instances have been undeployed.
      * In case of an Elastic processing unit, it waits until all containers have been removed.
      * 
      * <p>The undeployment process will wait for the given timeout and return when all processing units have undeployed or timeout expired.
@@ -313,41 +329,41 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
     boolean undeployAndWait(long timeout, TimeUnit timeunit);
     
     /**
-     * Returns the (first) embedded space within a processing unit. Returns <code>null</code> if
+     * @return Returns the (first) embedded space within a processing unit. Returns <code>null</code> if
      * no embedded space is defined within the processing unit or if no processing unit instance
      * has been added to the processing unit.
      */
     Space getSpace();
 
     /**
-     * Returns all the embedded spaces within a processing unit. Returns an empty array if there
+     * @return Returns all the embedded spaces within a processing unit. Returns an empty array if there
      * are no embedded spaces defined within the processing unit, or none has been associated with
      * the processing unit yet.
      */
     Space[] getSpaces();
 
     /**
-     * Returns the processing unit instances currently discovered.
+     * @return Returns the processing unit instances currently discovered.
      */
     ProcessingUnitInstance[] getInstances();
 
     /**
-     * Returns the processing unit partitions of this processing unit.
+     * @return Returns the processing unit partitions of this processing unit.
      */
     ProcessingUnitPartition[] getPartitions();
 
     /**
-     * Returns a processing unit partition based on the specified partition id.
+     * @return Returns a processing unit partition based on the specified partition id.
      */
     ProcessingUnitPartition getPartition(int partitionId);
 
     /**
-     * Returns an event manager allowing to register {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener}s.
+     * @return Returns an event manager allowing to register {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener}s.
      */
     ProcessingUnitInstanceAddedEventManager getProcessingUnitInstanceAdded();
 
     /**
-     * Returns an event manager allowing to register {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener}s.
+     * @return Returns an event manager allowing to register {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener}s.
      */
     ProcessingUnitInstanceRemovedEventManager getProcessingUnitInstanceRemoved();
 
@@ -362,27 +378,27 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
     void removeLifecycleListener(ProcessingUnitInstanceLifecycleEventListener eventListener);
 
     /**
-     * Returns an event manger allowing to listen for {@link org.openspaces.admin.pu.events.ManagingGridServiceManagerChangedEvent}s.
+     * @return Returns an event manger allowing to listen for {@link org.openspaces.admin.pu.events.ManagingGridServiceManagerChangedEvent}s.
      */
     ManagingGridServiceManagerChangedEventManager getManagingGridServiceManagerChanged();
 
     /**
-     * Returns an event manager allowing to listen for {@link org.openspaces.admin.pu.events.BackupGridServiceManagerChangedEvent}s.
+     * @return Returns an event manager allowing to listen for {@link org.openspaces.admin.pu.events.BackupGridServiceManagerChangedEvent}s.
      */
     BackupGridServiceManagerChangedEventManager getBackupGridServiceManagerChanged();
 
     /**
-     * Returns an event manager allowing to listen for {@link org.openspaces.admin.pu.events.ProcessingUnitStatusChangedEvent}s.
+     * @return Returns an event manager allowing to listen for {@link org.openspaces.admin.pu.events.ProcessingUnitStatusChangedEvent}s.
      */
     ProcessingUnitStatusChangedEventManager getProcessingUnitStatusChanged();
 
     /**
-     * Returns an event manager allowing to listen for {@link org.openspaces.admin.pu.events.ProcessingUnitSpaceCorrelatedEvent}s.
+     * @return Returns an event manager allowing to listen for {@link org.openspaces.admin.pu.events.ProcessingUnitSpaceCorrelatedEvent}s.
      */
     ProcessingUnitSpaceCorrelatedEventManager getSpaceCorrelated();
 
     /**
-     * Returns a processing unit instance statistics change event manger allowing to register for
+     * @return Returns a processing unit instance statistics change event manger allowing to register for
      * events of {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceStatisticsChangedEvent}.
      *
      * <p>Note, in order to receive events, the virtual machines need to be in a "statistics" monitored
@@ -391,13 +407,13 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
     ProcessingUnitInstanceStatisticsChangedEventManager getProcessingUnitInstanceStatisticsChanged();
     
     /**
-     * Returns an event manager allowing to register {@link ProcessingUnitInstanceProvisionStatusChangedEventListener}s.
+     * @return Returns an event manager allowing to register {@link ProcessingUnitInstanceProvisionStatusChangedEventListener}s.
      * @since 8.0.6
      */
     ProcessingUnitInstanceProvisionStatusChangedEventManager getProcessingUnitInstanceProvisionStatusChanged();
     
     /**
-     * Returns an event manager allowing to register {@link ProcessingUnitInstanceMemberAliveIndicatorStatusChangedEventListener}s.
+     * @return Returns an event manager allowing to register {@link ProcessingUnitInstanceMemberAliveIndicatorStatusChangedEventListener}s.
      * @since 8.0.6
      */
     ProcessingUnitInstanceMemberAliveIndicatorStatusChangedEventManager getProcessingUnitInstanceMemberAliveIndicatorStatusChanged();
@@ -406,8 +422,6 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      * Modifies the processing unit scalability strategy.
      * 
      * This method is only available if the processing unit deployment is elastic  
-     * 
-     * @param strategyConfig
      * 
      * @since 8.0
      * @see ProcessingUnit#scaleAndWait(ScaleStrategyConfig)
@@ -420,8 +434,6 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      * 
      * This method is only available if the processing unit deployment is elastic  
      * 
-     * @param strategyConfig
-     * 
      * @since 8.0.5
      * @see ProcessingUnit#scale(ScaleStrategyConfig)
      */
@@ -432,7 +444,6 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      * 
      * This method is only available if the processing unit deployment is elastic  
      * 
-     * @param strategyConfig
      * @return <code>false</code> if timeout occurred before scale operation has completed.
      * 
      * @since 8.0.5
