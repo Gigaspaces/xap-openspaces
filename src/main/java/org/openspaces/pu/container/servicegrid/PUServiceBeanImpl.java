@@ -36,10 +36,7 @@ import com.gigaspaces.lrmi.nio.info.NIODetails;
 import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.lrmi.nio.info.NIOStatistics;
 import com.gigaspaces.management.entry.JMXConnection;
-import com.gigaspaces.metrics.Gauge;
-import com.gigaspaces.metrics.Metric;
-import com.gigaspaces.metrics.MetricManager;
-import com.gigaspaces.metrics.ServiceMetric;
+import com.gigaspaces.metrics.*;
 import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
@@ -1690,7 +1687,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                     try {
                         if (containsEmbeddedSpace(serviceDetails)) {
                             IJSpace space = getSpaceFromServiceDetails(serviceDetails);
-                            space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode);
+                            space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode, quiesceDetails.getToken());
                         }
                     } catch (UnsupportedOperationException e) {
                         //todo

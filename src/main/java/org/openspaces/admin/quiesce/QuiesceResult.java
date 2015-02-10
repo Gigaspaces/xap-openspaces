@@ -1,4 +1,4 @@
-package org.openspaces.admin.pu.quiesce;
+package org.openspaces.admin.quiesce;
 
 import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.admin.quiesce.QuiesceToken;

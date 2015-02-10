@@ -31,8 +31,8 @@ import org.openspaces.admin.internal.support.InternalAgentGridComponent;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
-import org.openspaces.admin.pu.quiesce.QuiesceRequest;
-import org.openspaces.admin.pu.quiesce.QuiesceResult;
+import org.openspaces.admin.quiesce.QuiesceRequest;
+import org.openspaces.admin.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
 
 import com.gigaspaces.grid.gsm.GSM;

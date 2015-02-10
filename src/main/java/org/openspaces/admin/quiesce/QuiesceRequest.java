@@ -1,4 +1,4 @@
-package org.openspaces.admin.pu.quiesce;
+package org.openspaces.admin.quiesce;
 
 /**
  * Created by Barak Bar Orion

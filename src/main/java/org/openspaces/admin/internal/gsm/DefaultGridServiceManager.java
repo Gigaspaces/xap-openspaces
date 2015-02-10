@@ -39,7 +39,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.gigaspaces.internal.quiesce.InternalQuiesceRequest;
-import com.gigaspaces.admin.quiesce.QuiesceState;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceID;
 
@@ -77,8 +76,8 @@ import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.admin.pu.events.ProcessingUnitAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitRemovedEventListener;
-import org.openspaces.admin.pu.quiesce.QuiesceRequest;
-import org.openspaces.admin.pu.quiesce.QuiesceResult;
+import org.openspaces.admin.quiesce.QuiesceRequest;
+import org.openspaces.admin.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.topology.ElasticStatefulProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
@@ -952,22 +951,7 @@ public class DefaultGridServiceManager extends AbstractAgentGridComponent implem
     public QuiesceResult quiesce(ProcessingUnit processingUnit, QuiesceRequest request) {
         try {
             InternalQuiesceDetails details = gsm.quiesce(processingUnit.getName(), new InternalQuiesceRequest(request.getDescription()));
-            QuiesceState status = details.getStatus();
-            //TODO refactor into translator class
-            QuiesceState state = null;
-            if (status == QuiesceState.QUIESCED ){
-                state = QuiesceState.QUIESCED;
-            }
-            else if (status == QuiesceState.UNQUIESCED ){
-                state = QuiesceState.UNQUIESCED;
-            }
-            else if (status == QuiesceState.QUIESCING ){
-                state = QuiesceState.QUIESCING;
-            }
-            else if (status == QuiesceState.UNQUIESCING ){
-                state = QuiesceState.UNQUIESCING;
-            }
-            return new QuiesceResult(state, details.getToken() ,details.getDescription());
+            return new QuiesceResult(details.getStatus(), details.getToken() ,details.getDescription());
         } catch (SecurityException se) {
             //noinspection SpellCheckingInspection
             throw new AdminException("No privileges to request quiesce on processing unit " + processingUnit.getName(), se);
