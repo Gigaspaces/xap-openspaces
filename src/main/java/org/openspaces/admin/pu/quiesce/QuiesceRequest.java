@@ -1,16 +1,12 @@
 package org.openspaces.admin.pu.quiesce;
 
-import java.io.Serializable;
-import java.util.UUID;
-
 /**
  * Created by Barak Bar Orion
  * 1/28/15.
  */
-public class QuiesceRequest implements Serializable {
-    private static final long serialVersionUID = -128705742407213814L;
-    private String description;
+public class QuiesceRequest {
 
+    private String description;
 
     public QuiesceRequest() {
     }

@@ -1,23 +1,22 @@
 package org.openspaces.admin.pu.quiesce;
 
-import java.io.Serializable;
-import java.util.UUID;
+import com.gigaspaces.admin.quiesce.QuiesceState;
+import com.gigaspaces.admin.quiesce.QuiesceToken;
 
 /**
  * Created by Barak Bar Orion
  * 1/28/15.
  */
-public class QuiesceResult implements Serializable {
+public class QuiesceResult{
 
-    private static final long serialVersionUID = -128705742407213814L;
     private QuiesceState status;
-    private UUID token;
+    private QuiesceToken token;
     private String description;
 
     public QuiesceResult() {
     }
 
-    public QuiesceResult(QuiesceState status, UUID token, String description) {
+    public QuiesceResult(QuiesceState status, QuiesceToken token, String description) {
         this.status = status;
         this.token = token;
         this.description = description;
@@ -27,7 +26,7 @@ public class QuiesceResult implements Serializable {
         return status;
     }
 
-    public UUID getToken() {
+    public QuiesceToken getToken() {
         return token;
     }
 

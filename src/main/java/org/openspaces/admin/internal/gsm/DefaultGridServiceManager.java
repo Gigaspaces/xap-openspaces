@@ -37,9 +37,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.gigaspaces.quiesce.InternalQuiesceDetails;
-import com.gigaspaces.quiesce.InternalQuiesceRequest;
-import com.gigaspaces.quiesce.InternalQuiesceState;
+import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
+import com.gigaspaces.internal.quiesce.InternalQuiesceRequest;
+import com.gigaspaces.admin.quiesce.QuiesceState;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceID;
 
@@ -79,7 +79,6 @@ import org.openspaces.admin.pu.events.ProcessingUnitAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitRemovedEventListener;
 import org.openspaces.admin.pu.quiesce.QuiesceRequest;
 import org.openspaces.admin.pu.quiesce.QuiesceResult;
-import org.openspaces.admin.pu.quiesce.QuiesceState;
 import org.openspaces.admin.pu.topology.ElasticStatefulProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
@@ -953,19 +952,19 @@ public class DefaultGridServiceManager extends AbstractAgentGridComponent implem
     public QuiesceResult quiesce(ProcessingUnit processingUnit, QuiesceRequest request) {
         try {
             InternalQuiesceDetails details = gsm.quiesce(processingUnit.getName(), new InternalQuiesceRequest(request.getDescription()));
-            InternalQuiesceState status = details.getStatus();
+            QuiesceState status = details.getStatus();
             //TODO refactor into translator class
             QuiesceState state = null;
-            if (status == InternalQuiesceState.QUIESCED ){
+            if (status == QuiesceState.QUIESCED ){
                 state = QuiesceState.QUIESCED;
             }
-            else if (status == InternalQuiesceState.UNQUIESCED ){
+            else if (status == QuiesceState.UNQUIESCED ){
                 state = QuiesceState.UNQUIESCED;
             }
-            else if (status == InternalQuiesceState.QUIESCING ){
+            else if (status == QuiesceState.QUIESCING ){
                 state = QuiesceState.QUIESCING;
             }
-            else if (status == InternalQuiesceState.UNQUIESCING ){
+            else if (status == QuiesceState.UNQUIESCING ){
                 state = QuiesceState.UNQUIESCING;
             }
             return new QuiesceResult(state, details.getToken() ,details.getDescription());

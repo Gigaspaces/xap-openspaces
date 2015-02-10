@@ -19,7 +19,7 @@ package org.openspaces.pu.container.servicegrid;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.lrmi.nio.async.FutureContext;
-import com.gigaspaces.quiesce.InternalQuiesceDetails;
+import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.RuntimeHolder;
 import com.j_spaces.core.client.SpaceURL;

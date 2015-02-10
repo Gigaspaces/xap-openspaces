@@ -28,6 +28,7 @@ import com.gigaspaces.internal.jvm.JVMStatistics;
 import com.gigaspaces.internal.os.OSDetails;
 import com.gigaspaces.internal.os.OSHelper;
 import com.gigaspaces.internal.os.OSStatistics;
+import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.internal.server.space.quiesce.QuiesceModes;
 import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import com.gigaspaces.lrmi.LRMIMonitoringDetails;
@@ -39,8 +40,7 @@ import com.gigaspaces.metrics.Gauge;
 import com.gigaspaces.metrics.Metric;
 import com.gigaspaces.metrics.MetricManager;
 import com.gigaspaces.metrics.ServiceMetric;
-import com.gigaspaces.quiesce.InternalQuiesceDetails;
-import com.gigaspaces.quiesce.InternalQuiesceState;
+import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
 import com.gigaspaces.start.SystemBoot;
@@ -1289,10 +1289,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             throw new RemoteException("processing unit shutdown");
         }
         for (Object serviceDetails : puDetails.getDetails()) {
-            if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+            if (isSpaceServiceDetails(serviceDetails)) {
                 try {
-                    Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
-                    if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
+                    if (containsEmbeddedSpace(serviceDetails)) {
                         Method spaceServiceId = serviceDetails.getClass().getMethod("getServiceID");
                         if (spaceServiceId.invoke(serviceDetails).equals(serviceID)) {
                             Field spaceDetails = serviceDetails.getClass().getDeclaredField("directSpace");
@@ -1313,10 +1312,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             throw new RemoteException("processing unit shutdown");
         }
         for (Object serviceDetails : puDetails.getDetails()) {
-            if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+            if (isSpaceServiceDetails(serviceDetails)) {
                 try {
-                    Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
-                    if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
+                    if (containsEmbeddedSpace(serviceDetails)) {
                         Method spaceServiceId = serviceDetails.getClass().getMethod("getServiceID");
                         if (spaceServiceId.invoke(serviceDetails).equals(serviceID)) {
                             Field spaceDetails = serviceDetails.getClass().getDeclaredField("directSpaceAdmin");
@@ -1338,10 +1336,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             throw new RemoteException("processing unit shutdown");
         }
         for (Object serviceDetails : puDetails.getDetails()) {
-            if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+            if (isSpaceServiceDetails(serviceDetails)) {
                 try {
-                    Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
-                    if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
+                    if (containsEmbeddedSpace(serviceDetails)) {
                         Method spaceServiceId = serviceDetails.getClass().getMethod("getServiceID");
                         if (spaceServiceId.invoke(serviceDetails).equals(serviceID)) {
                             Field spaceDetails = serviceDetails.getClass().getDeclaredField("directSpaceAdmin");
@@ -1364,13 +1361,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
         List<SpaceURL> spaceUrls = new ArrayList<SpaceURL>();
         for (Object serviceDetails : puDetails.getDetails()) {
-            if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+            if (isSpaceServiceDetails(serviceDetails)) {
                 try {
-                    Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
-                    if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
-                        Field spaceDetails = serviceDetails.getClass().getDeclaredField("space");
-                        spaceDetails.setAccessible(true);
-                        IJSpace space = (IJSpace) spaceDetails.get(serviceDetails);
+                    if (containsEmbeddedSpace(serviceDetails)) {
+                        IJSpace space = getSpaceFromServiceDetails(serviceDetails);
                         spaceUrls.add(space.getFinderURL());
                     }
                 } catch (Exception e) {
@@ -1387,13 +1381,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
         List<SpaceMode> spacesModes = new ArrayList<SpaceMode>();
         for (Object serviceDetails : puDetails.getDetails()) {
-            if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+            if (isSpaceServiceDetails(serviceDetails)) {
                 try {
-                    Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
-                    if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
-                        Field spaceDetails = serviceDetails.getClass().getDeclaredField("space");
-                        spaceDetails.setAccessible(true);
-                        IJSpace space = (IJSpace) spaceDetails.get(serviceDetails);
+                    if (containsEmbeddedSpace(serviceDetails)) {
+                        IJSpace space = getSpaceFromServiceDetails(serviceDetails);
                         spacesModes.add(((IInternalRemoteJSpaceAdmin) space.getAdmin()).getSpaceMode());
                     }
                 } catch (Exception e) {
@@ -1688,20 +1679,17 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     @Override
     public void quiesceStateChanged(InternalQuiesceDetails quiesceDetails) throws RemoteException {
         QuiesceModes mode = null;
-        if (quiesceDetails.getStatus().equals(InternalQuiesceState.QUIESCING)) {
+        if (quiesceDetails.getStatus().equals(QuiesceState.QUIESCING)) {
             mode = QuiesceModes.ON;
-        } else if (quiesceDetails.getStatus().equals(InternalQuiesceState.UNQUIESCING)) {
+        } else if (quiesceDetails.getStatus().equals(QuiesceState.UNQUIESCING)) {
             mode = QuiesceModes.OFF;
         }
         if (mode != null) {
             for (Object serviceDetails : puDetails.getDetails()) {
-                if (serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName())) {
+                if (isSpaceServiceDetails(serviceDetails)) {
                     try {
-                        Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
-                        if (spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString())) {
-                            Field spaceDetails = serviceDetails.getClass().getDeclaredField("space");
-                            spaceDetails.setAccessible(true);
-                            IJSpace space = (IJSpace) spaceDetails.get(serviceDetails);
+                        if (containsEmbeddedSpace(serviceDetails)) {
+                            IJSpace space = getSpaceFromServiceDetails(serviceDetails);
                             space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode);
                         }
                     } catch (UnsupportedOperationException e) {
@@ -1713,5 +1701,20 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 }
             }
         }
+    }
+
+    private boolean containsEmbeddedSpace(Object serviceDetails) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method spaceType = serviceDetails.getClass().getMethod("getSpaceType");
+        return spaceType.invoke(serviceDetails).toString().equals(SpaceType.EMBEDDED.toString());
+    }
+
+    private boolean isSpaceServiceDetails(Object serviceDetails) {
+        return serviceDetails.getClass().getName().equals(SpaceServiceDetails.class.getName());
+    }
+
+    private IJSpace getSpaceFromServiceDetails(Object serviceDetails) throws NoSuchFieldException, IllegalAccessException {
+        Field spaceDetails = serviceDetails.getClass().getDeclaredField("space");
+        spaceDetails.setAccessible(true);
+        return (IJSpace) spaceDetails.get(serviceDetails);
     }
 }
