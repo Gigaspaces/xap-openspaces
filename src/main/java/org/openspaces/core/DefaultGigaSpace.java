@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;
 
+import com.gigaspaces.admin.quiesce.QuiesceToken;
 import com.gigaspaces.client.iterator.SpaceIterator;
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.DataEventSessionFactory;
@@ -1955,5 +1956,9 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         
         throw new IllegalArgumentException("Unsupported query result type: " + queryResultType);
     }
-    
+
+    @Override
+    public void setQuiesceToken(QuiesceToken token) {
+        space.getDirectProxy().setQuiesceToken(token);
+    }
 }

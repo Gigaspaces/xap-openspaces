@@ -19,6 +19,7 @@ package org.openspaces.core;
 import java.io.Serializable;
 import java.util.concurrent.Future;
 
+import com.gigaspaces.admin.quiesce.QuiesceToken;
 import com.gigaspaces.client.iterator.SpaceIterator;
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.EventSessionConfig;
@@ -3393,4 +3394,6 @@ public interface GigaSpace {
      * @since  9.7.0
      */
     DataEventSession newDataEventSession(EventSessionConfig config);
+
+    void setQuiesceToken(QuiesceToken token);
 }
