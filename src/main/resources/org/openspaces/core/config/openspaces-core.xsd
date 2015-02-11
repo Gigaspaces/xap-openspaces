@@ -641,7 +641,7 @@
                         </xsd:element>
                         <xsd:element name="blob-store-data-policy">
                             <xsd:complexType>
-                                <xsd:attribute name="cache-entries-percentage" type="precentage" use="optional">
+                                <xsd:attribute name="cache-entries-percentage" type="percentage" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx
