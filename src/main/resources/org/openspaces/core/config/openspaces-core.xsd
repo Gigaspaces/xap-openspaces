@@ -641,7 +641,7 @@
                         </xsd:element>
                         <xsd:element name="blob-store-data-policy">
                             <xsd:complexType>
-                                <xsd:attribute name="cache-entries-percentage" type="xsd:decimal" use="optional">
+                                <xsd:attribute name="cache-entries-percentage" type="precentage" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx
@@ -650,10 +650,17 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="avg-object-size-KB" type="xsd:decimal" use="optional">
+                                <xsd:attribute name="avg-object-size-KB" type="xsd:positiveInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Cverage object size.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="recover-from-blob-store" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Whether to recover from blob store or not.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
