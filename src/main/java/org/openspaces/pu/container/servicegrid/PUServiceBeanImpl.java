@@ -707,9 +707,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
         }
 
-        String metricsPuPrefix = "pu." + buildMetricsPrefix(clusterInfo) + ".";
-        this.metricRegistrator = metricManager.getDefaultRegistrator().extend(metricsPuPrefix);
-        beanLevelProperties.getContextProperties().setProperty("metrics.pu-prefix", metricsPuPrefix);
+        final Map<String, String> puTags = buildPuTags(clusterInfo);
+        this.metricRegistrator = metricManager.createRegistrator("pu", puTags);
+        for (Map.Entry<String, String> entry : puTags.entrySet())
+            beanLevelProperties.getContextProperties().setProperty("metrics." + entry.getKey(), entry.getValue());
 
         factory = createContainerProvider(processingUnitContainerProviderClass);
         factory.setDeployPath(deployPath);
@@ -780,18 +781,22 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
     }
 
-    private static String buildMetricsPrefix(ClusterInfo clusterInfo) {
-        if (clusterInfo == null)
-            return "null";
-        Integer id = clusterInfo.getInstanceId();
+    private static Map<String, String> buildPuTags(ClusterInfo clusterInfo) {
+        Map<String, String> tags = new HashMap<String, String>();
+        tags.put("pu-name", clusterInfo != null ? clusterInfo.getName() : "unknown");
+        tags.put("pu-instance-id", clusterInfo != null ? getInstanceId(clusterInfo) : "unknown");
+        return tags;
+    }
+
+    private static String getInstanceId(ClusterInfo clusterInfo) {
+        final Integer id = clusterInfo.getInstanceId();
         if (clusterInfo.getNumberOfBackups() == 0)
-            return clusterInfo.getName() + "." + id;
+            return id.toString();
         Integer bid = clusterInfo.getBackupId();
         if (bid == null)
             bid = Integer.valueOf(0);
-        return clusterInfo.getName() + "." + id + "_" + (bid+1);
+        return id + "_" + (bid+1);
     }
-
 
     private void buildMetrics() {
         if (container instanceof ApplicationContextProcessingUnitContainer) {
