@@ -25,31 +25,31 @@ import com.gigaspaces.admin.quiesce.QuiesceToken;
  * @author Boris
  * @since 10.1.0
  */
-public class QuiesceResult{
+public class QuiesceDetails {
 
     private QuiesceState status;
-    private QuiesceToken token;
     private String description;
+    private InstancesQuiesceState instancesQuiesceState;
 
-    public QuiesceResult() {
+    public QuiesceDetails() {
     }
 
-    public QuiesceResult(QuiesceState status, QuiesceToken token, String description) {
+    public QuiesceDetails(QuiesceState status, String description, InstancesQuiesceState instancesQuiesceState) {
         this.status = status;
-        this.token = token;
         this.description = description;
+        this.instancesQuiesceState = instancesQuiesceState;
     }
 
     public QuiesceState getStatus() {
         return status;
     }
 
-    public QuiesceToken getToken() {
-        return token;
-    }
-
     public String getDescription() {
         return description;
+    }
+
+    public InstancesQuiesceState getInstancesQuiesceState() {
+        return instancesQuiesceState;
     }
 
     @Override
@@ -57,23 +57,18 @@ public class QuiesceResult{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        QuiesceResult that = (QuiesceResult) o;
+        QuiesceDetails that = (QuiesceDetails) o;
 
-        return token.equals(that.token);
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (status != that.status) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return token.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "QuiesceResult{" +
-                "status=" + status +
-                ", token=" + token +
-                ", description='" + description + '\'' +
-                '}';
+        int result = status != null ? status.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        return result;
     }
 }

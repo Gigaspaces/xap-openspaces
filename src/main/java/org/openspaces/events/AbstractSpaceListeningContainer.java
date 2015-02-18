@@ -23,6 +23,8 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openspaces.admin.quiesce.QuiesceStateChangedEvent;
+import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;
 import org.openspaces.core.space.mode.BeforeSpaceModeChangeEvent;
@@ -72,7 +74,7 @@ import java.util.List;
  * @author kimchy
  */
 public abstract class AbstractSpaceListeningContainer implements Lifecycle, BeanNameAware, InitializingBean,
-        DisposableBean, ApplicationListener<ApplicationEvent>, ServiceDetailsProvider, ServiceMonitorsProvider {
+        DisposableBean, ApplicationListener<ApplicationEvent>, ServiceDetailsProvider, ServiceMonitorsProvider, QuiesceStateChangedListener {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -97,6 +99,8 @@ public abstract class AbstractSpaceListeningContainer implements Lifecycle, Bean
     private SpaceMode currentSpaceMode;
 
     private volatile boolean autoStart = true;
+
+    private volatile boolean quiesced = false;
 
 
     /**
@@ -322,7 +326,13 @@ public abstract class AbstractSpaceListeningContainer implements Lifecycle, Bean
         if (running) {
             return;
         }
+        if (quiesced){
+            return;
+        }
         synchronized (this.lifecycleMonitor) {
+            if (quiesced){
+                return;
+            }
             if (running) {
                 return;
             }
@@ -372,13 +382,17 @@ public abstract class AbstractSpaceListeningContainer implements Lifecycle, Bean
      * not stopped yet.
      */
     public final boolean isRunning() {
-        return this.running;
+        return this.running && !this.quiesced;
     }
 
     protected String getStatus() {
         if (running) {
             return "started";
-        } else {
+        }
+        if (quiesced){
+            return "quiesced";
+        }
+        else {
             return "stopped";
         }
     }
@@ -476,6 +490,16 @@ public abstract class AbstractSpaceListeningContainer implements Lifecycle, Bean
 
         public void afterSpaceModeChange(SpaceMode spaceMode) throws RemoteException {
             onApplicationEvent(new AfterSpaceModeChangeEvent(gigaSpace.getSpace(), spaceMode));
+        }
+    }
+
+    public void quiesceStateChanged(QuiesceStateChangedEvent event){
+        quiesced = event.isQuiesced();
+        if (quiesced){
+            stop();
+        }
+        else {
+            start();
         }
     }
 }

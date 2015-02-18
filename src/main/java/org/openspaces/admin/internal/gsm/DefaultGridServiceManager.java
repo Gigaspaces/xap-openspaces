@@ -37,8 +37,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.gigaspaces.async.AsyncFutureListener;
+import com.gigaspaces.async.AsyncResult;
+import com.gigaspaces.async.SettableFuture;
 import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.gigaspaces.internal.quiesce.InternalQuiesceRequest;
+import com.gigaspaces.lrmi.nio.async.FutureContext;
+import com.gigaspaces.lrmi.nio.async.IFuture;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceID;
 
@@ -76,6 +81,7 @@ import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.admin.pu.events.ProcessingUnitAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitRemovedEventListener;
+import org.openspaces.admin.quiesce.QuiesceDetails;
 import org.openspaces.admin.quiesce.QuiesceRequest;
 import org.openspaces.admin.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.topology.ElasticStatefulProcessingUnitConfigHolder;
@@ -948,18 +954,43 @@ public class DefaultGridServiceManager extends AbstractAgentGridComponent implem
     }
 
     @Override
-    public QuiesceResult quiesce(ProcessingUnit processingUnit, QuiesceRequest request) {
+    public IFuture<InternalQuiesceDetails> quiesce(ProcessingUnit processingUnit, InternalQuiesceRequest request) {
+        final SettableFuture<InternalQuiesceDetails> res = new SettableFuture<InternalQuiesceDetails>();
         try {
-            InternalQuiesceDetails details = gsm.quiesce(processingUnit.getName(), new InternalQuiesceRequest(request.getDescription()));
-            return new QuiesceResult(details.getStatus(), details.getToken() ,details.getDescription());
+            gsm.quiesce(processingUnit.getName(), request);
+            IFuture<InternalQuiesceDetails> future = FutureContext.getFutureResult();
+            future.setListener(new AsyncFutureListener<InternalQuiesceDetails>() {
+                @Override
+                public void onResult(AsyncResult<InternalQuiesceDetails> internalQuiesceDetails) {
+                    if(internalQuiesceDetails.getException() == null){
+                        InternalQuiesceDetails details = internalQuiesceDetails.getResult();
+                        res.setResult(new QuiesceResult(details.getStatus(), details.getToken() ,details.getDescription()));
+                    }else{
+                        res.setResult(internalQuiesceDetails.getException());
+                    }
+                }
+            });
         } catch (SecurityException se) {
             //noinspection SpellCheckingInspection
-            throw new AdminException("No privileges to request quiesce on processing unit " + processingUnit.getName(), se);
+            res.setResult(new AdminException("No privileges to request quiesce on processing unit " + processingUnit.getName(), se));
         } catch (Exception e) {
-//            if (!NetworkExceptionHelper.isConnectOrCloseException(e)){
-            //noinspection SpellCheckingInspection
-            throw new AdminException("Failed to quiesce processing unit " + processingUnit.getName(), e);
-//            }
+            res.setResult(new AdminException("Failed to quiesce processing unit " + processingUnit.getName(), e));
+        }
+        finally {
+            FutureContext.clear();
+        }
+        return res;
+    }
+
+    @Override
+    public QuiesceDetails getQuiesceDetails(ProcessingUnit processingUnit) {
+        try {
+            InternalQuiesceDetails quiesceDetails = gsm.getQuiesceDetails(processingUnit.getName());
+            return new QuiesceDetails(quiesceDetails.getStatus(), quiesceDetails.getDescription(), quiesceDetails.getInstancesState());
+        } catch (SecurityException se) {
+            throw new AdminException("No privileges to request quiesceDetails on processing unit " + processingUnit.getName(), se);
+        } catch (Exception e) {
+            throw new AdminException("Failed to request quiesceDetails unit " + processingUnit.getName(), e);
         }
     }
 

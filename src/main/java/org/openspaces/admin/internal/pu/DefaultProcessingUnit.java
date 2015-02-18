@@ -17,9 +17,13 @@
  ******************************************************************************/
 package org.openspaces.admin.internal.pu;
 
+import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.grid.gsm.PUDetails;
+import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
+import com.gigaspaces.internal.quiesce.InternalQuiesceRequest;
 import com.gigaspaces.internal.utils.StringUtils;
 import com.gigaspaces.internal.utils.collections.ConcurrentHashSet;
+import com.gigaspaces.lrmi.nio.async.IFuture;
 import com.j_spaces.kernel.time.SystemTime;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,9 +53,11 @@ import org.openspaces.admin.pu.dependency.ProcessingUnitDependencies;
 import org.openspaces.admin.pu.dependency.ProcessingUnitDependency;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.admin.pu.events.*;
+import org.openspaces.admin.quiesce.QuiesceDetails;
 import org.openspaces.admin.quiesce.QuiesceRequest;
 import org.openspaces.admin.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.statistics.*;
+import org.openspaces.admin.quiesce.QuiesceTimeoutException;
 import org.openspaces.admin.space.Space;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.AtLeastOneZoneConfigurer;
@@ -1257,10 +1263,43 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
     }
 
     @Override
-    public QuiesceResult quiesce(QuiesceRequest request) {
+    public QuiesceResult quiesceAndWait(QuiesceRequest request, long timeout, TimeUnit timeUnit) throws QuiesceTimeoutException {
         if (!isManaged()) {
             throw new AdminException("No managing GSM to execute quiesce");
         }
-        return ((InternalGridServiceManager) managingGridServiceManager).quiesce(this, request);
+        InternalQuiesceRequest iRequest = new InternalQuiesceRequest(request.getDescription());
+        QuiesceResult quiesceResult = new QuiesceResult(QuiesceState.QUIESCING, iRequest.getToken(), request.getDescription());
+        try {
+            IFuture<InternalQuiesceDetails> quiesce = ((InternalGridServiceManager) managingGridServiceManager).quiesce(this, iRequest);
+            InternalQuiesceDetails d = quiesce.get(timeout, timeUnit);
+            return new QuiesceResult(d.getStatus(), d.getToken(), d.getDescription());
+        }
+        catch (TimeoutException e){
+            throw new QuiesceTimeoutException("timeout occurred while waiting for quiesce", quiesceResult);
+        }
+        catch (InterruptedException e){
+            return quiesceResult;
+        }
+        catch (ExecutionException e){
+            if (e.getCause() instanceof RuntimeException)
+                throw (RuntimeException)e.getCause();
+            throw new AdminException(e.getMessage(), e.getCause());
+        }
+        catch (Exception e) {
+            throw new AdminException(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    public QuiesceResult quiesceAndWait(QuiesceRequest request) throws QuiesceTimeoutException {
+        return quiesceAndWait(request, admin.getDefaultTimeout(), admin.getDefaultTimeoutTimeUnit());
+    }
+
+    @Override
+    public QuiesceDetails getQuiesceDetails(){
+        if (!isManaged()) {
+            throw new AdminException("No managing GSM to execute getQuiesceDetails");
+        }
+        return ((InternalGridServiceManager) managingGridServiceManager).getQuiesceDetails(this);
     }
 }

@@ -20,6 +20,9 @@ package org.openspaces.admin.internal.gsm;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
+import com.gigaspaces.internal.quiesce.InternalQuiesceRequest;
+import com.gigaspaces.lrmi.nio.async.IFuture;
 import net.jini.core.lookup.ServiceID;
 
 import org.jini.rio.monitor.ProvisionMonitorAdmin;
@@ -31,6 +34,7 @@ import org.openspaces.admin.internal.support.InternalAgentGridComponent;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
+import org.openspaces.admin.quiesce.QuiesceDetails;
 import org.openspaces.admin.quiesce.QuiesceRequest;
 import org.openspaces.admin.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.topology.ProcessingUnitDeploymentTopology;
@@ -92,5 +96,7 @@ public interface InternalGridServiceManager extends GridServiceManager, Internal
     /** @since 8.0.6 */
     Events getEvents(int maxEvents);
 
-    QuiesceResult quiesce(ProcessingUnit processingUnit, QuiesceRequest request);
+    IFuture<InternalQuiesceDetails> quiesce(ProcessingUnit processingUnit, InternalQuiesceRequest request);
+
+    QuiesceDetails getQuiesceDetails(ProcessingUnit processingUnit);
 }

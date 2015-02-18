@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container.servicegrid;
 
+import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.grid.zone.ZoneHelper;
 import com.gigaspaces.internal.dump.InternalDump;
@@ -28,7 +29,7 @@ import com.gigaspaces.internal.jvm.JVMStatistics;
 import com.gigaspaces.internal.os.OSDetails;
 import com.gigaspaces.internal.os.OSHelper;
 import com.gigaspaces.internal.os.OSStatistics;
-import com.gigaspaces.admin.quiesce.QuiesceState;
+import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.gigaspaces.internal.server.space.quiesce.QuiesceModes;
 import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import com.gigaspaces.lrmi.LRMIMonitoringDetails;
@@ -37,7 +38,6 @@ import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.lrmi.nio.info.NIOStatistics;
 import com.gigaspaces.management.entry.JMXConnection;
 import com.gigaspaces.metrics.*;
-import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
 import com.gigaspaces.start.SystemBoot;
@@ -62,7 +62,12 @@ import org.jini.rio.jsb.ServiceBeanAdapter;
 import org.jini.rio.watch.Calculable;
 import org.jini.rio.watch.GaugeWatch;
 import org.jini.rio.watch.Watch;
-import org.openspaces.core.cluster.*;
+import org.openspaces.admin.quiesce.QuiesceStateChangedEvent;
+import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
+import org.openspaces.core.cluster.ClusterInfo;
+import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
+import org.openspaces.core.cluster.MemberAliveIndicator;
+import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.core.space.SpaceType;
@@ -70,7 +75,9 @@ import org.openspaces.core.util.PlaceholderReplacer;
 import org.openspaces.core.util.PlaceholderReplacer.PlaceholderResolutionException;
 import org.openspaces.interop.DotnetProcessingUnitContainer;
 import org.openspaces.interop.DotnetProcessingUnitContainerProvider;
-import org.openspaces.pu.container.*;
+import org.openspaces.pu.container.CannotCreateContainerException;
+import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.container.ProcessingUnitContainerProvider;
 import org.openspaces.pu.container.integrated.IntegratedProcessingUnitContainerProvider;
 import org.openspaces.pu.container.jee.JeeProcessingUnitContainerProvider;
 import org.openspaces.pu.container.jee.context.BootstrapWebApplicationContextListener;
@@ -1687,22 +1694,58 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             mode = QuiesceModes.OFF;
         }
         if (mode != null) {
-            for (Object serviceDetails : puDetails.getDetails()) {
-                if (isSpaceServiceDetails(serviceDetails)) {
-                    try {
-                        if (containsEmbeddedSpace(serviceDetails)) {
-                            IJSpace space = getSpaceFromServiceDetails(serviceDetails);
-                            space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode, quiesceDetails.getToken());
-                        }
-                    } catch (UnsupportedOperationException e) {
-                        //todo
-                        throw new RemoteException("setOperationalMode failed", e);
-                    } catch (Exception e) {
-                        throw new RemoteException("setOperationalMode failed", e);
+            boolean enterQuiesce = mode == QuiesceModes.ON;
+            QuiesceStateChangedEvent event = enterQuiesce ? new QuiesceStateChangedEvent(true) : new QuiesceStateChangedEvent(false);
+            if (enterQuiesce){
+                informQuiesceToListeners(event);
+                informQuiesceToSpaces(quiesceDetails, mode);
+            }
+            else {
+                informQuiesceToSpaces(quiesceDetails, mode);
+                informQuiesceToListeners(event);
+            }
+        }
+    }
+
+    private void informQuiesceToSpaces(InternalQuiesceDetails quiesceDetails, QuiesceModes mode) throws RemoteException {
+        RuntimeException ex = null;
+        for (Object serviceDetails : puDetails.getDetails()) {
+            if (isSpaceServiceDetails(serviceDetails)) {
+                try {
+                    if (containsEmbeddedSpace(serviceDetails)) {
+                        IJSpace space = getSpaceFromServiceDetails(serviceDetails);
+                        space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode, quiesceDetails.getToken());
                     }
+                } catch (RuntimeException e) {
+                    ex = e;
+                } catch (Exception e) {
+                    ex = new RuntimeException(e);
+                    logger.warn(e, e);
                 }
             }
         }
+        if (ex != null){
+            throw ex;
+        }
+    }
+
+    private void informQuiesceToListeners(QuiesceStateChangedEvent event) {
+        List<QuiesceStateChangedListener> listeners = getQuiesceStateChangedListeners();
+        for(QuiesceStateChangedListener listener : listeners){
+            listener.quiesceStateChanged(event);
+        }
+    }
+
+    private List<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
+        List<QuiesceStateChangedListener> res = new ArrayList<QuiesceStateChangedListener>();
+        if (container instanceof ApplicationContextProcessingUnitContainer) {
+            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
+            Map<String, QuiesceStateChangedListener> beansOfType = applicationContext.getBeansOfType(QuiesceStateChangedListener.class);
+            for (QuiesceStateChangedListener listener : beansOfType.values()) {
+                res.add(listener);
+            }
+        }
+        return res;
     }
 
     private boolean containsEmbeddedSpace(Object serviceDetails) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
