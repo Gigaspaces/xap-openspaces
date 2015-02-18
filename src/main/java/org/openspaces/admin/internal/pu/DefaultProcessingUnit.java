@@ -20,10 +20,8 @@ package org.openspaces.admin.internal.pu;
 import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.grid.gsm.PUDetails;
 import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
-import com.gigaspaces.internal.quiesce.InternalQuiesceRequest;
 import com.gigaspaces.internal.utils.StringUtils;
 import com.gigaspaces.internal.utils.collections.ConcurrentHashSet;
-import com.gigaspaces.lrmi.nio.async.IFuture;
 import com.j_spaces.kernel.time.SystemTime;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1263,36 +1261,40 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
     }
 
     @Override
-    public QuiesceResult quiesceAndWait(QuiesceRequest request, long timeout, TimeUnit timeUnit) throws QuiesceTimeoutException {
+    public QuiesceResult quiesce(QuiesceRequest request) {
         if (!isManaged()) {
             throw new AdminException("No managing GSM to execute quiesce");
         }
-        InternalQuiesceRequest iRequest = new InternalQuiesceRequest(request.getDescription());
-        QuiesceResult quiesceResult = new QuiesceResult(QuiesceState.QUIESCING, iRequest.getToken(), request.getDescription());
-        try {
-            IFuture<InternalQuiesceDetails> quiesce = ((InternalGridServiceManager) managingGridServiceManager).quiesce(this, iRequest);
-            InternalQuiesceDetails d = quiesce.get(timeout, timeUnit);
-            return new QuiesceResult(d.getStatus(), d.getToken(), d.getDescription());
+        InternalQuiesceDetails quiesceDetails = ((InternalGridServiceManager) managingGridServiceManager).quiesce(this, request);
+        return new QuiesceResult(quiesceDetails.getStatus(), quiesceDetails.getToken(), quiesceDetails.getDescription());
+    }
+
+    @Override
+    public boolean waitFor(QuiesceState desiredState, long timeout, TimeUnit timeUnit){
+        if (!isManaged()) {
+            throw new AdminException("No managing GSM to execute quiesce");
         }
-        catch (TimeoutException e){
-            throw new QuiesceTimeoutException("timeout occurred while waiting for quiesce", quiesceResult);
-        }
-        catch (InterruptedException e){
-            return quiesceResult;
-        }
-        catch (ExecutionException e){
-            if (e.getCause() instanceof RuntimeException)
-                throw (RuntimeException)e.getCause();
-            throw new AdminException(e.getMessage(), e.getCause());
-        }
-        catch (Exception e) {
-            throw new AdminException(e.getMessage(), e.getCause());
+        long interval = 1000;
+        long expTime = System.currentTimeMillis() + timeUnit.toMillis(timeout);
+        for(;;) {
+            QuiesceDetails currentDetails = getQuiesceDetails();
+            if (currentDetails.getStatus().equals(desiredState)){
+                return true;
+            }
+            try {
+                Thread.sleep(interval);
+                if (System.currentTimeMillis() >= expTime){
+                    return false;
+                }
+            } catch (InterruptedException e) {
+                return false;
+            }
         }
     }
 
     @Override
-    public QuiesceResult quiesceAndWait(QuiesceRequest request) throws QuiesceTimeoutException {
-        return quiesceAndWait(request, admin.getDefaultTimeout(), admin.getDefaultTimeoutTimeUnit());
+    public boolean waitFor(QuiesceState desiredState){
+        return waitFor(desiredState, admin.getDefaultTimeout(), admin.getDefaultTimeoutTimeUnit());
     }
 
     @Override
