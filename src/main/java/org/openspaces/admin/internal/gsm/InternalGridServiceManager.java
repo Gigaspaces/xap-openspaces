@@ -95,5 +95,7 @@ public interface InternalGridServiceManager extends GridServiceManager, Internal
 
     InternalQuiesceDetails quiesce(ProcessingUnit processingUnit, QuiesceRequest request);
 
+    void unquiesce(ProcessingUnit processingUnit, QuiesceRequest request);
+
     QuiesceDetails getQuiesceDetails(ProcessingUnit processingUnit);
 }

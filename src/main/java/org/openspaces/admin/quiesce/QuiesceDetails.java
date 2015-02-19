@@ -18,7 +18,6 @@ package org.openspaces.admin.quiesce;
 
 import com.gigaspaces.admin.quiesce.InstancesQuiesceState;
 import com.gigaspaces.admin.quiesce.QuiesceState;
-import com.gigaspaces.admin.quiesce.QuiesceToken;
 
 
 /**

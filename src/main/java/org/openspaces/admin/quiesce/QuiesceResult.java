@@ -16,8 +16,6 @@
 
 package org.openspaces.admin.quiesce;
 
-import com.gigaspaces.admin.quiesce.InstancesQuiesceState;
-import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.admin.quiesce.QuiesceToken;
 
 
@@ -27,21 +25,15 @@ import com.gigaspaces.admin.quiesce.QuiesceToken;
  */
 public class QuiesceResult{
 
-    private QuiesceState status;
     private QuiesceToken token;
     private String description;
 
     public QuiesceResult() {
     }
 
-    public QuiesceResult(QuiesceState status, QuiesceToken token, String description) {
-        this.status = status;
+    public QuiesceResult(QuiesceToken token, String description) {
         this.token = token;
         this.description = description;
-    }
-
-    public QuiesceState getStatus() {
-        return status;
     }
 
     public QuiesceToken getToken() {
@@ -71,7 +63,6 @@ public class QuiesceResult{
     @Override
     public String toString() {
         return "QuiesceResult{" +
-                "status=" + status +
                 ", token=" + token +
                 ", description='" + description + '\'' +
                 '}';

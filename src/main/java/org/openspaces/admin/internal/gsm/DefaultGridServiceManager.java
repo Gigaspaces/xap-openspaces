@@ -959,6 +959,17 @@ public class DefaultGridServiceManager extends AbstractAgentGridComponent implem
     }
 
     @Override
+    public void unquiesce(ProcessingUnit processingUnit, QuiesceRequest request){
+        try {
+            gsm.unquiesce(processingUnit.getName(), new InternalQuiesceRequest(request.getDescription()));
+        } catch (SecurityException se) {
+            throw new AdminException("No privileges to execute quiesce on processing unit " + processingUnit.getName(), se);
+        } catch (Exception e) {
+            throw new AdminException("Failed to execute quiesce on " + processingUnit.getName(), e);
+        }
+    }
+
+    @Override
     public QuiesceDetails getQuiesceDetails(ProcessingUnit processingUnit) {
         try {
             InternalQuiesceDetails quiesceDetails = gsm.getQuiesceDetails(processingUnit.getName());

@@ -55,7 +55,6 @@ import org.openspaces.admin.quiesce.QuiesceDetails;
 import org.openspaces.admin.quiesce.QuiesceRequest;
 import org.openspaces.admin.quiesce.QuiesceResult;
 import org.openspaces.admin.pu.statistics.*;
-import org.openspaces.admin.quiesce.QuiesceTimeoutException;
 import org.openspaces.admin.space.Space;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.AtLeastOneZoneConfigurer;
@@ -69,6 +68,7 @@ import org.openspaces.pu.sla.requirement.Requirement;
 import org.openspaces.pu.sla.requirement.ZoneRequirement;
 
 import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1266,7 +1266,14 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
             throw new AdminException("No managing GSM to execute quiesce");
         }
         InternalQuiesceDetails quiesceDetails = ((InternalGridServiceManager) managingGridServiceManager).quiesce(this, request);
-        return new QuiesceResult(quiesceDetails.getStatus(), quiesceDetails.getToken(), quiesceDetails.getDescription());
+        return new QuiesceResult(quiesceDetails.getToken(), quiesceDetails.getDescription());
+    }
+
+    public void unquiesce(QuiesceRequest request){
+        if (!isManaged()) {
+            throw new AdminException("No managing GSM to execute quiesce");
+        }
+        ((InternalGridServiceManager) managingGridServiceManager).unquiesce(this, request);
     }
 
     @Override
@@ -1275,21 +1282,35 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
             throw new AdminException("No managing GSM to execute quiesce");
         }
         long interval = 1000;
-        long expTime = System.currentTimeMillis() + timeUnit.toMillis(timeout);
+        long expiration;
+        // checking long overflow to set the expiration time properly
+        BigInteger sum = BigInteger.valueOf(0);
+        sum = sum.add(BigInteger.valueOf(System.currentTimeMillis())).add(BigInteger.valueOf(timeUnit.toMillis(timeout)));
+        if (sum.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
+            expiration = Long.MAX_VALUE;
+        else
+            expiration = sum.longValue();
         for(;;) {
             QuiesceDetails currentDetails = getQuiesceDetails();
-            if (currentDetails.getStatus().equals(desiredState)){
+            if (instancesReachedQuiesceState(desiredState, currentDetails)){
                 return true;
             }
             try {
                 Thread.sleep(interval);
-                if (System.currentTimeMillis() >= expTime){
+                if (System.currentTimeMillis() >= expiration){
                     return false;
                 }
             } catch (InterruptedException e) {
                 return false;
             }
         }
+    }
+
+    private boolean instancesReachedQuiesceState(QuiesceState desiredState, QuiesceDetails currentDetails) {
+        if (currentDetails.getInstancesQuiesceState() == null)
+            return false;
+
+        return currentDetails.getStatus().equals(desiredState) && currentDetails.getInstancesQuiesceState().getFailedToQuiesceInstances().size() == 0;
     }
 
     @Override

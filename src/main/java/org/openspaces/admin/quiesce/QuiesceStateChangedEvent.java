@@ -16,19 +16,28 @@
 
 package org.openspaces.admin.quiesce;
 
+import com.gigaspaces.admin.quiesce.QuiesceState;
+import com.gigaspaces.admin.quiesce.QuiesceToken;
+
 /**
  * @author Boris
  * @since 10.1.0
  */
 public class QuiesceStateChangedEvent {
 
-    private boolean quiesced;
+    private QuiesceState quiesceState;
+    private QuiesceToken token;
 
-    public QuiesceStateChangedEvent(boolean quiesced) {
-        this.quiesced = quiesced;
+    public QuiesceStateChangedEvent(QuiesceState quiesceState, QuiesceToken token) {
+        this.quiesceState = quiesceState;
+        this.token = token;
     }
 
-    public boolean isQuiesced(){
-        return quiesced;
+    public QuiesceState getQuiesceState(){
+        return quiesceState;
+    }
+
+    public QuiesceToken getToken() {
+        return token;
     }
 }

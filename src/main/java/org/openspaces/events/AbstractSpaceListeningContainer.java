@@ -16,6 +16,7 @@
 
 package org.openspaces.events;
 
+import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
@@ -494,7 +495,7 @@ public abstract class AbstractSpaceListeningContainer implements Lifecycle, Bean
     }
 
     public void quiesceStateChanged(QuiesceStateChangedEvent event){
-        quiesced = event.isQuiesced();
+        quiesced = event.getQuiesceState().equals(QuiesceState.QUIESCED);
         if (quiesced){
             stop();
         }

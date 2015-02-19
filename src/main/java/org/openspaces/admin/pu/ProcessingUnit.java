@@ -471,6 +471,8 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
 
     QuiesceResult quiesce(QuiesceRequest request);
 
+    void unquiesce(QuiesceRequest request);
+
     boolean waitFor(QuiesceState desiredState, long timeout, TimeUnit timeUnit);
 
     boolean waitFor(QuiesceState desiredState);
