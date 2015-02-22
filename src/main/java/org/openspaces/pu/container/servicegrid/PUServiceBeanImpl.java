@@ -50,6 +50,7 @@ import com.j_spaces.core.filters.StatisticsHolder;
 import com.j_spaces.jmx.util.JMXUtilities;
 import com.j_spaces.kernel.ClassLoaderHelper;
 import com.j_spaces.kernel.Environment;
+import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -265,14 +266,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         super.initialize(context);
 
         /* Get the JMX Service URL */
-        String jmxServiceURL = SystemBoot.getJMXServiceURL();
-
-        if(jmxServiceURL != null) {
-            String hostName = BootUtil.getHostAddress();
-            JMXConnection jmxConnection = JMXUtilities.createJMXConnectionAttribute(
-                    jmxServiceURL, context.getServiceElement().getName(), hostName );
-            addAttribute( jmxConnection );
-        }
+        Entry jmxEntry = JMXUtilities.createJMXConnectionAttribute(context.getServiceElement().getName());
+        if (jmxEntry!= null)
+            addAttribute(jmxEntry);
     }
 
     @Override
