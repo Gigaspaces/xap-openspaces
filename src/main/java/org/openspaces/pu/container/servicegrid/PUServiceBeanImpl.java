@@ -1691,7 +1691,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
         if (mode != null) {
             boolean enterQuiesce = mode == QuiesceModes.ON;
-            QuiesceStateChangedEvent event = new QuiesceStateChangedEvent(quiesceDetails.getStatus() , quiesceDetails.getToken());
+            QuiesceStateChangedEvent event = new QuiesceStateChangedEvent(quiesceDetails.getStatus() , quiesceDetails.getToken(), quiesceDetails.getDescription());
             if (enterQuiesce){
                 informQuiesceToListeners(event);
                 informQuiesceToSpaces(quiesceDetails, mode);
@@ -1703,8 +1703,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
     }
 
-    private void informQuiesceToSpaces(InternalQuiesceDetails quiesceDetails, QuiesceModes mode) throws RemoteException {
-        RuntimeException ex = null;
+    private void informQuiesceToSpaces(InternalQuiesceDetails quiesceDetails, QuiesceModes mode){
         for (Object serviceDetails : puDetails.getDetails()) {
             if (isSpaceServiceDetails(serviceDetails)) {
                 try {
@@ -1712,16 +1711,11 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                         IJSpace space = getSpaceFromServiceDetails(serviceDetails);
                         space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode, quiesceDetails.getToken());
                     }
-                } catch (RuntimeException e) {
-                    ex = e;
-                } catch (Exception e) {
-                    ex = new RuntimeException(e);
-                    logger.warn(e, e);
+                }
+                catch (Exception e) {
+                    logger.warn("Failed to inform a space about quiesce state changed" , e);
                 }
             }
-        }
-        if (ex != null){
-            throw ex;
         }
     }
 

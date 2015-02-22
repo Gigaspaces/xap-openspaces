@@ -27,10 +27,12 @@ public class QuiesceStateChangedEvent {
 
     private QuiesceState quiesceState;
     private QuiesceToken token;
+    private String description;
 
-    public QuiesceStateChangedEvent(QuiesceState quiesceState, QuiesceToken token) {
+    public QuiesceStateChangedEvent(QuiesceState quiesceState, QuiesceToken token, String description) {
         this.quiesceState = quiesceState;
         this.token = token;
+        this.description = description;
     }
 
     public QuiesceState getQuiesceState(){
@@ -39,5 +41,9 @@ public class QuiesceStateChangedEvent {
 
     public QuiesceToken getToken() {
         return token;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

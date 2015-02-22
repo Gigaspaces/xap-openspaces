@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.admin.internal.pu;
 
+import com.gigaspaces.admin.quiesce.InstancesQuiesceState;
 import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.grid.gsm.PUDetails;
 import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
@@ -1310,7 +1311,12 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
         if (currentDetails.getInstancesQuiesceState() == null)
             return false;
 
-        return currentDetails.getStatus().equals(desiredState) && currentDetails.getInstancesQuiesceState().getFailedToQuiesceInstances().size() == 0;
+        InstancesQuiesceState instancesQuiesceState = currentDetails.getInstancesQuiesceState();
+        // check if planned is equals to actual instances - if there are missing instances ALL instances could not be in desiredState
+        if (instancesQuiesceState.getMissingInstancesCount() != 0){
+            return false;
+        }
+        return currentDetails.getStatus().equals(desiredState) && instancesQuiesceState.getFailedToQuiesceInstances().size() == 0;
     }
 
     @Override
