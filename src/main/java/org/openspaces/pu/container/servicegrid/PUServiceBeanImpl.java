@@ -790,8 +790,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private static Map<String, String> buildPuTags(ClusterInfo clusterInfo) {
         Map<String, String> tags = new HashMap<String, String>();
-        tags.put("pu-name", clusterInfo != null ? clusterInfo.getName() : "unknown");
-        tags.put("pu-instance-id", clusterInfo != null ? getInstanceId(clusterInfo) : "unknown");
+        tags.put("pu_name", clusterInfo != null ? clusterInfo.getName() : "unknown");
+        tags.put("pu_instance_id", clusterInfo != null ? getInstanceId(clusterInfo) : "unknown");
         return tags;
     }
 
