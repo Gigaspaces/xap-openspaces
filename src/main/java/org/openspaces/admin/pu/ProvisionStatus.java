@@ -41,16 +41,21 @@ public enum ProvisionStatus {
     SUCCESS,
     FAILURE,
     PENDING;
-    
+
     /**
      * IS SET USING REFLECTION!
+     *
      * @see org.openspaces.admin.internal.pu.DefaultProcessingUnit#processProvisionEvent(org.jini.rio.monitor.ProvisionLifeCycleEvent)
+     * @deprecated since 10.1.0 replaced by {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceProvisionStatusChangedEvent#getProvisionFailure()}
      */
+    @Deprecated //GS-12208
     private ProcessingUnitInstanceProvisionFailure provisionFailure; //set using reflection!
 
     /**
-     * @return Upon a provision {@link #FAILURE}, the reason/cause can be extracted. Otherwise returns <code>null</code>.
+     * @return Upon a provision {@link #FAILURE} or {@link #PENDING} state, the reason/cause can be extracted. Otherwise returns <code>null</code>.
+     * @deprecated since 10.1.0 replaced by {@link org.openspaces.admin.pu.events.ProcessingUnitInstanceProvisionStatusChangedEvent#getProvisionFailure()}
      */
+    @Deprecated //GS-12208
     public ProcessingUnitInstanceProvisionFailure getProvisionFailure() {
         return provisionFailure;
     }

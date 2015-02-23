@@ -37,6 +37,7 @@ public class ProcessingUnitInstanceProvisionStatusChangedEvent {
     private final String processingUnitInstanceName;
     private final ProvisionStatus previousStatus;
     private final ProvisionStatus newStatus;
+    private final ProcessingUnitInstanceProvisionFailure provisionFailure;
     private final String gscServiceId;
 
     private GridServiceContainer cachedGridServiceContainer; //may be null on pending
@@ -44,7 +45,7 @@ public class ProcessingUnitInstanceProvisionStatusChangedEvent {
     
     public ProcessingUnitInstanceProvisionStatusChangedEvent(ProcessingUnit processingUnit,
             String processingUnitInstanceName, ProvisionStatus previousStatus, ProvisionStatus newStatus,
-            GridServiceContainer gridServiceContainer, ProcessingUnitInstance processingUnitInstance) {
+            GridServiceContainer gridServiceContainer, ProcessingUnitInstance processingUnitInstance, ProcessingUnitInstanceProvisionFailure provisionFailure) {
         this.processingUnit = processingUnit;
         this.processingUnitInstanceName = processingUnitInstanceName;
         this.previousStatus = previousStatus;
@@ -52,11 +53,12 @@ public class ProcessingUnitInstanceProvisionStatusChangedEvent {
         this.cachedGridServiceContainer = gridServiceContainer;
         this.cachedProcessingUnitInstance = processingUnitInstance;
         this.gscServiceId = null;
+        this.provisionFailure = provisionFailure;
     }
     
     public ProcessingUnitInstanceProvisionStatusChangedEvent(ProcessingUnit processingUnit,
             String processingUnitInstanceName, ProvisionStatus previousStatus, ProvisionStatus newStatus,
-            String gscServiceId) {
+            String gscServiceId, ProcessingUnitInstanceProvisionFailure provisionFailure) {
         this.processingUnit = processingUnit;
         this.processingUnitInstanceName = processingUnitInstanceName;
         this.previousStatus = previousStatus;
@@ -64,6 +66,7 @@ public class ProcessingUnitInstanceProvisionStatusChangedEvent {
         this.gscServiceId = gscServiceId;
         this.cachedGridServiceContainer = null;
         this.cachedProcessingUnitInstance = null;
+        this.provisionFailure = provisionFailure;
     }
     
     /**
@@ -128,5 +131,16 @@ public class ProcessingUnitInstanceProvisionStatusChangedEvent {
             }
         }
         return cachedProcessingUnitInstance;
+    }
+
+    /**
+     * A provision life-cycle failure can result due to missing container, illegal instance count, or a failure to instantiate. The corresponding status
+     * can be {@link org.openspaces.admin.pu.ProvisionStatus#PENDING} or {@link org.openspaces.admin.pu.ProvisionStatus#FAILURE}.
+     *
+     * @return The provision life-cycle failure corresponding to the status returned by {@link #getNewStatus()}, or <code>null</code> if no failure was raised.
+     * @since 10.1.0
+     */
+    public ProcessingUnitInstanceProvisionFailure getProvisionFailure() {
+        return provisionFailure;
     }
 }

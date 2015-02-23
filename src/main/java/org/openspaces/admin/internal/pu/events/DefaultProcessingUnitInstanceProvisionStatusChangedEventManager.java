@@ -79,7 +79,7 @@ public class DefaultProcessingUnitInstanceProvisionStatusChangedEventManager imp
 
                         listener.processingUnitInstanceProvisionStatusChanged(new ProcessingUnitInstanceProvisionStatusChangedEvent(
                                 pu, processingUnitInstanceName, statusHolder.getPrevProvisionStatus(),
-                                statusHolder.getNewProvisionStatus(), gridServiceContainer, processingUnitInstance));
+                                statusHolder.getNewProvisionStatus(), gridServiceContainer, processingUnitInstance, statusHolder.getProvisionFailure()));
                     }
                 }
             });

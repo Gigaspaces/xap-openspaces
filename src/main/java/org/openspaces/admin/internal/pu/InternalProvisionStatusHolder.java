@@ -18,10 +18,12 @@
 package org.openspaces.admin.internal.pu;
 
 import org.openspaces.admin.pu.ProvisionStatus;
+import org.openspaces.admin.pu.events.ProcessingUnitInstanceProvisionFailure;
 
 public class InternalProvisionStatusHolder {
     private ProvisionStatus prevProvisionStatus;
     private ProvisionStatus newProvisionStatus;
+    private ProcessingUnitInstanceProvisionFailure provisionFailure;
     
     public void setNewProvisionStatus(ProvisionStatus newProvisionStatus) {
         this.newProvisionStatus = newProvisionStatus;
@@ -35,8 +37,16 @@ public class InternalProvisionStatusHolder {
         this.prevProvisionStatus = prevProvisionStatus;
     }
 
-    
     public ProvisionStatus getPrevProvisionStatus() {
         return prevProvisionStatus;
+    }
+
+
+    public ProcessingUnitInstanceProvisionFailure getProvisionFailure() {
+        return provisionFailure;
+    }
+
+    public void setProvisionFailure(ProcessingUnitInstanceProvisionFailure provisionFailure) {
+        this.provisionFailure = provisionFailure;
     }
 }

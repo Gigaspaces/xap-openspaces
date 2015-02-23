@@ -142,12 +142,12 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
     private final ProcessingUnitType processingUnitType;
     
     /**
-     * @Deprecated since 8.0.6 use app.deploy(puDeployment) or gsm.deploy(new ApplicationDeployment(appName,puDeployment) instead.
+     * @deprecated  since 8.0.6 use app.deploy(puDeployment) or gsm.deploy(new ApplicationDeployment(appName,puDeployment) instead.
      */
     private static final String APPLICATION_NAME_CONTEXT_PROPERTY = "com.gs.application";
     
     /**
-     * @Deprecated since 8.0.6 use gsm.deploy(puDeployment.addDependency("otherPU")) instead.
+     * @deprecated since 8.0.6 use gsm.deploy(puDeployment.addDependency("otherPU")) instead.
      */
     private static final String APPLICATION_DEPENDENCIES_CONTEXT_PROPERTY = "com.gs.application.dependsOn";
 
@@ -1042,11 +1042,15 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
         ProvisionStatus lastProvisionStatus = provisionStatusHolder.getNewProvisionStatus();
         if (newStatus != lastProvisionStatus) {
             String processingUnitInstanceName = provisionLifeCycleEvent.getProcessingUnitInstanceName();
-            
+
+            ProcessingUnitInstanceProvisionFailure failure = null;
             final String exceptionMessage = provisionLifeCycleEvent.getException();
             if (exceptionMessage != null) {
                 boolean uninstantiable = provisionLifeCycleEvent.isUninstantiable();
-                ProcessingUnitInstanceProvisionFailure failure = new ProcessingUnitInstanceProvisionFailure(this, provisionLifeCycleEvent.getGscServiceId(), exceptionMessage, uninstantiable);
+                failure = new ProcessingUnitInstanceProvisionFailure(this, provisionLifeCycleEvent.getGscServiceId(), exceptionMessage, uninstantiable);
+
+                //@since 10.1 part of the event ProcessingUnitInstanceProvisionStatusChangedEvent.getProvisionFailure()
+                //This reflection can be removed once the deprecated method ProvisionStatus.getProvisionFailure() is removed
                 try {
                     Field field = newStatus.getClass().getDeclaredField("provisionFailure");
                     field.setAccessible(true);
@@ -1055,11 +1059,13 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
                     admin.getAdminLogger().warn("failed to set provision failure " + e);
                 }
             }
-            
-            ProcessingUnitInstanceProvisionStatusChangedEvent event = new ProcessingUnitInstanceProvisionStatusChangedEvent(this, processingUnitInstanceName, lastProvisionStatus, newStatus, provisionLifeCycleEvent.getGscServiceId());
+
+            ProcessingUnitInstanceProvisionStatusChangedEvent event = new ProcessingUnitInstanceProvisionStatusChangedEvent(this,
+                    processingUnitInstanceName, lastProvisionStatus, newStatus, provisionLifeCycleEvent.getGscServiceId(), failure);
             
             provisionStatusHolder.setNewProvisionStatus(newStatus);
             provisionStatusHolder.setPrevProvisionStatus(lastProvisionStatus);
+            provisionStatusHolder.setProvisionFailure(failure);
             provisionStatus.put(provisionLifeCycleEvent.getProcessingUnitInstanceName(), provisionStatusHolder);
 
             processingUnitInstanceProvisionStatusChangedEventManager.processingUnitInstanceProvisionStatusChanged(event);
