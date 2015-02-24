@@ -63,7 +63,7 @@ public class QuiesceResult{
     @Override
     public String toString() {
         return "QuiesceResult{" +
-                ", token=" + token +
+                "token=" + token +
                 ", description='" + description + '\'' +
                 '}';
     }
