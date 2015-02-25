@@ -18,9 +18,7 @@ package org.openspaces.core.exception;
 
 import java.rmi.RemoteException;
 
-import com.gigaspaces.cluster.replication.ConsistencyLevelCompromisedException;
-import com.gigaspaces.cluster.replication.TakeConsistencyLevelCompromisedException;
-import com.gigaspaces.internal.server.space.quiesce.QuiesceException;
+import com.gigaspaces.admin.quiesce.QuiesceException;
 import net.jini.core.transaction.TransactionException;
 
 import org.openspaces.core.*;

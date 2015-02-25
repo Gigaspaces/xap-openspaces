@@ -30,17 +30,14 @@ import com.gigaspaces.internal.os.OSDetails;
 import com.gigaspaces.internal.os.OSHelper;
 import com.gigaspaces.internal.os.OSStatistics;
 import com.gigaspaces.internal.quiesce.InternalQuiesceDetails;
-import com.gigaspaces.internal.server.space.quiesce.QuiesceModes;
 import com.gigaspaces.internal.utils.ClassLoaderUtils;
 import com.gigaspaces.lrmi.LRMIMonitoringDetails;
 import com.gigaspaces.lrmi.nio.info.NIODetails;
 import com.gigaspaces.lrmi.nio.info.NIOInfoHelper;
 import com.gigaspaces.lrmi.nio.info.NIOStatistics;
-import com.gigaspaces.management.entry.JMXConnection;
 import com.gigaspaces.metrics.*;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
-import com.gigaspaces.start.SystemBoot;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.RuntimeHolder;
@@ -1683,33 +1680,24 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     @Override
     public void quiesceStateChanged(InternalQuiesceDetails quiesceDetails) throws RemoteException {
-        QuiesceModes mode = null;
-        if (quiesceDetails.getStatus().equals(QuiesceState.QUIESCED)) {
-            mode = QuiesceModes.ON;
-        } else if (quiesceDetails.getStatus().equals(QuiesceState.UNQUIESCED)) {
-            mode = QuiesceModes.OFF;
+        QuiesceStateChangedEvent event = new QuiesceStateChangedEvent(quiesceDetails.getStatus() , quiesceDetails.getToken(), quiesceDetails.getDescription());
+        if (quiesceDetails.getStatus() == QuiesceState.QUIESCED){
+            informQuiesceToListeners(event);
+            informQuiesceToSpaces(quiesceDetails);
         }
-        if (mode != null) {
-            boolean enterQuiesce = mode == QuiesceModes.ON;
-            QuiesceStateChangedEvent event = new QuiesceStateChangedEvent(quiesceDetails.getStatus() , quiesceDetails.getToken(), quiesceDetails.getDescription());
-            if (enterQuiesce){
-                informQuiesceToListeners(event);
-                informQuiesceToSpaces(quiesceDetails, mode);
-            }
-            else {
-                informQuiesceToSpaces(quiesceDetails, mode);
-                informQuiesceToListeners(event);
-            }
+        else {
+            informQuiesceToSpaces(quiesceDetails);
+            informQuiesceToListeners(event);
         }
     }
 
-    private void informQuiesceToSpaces(InternalQuiesceDetails quiesceDetails, QuiesceModes mode){
+    private void informQuiesceToSpaces(InternalQuiesceDetails quiesceDetails){
         for (Object serviceDetails : puDetails.getDetails()) {
             if (isSpaceServiceDetails(serviceDetails)) {
                 try {
                     if (containsEmbeddedSpace(serviceDetails)) {
                         IJSpace space = getSpaceFromServiceDetails(serviceDetails);
-                        space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(mode, quiesceDetails.getToken());
+                        space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(quiesceDetails);
                     }
                 }
                 catch (Exception e) {
