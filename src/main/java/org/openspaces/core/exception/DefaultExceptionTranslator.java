@@ -18,7 +18,6 @@ package org.openspaces.core.exception;
 
 import java.rmi.RemoteException;
 
-import com.gigaspaces.admin.quiesce.QuiesceException;
 import net.jini.core.transaction.TransactionException;
 
 import org.openspaces.core.*;
@@ -71,9 +70,6 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
         }
         if (e instanceof DuplicateIndexValueException){
         	return new UniqueConstraintViolationException(e.toString(), e);
-        }
-        if (e instanceof QuiesceException){
-            return new SpaceInQuiesceModeException(e.toString(), e);
         }
 
         if (e instanceof DataAccessException) {
