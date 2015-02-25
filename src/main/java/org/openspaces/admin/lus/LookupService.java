@@ -20,6 +20,7 @@ import net.jini.core.discovery.LookupLocator;
 import org.openspaces.admin.AgentGridComponent;
 import org.openspaces.admin.LogProviderGridComponent;
 import org.openspaces.admin.dump.DumpProvider;
+import org.openspaces.admin.metrics.MetricProvider;
 
 /**
  * A lookup service acts a lookup server where different grid components register and maintain
@@ -27,7 +28,7 @@ import org.openspaces.admin.dump.DumpProvider;
  *
  * @author kimchy
  */
-public interface LookupService extends AgentGridComponent, LogProviderGridComponent, DumpProvider {
+public interface LookupService extends AgentGridComponent, LogProviderGridComponent, DumpProvider, MetricProvider {
 
     String[] getLookupGroups();
 

@@ -475,6 +475,15 @@ public class DefaultGridServiceAgent extends AbstractGridComponent implements In
         }
     }
 
+    @Override
+    public void reloadMetricConfiguration() throws AdminException {
+        try {
+            gsa.reloadMetricConfiguration();
+        } catch (RemoteException e) {
+            throw new AdminException("Failed to reload metric configuration", e);
+        }
+    }
+
     public NIODetails getNIODetails() throws RemoteException {
         return gsa.getNIODetails();
     }

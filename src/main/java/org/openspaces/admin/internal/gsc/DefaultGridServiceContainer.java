@@ -196,6 +196,15 @@ public class DefaultGridServiceContainer extends AbstractAgentGridComponent impl
         }
     }
 
+    @Override
+    public void reloadMetricConfiguration() throws AdminException {
+        try {
+            gsc.reloadMetricConfiguration();
+        } catch (RemoteException e) {
+            throw new AdminException("Failed to reload metric configuration", e);
+        }
+    }
+
     public DumpResult generateDump(String cause, Map<String, Object> context) throws AdminException {
         try {
             return new InternalDumpResult(this, gsc, gsc.generateDump(cause, context));

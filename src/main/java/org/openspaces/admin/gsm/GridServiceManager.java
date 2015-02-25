@@ -27,6 +27,7 @@ import org.openspaces.admin.application.ApplicationDeployment;
 import org.openspaces.admin.application.config.ApplicationConfig;
 import org.openspaces.admin.dump.DumpProvider;
 import org.openspaces.admin.memcached.MemcachedDeployment;
+import org.openspaces.admin.metrics.MetricProvider;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitAlreadyDeployedException;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
@@ -44,7 +45,7 @@ import org.openspaces.admin.space.SpaceDeployment;
  *
  * @author kimchy
  */
-public interface GridServiceManager extends AgentGridComponent, LogProviderGridComponent, DumpProvider {
+public interface GridServiceManager extends AgentGridComponent, LogProviderGridComponent, DumpProvider, MetricProvider {
 
     /**
      * Undeploys the processing unit based on its name.

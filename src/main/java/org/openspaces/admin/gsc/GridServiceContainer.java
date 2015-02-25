@@ -19,6 +19,7 @@ package org.openspaces.admin.gsc;
 import org.openspaces.admin.AgentGridComponent;
 import org.openspaces.admin.LogProviderGridComponent;
 import org.openspaces.admin.dump.DumpProvider;
+import org.openspaces.admin.metrics.MetricProvider;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventManager;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author kimchy
  */
-public interface GridServiceContainer extends AgentGridComponent, Iterable<ProcessingUnitInstance>, LogProviderGridComponent, DumpProvider {
+public interface GridServiceContainer extends AgentGridComponent, Iterable<ProcessingUnitInstance>, LogProviderGridComponent, DumpProvider, MetricProvider {
 
     /**
      * Waits indefinitely for the given number of processing unit instances to run within the container.

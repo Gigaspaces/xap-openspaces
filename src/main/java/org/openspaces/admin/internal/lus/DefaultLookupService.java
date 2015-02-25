@@ -22,6 +22,7 @@ import com.gigaspaces.internal.jvm.JVMInfoProvider;
 import com.gigaspaces.internal.jvm.JVMStatistics;
 import com.gigaspaces.internal.log.InternalLogHelper;
 import com.gigaspaces.internal.log.InternalLogProvider;
+import com.gigaspaces.internal.metrics.InternalMetricProvider;
 import com.gigaspaces.internal.os.OSDetails;
 import com.gigaspaces.internal.os.OSInfoProvider;
 import com.gigaspaces.internal.os.OSStatistics;
@@ -102,6 +103,15 @@ public class DefaultLookupService extends AbstractAgentGridComponent implements 
             return InternalLogHelper.clientSideProcess(matcher, ((InternalLogProvider) registrar.getRegistrar()).logEntriesDirect(matcher));
         } catch (IOException e) {
             throw new AdminException("Failed to get log", e);
+        }
+    }
+
+    @Override
+    public void reloadMetricConfiguration() throws AdminException {
+        try {
+            ((InternalMetricProvider)registrar.getRegistrar()).reloadMetricConfiguration();
+        } catch (RemoteException e) {
+            throw new AdminException("Failed to reload metric configuration", e);
         }
     }
 

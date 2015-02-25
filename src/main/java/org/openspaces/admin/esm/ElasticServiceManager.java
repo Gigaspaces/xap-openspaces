@@ -19,6 +19,7 @@ package org.openspaces.admin.esm;
 import org.openspaces.admin.AgentGridComponent;
 import org.openspaces.admin.LogProviderGridComponent;
 import org.openspaces.admin.dump.DumpProvider;
+import org.openspaces.admin.metrics.MetricProvider;
 
 /**
  * The base Elastic Service Manager interface for deploying an elastic data-grid service. 
@@ -33,7 +34,7 @@ import org.openspaces.admin.dump.DumpProvider;
  * 
  * @author Moran Avigdor
  */
-public interface ElasticServiceManager extends AgentGridComponent, LogProviderGridComponent, DumpProvider {
+public interface ElasticServiceManager extends AgentGridComponent, LogProviderGridComponent, DumpProvider, MetricProvider {
 
    
 }

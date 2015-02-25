@@ -425,6 +425,12 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
         return InternalLogHelper.logEntriesDirect(LogProcessType.ESM, matcher);
     }
 
+    @Override
+    public void reloadMetricConfiguration() throws RemoteException {
+        MetricManager.reloadIfStarted();
+    }
+
+
     public byte[] dumpBytes(String file, long from, int length)
     throws RemoteException, IOException {
         return InternalDumpHelper.dumpBytes(file, from, length);

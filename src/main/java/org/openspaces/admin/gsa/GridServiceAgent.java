@@ -18,13 +18,13 @@ package org.openspaces.admin.gsa;
 
 import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.GridComponent;
 import org.openspaces.admin.LogProviderGridComponent;
 import org.openspaces.admin.dump.DumpProvider;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.lus.LookupService;
+import org.openspaces.admin.metrics.MetricProvider;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
 
@@ -43,7 +43,7 @@ import com.gigaspaces.log.LogProcessType;
  *
  * @author kimchy
  */
-public interface GridServiceAgent extends GridComponent, LogProviderGridComponent, DumpProvider {
+public interface GridServiceAgent extends LogProviderGridComponent, DumpProvider, MetricProvider {
 
     /**
      * Returns all the processes details this agent is currently running.
