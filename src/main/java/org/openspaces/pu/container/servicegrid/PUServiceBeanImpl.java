@@ -53,6 +53,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jini.rio.boot.*;
 import org.jini.rio.core.JSBInstantiationException;
+import org.jini.rio.core.OperationalStringManager;
 import org.jini.rio.core.SLA;
 import org.jini.rio.core.ServiceLevelAgreements;
 import org.jini.rio.core.jsb.ServiceBeanContext;
@@ -152,6 +153,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     private volatile boolean stopping = false;
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
+
+    private volatile InternalQuiesceDetails quiesceDetails;
     
     public PUServiceBeanImpl() {
         super();
@@ -176,6 +179,13 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     @Override
     protected Object doStart(ServiceBeanContext context) throws Exception {
         this.context = context;
+
+        OperationalStringManager operationalStringManager = context.getServiceBeanManager().getOperationalStringManager();
+        InternalQuiesceDetails quiesceDetails = operationalStringManager.getQuiesceDetails();
+        if (quiesceDetails != null) {
+            this.quiesceDetails = quiesceDetails;
+        }
+
         org.openspaces.pu.sla.SLA sla = getSLA(context);
         if (sla.getMonitors() != null) {
             for (Monitor monitor : sla.getMonitors()) {
@@ -266,6 +276,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         Entry jmxEntry = JMXUtilities.createJMXConnectionAttribute(context.getServiceElement().getName());
         if (jmxEntry!= null)
             addAttribute(jmxEntry);
+
+        if (quiesceDetails != null) {
+            if (quiesceDetails.getStatus().equals(QuiesceState.QUIESCED)) {
+                QuiesceStateChangedEvent event = new QuiesceStateChangedEvent(quiesceDetails.getStatus() , quiesceDetails.getToken(), quiesceDetails.getDescription());
+                informQuiesceToListeners(event);
+            }
+        }
+
     }
 
     @Override
@@ -711,7 +729,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         this.metricRegistrator = metricManager.createRegistrator("pu", puTags);
         for (Map.Entry<String, String> entry : puTags.entrySet())
             beanLevelProperties.getContextProperties().setProperty("metrics." + entry.getKey(), entry.getValue());
-
+        //inject quiesce details in order let space know to be initialized in quiesced mode
+        if (quiesceDetails != null)
+            beanLevelProperties.getContextProperties().put("quiesce.details", quiesceDetails);
         factory = createContainerProvider(processingUnitContainerProviderClass);
         factory.setDeployPath(deployPath);
         factory.setClassLoader(contextClassLoader);
