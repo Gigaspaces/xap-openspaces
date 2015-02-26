@@ -17,6 +17,7 @@
 package org.openspaces.events;
 
 import com.gigaspaces.admin.quiesce.QuiesceState;
+import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
@@ -24,7 +25,6 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openspaces.admin.quiesce.QuiesceStateChangedEvent;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.space.mode.AfterSpaceModeChangeEvent;

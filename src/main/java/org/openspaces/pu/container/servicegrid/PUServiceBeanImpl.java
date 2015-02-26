@@ -17,6 +17,7 @@
 package org.openspaces.pu.container.servicegrid;
 
 import com.gigaspaces.admin.quiesce.QuiesceState;
+import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.grid.zone.ZoneHelper;
 import com.gigaspaces.internal.dump.InternalDump;
@@ -61,7 +62,6 @@ import org.jini.rio.jsb.ServiceBeanAdapter;
 import org.jini.rio.watch.Calculable;
 import org.jini.rio.watch.GaugeWatch;
 import org.jini.rio.watch.Watch;
-import org.openspaces.admin.quiesce.QuiesceStateChangedEvent;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
@@ -729,9 +729,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         this.metricRegistrator = metricManager.createRegistrator("pu", puTags);
         for (Map.Entry<String, String> entry : puTags.entrySet())
             beanLevelProperties.getContextProperties().setProperty("metrics." + entry.getKey(), entry.getValue());
-        //inject quiesce details in order let space know to be initialized in quiesced mode
+        //inject quiesce state changed event in order let space know to be initialized in quiesced mode
         if (quiesceDetails != null)
-            beanLevelProperties.getContextProperties().put("quiesce.details", quiesceDetails);
+            beanLevelProperties.getContextProperties().put("quiesce.state_changed_event",
+                    new QuiesceStateChangedEvent(quiesceDetails.getStatus(), quiesceDetails.getToken(), quiesceDetails.getDescription()));
         factory = createContainerProvider(processingUnitContainerProviderClass);
         factory.setDeployPath(deployPath);
         factory.setClassLoader(contextClassLoader);
@@ -1699,25 +1700,24 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     @Override
-    public void quiesceStateChanged(InternalQuiesceDetails quiesceDetails) throws RemoteException {
-        QuiesceStateChangedEvent event = new QuiesceStateChangedEvent(quiesceDetails.getStatus() , quiesceDetails.getToken(), quiesceDetails.getDescription());
+    public void quiesceStateChanged(QuiesceStateChangedEvent quiesceStateChangedEvent) throws RemoteException {
         if (quiesceDetails.getStatus() == QuiesceState.QUIESCED){
-            informQuiesceToListeners(event);
-            informQuiesceToSpaces(quiesceDetails);
+            informQuiesceToListeners(quiesceStateChangedEvent);
+            informQuiesceToSpaces(quiesceStateChangedEvent);
         }
         else {
-            informQuiesceToSpaces(quiesceDetails);
-            informQuiesceToListeners(event);
+            informQuiesceToSpaces(quiesceStateChangedEvent);
+            informQuiesceToListeners(quiesceStateChangedEvent);
         }
     }
 
-    private void informQuiesceToSpaces(InternalQuiesceDetails quiesceDetails){
+    private void informQuiesceToSpaces(QuiesceStateChangedEvent quiesceStateChangedEvent){
         for (Object serviceDetails : puDetails.getDetails()) {
             if (isSpaceServiceDetails(serviceDetails)) {
                 try {
                     if (containsEmbeddedSpace(serviceDetails)) {
                         IJSpace space = getSpaceFromServiceDetails(serviceDetails);
-                        space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(quiesceDetails);
+                        space.getDirectProxy().getSpaceImplIfEmbedded().getQuiesceHandler().setQuiesceMode(quiesceStateChangedEvent);
                     }
                 }
                 catch (Exception e) {

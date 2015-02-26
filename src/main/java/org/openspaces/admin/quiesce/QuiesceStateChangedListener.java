@@ -16,6 +16,8 @@
 
 package org.openspaces.admin.quiesce;
 
+import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
+
 /**
  * @author Boris
  * @since 10.1.0
