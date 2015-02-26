@@ -47,7 +47,7 @@ import java.util.Map.Entry;
  * @see ElasticDeploymentTopology#dedicatedMachineProvisioning(org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig)
  * @see ElasticDeploymentTopology#sharedMachineProvisioning(String, org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig)
   */
-@XmlRootElement(name = "dedicated-machine-provisioning")
+@XmlRootElement(name = "discovered-machine-provisioning-config")
 public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvisioningConfig {
 
     private static final String MINIMUM_NUMBER_OF_CPU_CORES_PER_MACHINE_KEY = "minimum-number-of-cpu-cores-per-machine";
@@ -187,7 +187,7 @@ public class DiscoveredMachineProvisioningConfig implements ElasticMachineProvis
 	}
     
     public Map<String,Long> getReservedDriveCapacityPerMachineInMB() {
-        Map<String,String> reserved = 
+        Map<String,String> reserved =
             this.properties.getKeyValuePairs(
                     RESREVED_DRIVES_CAPACITY_MEGABYTES_PER_MACHINE_KEY, RESREVED_DRIVES_CAPACITY_MEGABYTES_PER_MACHINE_PAIR_SEPERATOR, RESREVED_DRIVES_CAPACITY_MEGABYTES_PER_MACHINE_KEY_VALUE_SEPERATOR, RESERVED_DRIVES_CAPACITY_PER_MACHINE_DEFAULT);
         

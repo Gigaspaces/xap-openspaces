@@ -20,6 +20,8 @@ import org.openspaces.admin.pu.config.ProcessingUnitConfig;
 import org.openspaces.admin.pu.config.UserDetailsConfig;
 import org.openspaces.admin.pu.dependency.ProcessingUnitDependency;
 import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
+import org.openspaces.admin.pu.elastic.topology.DedicatedMachineProvisioningInternal;
+import org.openspaces.admin.pu.elastic.topology.SharedMachineProvisioningInternal;
 import org.openspaces.admin.pu.topology.ProcessingUnitConfigHolder;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -93,5 +95,23 @@ public class ElasticStatelessProcessingUnitConfig extends AbstractElasticProcess
     @XmlElement(type = ProcessingUnitDependency.class)
     public void setDeploymentDependencies(ProcessingUnitDependency[] dependencies) {
         super.setDeploymentDependencies(dependencies);
+    }
+
+    /**
+     * Parse the shared-machine-provisioning bean, get its data and apply them to the relevant methods to enable shared machine provisioning
+     */
+    @XmlElement(type = SharedMachineProvisioningInternal.class)
+    public void setSharedMachineProvisioning(SharedMachineProvisioningInternal sharedMachineProvisioningInternal) {
+        this.setSharedIsolation(sharedMachineProvisioningInternal.getSharingId());
+        this.setMachineProvisioning(sharedMachineProvisioningInternal.getDiscoveredMachineProvisioningConfig());
+    }
+
+    /**
+     * Parse the dedicated-machine-provisioning bean, get its data and apply them to the relevant methods to enable dedicated machine provisioning
+     */
+    @XmlElement(type = DedicatedMachineProvisioningInternal.class)
+    public void setDedicatedMachineProvisioning(DedicatedMachineProvisioningInternal dedicatedMachineProvisioningInternal) {
+        this.setDedicatedIsolation();
+        this.setMachineProvisioning(dedicatedMachineProvisioningInternal.getDiscoveredMachineProvisioningConfig());
     }
 }

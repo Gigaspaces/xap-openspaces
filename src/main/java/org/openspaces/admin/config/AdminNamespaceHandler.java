@@ -25,6 +25,8 @@ import org.openspaces.admin.pu.config.ProcessingUnitConfig;
 import org.openspaces.admin.pu.config.UserDetailsConfig;
 import org.openspaces.admin.pu.dependency.config.ProcessingUnitDependencyConfig;
 import org.openspaces.admin.pu.elastic.config.*;
+import org.openspaces.admin.pu.elastic.topology.DedicatedMachineProvisioningParser;
+import org.openspaces.admin.pu.elastic.topology.SharedMachineProvisioningParser;
 import org.openspaces.admin.space.ElasticSpaceConfig;
 import org.openspaces.admin.space.config.SpaceConfig;
 import org.openspaces.core.config.xmlparser.AbstractXmlBeanNamespaceHandler;
@@ -58,5 +60,8 @@ public class AdminNamespaceHandler extends AbstractXmlBeanNamespaceHandler {
 
         register(ElasticStatefulProcessingUnitConfig.class);
         register(ElasticStatelessProcessingUnitConfig.class);
+
+        registerBeanDefinitionParser("shared-machine-provisioning", new SharedMachineProvisioningParser());
+        registerBeanDefinitionParser("dedicated-machine-provisioning", new DedicatedMachineProvisioningParser());
     }
 }

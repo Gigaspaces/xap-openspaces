@@ -2,7 +2,11 @@
 
 <xsd:schema xmlns="http://www.openspaces.org/schema/admin"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.openspaces.org/schema/admin"
+    xmlns:tool="http://www.springframework.org/schema/tool"
+	xmlns:beans="http://www.springframework.org/schema/beans"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:import namespace="http://www.springframework.org/schema/beans"/>
+	<xsd:import namespace="http://www.springframework.org/schema/tool"/>
 
 	<xsd:element name="depends-on">
 		<xsd:annotation>
@@ -82,48 +86,58 @@
 		</xsd:complexType>
 	</xsd:element>
 
-    <xsd:element name="dedicated-machine-provisioning">
+    <xsd:element name="discovered-machine-provisioning-config">
         <xsd:annotation>
             <xsd:documentation>
-                Configure the server side bean that
-                starts and stops machines automatically.
+                Allows to configure an Elastic Processing Unit machine provisioning that discovers existing machines.
             </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfig"/>
+                </tool:annotation>
+            </xsd:appinfo>
         </xsd:annotation>
         <xsd:complexType>
-            <xsd:attribute name="grid-service-agents-zones" use="optional">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Sets the list of zones that can be discovered
-                        and started by this machine provisioning.
-                        The value should be a comma seperated list of zones
-                    </xsd:documentation>
-                </xsd:annotation>
-                <xsd:simpleType>
-                    <xsd:restriction base="xsd:string">
-                        <xsd:pattern value="([-\w\s]+(,[-\w\s]+)*)"/>
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:attribute>
-            <xsd:attribute name="reserved-memory-capacity-per-machine-in-mb" type="xsd:positiveInteger" use="optional">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Sets the expected amount of memory per machine that is
-                        reserved for processes other than grid containers.
-                        These include Grid Service Manager, Lookup Service
-                        or any other daemon running on the system.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:attribute>
-            <xsd:attribute name="reserved-memory-capacity-per-management-machine-in-mb" type="xsd:positiveInteger" use="optional">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Sets the expected amount of memory per management machine
-                        that is reserved for processes other than grid containers.
-                        These include Grid Service Manager, Lookup Service
-                        or any other daemon running on the system.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:attribute>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="grid-service-agents-zones" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the list of zones that can be discovered
+                                and started by this machine provisioning.
+                                The value should be a comma seperated list of zones
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:pattern value="([-\w\s]+(,[-\w\s]+)*)"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="reserved-memory-capacity-per-machine-in-mb" type="xsd:positiveInteger"
+                                   use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the expected amount of memory per machine that is
+                                reserved for processes other than grid containers.
+                                These include Grid Service Manager, Lookup Service
+                                or any other daemon running on the system.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="reserved-memory-capacity-per-management-machine-in-mb"
+                                   type="xsd:positiveInteger" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the expected amount of memory per management machine
+                                that is reserved for processes other than grid containers.
+                                These include Grid Service Manager, Lookup Service
+                                or any other daemon running on the system.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
 
@@ -751,6 +765,81 @@
 		</xsd:complexType>
 	</xsd:element>
 
+
+    <xsd:simpleType name="elasticMachineProvisioningConfigType">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <xsd:documentation>
+                    Allows to configure an Elastic Processing Unit machine provisioning that discovers existing machines.
+                </xsd:documentation>
+                <tool:annotation kind="ref">
+                    <tool:expected-type type="org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:string"/>
+    </xsd:simpleType>
+
+	<xsd:element name="shared-machine-provisioning">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configure the server side bean that starts and stops machines automatically.
+                For example, the bean could delegate the request to a cloud provider.
+
+                The machines returned by the 'machine provisioner' will be shared
+                by other processing unit instances with the same sharingId.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="elastic-machine-provisioning-config"  type="elasticMachineProvisioningConfigType" use="required">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                            <tool:expected-type type="org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig"/>
+                        </tool:annotation>
+                    </xsd:appinfo>
+					<xsd:documentation>
+                        Allows to configure an Elastic Processing Unit machine provisioning that discovers existing machines.
+                        This is a ref to a discovered-machine-provisioning bean.
+					</xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="sharing-id" use="required" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        For sharing a machine between processing units, you would need to specify a sharing ID - a simple string identifying your sharing policy.
+                        This sharing ID is later used to match against other processing unit’s sharing ID - to allow or deny sharing the same machine resource.
+                    </xsd:documentation>
+                </xsd:annotation>
+                    </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="dedicated-machine-provisioning">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configure the server side bean that starts and stops machines automatically.
+                For example, the bean could delegate the request to a cloud provider.
+
+                The machines returned by the 'machine provisioner' will be dedicated to the instances of this processing unit.
+                In other words, this processing unit will not share the machines with other processing units.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="elastic-machine-provisioning-config" type="elasticMachineProvisioningConfigType" use="required">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                            <tool:expected-type type="org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig"/>
+                        </tool:annotation>
+                    </xsd:appinfo>
+                    <xsd:documentation>
+                        Allows to configure an Elastic Processing Unit machine provisioning that discovers existing machines.
+                        This is a ref to a discovered-machine-provisioning bean.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="elastic-space">
         <xsd:complexType>
             <xsd:sequence>
@@ -773,13 +862,20 @@
                     </xsd:element>
                 </xsd:choice>
                 <xsd:choice minOccurs="0" maxOccurs="1">
-                    <xsd:element ref="dedicated-machine-provisioning">
+                    <xsd:element ref="shared-machine-provisioning">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Configure the server side bean that starts and stops machines automatically.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:element>
+					<xsd:element ref="dedicated-machine-provisioning">
+						<xsd:annotation>
+							<xsd:documentation>
+								Configure the server side bean that starts and stops machines automatically.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
                 </xsd:choice>
 				<xsd:choice minOccurs="0" maxOccurs="1">
 					<xsd:element ref="manual-scale">
@@ -893,13 +989,20 @@
                     </xsd:element>
                 </xsd:choice>
                 <xsd:choice minOccurs="0" maxOccurs="1">
-                    <xsd:element ref="dedicated-machine-provisioning">
+                    <xsd:element ref="shared-machine-provisioning">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Configure the server side bean that starts and stops machines automatically.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:element>
+					<xsd:element ref="dedicated-machine-provisioning">
+						<xsd:annotation>
+							<xsd:documentation>
+								Configure the server side bean that starts and stops machines automatically.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
                 </xsd:choice>
                 <xsd:choice minOccurs="0" maxOccurs="1">
 					<xsd:element ref="manual-scale">
@@ -1020,6 +1123,13 @@
 					</xsd:element>
 				</xsd:choice>
 				<xsd:choice minOccurs="0" maxOccurs="1">
+					<xsd:element ref="shared-machine-provisioning">
+						<xsd:annotation>
+							<xsd:documentation>
+								Configure the server side bean that starts and stops machines automatically.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
 					<xsd:element ref="dedicated-machine-provisioning">
 						<xsd:annotation>
 							<xsd:documentation>

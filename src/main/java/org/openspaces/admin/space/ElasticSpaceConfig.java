@@ -20,10 +20,10 @@ import org.openspaces.admin.pu.config.UserDetailsConfig;
 import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 import org.openspaces.admin.pu.elastic.config.ElasticStatefulProcessingUnitConfig;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
+import org.openspaces.admin.pu.elastic.topology.DedicatedMachineProvisioningInternal;
+import org.openspaces.admin.pu.elastic.topology.SharedMachineProvisioningInternal;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 /**
  * @author itaif
@@ -120,5 +120,23 @@ public class ElasticSpaceConfig extends ElasticStatefulProcessingUnitConfig {
     @XmlAttribute(name = "number-of-backups-per-partition")
     public void setNumberOfBackupInstancesPerPartition(int numberOfBackupInstancesPerPartition) {
         super.setNumberOfBackupInstancesPerPartition(numberOfBackupInstancesPerPartition);
+    }
+
+    /**
+     * Parse the shared-machine-provisioning bean, get its data and apply them to the relevant methods to enable shared machine provisioning
+     */
+    @XmlElement(type = SharedMachineProvisioningInternal.class)
+    public void setSharedMachineProvisioning(SharedMachineProvisioningInternal sharedMachineProvisioningInternal) {
+        this.setSharedIsolation(sharedMachineProvisioningInternal.getSharingId());
+        this.setMachineProvisioning(sharedMachineProvisioningInternal.getDiscoveredMachineProvisioningConfig());
+    }
+
+    /**
+     * Parse the dedicated-machine-provisioning bean, get its data and apply them to the relevant methods to enable dedicated machine provisioning
+     */
+    @XmlElement(type = DedicatedMachineProvisioningInternal.class)
+    public void setDedicatedMachineProvisioning(DedicatedMachineProvisioningInternal dedicatedMachineProvisioningInternal) {
+        this.setDedicatedIsolation();
+        this.setMachineProvisioning(dedicatedMachineProvisioningInternal.getDiscoveredMachineProvisioningConfig());
     }
 }
