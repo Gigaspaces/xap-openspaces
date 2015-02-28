@@ -103,7 +103,7 @@ public class ElasticStatelessProcessingUnitConfig extends AbstractElasticProcess
     @XmlElement(type = SharedMachineProvisioningInternal.class)
     public void setSharedMachineProvisioning(SharedMachineProvisioningInternal sharedMachineProvisioningInternal) {
         this.setSharedIsolation(sharedMachineProvisioningInternal.getSharingId());
-        this.setMachineProvisioning(sharedMachineProvisioningInternal.getDiscoveredMachineProvisioningConfig());
+        this.setMachineProvisioning(sharedMachineProvisioningInternal.getElasticMachineProvisioningConfig());
     }
 
     /**
@@ -112,6 +112,6 @@ public class ElasticStatelessProcessingUnitConfig extends AbstractElasticProcess
     @XmlElement(type = DedicatedMachineProvisioningInternal.class)
     public void setDedicatedMachineProvisioning(DedicatedMachineProvisioningInternal dedicatedMachineProvisioningInternal) {
         this.setDedicatedIsolation();
-        this.setMachineProvisioning(dedicatedMachineProvisioningInternal.getDiscoveredMachineProvisioningConfig());
+        this.setMachineProvisioning(dedicatedMachineProvisioningInternal.getElasticMachineProvisioningConfig());
     }
 }

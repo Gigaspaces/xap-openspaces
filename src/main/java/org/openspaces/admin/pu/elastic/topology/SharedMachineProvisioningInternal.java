@@ -1,6 +1,6 @@
 package org.openspaces.admin.pu.elastic.topology;
 
-import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfig;
+import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 
 /**
  * @author yohana
@@ -11,15 +11,15 @@ import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfi
  * Used by shared-machine-provisioning bean to hold the discoveredMachineProvisioningConfig object.
  */
 public class SharedMachineProvisioningInternal {
-    public DiscoveredMachineProvisioningConfig discoveredMachineProvisioningConfig;
+    public ElasticMachineProvisioningConfig elasticMachineProvisioningConfig;
     public String sharingId;
 
-    public DiscoveredMachineProvisioningConfig getDiscoveredMachineProvisioningConfig() {
-        return discoveredMachineProvisioningConfig;
+    public ElasticMachineProvisioningConfig getElasticMachineProvisioningConfig() {
+        return elasticMachineProvisioningConfig;
     }
 
-    public void setDiscoveredMachineProvisioningConfig(DiscoveredMachineProvisioningConfig discoveredMachineProvisioningConfig) {
-        this.discoveredMachineProvisioningConfig = discoveredMachineProvisioningConfig;
+    public void setElasticMachineProvisioningConfig(ElasticMachineProvisioningConfig elasticMachineProvisioningConfig) {
+        this.elasticMachineProvisioningConfig = elasticMachineProvisioningConfig;
     }
 
     public String getSharingId() {
