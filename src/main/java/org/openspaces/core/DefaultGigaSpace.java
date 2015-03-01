@@ -146,7 +146,6 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         // set the default read take modifiers according to the default isolation level
         this.springIsolationLevel = defaultIsolationLevel;
         this.defaultIsolationLevel = 
-        
                 IsolationLevelHelpers.convertSpringToSpaceIsolationLevel(defaultIsolationLevel, space.getReadModifiers());
         this.defaultCountModifiers = IsolationLevelHelpers.toCountModifiers(this.defaultIsolationLevel);
         this.defaultReadModifiers = IsolationLevelHelpers.toReadModifiers(this.defaultIsolationLevel);
@@ -189,6 +188,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         this.defaultReadTimeout = defaultReadTimeout;
     }
 
+
+    /**
+     * Gets the default read timeout when executing {@link #read(Object)} or
+     * {@link #readIfExists(Object)} operations.
+     */
+    public long getDefaultReadTimeout() {
+        return defaultReadTimeout;
+    }
+
     /**
      * Sets the default take timeout when executing {@link #take(Object)} or
      * {@link #takeIfExists(Object)} operations.
@@ -197,11 +205,34 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         this.defaultTakeTimeout = defaultTakeTimeout;
     }
 
+
+    /**
+     * Gets the default take timeout when executing {@link #take(Object)} or
+     * {@link #takeIfExists(Object)} operations.
+     */
+    public long getDefaultTakeTimeout() {
+        return defaultTakeTimeout;
+    }
+
     /**
      * Sets the default write lease when executing {@link #write(Object)}.
      */
     public void setDefaultWriteLease(long defaultWriteLease) {
         this.defaultWriteLease = defaultWriteLease;
+    }
+
+    /**
+     * Gets the default write lease when executing {@link #write(Object)}.
+     */
+    public long getDefaultWriteLease() {
+        return defaultWriteLease;
+    }
+
+    /**
+     * Gets the defaultIsolationLevel.
+     */
+    public int getDefaultIsolationLevel() {
+        return defaultIsolationLevel;
     }
 
     /**
