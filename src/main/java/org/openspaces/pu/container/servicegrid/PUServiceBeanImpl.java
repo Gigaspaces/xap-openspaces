@@ -1701,6 +1701,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     @Override
     public void quiesceStateChanged(QuiesceStateChangedEvent quiesceStateChangedEvent) throws RemoteException {
+        quiesceDetails = new InternalQuiesceDetails(
+                quiesceStateChangedEvent.getQuiesceState(), quiesceStateChangedEvent.getToken(), quiesceStateChangedEvent.getDescription());
         if (quiesceDetails.getStatus() == QuiesceState.QUIESCED){
             informQuiesceToListeners(quiesceStateChangedEvent);
             informQuiesceToSpaces(quiesceStateChangedEvent);
