@@ -1992,4 +1992,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public void setQuiesceToken(QuiesceToken token) {
         space.getDirectProxy().setQuiesceToken(token);
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> ISpaceQuery<T> prepareTemplate(Object template){
+        return (ISpaceQuery<T>)space.getDirectProxy().prepareTemplate(template);
+    }
 }

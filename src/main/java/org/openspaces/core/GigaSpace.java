@@ -314,7 +314,15 @@ public interface GigaSpace {
      * @param entry The entry to snapshot
      * @return The snapshot
      * @throws DataAccessException
+     * @deprecated since 10.1.0 - usage alternatives:
+     * 1. {@link #prepareTemplate(Object)} if one needs to prepare and cache the template as pre-processed packet without accessing the server.
+     * 2. {@link GigaSpaceTypeManager#registerTypeDescriptor(Class)}
+     * or {@link GigaSpaceTypeManager#registerTypeDescriptor(com.gigaspaces.metadata.SpaceTypeDescriptor)}
+     * if one wants to introduce (register) a new type to the space.
+     * 3. It's possible to combine (1) and (2) to achieve full snapshot functionality
+     *
      */
+    @Deprecated
     <T> ISpaceQuery<T> snapshot(Object entry) throws DataAccessException;
 
     /**
@@ -390,7 +398,7 @@ public interface GigaSpace {
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #readById(Class, Object, Object)} can be used to specify the routing.
-     * 
+     *
      * @param query Query to search by.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      * @since 8.0
@@ -733,7 +741,7 @@ public interface GigaSpace {
      * @param template A query to be executed against the space. Most common one is
      *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param timeout  How long the client is willing to wait for a
-     *                 transactionally proper matching object. A timeout of 0 
+     *                 transactionally proper matching object. A timeout of 0
      *                 means to wait no time at all.
      * @param listener A listener to be notified when a result arrives
      * @return A copy of the object read from the space.
@@ -891,13 +899,13 @@ public interface GigaSpace {
      * <p>Matching and timeouts are done as in
      * <code>readById</code>, except that blocking in this call is done only if
      * necessary to wait for transactional state to settle.
-     * 
+     *
      * @param query Query to search by.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      * @since 8.0
      */
     <T> T readIfExistsById(IdQuery<T> query) throws DataAccessException;
-    
+
     /**
      * Read an object from the space matching the specified id query. Returns
      * <code>null</code> if there is no match within the specified timeout.
@@ -1060,7 +1068,7 @@ public interface GigaSpace {
      * @since 9.0.1
      */
     <T> T readIfExists(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers) throws DataAccessException;
-    
+
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout (0). Returns an
@@ -1077,7 +1085,7 @@ public interface GigaSpace {
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      */
     <T> T[] readMultiple(T template) throws DataAccessException;
-        
+
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout (0). Returns an
@@ -1114,7 +1122,7 @@ public interface GigaSpace {
      * modifier - {@link ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -1137,13 +1145,13 @@ public interface GigaSpace {
      * empty array if no match was found.
      *
      * @param template A query to be executed against the space. Most common one is
-     *                 {@link com.j_spaces.core.client.SQLQuery}.     
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @throws DataAccessException In the event of a read error, DataAccessException will
      *         wrap a ReadMultipleException, accessible via DataAccessException.getRootCause().
      * @return A copy of the entries read from the space.
      */
     <T> T[] readMultiple(ISpaceQuery<T> template) throws DataAccessException;
-    
+
     /**
      * Read any matching entries from the space. Matching is done as in
      * <code>read</code> without timeout (0). Returns an
@@ -1177,9 +1185,9 @@ public interface GigaSpace {
      * modifier - {@link ReadModifiers#REPEATABLE_READ}. Modifiers
      * are used to define the behavior of a read operation.
      *
-     * 
+     *
      * @param template A query to be executed against the space. Most common one is
-     *                 {@link com.j_spaces.core.client.SQLQuery}.  
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers one or a union of {@link ReadModifiers}.
@@ -1212,17 +1220,17 @@ public interface GigaSpace {
 
     /**
      * Read objects from the space matching their IDs, the specified class and routing key.
-     * 
+     *
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
-     * 
+     *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
      * @return a ReadByIdsResult containing the matched results.
      */
     <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routingKey) throws DataAccessException;
-    
+
     /**
      * @deprecated since 9.0.1 - use {@link #readByIds(Class, Object[], Object, ReadModifiers)} instead.
      */
@@ -1232,13 +1240,13 @@ public interface GigaSpace {
     /**
      * Read objects from the space matching their IDs, the specified class type and routing key, with the
      * provided {@link ReadModifiers}.
-     * 
+     *
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
-     * 
+     *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
-     * 
+     *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
@@ -1250,19 +1258,19 @@ public interface GigaSpace {
 
     /**
      * Read objects from the space matching their IDs, the specified class and the routing keys.
-     * 
+     *
      * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions. 
+     * all of the partitions.
      *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKeys   The object routing keys array.
      * @return a ReadByIdsResult containing the matched results.
      */
-    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys) throws DataAccessException;       
-    
+    <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routingKeys) throws DataAccessException;
+
     /**
      * @deprecated since 9.0.1 - use {@link #readByIds(Class, Object[], Object[], ReadModifiers)} instead.
      */
@@ -1272,15 +1280,15 @@ public interface GigaSpace {
     /**
      * Read objects from the space matching their IDs, the specified class and the routing keys, with the
      * provided {@link ReadModifiers}.
-     * 
+     *
      * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions. 
-     * 
+     * all of the partitions.
+     *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
-     * 
+     *
      * @param clazz         The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
@@ -1292,13 +1300,13 @@ public interface GigaSpace {
 
     /**
      * Read objects from the space matching the specified IDs query.
-     * 
+     *
      * @param query Query to search by.
      * @return a ReadByIdsResult containing the matched results.
      * @since 8.0
      */
     <T> ReadByIdsResult<T> readByIds(IdsQuery<T> query) throws DataAccessException;
-    
+
     /**
      * @deprecated since 9.0.1 - use {@link #readByIds(IdsQuery, ReadModifiers)} instead.
      */
@@ -1307,8 +1315,8 @@ public interface GigaSpace {
 
     /**
      * Read objects from the space matching the specified IDs query, with the
-     * provided {@link ReadModifiers}. 
-     * 
+     * provided {@link ReadModifiers}.
+     *
      * @param query Query to search by.
      * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
@@ -1318,7 +1326,7 @@ public interface GigaSpace {
 
     /**
      * Take (remove) objects from the space matching their IDs and the specified class.
-     * 
+     *
      * <p>Note, if the space is partitioned, or the Class defines a specific property
      * for its routing value (which means that the ID property is not used for routing),
      * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
@@ -1338,10 +1346,10 @@ public interface GigaSpace {
 
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and routing key.
-     * 
+     *
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
-     * 
+     *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
@@ -1358,13 +1366,13 @@ public interface GigaSpace {
     /**
      * Take (remove) objects from the space matching their IDs, the specified class type and routing key, with the
      * provided {@link ReadModifiers}.
-     * 
+     *
      * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
      * to all of the partitions.
      *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
-     * 
+     *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKey    The routing of the provided object IDs.
@@ -1375,12 +1383,12 @@ public interface GigaSpace {
 
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and the routing keys.
-     * 
+     *
      * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions. 
-     * 
+     * all of the partitions.
+     *
      * @param clazz         The class.
      * @param ids           The object IDs array.
      * @param routingKeys   The object routing keys array.
@@ -1392,20 +1400,20 @@ public interface GigaSpace {
      * @deprecated since 9.0.1 - use {@link #takeByIds(Class, Object[], Object[], TakeModifiers)} instead.
      */
     @Deprecated
-    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;   
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, int modifiers) throws DataAccessException;
 
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and the routing keys, with the
      * provided {@link ReadModifiers}.
-     * 
+     *
      * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
      * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
      * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions. 
+     * all of the partitions.
      *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
-     * 
+     *
      * @param clazz     The class type.
      * @param ids           The objects\ IDs array.
      * @param routingKeys   The object routing keys array.
@@ -1413,17 +1421,17 @@ public interface GigaSpace {
      * @return a TakeByIdsResult containing the matched results.
      * @since 9.0.1
      */
-    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, TakeModifiers modifiers) throws DataAccessException;   
+    <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routingKeys, TakeModifiers modifiers) throws DataAccessException;
 
     /**
      * Take (remove) objects from the space matching the specified IDs query.
-     * 
+     *
      * @param query Query to search by.
      * @return a ReadByIdsResult containing the matched results.
      * @since 8.0
      */
     <T> TakeByIdsResult<T> takeByIds(IdsQuery<T> query) throws DataAccessException;
-    
+
     /**
      * @deprecated since 9.0.1 - use {@link #takeByIds(IdsQuery, TakeModifiers)} instead.
      */
@@ -1432,8 +1440,8 @@ public interface GigaSpace {
 
     /**
      * Take (remove) objects from the space matching the specified IDs query, with the
-     * provided {@link ReadModifiers}. 
-     * 
+     * provided {@link ReadModifiers}.
+     *
      * @param query Query to search by.
      * @param modifiers The read modifier to use (One or several of {@link ReadModifiers}).
      * @return a ReadByIdsResult containing the matched results.
@@ -1514,13 +1522,13 @@ public interface GigaSpace {
      * <p>Note, if the space is partitioned, and the Entry has a specific property
      * for its routing value, the operation will broadcast to all partitions. The
      * {@link #readById(Class, Object, Object)} can be used to specify the routing.
-     * 
+     *
      * @param query Query to search by.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      * @since 8.0
      */
     <T> T takeById(IdQuery<T> query) throws DataAccessException;
-    
+
     /**
      * Take (remove) an object from the space matching the specified id query. Returns
      * <code>null</code> if there is no match within the specified timeout.
@@ -1531,7 +1539,7 @@ public interface GigaSpace {
      * @since 8.0
      */
     <T> T takeById(IdQuery<T> query, long timeout) throws DataAccessException;
-    
+
     /**
      * @deprecated since 9.0.1 - use {@link #takeById(IdQuery, long, TakeModifiers)} instead.
      */
@@ -1987,7 +1995,7 @@ public interface GigaSpace {
      * <p>Matching and timeouts are done as in
      * <code>readById</code>, except that blocking in this call is done only if
      * necessary to wait for transactional state to settle.
-     * 
+     *
      * @param query Query to search by.
      * @return A matching object, or <code>null</code> if no matching is found within the timeout value.
      * @since 8.0
@@ -2008,7 +2016,7 @@ public interface GigaSpace {
      * @since 8.0
      */
     <T> T takeIfExistsById(IdQuery<T> query, long timeout) throws DataAccessException;
-    
+
     /**
      * @deprecated since 9.0.1 - use {@link #takeIfExistsById(IdQuery, long, TakeModifiers)} instead.
      */
@@ -2033,8 +2041,8 @@ public interface GigaSpace {
 
     /**
      * Take (remove) any matching entry from the space, returning <code>null</code> if
-     * there currently is none. Matching and timeouts are done as in <code>take</code>, 
-     * except that blocking in this call is done only if necessary to wait for transactional 
+     * there currently is none. Matching and timeouts are done as in <code>take</code>,
+     * except that blocking in this call is done only if necessary to wait for transactional
      * state to settle.
      *
      * <p>Note, the timeout is the default timeout this interface is configured with
@@ -2164,7 +2172,7 @@ public interface GigaSpace {
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
      */
     <T> T[] takeMultiple(T template) throws DataAccessException;
-        
+
     /**
      * Takes (removes) all the entries matching the specified template from this
      * space.
@@ -2192,7 +2200,7 @@ public interface GigaSpace {
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -2213,20 +2221,20 @@ public interface GigaSpace {
      * space.
      *
      * @param template A query to be executed against the space. Most common one is
-     *                 {@link com.j_spaces.core.client.SQLQuery}.  
-     *                 
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
+     *
      * @return Removed matched entries from the space
      * @throws DataAccessException In the event of a take error, DataAccessException will
      *         wrap a TakeMultipleException, accessible via DataAccessException.getRootCause().
      */
     <T> T[] takeMultiple(ISpaceQuery<T> template) throws DataAccessException;
-    
+
     /**
      * Takes (removes) all the entries matching the specified template from this
      * space.
      *
      * @param template A query to be executed against the space. Most common one is
-     *                 {@link com.j_spaces.core.client.SQLQuery}.  
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @return Removed matched entries from the space
@@ -2246,7 +2254,7 @@ public interface GigaSpace {
      * space.
      *
      * @param template A query to be executed against the space. Most common one is
-     *                 {@link com.j_spaces.core.client.SQLQuery}.  
+     *                 {@link com.j_spaces.core.client.SQLQuery}.
      * @param maxEntries A limit on the number of entries to be returned. Use
      *                   {@link Integer#MAX_VALUE} for the uppermost limit.
      * @param modifiers one or a union of {@link TakeModifiers}.
@@ -2355,10 +2363,10 @@ public interface GigaSpace {
     /**
      * Writes a new object to the space, returning its {@link com.j_spaces.core.LeaseContext}.
      *
-     * <p>By default uses the {@link com.gigaspaces.client.WriteModifiers#UPDATE_OR_WRITE} modifier. 
-     * In order to force the operation to perform "write" only (a bit more performant), the 
-     * {@link com.gigaspaces.client.WriteModifiers#WRITE_ONLY} modifier can be used resulting in an 
-     * {@link org.openspaces.core.EntryAlreadyInSpaceException} if the entry already exists in the space 
+     * <p>By default uses the {@link com.gigaspaces.client.WriteModifiers#UPDATE_OR_WRITE} modifier.
+     * In order to force the operation to perform "write" only (a bit more performant), the
+     * {@link com.gigaspaces.client.WriteModifiers#WRITE_ONLY} modifier can be used resulting in an
+     * {@link org.openspaces.core.EntryAlreadyInSpaceException} if the entry already exists in the space
      * (it must have an id for this exception to be raised).
      *
      * <p>If the object has a primary key that isn't auto - generated, and the modifiers value is one of
@@ -2399,7 +2407,7 @@ public interface GigaSpace {
 
     /**
      * Writes the specified entries to this space.
-     * 
+     *
      * @param entries The entries to write to the space.
      * @param lease   The lease the entry will be written with, in <b>milliseconds</b>.
      * @return Leases for the written entries
@@ -2410,7 +2418,7 @@ public interface GigaSpace {
 
     /**
      * Writes the specified entries to this space.
-     * 
+     *
      * @param entries The entries to write to the space.
      * @param modifiers one or a union of {@link WriteModifiers}.
      * @return Leases for the written entries
@@ -2428,18 +2436,18 @@ public interface GigaSpace {
 
     /**
      * Writes the specified entries to this space.
-     * 
+     *
      * Same as a single write but for a group of entities sharing the same transaction (if any),
-     * applied with the same specified operation modifier. 
-     * The semantics of a single write and a batch update are similar - the return 
+     * applied with the same specified operation modifier.
+     * The semantics of a single write and a batch update are similar - the return
      * value for each corresponds to it's cell in the returned array.
      * see <code>'returns'</code> for possible return values.
-     * 
-     * @param entries           the entries to write. 
+     *
+     * @param entries           the entries to write.
      * @param lease             the requested lease time, in milliseconds
      * @param modifiers one or a union of {@link WriteModifiers}.
-     *         
-     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array,
      *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         <ul>
@@ -2458,19 +2466,19 @@ public interface GigaSpace {
 
     /**
      * Writes the specified entries to this space.
-     * 
+     *
      * Same as a single write but for a group of entities sharing the same transaction (if any),
-     * applied with the same specified operation modifier. 
-     * The semantics of a single write and a batch update are similar - the return 
+     * applied with the same specified operation modifier.
+     * The semantics of a single write and a batch update are similar - the return
      * value for each corresponds to it's cell in the returned array.
      * see <code>'returns'</code> for possible return values.
-     * 
-     * @param entries           the entries to write. 
+     *
+     * @param entries           the entries to write.
      * @param lease             the requested lease time, in milliseconds
      * @param timeout The timeout of the update operations, in <b>milliseconds</b>. If entries are locked by another transaction
      * @param modifiers one or a union of {@link WriteModifiers}.
-     *         
-     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array,
      *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         <ul>
@@ -2487,7 +2495,7 @@ public interface GigaSpace {
      */
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, long timeout, WriteModifiers modifiers) throws DataAccessException;
 
-    
+
     /**
      * @deprecated since 9.0.1 - use {@link #writeMultiple(Object[], long[], WriteModifiers)} instead.
      */
@@ -2496,18 +2504,18 @@ public interface GigaSpace {
 
     /**
      * Writes the specified entries to this space.
-     * 
+     *
      * Same as a single write but for a group of entities sharing the same transaction (if any),
-     * applied with the same specified operation modifier. 
-     * The semantics of a single write and a batch update are similar - the return 
+     * applied with the same specified operation modifier.
+     * The semantics of a single write and a batch update are similar - the return
      * value for each corresponds to it's cell in the returned array.
      * see <code>'returns'</code> for possible return values.
-     * 
-     * @param entries           the entries to write. 
+     *
+     * @param entries           the entries to write.
      * @param leases            the requested lease time per entry, in milliseconds
      * @param modifiers one or a union of {@link WriteModifiers}.
-     *         
-     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array,
      *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         <ul>
@@ -2521,24 +2529,24 @@ public interface GigaSpace {
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
      * @since 9.0.1
-     */    
+     */
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, WriteModifiers modifiers) throws DataAccessException;
 
     /**
      * Writes the specified entries to this space.
-     * 
+     *
      * Same as a single write but for a group of entities sharing the same transaction (if any),
-     * applied with the same specified operation modifier. 
-     * The semantics of a single write and a batch update are similar - the return 
+     * applied with the same specified operation modifier.
+     * The semantics of a single write and a batch update are similar - the return
      * value for each corresponds to it's cell in the returned array.
      * see <code>'returns'</code> for possible return values.
-     * 
-     * @param entries           the entries to write. 
+     *
+     * @param entries           the entries to write.
      * @param leases            the requested lease time per entry, in milliseconds
      * @param timeout The timeout of the update operations, in <b>milliseconds</b>. If entries are locked by another transaction
      * @param modifiers one or a union of {@link WriteModifiers}.
-     *         
-     * @return array in which each cell is corresponding to the written entry at the same index in the entries array, 
+     *
+     * @return array in which each cell is corresponding to the written entry at the same index in the entries array,
      *         each cell is a usable <code>Lease</code> on a successful write, or <code>null</code> if performed with NoWriteLease attribute.
      *         <p>when {@link WriteModifiers#UPDATE_OR_WRITE} modifier is applied,
      *         <ul>
@@ -2552,7 +2560,7 @@ public interface GigaSpace {
      * @throws DataAccessException In the event of a write error, DataAccessException will
      *         wrap a WriteMultipleException, accessible via DataAccessException.getRootCause().
      * @since 9.6
-     */    
+     */
     <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, long timeout, WriteModifiers modifiers) throws DataAccessException;
 
     /**
@@ -2851,12 +2859,12 @@ public interface GigaSpace {
      * @return The executor builder.
      */
     <T extends Serializable, R> ExecutorBuilder<T, R> executorBuilder(AsyncResultsReducer<T, R> reducer);
-    
+
     /**
      * Gets the type manager of this GigaSpace instance.
-     * 
+     *
      * @see org.openspaces.core.GigaSpaceTypeManager
-     * 
+     *
      * @since 8.0
      */
     GigaSpaceTypeManager getTypeManager();
@@ -2874,16 +2882,16 @@ public interface GigaSpace {
 
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -2891,18 +2899,18 @@ public interface GigaSpace {
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet);
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -2910,17 +2918,17 @@ public interface GigaSpace {
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, long timeout);
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -2928,19 +2936,19 @@ public interface GigaSpace {
     <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers);
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -2950,16 +2958,16 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -2968,17 +2976,17 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -2987,18 +2995,18 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -3007,19 +3015,19 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -3028,17 +3036,17 @@ public interface GigaSpace {
     /**
      * Changes an existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -3047,18 +3055,18 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -3067,19 +3075,19 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -3088,20 +3096,20 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param query Query to search by.
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @throws ChangeException In event of a change error.
      * @see org.openspaces.extensions.ChangeExtension
      * @since 9.1
@@ -3110,33 +3118,33 @@ public interface GigaSpace {
 
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param changeSet Changes to apply to the matched entry.
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @since 9.1
      * @throws ChangeException In event of a change error.
      */
     <T> ChangeResult<T> change(T template, ChangeSet changeSet);
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3145,20 +3153,20 @@ public interface GigaSpace {
      * @param changeSet Changes to apply to the matched entry.
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @since 9.1
      * @throws ChangeException In event of a change error.
      */
     <T> ChangeResult<T> change(T template, ChangeSet changeSet, long timeout);
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3166,20 +3174,20 @@ public interface GigaSpace {
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @since 9.1
      * @throws ChangeException In event of a change error.
      */
     <T> ChangeResult<T> change(T template, ChangeSet changeSet, ChangeModifiers modifiers);
     /**
      * Changes existing objects in space, returning a change result which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3189,7 +3197,7 @@ public interface GigaSpace {
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A <code>ChangeResult</code> containing the details of the change operation affect. 
+     * @return A <code>ChangeResult</code> containing the details of the change operation affect.
      * @since 9.1
      * @throws ChangeException In event of a change error.
      */
@@ -3198,20 +3206,20 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
      *                   exactly on the serialized form"). The template can also be one
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param changeSet Changes to apply to the matched entry.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3219,13 +3227,13 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3233,7 +3241,7 @@ public interface GigaSpace {
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param changeSet Changes to apply to the matched entry.
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3241,13 +3249,13 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3256,7 +3264,7 @@ public interface GigaSpace {
      * @param changeSet Changes to apply to the matched entry.
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3264,13 +3272,13 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3280,7 +3288,7 @@ public interface GigaSpace {
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3288,13 +3296,13 @@ public interface GigaSpace {
     /**
      * Changes an existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3302,7 +3310,7 @@ public interface GigaSpace {
      *                   of the different {@link com.gigaspaces.query.ISpaceQuery} classes
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3310,13 +3318,13 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3325,7 +3333,7 @@ public interface GigaSpace {
      * @param changeSet Changes to apply to the matched entry.
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3333,13 +3341,13 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3349,7 +3357,7 @@ public interface GigaSpace {
      * @param modifiers one or a union of {@link ChangeModifiers}
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3357,13 +3365,13 @@ public interface GigaSpace {
     /**
      * Changes existing objects in space in an asynchronous manner, returning immidiately with a future.
      * The future can be used to check the change operation results which provides details of the operation affect.
-     * The change operation is designed for performance optimization, By allowing to change an existing object unlike 
-     * with regular updating write operation which usually requires reading the object before applying to update to it. 
-     * As part of the optimization, when the operation is replicated, on a best effort it will 
+     * The change operation is designed for performance optimization, By allowing to change an existing object unlike
+     * with regular updating write operation which usually requires reading the object before applying to update to it.
+     * As part of the optimization, when the operation is replicated, on a best effort it will
      * try to replicate only the required data which is needed to apply the changes on the entry in the replicated target.
-     * 
+     *
      * <p>Modifiers can be used to specify behavior of the change operation, by default uses the {@link ChangeModifiers#NONE} modifier.
-     * 
+     *
      * @param template   The template used for matching. Matching is done against
      *                   the template with <code>null</code> fields being.
      *                   wildcards ("match anything") other fields being values ("match
@@ -3374,7 +3382,7 @@ public interface GigaSpace {
      * @param timeout The timeout of the operation, in <b>milliseconds</b>. If the entry is locked by another transaction
      * wait for the specified number of milliseconds for it to be released.
      * @param listener A listener to be notified when a result arrives.
-     * @return A future containing the details of the change operation affect which arrived asynchronously. 
+     * @return A future containing the details of the change operation affect which arrived asynchronously.
      * @since 9.1
      * @throws ChangeException Arrived asynchronously in event of a change error, via future or listener.
      */
@@ -3396,4 +3404,17 @@ public interface GigaSpace {
     DataEventSession newDataEventSession(EventSessionConfig config);
 
     void setQuiesceToken(QuiesceToken token);
+
+    /**
+     * Translates the template object into pre-processed packet which will be sent to the space.
+     * The process of serializing an entry for transmission to the space will be identical if the same entry is used twice.
+     * The prepareTemplate method gives a way to reduce the impact of repeated use of the same entry
+     * therefore it is extremely useful when dealing with many template matching operations (i.e read and take).
+     * This method will not access the space, all processing is done in client side only.
+     * @see {@link #snapshot(Object)}
+     * @param template to be translated into {@link com.gigaspaces.query.ISpaceQuery}
+     * @return pre-processed {@link com.gigaspaces.query.ISpaceQuery} which represents the translated template
+     * @since  10.1.0
+     */
+    <T> ISpaceQuery<T> prepareTemplate(Object template);
 }

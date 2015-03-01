@@ -81,7 +81,7 @@ public abstract class AbstractTemplateEventListenerContainer extends AbstractEve
             if (logger.isTraceEnabled()) {
                 logger.trace(message("Performing snapshot on template [" + template + "]"));
             }
-            receiveTemplate = getGigaSpace().getSpace().getDirectProxy().prepareTemplate(template);
+            receiveTemplate = getGigaSpace().prepareTemplate(template);
         } else {
             receiveTemplate = template;
         }
