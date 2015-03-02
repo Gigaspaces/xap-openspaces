@@ -49,6 +49,10 @@ public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements B
         this.name = name;
     }
 
+    public void setSpaceName(String name) {
+        this.name = name;
+    }
+
     public void setInstanceId(String instanceId) {
         factory.getFactory().setInstanceId(instanceId);
     }

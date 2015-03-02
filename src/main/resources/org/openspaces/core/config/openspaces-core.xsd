@@ -802,7 +802,14 @@
                             </xsd:annotation>
                         </xsd:element>
                     </xsd:choice>
-                    <xsd:attribute name="name" type="xsd:string" use="required">
+                    <xsd:attribute name="name" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Deprecated since 10.1 - use space-name attribute instead.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="space-name" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The space name.
@@ -987,7 +994,14 @@
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:choice>
-                    <xsd:attribute name="name" type="xsd:string" use="required">
+                    <xsd:attribute name="name" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Deprecated since 10.1 - use space-name attribute instead.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="space-name" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The space name.

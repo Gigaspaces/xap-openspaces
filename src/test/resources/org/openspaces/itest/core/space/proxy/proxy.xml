@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/10.0/core/openspaces-core.xsd">
+
+    <os-core:embedded-space id="embedded1" space-name="space1" />
+    <os-core:embedded-space id="embedded2" space-name="mySpace2" />
+    <os-core:embedded-space id="embedded3" space-name="mySpace3" />
+
+    <os-core:space-proxy id="space1" />
+    <os-core:space-proxy id="space2" name="mySpace2" />
+    <os-core:space-proxy id="space3" space-name="mySpace3" />
+    <!--<os-core:space-proxy id="space4" name="foo" space-name="bar" />-->
+
+    <os-core:giga-space id="gigaSpace1" space="space1" />
+    <os-core:giga-space id="gigaSpace2" space="space2" />
+    <os-core:giga-space id="gigaSpace3" space="space3" />
+
+</beans>

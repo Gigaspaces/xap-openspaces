@@ -108,6 +108,8 @@ public class InternalSpaceFactory {
     }
 
     public IJSpace create(AbstractSpaceFactoryBean spaceFactoryBean, String name, boolean isRemote) {
+        if (name == null)
+            name = spaceFactoryBean.getName();
         Assert.notNull(name, "name property is required");
         factory.setClusterConfig(toClusterConfig(clusterInfo));
         beforeCreateSpace(spaceFactoryBean, isRemote);

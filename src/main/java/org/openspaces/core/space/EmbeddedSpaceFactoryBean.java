@@ -57,7 +57,15 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implemen
         return factory.create(this, name, false);
     }
 
+    /**
+     * @deprecated Since 10.1
+     */
+    @Deprecated
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSpaceName(String name) {
         this.name = name;
     }
 
