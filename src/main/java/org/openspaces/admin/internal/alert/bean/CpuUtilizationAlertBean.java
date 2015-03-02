@@ -18,7 +18,7 @@
 package org.openspaces.admin.internal.alert.bean;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +50,9 @@ public class CpuUtilizationAlertBean implements AlertBean,
 
     private Admin admin;
     private final static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+
+    //time-line (from oldest at [0] to newest at [size-1]) history statistics
+    private List<Double> timeLine = new LinkedList<Double>();
 
     public CpuUtilizationAlertBean() {
         NUMBER_FORMAT.setMinimumFractionDigits(1);
@@ -202,14 +205,15 @@ public class CpuUtilizationAlertBean implements AlertBean,
     private double calcAverageWithinPeriod(OperatingSystemStatisticsChangedEvent event) {
         long measurementPeriod = config.getMeasurementPeriod();
         int period = (int) (measurementPeriod / StatisticsMonitor.DEFAULT_MONITOR_INTERVAL);
-        
-        List<Double> timeline = new ArrayList<Double>(event.getStatistics().getTimeline().size());
-        for (OperatingSystemStatistics stats : event.getStatistics().getTimeline()) {
-            if (!stats.isNA()) {
-                timeline.add(stats.getCpuPerc()*100.0);
-            }
+
+        if (!event.getStatistics().isNA()) {
+            timeLine.add(event.getStatistics().getCpuPerc()*100.0);
         }
-        
-        return AlertBeanUtils.getAverage(period, timeline);
+        //adjust history with time-window
+        if (timeLine.size() > period) {
+            timeLine.remove(0); //remove oldest
+        }
+
+        return AlertBeanUtils.getAverage(period, timeLine);
     }
 }

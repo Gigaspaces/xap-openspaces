@@ -18,7 +18,7 @@
 package org.openspaces.admin.internal.alert.bean;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +35,6 @@ import org.openspaces.admin.bean.BeanConfigurationException;
 import org.openspaces.admin.internal.alert.InternalAlertManager;
 import org.openspaces.admin.internal.alert.bean.util.AlertBeanUtils;
 import org.openspaces.admin.vm.VirtualMachine;
-import org.openspaces.admin.vm.VirtualMachineStatistics;
 import org.openspaces.admin.vm.events.VirtualMachineRemovedEventListener;
 import org.openspaces.admin.vm.events.VirtualMachineStatisticsChangedEvent;
 import org.openspaces.admin.vm.events.VirtualMachineStatisticsChangedEventListener;
@@ -50,6 +49,9 @@ public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachine
 
     private Admin admin;
     private final static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+
+    //time-line (from oldest at [0] to newest at [size-1]) history statistics
+    private List<Double> timeLine = new LinkedList<Double>();
 
     public HeapMemoryUtilizationAlertBean() {
         NUMBER_FORMAT.setMinimumFractionDigits(1);
@@ -217,15 +219,16 @@ public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachine
     private double calcAverageWithinPeriod(VirtualMachineStatisticsChangedEvent event) {
         long measurementPeriod = config.getMeasurementPeriod();
         int period = (int) (measurementPeriod / StatisticsMonitor.DEFAULT_MONITOR_INTERVAL);
-        
-        List<Double> timeline = new ArrayList<Double>(event.getStatistics().getTimeline().size());
-        for (VirtualMachineStatistics stats : event.getStatistics().getTimeline()) {
-            if (!stats.isNA()) {
-                timeline.add(stats.getMemoryHeapUsedPerc());
-            }
+
+        if (!event.getStatistics().isNA()) {
+            timeLine.add(event.getStatistics().getMemoryHeapUsedPerc());
         }
-        
-        return AlertBeanUtils.getAverage(period, timeline);
+        //adjust history with time-window
+        if (timeLine.size() > period) {
+            timeLine.remove(0); //remove oldest
+        }
+
+        return AlertBeanUtils.getAverage(period, timeLine);
     }
 
     private String getPeriodOfTime(VirtualMachineStatisticsChangedEvent event) {
