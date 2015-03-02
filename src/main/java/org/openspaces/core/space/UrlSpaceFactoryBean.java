@@ -16,59 +16,25 @@
 
 package org.openspaces.core.space;
 
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
 
-import com.gigaspaces.client.ClusterConfig;
-import com.gigaspaces.client.SpaceProxyFactory;
-import com.gigaspaces.internal.lookup.SpaceUrlUtils;
-import com.gigaspaces.internal.sync.mirror.MirrorDistributedTxnConfig;
-import net.jini.core.entry.UnusableEntryException;
-
-import org.openspaces.core.GigaSpace;
-import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
 import org.openspaces.core.config.CustomCachePolicyFactoryBean;
-import org.openspaces.core.executor.AutowireTask;
-import org.openspaces.core.executor.AutowireTaskMarker;
-import org.openspaces.core.executor.TaskGigaSpace;
-import org.openspaces.core.executor.TaskGigaSpaceAware;
-import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
-import org.openspaces.core.executor.support.DelegatingTask;
-import org.openspaces.core.executor.support.ProcessObjectsProvider;
 import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.openspaces.core.space.filter.FilterProviderFactory;
 import org.openspaces.core.space.filter.replication.ReplicationFilterProviderFactory;
 import org.openspaces.core.transaction.DistributedTransactionProcessingConfigurationFactoryBean;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
-import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
-import com.gigaspaces.internal.reflection.IField;
-import com.gigaspaces.internal.reflection.ReflectionUtil;
-import com.gigaspaces.internal.utils.collections.CopyOnUpdateMap;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.SpaceContext;
-import com.j_spaces.core.client.FinderException;
-import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.filters.FilterOperationCodes;
-import com.j_spaces.core.filters.FilterProvider;
-import com.j_spaces.core.filters.ISpaceFilter;
-import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
 
 /**
  * A space factory bean that creates a space ({@link IJSpace}) based on a url.
@@ -93,12 +59,8 @@ import com.j_spaces.core.filters.entry.ISpaceFilterEntry;
  */
 public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
-    private final SpaceProxyFactory factory = new SpaceProxyFactory();
-    private final boolean enableExecutorInjection = true;
+    private final InternalSpaceFactory factory = new InternalSpaceFactory();
     private String url;
-    private String name;
-    private Boolean isRemote;
-    private ClusterInfo clusterInfo;
 
     /**
      * Creates a new url space factory bean. The url parameters is requires so the
@@ -127,88 +89,12 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         setParameters(params);
     }
 
-    UrlSpaceFactoryBean(boolean isRemote) {
-        this.isRemote = isRemote;
-    }
     /**
      * Creates the space.
      */
     @Override
     protected IJSpace doCreateSpace() throws DataAccessException {
-        if (isRemote == null) {
-            Assert.notNull(url, "url property is required");
-            isRemote = SpaceUrlUtils.isRemoteProtocol(url);
-            factory.setClusterConfig(toClusterConfig(url, clusterInfo));
-            beforeCreateSpace();
-            try {
-                return factory.createSpaceProxy(url);
-            } catch (MalformedURLException e) {
-                throw new CannotCreateSpaceException("Failed to parse url [" + url + "]", e);
-            } catch (FinderException e) {
-                if (isRemote) {
-                    throw new CannotFindSpaceException("Failed to find space with url " + url + "", e);
-                }
-                throw new CannotCreateSpaceException("Failed to create space with url " + url + "", e);
-            }
-        } else {
-            Assert.notNull(name, "name property is required");
-            factory.setClusterConfig(toClusterConfig(clusterInfo));
-            beforeCreateSpace();
-            try {
-                return factory.createSpaceProxy(name, isRemote);
-            } catch (MalformedURLException e) {
-                throw new CannotCreateSpaceException("Failed to build url for space [" + name + "]", e);
-            } catch (FinderException e) {
-                if (isRemote) {
-                    throw new CannotFindSpaceException("Failed to find space " + name + "", e);
-                }
-                throw new CannotCreateSpaceException("Failed to create space " + name + "", e);
-            }
-        }
-    }
-
-    private void beforeCreateSpace() {
-        if (!isRemote && enableExecutorInjection) {
-            FilterProvider filterProvider = new FilterProvider("InjectionExecutorFilter", new ExecutorSpaceFilter());
-            filterProvider.setOpCodes(FilterOperationCodes.BEFORE_EXECUTE);
-            factory.addFilterProvider(filterProvider);
-        }
-    }
-
-    private static ClusterConfig toClusterConfig(String url, ClusterInfo clusterInfo) {
-        if (clusterInfo == null || SpaceUrlUtils.isRemoteProtocol(url))
-            return null;
-
-        if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1 && !StringUtils.hasText(clusterInfo.getSchema()))
-            return null;
-        ClusterConfig clusterConfig = new ClusterConfig();
-        if (url.indexOf(SpaceURL.CLUSTER_SCHEMA + "=") == -1)
-            clusterConfig.setSchema(clusterInfo.getSchema());
-        if (url.indexOf("&" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_TOTAL_MEMBERS + "=") == -1) {
-            clusterConfig.setNumberOfInstances(clusterInfo.getNumberOfInstances());
-            clusterConfig.setNumberOfBackups(clusterInfo.getNumberOfBackups());
-        }
-        if (url.indexOf("&" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_MEMBER_ID + "=") == -1)
-            clusterConfig.setInstanceId(clusterInfo.getInstanceId());
-
-        if (url.indexOf("&" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1 && url.indexOf("?" + SpaceURL.CLUSTER_BACKUP_ID + "=") == -1)
-            clusterConfig.setBackupId(clusterInfo.getBackupId());
-
-        return clusterConfig;
-    }
-
-    private static ClusterConfig toClusterConfig(ClusterInfo clusterInfo) {
-        if (clusterInfo == null)
-            return null;
-        if (!StringUtils.hasText(clusterInfo.getSchema()))
-            return null;
-        ClusterConfig clusterConfig = new ClusterConfig();
-        clusterConfig.setSchema(clusterInfo.getSchema());
-        clusterConfig.setNumberOfInstances(clusterInfo.getNumberOfInstances());
-        clusterConfig.setNumberOfBackups(clusterInfo.getNumberOfBackups());
-        clusterConfig.setInstanceId(clusterInfo.getInstanceId());
-        clusterConfig.setBackupId(clusterInfo.getBackupId());
-        return clusterConfig;
+        return factory.create(this, url);
     }
 
     /**
@@ -216,13 +102,13 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * automatically be secured.
      */
     public void setSecured(boolean secured) {
-        factory.setSecured(secured);
+        factory.getFactory().setSecured(secured);
     }
 
     @Override
     public void setSecurityConfig(SecurityConfig securityConfig) {
         super.setSecurityConfig(securityConfig);
-        factory.setCredentialsProvider(securityConfig == null ? null : securityConfig.getCredentialsProvider());
+        factory.setSecurityConfig(securityConfig);
     }
 
     /**
@@ -235,12 +121,8 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         this.url = url;
     }
 
-    void setName(String name) {
-        this.name = name;
-    }
-
     void setInstanceId(String instanceId) {
-        factory.setInstanceId(instanceId);
+        factory.getFactory().setInstanceId(instanceId);
     }
 
     /**
@@ -255,7 +137,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param parameters The parameters to create the {@link com.j_spaces.core.IJSpace} with.
      */
     public void setParameters(Map<String, Object> parameters) {
-        factory.setParameters(parameters);
+        factory.getFactory().setParameters(parameters);
     }
 
     /**
@@ -263,7 +145,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * configuration.
      */
     public void setProperties(Properties properties) {
-        factory.setProperties(properties);
+        factory.getFactory().setProperties(properties);
     }
 
     /**
@@ -271,7 +153,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * setters.
      */
     public void setUrlProperties(Properties urlProperties) {
-        factory.setUrlProperties(urlProperties);
+        factory.getFactory().setUrlProperties(urlProperties);
     }
 
     /**
@@ -283,7 +165,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * used.
      */
     public void setSchema(String schema) {
-        factory.setSchema(schema);
+        factory.getFactory().setSchema(schema);
     }
 
     /**
@@ -291,7 +173,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * the Space default (<code>false</code>).
      */
     public void setFifo(boolean fifo) {
-        factory.setFifo(fifo);
+        factory.getFactory().setFifo(fifo);
     }
 
     /**
@@ -299,14 +181,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * Groups are comma separated list.
      */
     public void setLookupGroups(String lookupGroups) {
-        factory.setLookupGroups(lookupGroups);
+        factory.getFactory().setLookupGroups(lookupGroups);
     }
 
     /**
      * The Jini Lookup locators for the Space. In the form of: <code>host1:port1,host2:port2</code>.
      */
     public void setLookupLocators(String lookupLocators) {
-        factory.setLookupLocators(lookupLocators);
+        factory.getFactory().setLookupLocators(lookupLocators);
     }
 
     /**
@@ -314,14 +196,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * protocol). Defaults to <code>6000</code> (i.e. 6 seconds).
      */
     public void setLookupTimeout(Integer lookupTimeout) {
-        factory.setLookupTimeout(lookupTimeout);
+        factory.getFactory().setLookupTimeout(lookupTimeout);
     }
 
     /**
      * When <code>false</code>, optimistic lock is disabled. Default to the Space default value.
      */
     public void setVersioned(boolean versioned) {
-        factory.setVersioned(versioned);
+        factory.getFactory().setVersioned(versioned);
     }
 
     /**
@@ -338,7 +220,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * the Space default (which defaults to <code>false</code>).
      */
     public void setMirror(boolean mirror) {
-        factory.setMirror(mirror);
+        factory.getFactory().setMirror(mirror);
     }
 
     /**
@@ -346,14 +228,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * inject actual Space filters.
      */
     public void setFilterProviders(FilterProviderFactory[] filterProviders) {
-        FilterProvider[] spaceFilterProviders = null;
-        if (filterProviders != null) {
-            spaceFilterProviders = new FilterProvider[filterProviders.length];
-            for (int i = 0; i < filterProviders.length; i++) {
-                spaceFilterProviders[i] = filterProviders[i].getFilterProvider();
-            }
-        }
-        factory.setFilterProviders(spaceFilterProviders);
+        factory.setFilterProviders(filterProviders);
     }
 
     /**
@@ -361,14 +236,14 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * filters.
      */
     public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
-        factory.setReplicationFilterProvider(replicationFilterProvider == null ? null : replicationFilterProvider.getFilterProvider());
+        factory.setReplicationFilterProvider(replicationFilterProvider);
     }
 
     /**
      * A data source
      */
     public void setExternalDataSource(ManagedDataSource externalDataSource) {
-        factory.setExternalDataSource(externalDataSource);
+        factory.getFactory().setExternalDataSource(externalDataSource);
     }
     
     /**
@@ -376,21 +251,21 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param spaceDataSource The {@link SpaceDataSource} instance.
      */
     public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
-        factory.setSpaceDataSource(spaceDataSource);
+        factory.getFactory().setSpaceDataSource(spaceDataSource);
     }
 
     /**
      * @param spaceSynchronizationEndpoint
      */
     public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
-        factory.setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
+        factory.getFactory().setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
     }
 
     /**
      * Inject a list of space types.
      */
     public void setSpaceTypes(SpaceTypeDescriptor[] typeDescriptors) {
-        factory.setTypeDescriptors(typeDescriptors);
+        factory.getFactory().setTypeDescriptors(typeDescriptors);
     }
 
     /**
@@ -403,7 +278,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @see org.openspaces.core.space.BlobStoreDataCachePolicy
      */
     public void setCachePolicy(CachePolicy cachePolicy) {
-        factory.setCachePolicyProperties(cachePolicy == null ? null : cachePolicy.toProps());
+        factory.setCachePolicy(cachePolicy);
     }
 
     /**
@@ -411,7 +286,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * be set directly but allowed for different Spring context container to set it.
      */
     public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
-        factory.setBeanLevelProperties(beanLevelProperties);
+        factory.getFactory().setBeanLevelProperties(beanLevelProperties);
     }
 
     /**
@@ -419,7 +294,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * cluster information in order to configure the url based on it.
      */
     public void setClusterInfo(ClusterInfo clusterInfo) {
-        this.clusterInfo = clusterInfo;
+        factory.setClusterInfo(clusterInfo);
     }
 
     /**
@@ -427,7 +302,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      * @param gatewayTargets The gateway targets.
      */
     public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
-        factory.setGatewayPolicy(gatewayTargets == null ? null : gatewayTargets.asGatewaysPolicy());
+        factory.setGatewayTargets(gatewayTargets);
     }
 
     /**
@@ -436,13 +311,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
      */
     public void setDistributedTransactionProcessingConfiguration(
             DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
-        MirrorDistributedTxnConfig mirrorDistributedTxnConfig = null;
-        if (distributedTransactionProcessingConfiguration != null) {
-            mirrorDistributedTxnConfig = new MirrorDistributedTxnConfig()
-                    .setDistributedTransactionWaitForOperations(distributedTransactionProcessingConfiguration.getDistributedTransactionWaitForOperations())
-                    .setDistributedTransactionWaitTimeout(distributedTransactionProcessingConfiguration.getDistributedTransactionWaitTimeout());
-        }
-        factory.setMirrorDistributedTxnConfig(mirrorDistributedTxnConfig);
+        factory.setDistributedTransactionProcessingConfiguration(distributedTransactionProcessingConfiguration);
     }
 
     public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
@@ -453,126 +322,5 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
         if (blobStoreDataPolicy != null)
             setCachePolicy(blobStoreDataPolicy.asCachePolicy());
-    }
-
-    private final Map<Class, Object> tasksGigaSpaceInjectionMap = new CopyOnUpdateMap<Class, Object>();
-
-    private static Object NO_FIELD = new Object();
-
-    private class ExecutorSpaceFilter implements ISpaceFilter {
-
-        private IJSpace space;
-
-        private GigaSpace gigaSpace;
-
-        public void init(IJSpace space, String filterId, String url, int priority) throws RuntimeException {
-            this.space = space;
-            this.gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
-        }
-
-        public void process(SpaceContext context, ISpaceFilterEntry entry, int operationCode) throws RuntimeException {
-            if (operationCode != FilterOperationCodes.BEFORE_EXECUTE) {
-                return;
-            }
-            ApplicationContext applicationContext = getApplicationContext();
-            AutowireCapableBeanFactory beanFactory = null;
-            if (applicationContext != null) {
-                beanFactory = applicationContext.getAutowireCapableBeanFactory();
-            }
-            try {
-                Object task = entry.getObject(space);
-                if (task instanceof InternalSpaceTaskWrapper) {
-                    task = ((InternalSpaceTaskWrapper) task).getTask();
-                }
-                // go over the task and inject what can be injected
-                // break when there is no more DelegatingTasks
-                while (true) {
-                    if (task instanceof TaskGigaSpaceAware) {
-                        ((TaskGigaSpaceAware) task).setGigaSpace(gigaSpace);
-                    } else {
-                        Object field = tasksGigaSpaceInjectionMap.get(task.getClass());
-                        if (field == NO_FIELD) {
-                            // do nothing
-                        } else if (field != null) {
-                            try {
-                                ((IField) field).set(task, gigaSpace);
-                            } catch (IllegalAccessException e) {
-                                throw new RuntimeException("Failed to set task GigaSpace field", e);
-                            }
-                        } else {
-                            final AtomicReference<Field> ref = new AtomicReference<Field>();
-                            ReflectionUtils.doWithFields(task.getClass(), new ReflectionUtils.FieldCallback() {
-                                public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                                    if (field.isAnnotationPresent(TaskGigaSpace.class)) {
-                                        ref.set(field);
-                                    }
-                                }
-                            });
-                            if (ref.get() == null) {
-                                tasksGigaSpaceInjectionMap.put(task.getClass(), NO_FIELD);
-                            } else {
-                                ref.get().setAccessible(true);
-                                IField fastField = ReflectionUtil.createField(ref.get());
-                                tasksGigaSpaceInjectionMap.put(task.getClass(), fastField);
-                                try {
-                                    fastField.set(task, gigaSpace);
-                                } catch (IllegalAccessException e) {
-                                    throw new RuntimeException("Failed to set task GigaSpace field", e);
-                                }
-                            }
-                        }
-                    }
-
-                    if (isAutowire(task)) {
-                        if (beanFactory == null) {
-                            throw new IllegalStateException("Task [" + task.getClass().getName() + "] is configured to do autowiring but the space was not started with application context");
-                        }
-                        beanFactory.autowireBeanProperties(task, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-                        beanFactory.initializeBean(task, task.getClass().getName());
-                        if (task instanceof ProcessObjectsProvider) {
-                            Object[] objects = ((ProcessObjectsProvider) task).getObjectsToProcess();
-                            if (objects != null) {
-                                for (Object obj : objects) {
-                                    if (obj != null) {
-                                        beanFactory.autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-                                        beanFactory.initializeBean(obj, obj.getClass().getName());
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if (applicationContext != null && task instanceof ApplicationContextAware) {
-                            ((ApplicationContextAware) task).setApplicationContext(applicationContext);
-                        }
-                        if (clusterInfo != null && task instanceof ClusterInfoAware) {
-                            ((ClusterInfoAware) task).setClusterInfo(clusterInfo);
-                        }
-                    }
-
-                    if (task instanceof DelegatingTask) {
-                        task = ((DelegatingTask) task).getDelegatedTask();
-                    } else {
-                        break;
-                    }
-                }
-            } catch (UnusableEntryException e) {
-                // won't happen
-            }
-        }
-
-        public void process(SpaceContext context, ISpaceFilterEntry[] entries, int operationCode) throws RuntimeException {
-
-        }
-
-        public void close() throws RuntimeException {
-
-        }
-
-        private boolean isAutowire(Object obj) {
-            if (obj instanceof AutowireTaskMarker) {
-                return true;
-            }
-            return obj.getClass().isAnnotationPresent(AutowireTask.class);
-        }
     }
 }

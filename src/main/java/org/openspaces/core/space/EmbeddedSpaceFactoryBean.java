@@ -41,10 +41,10 @@ import java.util.Properties;
  */
 public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implements BeanLevelMergedPropertiesAware, ClusterInfoAware {
 
-    private final UrlSpaceFactoryBean factoryBean;
+    private final InternalSpaceFactory factory = new InternalSpaceFactory();
+    private String name;
 
     public EmbeddedSpaceFactoryBean() {
-        this.factoryBean = new UrlSpaceFactoryBean(false);
     }
 
     public EmbeddedSpaceFactoryBean(String name) {
@@ -54,102 +54,104 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implemen
 
     @Override
     protected IJSpace doCreateSpace() throws DataAccessException {
-        return factoryBean.doCreateSpace();
+        return factory.create(this, name, false);
     }
 
     public void setName(String name) {
-        factoryBean.setName(name);
+        this.name = name;
     }
 
     @Override
     public void setSecurityConfig(SecurityConfig securityConfig) {
         super.setSecurityConfig(securityConfig);
-        factoryBean.setSecurityConfig(securityConfig);
+        factory.setSecurityConfig(securityConfig);
     }
 
     public void setProperties(Properties properties) {
-        factoryBean.setProperties(properties);
+        factory.getFactory().setProperties(properties);
     }
 
     public void setLookupGroups(String lookupGroups) {
-        factoryBean.setLookupGroups(lookupGroups);
+        factory.getFactory().setLookupGroups(lookupGroups);
     }
 
     public void setLookupLocators(String lookupLocators) {
-        factoryBean.setLookupLocators(lookupLocators);
+        factory.getFactory().setLookupLocators(lookupLocators);
     }
 
     public void setLookupTimeout(int lookupTimeout) {
-        factoryBean.setLookupTimeout(lookupTimeout);
+        factory.getFactory().setLookupTimeout(lookupTimeout);
     }
 
     public void setVersioned(boolean versioned) {
-        factoryBean.setVersioned(versioned);
+        factory.getFactory().setVersioned(versioned);
     }
 
     public void setSecured(boolean secured) {
-        factoryBean.setSecured(secured);
+        factory.getFactory().setSecured(secured);
     }
 
     public void setSchema(String schema) {
-        factoryBean.setSchema(schema);
+        factory.getFactory().setSchema(schema);
     }
 
     public void setMirrored(boolean mirrored) {
-        factoryBean.setMirror(mirrored);
+        factory.getFactory().setMirror(mirrored);
     }
 
     public void setReplicationFilterProvider(ReplicationFilterProviderFactory replicationFilterProvider) {
-        factoryBean.setReplicationFilterProvider(replicationFilterProvider);
+        factory.setReplicationFilterProvider(replicationFilterProvider);
     }
 
     public void setExternalDataSource(ManagedDataSource externalDataSource) {
-        factoryBean.setExternalDataSource(externalDataSource);
+        factory.getFactory().setExternalDataSource(externalDataSource);
     }
 
     public void setSpaceDataSource(SpaceDataSource spaceDataSource) {
-        factoryBean.setSpaceDataSource(spaceDataSource);
+        factory.getFactory().setSpaceDataSource(spaceDataSource);
     }
 
     public void setSpaceSynchronizationEndpoint(SpaceSynchronizationEndpoint spaceSynchronizationEndpoint) {
-        factoryBean.setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
+        factory.getFactory().setSpaceSynchronizationEndpoint(spaceSynchronizationEndpoint);
     }
 
     public void setCachePolicy(CachePolicy cachePolicy) {
-        factoryBean.setCachePolicy(cachePolicy);
+        factory.setCachePolicy(cachePolicy);
     }
 
     public void setClusterInfo(ClusterInfo clusterInfo) {
-        factoryBean.setClusterInfo(clusterInfo);
+        factory.setClusterInfo(clusterInfo);
     }
 
     public void setFilterProviders(FilterProviderFactory[] filterProviders) {
-        factoryBean.setFilterProviders(filterProviders);
+        factory.setFilterProviders(filterProviders);
     }
 
-    public void setSpaceTypes(SpaceTypeDescriptor[] spaceTypes) {
-        factoryBean.setSpaceTypes(spaceTypes);
+    public void setSpaceTypes(SpaceTypeDescriptor[] typeDescriptors) {
+        factory.getFactory().setTypeDescriptors(typeDescriptors);
     }
 
     public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
-        factoryBean.setGatewayTargets(gatewayTargets);
+        factory.setGatewayTargets(gatewayTargets);
     }
 
     public void setDistributedTransactionProcessingConfiguration(
             DistributedTransactionProcessingConfigurationFactoryBean distributedTransactionProcessingConfiguration) {
-        factoryBean.setDistributedTransactionProcessingConfiguration(distributedTransactionProcessingConfiguration);
+        factory.setDistributedTransactionProcessingConfiguration(distributedTransactionProcessingConfiguration);
     }
 
     public void setCustomCachePolicy(CustomCachePolicyFactoryBean customCachePolicy) {
-        factoryBean.setCustomCachePolicy(customCachePolicy);
+        if (customCachePolicy != null)
+            setCachePolicy(customCachePolicy.asCachePolicy());
     }
 
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
-        factoryBean.setBlobStoreDataPolicy(blobStoreDataPolicy);
+        if (blobStoreDataPolicy != null)
+            setCachePolicy(blobStoreDataPolicy.asCachePolicy());
     }
 
 	@Override
 	public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
-		factoryBean.setMergedBeanLevelProperties(beanLevelProperties);
+        factory.getFactory().setBeanLevelProperties(beanLevelProperties);
 	}
 }

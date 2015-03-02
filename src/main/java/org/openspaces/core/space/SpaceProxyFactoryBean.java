@@ -18,7 +18,6 @@ package org.openspaces.core.space;
 
 import com.j_spaces.core.IJSpace;
 
-import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelMergedPropertiesAware;
 import org.springframework.dao.DataAccessException;
 
@@ -30,10 +29,10 @@ import java.util.Properties;
  */
 public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements BeanLevelMergedPropertiesAware {
 
-    private final UrlSpaceFactoryBean factoryBean;
+    private final InternalSpaceFactory factory = new InternalSpaceFactory();
+    private String name;
 
     public SpaceProxyFactoryBean() {
-        this.factoryBean = new UrlSpaceFactoryBean(true);
     }
 
     public SpaceProxyFactoryBean(String name) {
@@ -43,45 +42,45 @@ public class SpaceProxyFactoryBean extends AbstractSpaceFactoryBean implements B
 
     @Override
     protected IJSpace doCreateSpace() throws DataAccessException {
-        return factoryBean.doCreateSpace();
+        return factory.create(this, name, true);
     }
 
     public void setName(String name) {
-        factoryBean.setName(name);
+        this.name = name;
     }
 
     public void setInstanceId(String instanceId) {
-        factoryBean.setInstanceId(instanceId);
+        factory.getFactory().setInstanceId(instanceId);
     }
 
     @Override
     public void setSecurityConfig(SecurityConfig securityConfig) {
         super.setSecurityConfig(securityConfig);
-        factoryBean.setSecurityConfig(securityConfig);
+        factory.setSecurityConfig(securityConfig);
     }
 
     public void setProperties(Properties properties) {
-        factoryBean.setProperties(properties);
+        factory.getFactory().setProperties(properties);
     }
 
     public void setLookupGroups(String lookupGroups) {
-        factoryBean.setLookupGroups(lookupGroups);
+        factory.getFactory().setLookupGroups(lookupGroups);
     }
 
     public void setLookupLocators(String lookupLocators) {
-        factoryBean.setLookupLocators(lookupLocators);
+        factory.getFactory().setLookupLocators(lookupLocators);
     }
 
     public void setLookupTimeout(int lookupTimeout) {
-        factoryBean.setLookupTimeout(lookupTimeout);
+        factory.getFactory().setLookupTimeout(lookupTimeout);
     }
 
     public void setVersioned(boolean versioned) {
-        factoryBean.setVersioned(versioned);
+        factory.getFactory().setVersioned(versioned);
     }
     
     @Override
 	public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
-		factoryBean.setMergedBeanLevelProperties(beanLevelProperties);
+        factory.getFactory().setBeanLevelProperties(beanLevelProperties);
 	}
 }
