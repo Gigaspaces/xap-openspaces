@@ -20,6 +20,9 @@ import com.gigaspaces.admin.quiesce.QuiesceToken;
 
 
 /**
+ * A result of triggering {@link org.openspaces.admin.pu.ProcessingUnit#quiesce(QuiesceRequest)} or
+ * {@link org.openspaces.admin.pu.ProcessingUnit#unquiesce(QuiesceRequest)} (QuiesceRequest)}
+ * The result contains {@link com.gigaspaces.admin.quiesce.QuiesceToken} and description about the request.
  * @author Boris
  * @since 10.1.0
  */
@@ -27,9 +30,6 @@ public class QuiesceResult{
 
     private QuiesceToken token;
     private String description;
-
-    public QuiesceResult() {
-    }
 
     public QuiesceResult(QuiesceToken token, String description) {
         this.token = token;

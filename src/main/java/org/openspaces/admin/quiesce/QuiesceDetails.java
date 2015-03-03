@@ -21,6 +21,10 @@ import com.gigaspaces.admin.quiesce.QuiesceState;
 
 
 /**
+ * Represents the quiesce details of the processing unit.
+ * If a quiesce request failed for some reason ({@link org.openspaces.admin.pu.ProcessingUnit#waitFor(com.gigaspaces.admin.quiesce.QuiesceState)}
+ * returned false after requesting quiesce/unquiesce)
+ * It's possible to investigate the failure reason by inspecting {@link InstancesQuiesceState}.
  * @author Boris
  * @since 10.1.0
  */
@@ -29,9 +33,6 @@ public class QuiesceDetails {
     private QuiesceState status;
     private String description;
     private InstancesQuiesceState instancesQuiesceState;
-
-    public QuiesceDetails() {
-    }
 
     public QuiesceDetails(QuiesceState status, String description, InstancesQuiesceState instancesQuiesceState) {
         this.status = status;

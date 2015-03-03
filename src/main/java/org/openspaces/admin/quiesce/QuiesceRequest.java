@@ -17,15 +17,14 @@
 package org.openspaces.admin.quiesce;
 
 /**
+ * A request which includes all needed information about the quiesce request (e.g reason for entering to QUIESCE mode
+ * , the user name which triggered the operation, the time and date and so on)
  * @author Boris
  * @since 10.1.0
  */
 public class QuiesceRequest {
 
     private String description;
-
-    public QuiesceRequest() {
-    }
 
     public QuiesceRequest(String description) {
         this.description = description;

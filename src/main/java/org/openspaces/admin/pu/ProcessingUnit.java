@@ -469,13 +469,43 @@ public interface ProcessingUnit extends Iterable<ProcessingUnitInstance>, AdminA
      */
     ProcessingUnitDependencies<ProcessingUnitDependency> getDependencies();
 
+    /**
+     * Requests a quiesce request from the GSM.
+     * If the request ended successfully ({@link #waitFor(com.gigaspaces.admin.quiesce.QuiesceState)} returned true)
+     * all space instances and listeners will switch to quiesced mode.
+     * If the GSM rejects the request an exception with the rejection failure will be thrown.
+     * (precondition: the processing unit is intact)
+     * @param request with the quiesce description
+     * @return {@link org.openspaces.admin.quiesce.QuiesceRequest} if the request was approved by the server
+     */
     QuiesceResult quiesce(QuiesceRequest request);
 
+    /**
+     * Requests a unquiesce request from the GSM.
+     * If the request ended successfully ({@link #waitFor(com.gigaspaces.admin.quiesce.QuiesceState)} returned true)
+     * all space instances and listeners will switch to unquiesced mode.
+     * If the GSM rejects the request an exception with the rejection failure will be thrown.
+     * (precondition: the processing unit is intact)
+     * @param request with the quiesce description
+     * @return {@link org.openspaces.admin.quiesce.QuiesceRequest} if the request was approved by the server
+     */
     void unquiesce(QuiesceRequest request);
 
+    /**
+     * @param desiredState
+     * @param timeout
+     * @param timeUnit
+     * @return {@code true} if the processing unit reached to desired as well as all instances in the requested timeout, {@code false} otherwise.
+     */
     boolean waitFor(QuiesceState desiredState, long timeout, TimeUnit timeUnit);
 
+    /**
+     * Same as {@link #waitFor(com.gigaspaces.admin.quiesce.QuiesceState, long, java.util.concurrent.TimeUnit)} but with endless timeout
+     */
     boolean waitFor(QuiesceState desiredState);
 
+    /**
+     * @return the quiesce details of the processing unit - {@link QuiesceDetails}
+     */
     QuiesceDetails getQuiesceDetails();
 }
