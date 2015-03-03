@@ -850,7 +850,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private static Metric getMetricFromMethod(final Method method, final Object bean) {
-        if (method.getParameters().length != 0) {
+        if (method.getParameterTypes().length != 0) {
             if (logger.isWarnEnabled())
                 logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName()+
                         " is skipped - metric method cannot have parameters");
