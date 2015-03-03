@@ -122,7 +122,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private MetricManager metricManager;
 
-    private MetricRegistrator metricRegistrator;
+    private List<MetricRegistrator> metricRegistrators;
 
     private int clusterGroup;
 
@@ -726,7 +726,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         final Map<String, String> puTags = buildPuTags(clusterInfo);
-        this.metricRegistrator = metricManager.createRegistrator("pu", puTags);
+        MetricRegistrator puMetricRegistrator = metricManager.createRegistrator("pu", puTags);
+        this.metricRegistrators = metricManager.registerProcessMetrics(puTags);
+        this.metricRegistrators.add(puMetricRegistrator);
         for (Map.Entry<String, String> entry : puTags.entrySet())
             beanLevelProperties.getContextProperties().setProperty("metrics." + entry.getKey(), entry.getValue());
         //inject quiesce state changed event in order let space know to be initialized in quiesced mode
@@ -779,7 +781,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
         buildInvocableServices();
 
-        buildMetrics();
+        buildMetrics(puMetricRegistrator);
 
         this.puDetails = new PUDetails(context.getParentServiceID(), clusterInfo, beanLevelProperties, serviceDetails.toArray(new Object[serviceDetails.size()]));
 
@@ -819,7 +821,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         return id + "_" + (bid+1);
     }
 
-    private void buildMetrics() {
+    private void buildMetrics(MetricRegistrator registrator) {
         if (container instanceof ApplicationContextProcessingUnitContainer) {
             ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
             for (String beanName : applicationContext.getBeanDefinitionNames()) {
@@ -830,13 +832,13 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 for (Method m : objClz.getDeclaredMethods()) {
                     ServiceMetric annotation = m.getAnnotation(ServiceMetric.class);
                     if (annotation != null)
-                        processMetricMethod(beanName, bean, m, annotation);
+                        processMetricMethod(registrator, beanName, bean, m, annotation);
                 }
             }
         }
     }
 
-    private void processMetricMethod(String beanName, Object bean, Method method, ServiceMetric annotation) {
+    private void processMetricMethod(MetricRegistrator registrator, String beanName, Object bean, Method method, ServiceMetric annotation) {
         if (logger.isDebugEnabled())
             logger.debug("Bean " + beanName + " [class " + bean.getClass().getName() + "] has metric method " + method.getName());
 
@@ -845,7 +847,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             String name = annotation.name();
             if (logger.isDebugEnabled())
                 logger.debug("Registering ServiceMetric '" + name + "' => " + metric);
-            metricRegistrator.register(name, metric);
+            registrator.register(name, metric);
         }
     }
 
@@ -1211,8 +1213,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private void stopPU() {
-        if (metricRegistrator != null)
-            metricRegistrator.clear();
+        if (metricRegistrators != null)
+            for (MetricRegistrator registrator : metricRegistrators)
+                registrator.clear();
 
         if (metricManager != null)
             metricManager.close();
