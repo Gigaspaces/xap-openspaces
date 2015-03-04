@@ -24,10 +24,10 @@ echo ""
 echo ""
 
 # GigaSpaces Jars
-mvn -f %TEMP%/gs-dependencies-pom.xml install
+mvn -f ${TMPDIR}/gs-dependencies-pom.xml install
 
 # Build and install OpenSpaces Maven Plugin
 mvn -f maven-openspaces-plugin/pom.xml install -DcreateChecksum=true
 
 # Remove temp files
-rm $TMPDIR/gs-dependencies-pom.xml
+rm ${TMPDIR}/gs-dependencies-pom.xml
