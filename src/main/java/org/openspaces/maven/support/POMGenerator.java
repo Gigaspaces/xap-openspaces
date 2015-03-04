@@ -17,9 +17,6 @@
  ******************************************************************************/
 package org.openspaces.maven.support;
 
-import com.j_spaces.kernel.PlatformVersion;
-import org.springframework.core.JdkVersion;
-
 import java.io.*;
 
 /**
@@ -27,169 +24,66 @@ import java.io.*;
  */
 public class POMGenerator {
 
-    
 	public static final String GS_GROUP = "com.gigaspaces";
-    public static final String CLOUDIFY_GROUP = "org.cloudifysource";
-    private static final String SPRING_GROUP = "org.springframework";
-    public static final String SPRING_VERSION = "4.1.1.RELEASE";
-    public static final String SPRING_SECURITY_VERSION = "3.1.4.RELEASE";
-    public static final String SPRING_LDAP_VERSION = "1.3.2.RELEASE";
-	private static final String SPRING_SECURITY_GROUP = "org.springframework.security";
-	private static final String SPRING_LDAP_GROUP = "org.springframework.ldap";
-	private static final String COMMONS_COLLECTIONS_VERSION = "3.2.1";
-	private static final String COMMONS_LANG_VERSION = "2.6";
-	private static final String COMMONS_POOL_VERSION = "1.6";
-    
+    public static final String POM_FILE_NAME = "gs-dependencies-pom.xml";
+    public static final String POM_ARTIFACT_ID = "gs-dependencies";
+
     public static void main(String[] args) throws Exception {
-        String templDir = System.getProperty("java.io.tmpdir");
-        if (args.length > 0) {
+        String templDir;
+        String dependencies;
+        if (args.length == 2) {
             templDir = args[0];
+            dependencies = args[1];
+        }
+        else {
+            printUsage();
+            return;
         }
 
         String xapVersion = OutputVersion.computeXapVersion();
-        String cloudifyVersion = null;
-        boolean isCloudify = PlatformVersion.getEdition().equals(PlatformVersion.EDITION_CLOUDIFY);
-        if (isCloudify) {
-            cloudifyVersion = OutputVersion.computeCloudifyVersion();
-        }
-        
+
         File dir = new File(templDir);
         dir.mkdirs();
 
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "gs-runtime-pom.xml")))));
-        printHeader(writer, xapVersion, POMGenerator.GS_GROUP, "gs-runtime");
-        
+        String[] dependencyList = dependencies.split(",");
 
-        // jmx
-        if (JdkVersion.getMajorJavaVersion() < JdkVersion.JAVA_15) {
-        	printDependenciesHeader(writer);
-            printDependency(writer, "com.sun.jdmk", "jmxtools", "1.2.1");
-            printDependency(writer, "javax.management", "jmxremote", "1.0.1_04");
-            printDependency(writer, "javax.management", "jmxri", "1.2.1");
-            printDependency(writer, "backport-util-concurrent", "backport-util-concurrent", "3.0");
-            printDependenciesFooter(writer);
-        }
-        printProjectFooter(writer);
-        writer.close();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, POM_FILE_NAME)))));
 
-        writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "gs-openspaces-pom.xml")))));
-        printHeader(writer, xapVersion, POMGenerator.GS_GROUP, "gs-openspaces");
+        printHeader(writer, xapVersion, POMGenerator.GS_GROUP, POM_ARTIFACT_ID);
+
+        printOpenspacesMavenRepository(writer);
+
         printDependenciesHeader(writer);
-        printCompileDependency(writer, POMGenerator.GS_GROUP, "gs-runtime");
 
-        //<scope>compile</scope> overrides <scope>provided</scope> defined in <dependencyManagement>
-        //without this override dependant PUs may not compile.
-        //this list was derived from looking at mvn dependency:analyze which finds JARs not referenced from the bytecode directly.
-        printCompileDependency(writer, SPRING_GROUP, "spring-aop");
-        printCompileDependency(writer, SPRING_GROUP, "spring-beans");
-        printCompileDependency(writer, SPRING_GROUP, "spring-context");
-        printCompileDependency(writer, SPRING_GROUP, "spring-core");
-        printCompileDependency(writer, SPRING_GROUP, "spring-web");
-        printCompileDependency(writer, SPRING_GROUP, "spring-tx");
-        printCompileDependency(writer, SPRING_GROUP, "spring-jdbc");
-        printCompileDependency(writer, SPRING_GROUP, "spring-orm");
-        printCompileDependency(writer, SPRING_SECURITY_GROUP, "spring-security-core");
-        printDependency(writer, "commons-logging", "commons-logging");
-        // add javax.annotations (@PostConstruct) for JDK 1.5 (no need for 1.6 since it is there)
-        if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_15) {
-            printDependency(writer, "org.apache.geronimo.specs", "geronimo-annotation_1.0_spec", "1.1.1");
+        for (String dependency : dependencyList) {
+            printDependency(writer, GS_GROUP, dependency , xapVersion);
         }
+
         printDependenciesFooter(writer);
-        
-        printDependencyManagementHeader(writer);
-        printDependenciesHeader(writer);
-        
-        // lib/required/gs-* files
-        printProvidedDependency(writer, GS_GROUP, "gs-runtime", xapVersion);
-        printProvidedDependency(writer, GS_GROUP, "gs-openspaces", xapVersion);
-        
-        // spring jars in lib/required (in GSC classpath)
-        printProvidedDependency(writer, SPRING_GROUP, "spring-aop", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-aspects", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-beans", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-context", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-context-support", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-core", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-expression", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-tx", SPRING_VERSION);
-        printProvidedDependency(writer, "commons-logging", "commons-logging", "1.1.3");
-        
-        // commons in lib/platform/commons (not in GSC classpath)
-        printDependency(writer, "commons-collections", "commons-collections", COMMONS_COLLECTIONS_VERSION);
-        printDependency(writer, "commons-lang", "commons-lang", COMMONS_LANG_VERSION);
-        printDependency(writer, "commons-pool", "commons-pool", COMMONS_POOL_VERSION);
-	
-        // spring jars in lib/optional/spring (in GSC classpath)
-        printProvidedDependency(writer, SPRING_GROUP, "spring-web", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-jdbc", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-jms", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-orm", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-oxm", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-web", SPRING_VERSION);
-        printProvidedDependency(writer, SPRING_GROUP, "spring-webmvc", SPRING_VERSION);
-		printTestDependency(writer, SPRING_GROUP, "spring-test", SPRING_VERSION);
-		
-		// spring jars in lib/optional/security (in GSC classpath)
-		printProvidedDependency(writer, SPRING_SECURITY_GROUP, "spring-security-core", SPRING_SECURITY_VERSION);
-		printProvidedDependency(writer, SPRING_SECURITY_GROUP, "spring-security-config", SPRING_SECURITY_VERSION);
-		printProvidedDependency(writer, SPRING_SECURITY_GROUP, "spring-security-web", SPRING_SECURITY_VERSION);
-		
-		//align spring security ldap version for pus importing this dep management pom section
-		printDependency(writer, SPRING_SECURITY_GROUP, "spring-security-ldap", SPRING_SECURITY_VERSION);
-		printDependency(writer, SPRING_LDAP_GROUP, "spring-ldap-core", SPRING_LDAP_VERSION);
-		printDependency(writer, SPRING_LDAP_GROUP, "spring-ldap-core-tiger", SPRING_LDAP_VERSION);
-		printDependency(writer, SPRING_LDAP_GROUP, "spring-ldap-odm", SPRING_LDAP_VERSION);
-		printDependency(writer, SPRING_LDAP_GROUP, "spring-ldap-ldif-core", SPRING_LDAP_VERSION);
-		printDependency(writer, SPRING_LDAP_GROUP, "spring-ldap-ldif-batch", SPRING_LDAP_VERSION);
-		
-		printDependenciesFooter(writer);
-        printDependencyManagementFooter(writer);
-        
-        printProjectFooter(writer);
-        writer.close();
 
-        writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "mule-os-pom.xml")))));
-        printHeader(writer, xapVersion, POMGenerator.GS_GROUP, "mule-os");
         printProjectFooter(writer);
-        writer.close();
-        
-        writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "jetty-os-pom.xml")))));
-        printHeader(writer, xapVersion, POMGenerator.GS_GROUP, "jetty-os");
-        printProjectFooter(writer);
-        writer.close();
 
-        writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "mongo-datasource-pom.xml")))));
-        printHeader(writer, xapVersion, POMGenerator.GS_GROUP, "mongo-datasource");
-        printProjectFooter(writer);
         writer.close();
-        
-        if ( isCloudify ) {
-            writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "dsl-pom.xml")))));
-            printHeader(writer, cloudifyVersion, POMGenerator.CLOUDIFY_GROUP, "dsl");
-            printDependenciesHeader(writer);
-            printDependency(writer, POMGenerator.GS_GROUP, "gs-openspaces", xapVersion);
-            printDependenciesFooter(writer);           
-            printProjectFooter(writer);
-            writer.close();
-            
-            writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "usm-pom.xml")))));
-            printHeader(writer, cloudifyVersion, POMGenerator.CLOUDIFY_GROUP, "usm");
-            printDependenciesHeader(writer);
-            printDependency(writer, POMGenerator.GS_GROUP, "gs-openspaces", xapVersion);
-            printDependency(writer, POMGenerator.CLOUDIFY_GROUP, "dsl", cloudifyVersion);
-            printDependenciesFooter(writer);
-            printProjectFooter(writer);
-            writer.close();
-            
-            writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(new File(dir, "esc-pom.xml")))));
-            printHeader(writer, cloudifyVersion, POMGenerator.CLOUDIFY_GROUP, "esc");
-            printDependenciesHeader(writer);
-            printDependency(writer, POMGenerator.GS_GROUP, "gs-openspaces", xapVersion);
-            printDependenciesFooter(writer);
-            printProjectFooter(writer);
-            writer.close();
-        }
-        
+    }
+
+    private static void printOpenspacesMavenRepository(PrintWriter writer) {
+        writer.println("<repositories>");
+        writer.println("    <repository>");
+        writer.println("        <id>org.openspaces</id>");
+        writer.println("        <name>OpenSpaces</name>");
+        writer.println("        <url>http://maven-repository.openspaces.org</url>");
+        writer.println("        <releases>");
+        writer.println("            <enabled>true</enabled>");
+        writer.println("            <updatePolicy>daily</updatePolicy>");
+        writer.println("            <checksumPolicy>warn</checksumPolicy>");
+        writer.println("        </releases>");
+        writer.println("        <snapshots>");
+        writer.println("            <enabled>true</enabled>");
+        writer.println("            <updatePolicy>daily</updatePolicy>");
+        writer.println("            <checksumPolicy>warn</checksumPolicy>");
+        writer.println("        </snapshots>");
+        writer.println("    </repository>");
+        writer.println("</repositories>");
     }
 
 
@@ -201,21 +95,11 @@ public class POMGenerator {
         writer.println("  <modelVersion>4.0.0</modelVersion>");
         writer.println("  <groupId>" + groupId + "</groupId>");
         writer.println("  <artifactId>" + artifactId + "</artifactId>");
-        writer.println("  <packaging>jar</packaging>");
         writer.println("  <version>" + version + "</version>");
-        writer.println("  <url>http://www.gigaspaces.com</url>");
     }
     
     public static void printDependenciesHeader(PrintWriter writer) throws Exception {
         writer.println("  <dependencies>");
-    }
-    
-    public static void printDependencyManagementHeader(PrintWriter writer) throws Exception {
-        writer.println("  <dependencyManagement>");
-    }
-    
-    public static void printDependencyManagementFooter(PrintWriter writer) throws Exception {
-        writer.println("  </dependencyManagement>");
     }
     
     public static void printDependency(PrintWriter writer, String groupId, String artifactId) {
@@ -267,5 +151,10 @@ public class POMGenerator {
     
     public static void printProjectFooter(PrintWriter writer) throws Exception {
         writer.println("</project>");
+    }
+
+    private static void printUsage() {
+        System.out.println("Usage: %JAVACMD% -cp %GS_JARS% org.openspaces.maven.support.POMGenerator <directoryPlacingPomFile> <dependencyList>");
+        System.out.println("Exiting...");
     }
 }

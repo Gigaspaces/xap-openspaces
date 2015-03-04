@@ -15,18 +15,14 @@ if "%1" == "XAP"  (
 goto END
 )
 
-if "%1" == "Cloudify"  (
-%JAVACMD% -cp %GS_JARS% org.openspaces.maven.support.OutputVersion Cloudify
-goto END
-)
-
 FOR /F "usebackq tokens=*" %%i IN (`installmavenrep.bat edition`) DO @set EDITION=%%i
-
 
 FOR /F "usebackq tokens=*" %%i IN (`installmavenrep.bat XAP`) DO @set XAP_VERSION=%%i
 
+REM Dependencies that will be installed into the local maven repository
+set DEPENDENCY_LIST=gs-openspaces,gs-openspaces-jetty,mongo-datasource
 
-%JAVACMD% -cp %GS_JARS% org.openspaces.maven.support.POMGenerator "%TEMP%"
+%JAVACMD% -cp %GS_JARS% org.openspaces.maven.support.POMGenerator "%TEMP%" "%DEPENDENCY_LIST%"
 
 echo ""
 echo ""
@@ -35,41 +31,12 @@ echo ""
 echo ""
 
 REM GigaSpaces Jars
-call mvn install:install-file -DgroupId=com.gigaspaces -DcreateChecksum=true -DartifactId=gs-runtime -Dversion=%XAP_VERSION% -DpomFile=%TEMP%/gs-runtime-pom.xml -Dpackaging=jar -Dfile="%JSHOMEDIR%/lib/required/gs-runtime.jar" -Djavadoc="%JSHOMEDIR%/docs/xap-javadoc.zip" 
-call mvn install:install-file -DgroupId=com.gigaspaces -DcreateChecksum=true -DartifactId=gs-openspaces -Dversion=%XAP_VERSION% -DpomFile=%TEMP%/gs-openspaces-pom.xml -Dpackaging=jar -Dfile="%JSHOMEDIR%/lib/required/gs-openspaces.jar" -Djavadoc="%JSHOMEDIR%/docs/xap-javadoc.zip" -Dsources="%JSHOMEDIR%/lib/optional/openspaces/gs-openspaces-sources.jar"  
-call mvn install:install-file -DgroupId=com.gigaspaces -DcreateChecksum=true -DartifactId=mule-os -Dversion=%XAP_VERSION% -Dpackaging=jar -DpomFile=%TEMP%/mule-os-pom.xml -Dfile="%JSHOMEDIR%/lib/optional/openspaces/mule-os.jar"
-call mvn install:install-file -DgroupId=com.gigaspaces -DcreateChecksum=true -DartifactId=jetty-os -Dversion=%XAP_VERSION% -Dpackaging=jar -DpomFile=%TEMP%/jetty-os-pom.xml -Dfile="%JSHOMEDIR%/lib/platform/openspaces/gs-openspaces-jetty.jar"
-call mvn install:install-file -DgroupId=com.gigaspaces -DcreateChecksum=true -DartifactId=mongo-datasource -Dversion=%XAP_VERSION% -Dpackaging=jar -DpomFile=%TEMP%/mongo-datasource-pom.xml -Dfile="%JSHOMEDIR%/lib/optional/datasource/mongo/mongo-datasource.jar"
+call mvn -f %TEMP%/gs-dependencies-pom.xml install
 
 REM Build and install OpenSpaces Maven Plugin 
 call mvn -f maven-openspaces-plugin/pom.xml install  -DcreateChecksum=true
 
-if "%EDITION%" == "Cloudify" FOR /F "usebackq tokens=*" %%i IN (`installmavenrep.bat Cloudify`) DO @set CLOUDIFY_VERSION=%%i
-
-if "%EDITION%" == "Cloudify" (
-
-echo ""
-echo ""
-echo "Installing Cloudify %CLOUDIFY_VERSION% jars"
-echo ""
-echo ""
-
-call mvn install:install-file -DgroupId=org.cloudifysource -DcreateChecksum=true -DartifactId=dsl -Dversion=%CLOUDIFY_VERSION% -Dpackaging=jar -DpomFile=%TEMP%/dsl-pom.xml -Dfile="%JSHOMEDIR%/lib/platform/cloudify/dsl.jar"
-call mvn install:install-file -DgroupId=org.cloudifysource -DcreateChecksum=true -DartifactId=usm -Dversion=%CLOUDIFY_VERSION% -Dpackaging=jar -DpomFile=%TEMP%/usm-pom.xml -Dfile="%JSHOMEDIR%/lib/platform/usm/usm.jar"
-call mvn install:install-file -DgroupId=org.cloudifysource -DcreateChecksum=true -DartifactId=esc -Dversion=%CLOUDIFY_VERSION% -Dpackaging=jar -DpomFile=%TEMP%/esc-pom.xml -Dfile="%JSHOMEDIR%/lib/platform/esm/esc.jar"
-)
-
-
 REM remove temp files
-del %TEMP%\gs-runtime-pom.xml
-del %TEMP%\gs-openspaces-pom.xml
-del %TEMP%\mule-os-pom.xml
-del %TEMP%\jetty-os-pom.xml
-del %TEMP%\mongo-datasource-pom.xml
-
-if "%EDITION%" == "Cloudify" (
-del %TEMP%\usm-pom.xml
-del %TEMP%\dsl-pom.xml
-)
+del %TEMP%\gs-dependencies-pom.xml
 
 :END
