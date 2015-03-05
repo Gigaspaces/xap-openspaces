@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class IntegratedMemcachedTests extends TestCase {
 
     private MemcachedClient memcachedClient;
+    private static final int timeout = 10;
 
 
     public void testTextIntegratedProcessingUnit() throws Exception {
@@ -67,7 +68,7 @@ public class IntegratedMemcachedTests extends TestCase {
 
         for (int i = 0; i < 100; i++) {
             Future setResult = memcachedClient.set("key" + i, 0, "value" + i);
-            assertEquals( Boolean.TRUE, setResult.get(10, TimeUnit.SECONDS));
+            getResult(setResult, Boolean.TRUE);
         }
 
         for (int i = 0; i < 100; i++) {
@@ -76,46 +77,45 @@ public class IntegratedMemcachedTests extends TestCase {
         }
 
         Future<Boolean> booleanFuture = memcachedClient.replace("xkey", 0, "xvalue");
-        assertEquals(Boolean.FALSE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.FALSE);
         String getResult = (String) memcachedClient.get("xkey");
         assertNull(getResult);
 
         booleanFuture = memcachedClient.add("xkey", 0, "xvalue");
-        assertEquals(Boolean.TRUE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.TRUE);
         getResult = (String) memcachedClient.get("xkey");
         assertEquals("xvalue", getResult);
 
         booleanFuture = memcachedClient.add("xkey", 0, "xvalue1");
-        assertEquals(Boolean.FALSE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.FALSE);
         getResult = (String) memcachedClient.get("xkey");
         assertEquals("xvalue", getResult);
 
 
         booleanFuture = memcachedClient.replace("xkey", 0, "xvalue1");
-        assertEquals(Boolean.TRUE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.TRUE);
         getResult = (String) memcachedClient.get("xkey");
         assertEquals("xvalue1", getResult);
 
         booleanFuture = memcachedClient.append(0, "xkey", "append");
-        assertEquals(Boolean.TRUE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.TRUE);
         getResult = (String) memcachedClient.get("xkey");
         assertEquals("xvalue1append", getResult);
 
         booleanFuture = memcachedClient.prepend(0, "xkey", "prepend");
-        assertEquals(Boolean.TRUE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.TRUE);
         getResult = (String) memcachedClient.get("xkey");
         assertEquals("prependxvalue1append", getResult);
 
         booleanFuture = memcachedClient.delete("xkey");
-        assertEquals(Boolean.TRUE, booleanFuture.get(10, TimeUnit.SECONDS));
+        getResult(booleanFuture, Boolean.TRUE);
         getResult = (String) memcachedClient.get("xkey");
         assertNull(getResult);
 
         booleanFuture = memcachedClient.delete("xkey");
-        assertEquals(Boolean.FALSE, booleanFuture.get(10, TimeUnit.SECONDS));
-
+        getResult(booleanFuture, Boolean.FALSE);
         Future setResult = memcachedClient.set("xkey", 0, "xvalue");
-        assertEquals( Boolean.TRUE, setResult.get(10, TimeUnit.SECONDS));
+        getResult(setResult, Boolean.TRUE);
 
         CASValue<Object> casValue = memcachedClient.gets("xkey");
         assertEquals("xvalue", casValue.getValue());
@@ -124,19 +124,19 @@ public class IntegratedMemcachedTests extends TestCase {
         assertEquals(CASResponse.OK, casResponse);
 
         setResult = memcachedClient.set("xkey", 0, "xvalueU1");
-        setResult.get(10, TimeUnit.SECONDS);
+        getResult(setResult, null);
 
         casResponse = memcachedClient.cas("xkey", casValue.getCas(), "xvalueC1");
         assertEquals(CASResponse.EXISTS, casResponse);
 
         booleanFuture = memcachedClient.delete("xkey");
-        assertEquals(booleanFuture.get(10, TimeUnit.SECONDS), Boolean.TRUE);
+        getResult(booleanFuture, Boolean.TRUE);
 
         casResponse = memcachedClient.cas("xkey", casValue.getCas(), "xvalueC1");
         assertEquals(CASResponse.NOT_FOUND, casResponse);
 
         setResult = memcachedClient.set("intKey", 0, "1");
-        setResult.get(10, TimeUnit.SECONDS);
+        getResult(setResult, null);
         long value = memcachedClient.incr("intKey", 2);
         assertEquals(3, value);
 
@@ -149,10 +149,22 @@ public class IntegratedMemcachedTests extends TestCase {
 
         // test invalid tokens in key
         setResult = memcachedClient.set("key^1", 0, "value");
-        setResult.get(10, TimeUnit.SECONDS);
+        getResult(setResult, null);
 
         memcachedClient.shutdown();
 
         container.close();
+    }
+
+    private void getResult(Future result, Boolean expected){
+        try {
+            if (expected != null)
+                assertEquals(expected, result.get(timeout, TimeUnit.SECONDS));
+            else
+                result.get(timeout, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("failed getting result "+e);
+        }
     }
 }
