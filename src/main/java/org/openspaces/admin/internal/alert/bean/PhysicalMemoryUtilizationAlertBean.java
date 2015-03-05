@@ -18,9 +18,9 @@
 package org.openspaces.admin.internal.alert.bean;
 
 import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jini.rio.resources.util.TimeUtil;
 import org.openspaces.admin.Admin;
@@ -34,25 +34,26 @@ import org.openspaces.admin.alert.config.PhysicalMemoryUtilizationAlertConfigura
 import org.openspaces.admin.bean.BeanConfigurationException;
 import org.openspaces.admin.internal.alert.InternalAlertManager;
 import org.openspaces.admin.internal.alert.bean.util.AlertBeanUtils;
+import org.openspaces.admin.internal.alert.bean.util.MovingAverageStatistics;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.MachineRemovedEventListener;
-import org.openspaces.admin.os.OperatingSystemStatistics;
 import org.openspaces.admin.os.events.OperatingSystemStatisticsChangedEvent;
 import org.openspaces.admin.os.events.OperatingSystemStatisticsChangedEventListener;
 
 public class PhysicalMemoryUtilizationAlertBean implements AlertBean,
         OperatingSystemStatisticsChangedEventListener, MachineRemovedEventListener {
 
+    private static final Logger logger = Logger.getLogger(PhysicalMemoryUtilizationAlert.class.getName());
+
     public static final String beanUID = "726a2752-4cae5258-f281-49d3-96b6-1e68e42bbd2c";
     public static final String ALERT_NAME = "Physical Memory Utilization";
-    
+
     private final PhysicalMemoryUtilizationAlertConfiguration config = new PhysicalMemoryUtilizationAlertConfiguration();
 
     private Admin admin;
     private final static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
-    //time-line (from oldest at [0] to newest at [size-1]) history statistics
-    private List<Double> timeLine = new LinkedList<Double>();
+    private MovingAverageStatistics movingAverageStatistics;
 
     public PhysicalMemoryUtilizationAlertBean() {
         NUMBER_FORMAT.setMinimumFractionDigits(1);
@@ -62,7 +63,11 @@ public class PhysicalMemoryUtilizationAlertBean implements AlertBean,
     @Override
     public void afterPropertiesSet() throws Exception {
         validateProperties();
-        
+
+        long measurementPeriod = config.getMeasurementPeriod();
+        int period = (int) (measurementPeriod / StatisticsMonitor.DEFAULT_MONITOR_INTERVAL);
+        movingAverageStatistics = new MovingAverageStatistics(period);
+
         admin.getMachines().getMachineRemoved().add(this);
         admin.getOperatingSystems().getOperatingSystemStatisticsChanged().add(this);
         admin.getOperatingSystems().startStatisticsMonitor();
@@ -70,6 +75,7 @@ public class PhysicalMemoryUtilizationAlertBean implements AlertBean,
 
     @Override
     public void destroy() throws Exception {
+        movingAverageStatistics.clear();
         admin.getMachines().getMachineRemoved().remove(this);
         admin.getOperatingSystems().getOperatingSystemStatisticsChanged().remove(this);
         admin.getOperatingSystems().stopStatisticsMonitor();
@@ -129,6 +135,9 @@ public class PhysicalMemoryUtilizationAlertBean implements AlertBean,
         //unreachable machine
     @Override
     public void machineRemoved(final Machine machine) {
+
+        movingAverageStatistics.clear(machine.getOperatingSystem().getUid());
+
         final String groupUid = generateGroupUid(machine.getOperatingSystem().getUid());
         Alert[] alertsByGroupUid = ((InternalAlertManager)admin.getAlertManager()).getAlertRepository().getAlertsByGroupUid(groupUid);
         if (alertsByGroupUid.length != 0 && !alertsByGroupUid[0].getStatus().isResolved()) {
@@ -208,18 +217,21 @@ public class PhysicalMemoryUtilizationAlertBean implements AlertBean,
     }
 
     private double calcAverageWithinPeriod(OperatingSystemStatisticsChangedEvent event) {
-        long measurementPeriod = config.getMeasurementPeriod();
-        int period = (int) (measurementPeriod / StatisticsMonitor.DEFAULT_MONITOR_INTERVAL);
-
-        if (!event.getStatistics().isNA()) {
-            timeLine.add(event.getStatistics().getPhysicalMemoryUsedPerc());
-        }
-        //adjust history with time-window
-        if (timeLine.size() > period) {
-            timeLine.remove(0); //remove oldest
+        if (event.getStatistics().isNA()) {
+            return -1;
         }
 
-        return AlertBeanUtils.getAverage(period, timeLine);
+        final String key = event.getOperatingSystem().getUid();
+        movingAverageStatistics.addStatistics(key, event.getStatistics().getPhysicalMemoryUsedPerc());
+        double average = movingAverageStatistics.getAverageAndReset(key);
+
+        if (average != -1 && logger.isLoggable(Level.FINE)) {
+            logger.fine("host=[" + event.getOperatingSystem().getDetails().getHostName()
+                    + "] memory used=[" + event.getStatistics().getPhysicalMemoryUsedPerc() + "%]" +
+                    " average=[" + average + "%] values: " + movingAverageStatistics.toString(key));
+        }
+
+        return average;
     }
 
     private String getPeriodOfTime(OperatingSystemStatisticsChangedEvent event) {

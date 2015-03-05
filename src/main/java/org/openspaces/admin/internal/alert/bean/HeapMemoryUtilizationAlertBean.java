@@ -18,9 +18,9 @@
 package org.openspaces.admin.internal.alert.bean;
 
 import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jini.rio.resources.util.TimeUtil;
 import org.openspaces.admin.Admin;
@@ -34,6 +34,7 @@ import org.openspaces.admin.alert.config.PhysicalMemoryUtilizationAlertConfigura
 import org.openspaces.admin.bean.BeanConfigurationException;
 import org.openspaces.admin.internal.alert.InternalAlertManager;
 import org.openspaces.admin.internal.alert.bean.util.AlertBeanUtils;
+import org.openspaces.admin.internal.alert.bean.util.MovingAverageStatistics;
 import org.openspaces.admin.vm.VirtualMachine;
 import org.openspaces.admin.vm.events.VirtualMachineRemovedEventListener;
 import org.openspaces.admin.vm.events.VirtualMachineStatisticsChangedEvent;
@@ -42,16 +43,17 @@ import org.openspaces.admin.vm.events.VirtualMachineStatisticsChangedEventListen
 public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachineStatisticsChangedEventListener,
         VirtualMachineRemovedEventListener {
 
+    private static final Logger logger = Logger.getLogger(HeapMemoryUtilizationAlert.class.getName());
+
     public static final String beanUID = "694248f7-8a41119b-ddf9-4998-b3a0-885021e366af";
     public static final String ALERT_NAME = "Heap Memory Utilization";
-    
+
     private final PhysicalMemoryUtilizationAlertConfiguration config = new PhysicalMemoryUtilizationAlertConfiguration();
 
     private Admin admin;
     private final static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
-    //time-line (from oldest at [0] to newest at [size-1]) history statistics
-    private List<Double> timeLine = new LinkedList<Double>();
+    private MovingAverageStatistics movingAverageStatistics;
 
     public HeapMemoryUtilizationAlertBean() {
         NUMBER_FORMAT.setMinimumFractionDigits(1);
@@ -61,7 +63,11 @@ public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachine
     @Override
     public void afterPropertiesSet() throws Exception {
         validateProperties();
-        
+
+        long measurementPeriod = config.getMeasurementPeriod();
+        int period = (int) (measurementPeriod / StatisticsMonitor.DEFAULT_MONITOR_INTERVAL);
+        movingAverageStatistics = new MovingAverageStatistics(period);
+
         admin.getVirtualMachines().getVirtualMachineRemoved().add(this);
         admin.getVirtualMachines().getVirtualMachineStatisticsChanged().add(this);
         admin.getVirtualMachines().startStatisticsMonitor();
@@ -69,6 +75,7 @@ public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachine
 
     @Override
     public void destroy() throws Exception {
+        movingAverageStatistics.clear();
         admin.getVirtualMachines().getVirtualMachineRemoved().remove(this);
         admin.getVirtualMachines().getVirtualMachineStatisticsChanged().remove(this);
         admin.getVirtualMachines().stopStatisticsMonitor();
@@ -127,6 +134,8 @@ public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachine
 
     @Override
     public void virtualMachineRemoved(VirtualMachine virtualMachine) {
+
+        movingAverageStatistics.clear(virtualMachine.getUid());
 
         final String groupUid = generateGroupUid(virtualMachine.getUid());
         Alert[] alertsByGroupUid = ((InternalAlertManager)admin.getAlertManager()).getAlertRepository().getAlertsByGroupUid(groupUid);
@@ -217,18 +226,22 @@ public class HeapMemoryUtilizationAlertBean implements AlertBean, VirtualMachine
     }
 
     private double calcAverageWithinPeriod(VirtualMachineStatisticsChangedEvent event) {
-        long measurementPeriod = config.getMeasurementPeriod();
-        int period = (int) (measurementPeriod / StatisticsMonitor.DEFAULT_MONITOR_INTERVAL);
 
-        if (!event.getStatistics().isNA()) {
-            timeLine.add(event.getStatistics().getMemoryHeapUsedPerc());
-        }
-        //adjust history with time-window
-        if (timeLine.size() > period) {
-            timeLine.remove(0); //remove oldest
+        if (event.getStatistics().isNA()) {
+            return -1;
         }
 
-        return AlertBeanUtils.getAverage(period, timeLine);
+        final String key = event.getVirtualMachine().getUid();
+        movingAverageStatistics.addStatistics(key, event.getStatistics().getMemoryHeapUsedPerc());
+        double average = movingAverageStatistics.getAverageAndReset(key);
+
+        if (average != -1 && logger.isLoggable(Level.FINE)) {
+            logger.fine("vm pid=[" + event.getVirtualMachine().getDetails().getPid()
+                    + "] memory used=[" + event.getStatistics().getMemoryHeapUsedPerc() + "%]" +
+                    " average=[" + average + "%] values: " + movingAverageStatistics.toString(key));
+        }
+
+        return average;
     }
 
     private String getPeriodOfTime(VirtualMachineStatisticsChangedEvent event) {
