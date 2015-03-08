@@ -591,7 +591,7 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
     }
 
     public ServiceMonitors[] getServicesMonitors() {
-        return new ServiceMonitors[] {new PollingEventContainerServiceMonitors(beanName, processedEvents.get(), failedEvents.get(), getStatus(), getConcurrentConsumers())};
+        return new ServiceMonitors[] {new PollingEventContainerServiceMonitors(beanName, getProcessedEvents(), getFailedEvents(), getStatus(), getConcurrentConsumers())};
     }
 
     public String getName() {

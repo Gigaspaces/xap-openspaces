@@ -120,7 +120,7 @@ public class SimpleAsyncPollingEventListenerContainer extends AbstractTransactio
     }
 
     public ServiceMonitors[] getServicesMonitors() {
-        return new ServiceMonitors[]{new AsyncPollingEventContainerServiceMonitors(beanName, processedEvents.get(), failedEvents.get(), getStatus())};
+        return new ServiceMonitors[]{new AsyncPollingEventContainerServiceMonitors(beanName, getProcessedEvents(), getFailedEvents(), getStatus())};
     }
 
     public String getName() {

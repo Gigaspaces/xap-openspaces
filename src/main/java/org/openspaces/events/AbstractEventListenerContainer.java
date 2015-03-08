@@ -16,6 +16,7 @@
 
 package org.openspaces.events;
 
+import com.gigaspaces.metrics.LongCounter;
 import org.openspaces.events.adapter.EventListenerAdapter;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +26,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -46,9 +46,9 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
 
     protected EventExceptionHandler exceptionHandler;
 
-    protected final AtomicLong processedEvents = new AtomicLong();
+    private final LongCounter processedEvents = new LongCounter();
 
-    protected final AtomicLong failedEvents = new AtomicLong();
+    private final LongCounter failedEvents = new LongCounter();
 
     protected EventExceptionHandler getExceptionHandler() {
         return exceptionHandler;
@@ -193,7 +193,7 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
         } else {
             eventListener.onEvent(eventData, getGigaSpace(), txStatus, source);
         }
-        processedEvents.incrementAndGet();
+        processedEvents.inc();
     }
 
     /**
@@ -206,7 +206,7 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
             invokeExceptionListener((Exception) ex);
         }
         if (isActive()) {
-            failedEvents.incrementAndGet();
+            failedEvents.inc();
             // Regular case: failed while active. Log at error level.
             logger.error(message("Execution of event listener failed"), ex);
         } else {
@@ -223,10 +223,10 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
     }
 
     public long getProcessedEvents() {
-        return processedEvents.get();
+        return processedEvents.getCount();
     }
 
     public long getFailedEvents() {
-        return failedEvents.get();
+        return failedEvents.getCount();
     }
 }

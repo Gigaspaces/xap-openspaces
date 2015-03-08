@@ -198,7 +198,7 @@ public class SimpleNotifyEventListenerContainer extends AbstractNotifyEventListe
     }
 
     public ServiceMonitors[] getServicesMonitors() {
-        return new ServiceMonitors[]{new NotifyEventContainerServiceMonitors(beanName, processedEvents.get(), failedEvents.get(), getStatus())};
+        return new ServiceMonitors[]{new NotifyEventContainerServiceMonitors(beanName, getProcessedEvents(), getFailedEvents(), getStatus())};
     }
 
     public String getName() {
