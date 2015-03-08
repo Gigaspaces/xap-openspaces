@@ -750,12 +750,14 @@ public class SimplePollingEventListenerContainer extends AbstractEventListenerCo
         return beanName;
     }
 
+    @Override
+    protected String getEventListenerContainerType() {
+        return "Polling Container";
+    }
+
     protected void dump(PrintWriter writer) {
-        writer.println("TYPE: Polling Container");
-        writer.println("===== CONFIGURATION =====");
-        writer.println("GigaSpace             : [" + getGigaSpace().getName() + "]");
-        writer.println("Template              : [" + getTemplate() + "]");
-        writer.println("Transactional         : [" + getTransactionManagerName() + "]");
+        super.dump(writer);
+
         writer.println("Receive Timeout       : [" + getReceiveTimeout() + "]");
         writer.println("Receive Handler       : [" + getReceiveOperationHandler().toString() + "]");
         if (getTriggerOperationHandler() != null) {
@@ -764,10 +766,6 @@ public class SimplePollingEventListenerContainer extends AbstractEventListenerCo
         writer.println("Consumers             : [" + getConcurrentConsumers() + "]");
         writer.println("Max Consumers         : [" + getMaxConcurrentConsumers() + "]");
         writer.println("Pass Array            : [" + isPassArrayAsIs() + "]");
-        writer.println();
-        writer.println("===== RUNTIME =====");
-        writer.println("Status [" + getStatus() + "]");
-        writer.println("Events: Processed [" + getProcessedEvents() + "], Failed [" + getFailedEvents() + "]");
     }
 
     // -------------------------------------------------------------------------

@@ -125,18 +125,15 @@ public class SimpleAsyncPollingEventListenerContainer extends AbstractEventListe
     }
 
     @Override
+    protected String getEventListenerContainerType() {
+        return "Async Polling Container";
+    }
+
+    @Override
     protected void dump(PrintWriter writer) {
-        writer.println("TYPE: Async Polling Container");
-        writer.println("===== CONFIGURATION =====");
-        writer.println("GigaSpace             : [" + getGigaSpace().getName() + "]");
-        writer.println("Template              : [" + getTemplate() + "]");
-        writer.println("Transactional         : [" + getTransactionManagerName() + "]");
+        super.dump(writer);
         writer.println("Receive Timeout       : [" + getReceiveTimeout() + "]");
         writer.println("Consumers             : [" + concurrentConsumers + "]");
-        writer.println();
-        writer.println("===== RUNTIME =====");
-        writer.println("Status [" + getStatus() + "]");
-        writer.println("Events: Processed [" + getProcessedEvents() + "], Failed [" + getFailedEvents() + "]");
     }
 
     @Override

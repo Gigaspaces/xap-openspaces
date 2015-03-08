@@ -872,11 +872,24 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
         try {
             PrintWriter writer = new PrintWriter(dump.createFileWriter(beanName + ".txt"));
             dump(writer);
+            writer.println();
             writer.close();
         } finally {
             dump.removePrefix();
         }
     }
 
-    protected abstract void dump(PrintWriter writer);
+    protected void dump(PrintWriter writer) {
+        writer.println("===== RUNTIME =====");
+        writer.println("Status: " + getStatus());
+        writer.println("Processed events: " + getProcessedEvents());
+        writer.println("Failed events: " + getFailedEvents());
+        writer.println("===== CONFIGURATION =====");
+        writer.println("Type                  : [" + getEventListenerContainerType() + "]");
+        writer.println("GigaSpace             : [" + getGigaSpace().getName() + "]");
+        writer.println("Template              : [" + getTemplate() + "]");
+        writer.println("Transactional         : [" + getTransactionManagerName() + "]");
+    }
+
+    protected abstract String getEventListenerContainerType();
 }

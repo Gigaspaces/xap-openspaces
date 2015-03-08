@@ -827,7 +827,13 @@ public class SimpleNotifyEventListenerContainer extends AbstractEventListenerCon
     }
 
     @Override
+    protected String getEventListenerContainerType() {
+        return "Notify Container";
+    }
+
+    @Override
     protected void dump(PrintWriter writer) {
+        super.dump(writer);
         StringBuilder notifications = new StringBuilder();
         if (isNotifyAll())
             notifications.append("ALL, ");
@@ -846,11 +852,6 @@ public class SimpleNotifyEventListenerContainer extends AbstractEventListenerCon
         if (isNotifyRematchedUpdate())
             notifications.append("REMATCHED_UPDATE, ");
 
-        writer.println("TYPE: Notify Container");
-        writer.println("===== CONFIGURATION =====");
-        writer.println("GigaSpace             : [" + getGigaSpace().getName() + "]");
-        writer.println("Template              : [" + getTemplate() + "]");
-        writer.println("Transactional         : [" + getTransactionManagerName() + "]");
         writer.println("CommType              : [" + getCommType() + "]");
         writer.println("Fifo                  : [" + isFifo() + "]");
         writer.println("Batching              : Size [" + getBatchSize() + "], Time [" + getBatchTime() + "]");
@@ -861,10 +862,6 @@ public class SimpleNotifyEventListenerContainer extends AbstractEventListenerCon
         writer.println("Perform Snapshot      : [" + isPerformSnapshot() + "]");
         writer.println("Pass Array            : [" + isPassArrayAsIs() + "]");
         writer.println("Durable               : [" + isDurable() + "]");
-        writer.println();
-        writer.println("===== RUNTIME =====");
-        writer.println("Status [" + getStatus() + "]");
-        writer.println("Events: Processed [" + getProcessedEvents() + "], Failed [" + getFailedEvents() + "]");
 
         if (isDurable() &&
                 eventRegistration != null &&
