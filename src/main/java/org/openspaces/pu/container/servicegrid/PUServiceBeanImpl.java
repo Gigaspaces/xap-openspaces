@@ -826,6 +826,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
             for (String beanName : applicationContext.getBeanDefinitionNames()) {
                 Object bean = applicationContext.getBean(beanName);
+                // safety check, e.g. in case bean is org.springframework.beans.factory.config.MethodInvokingFactoryBean
+                if (bean == null)
+                    continue;
                 Class<?> objClz = bean.getClass();
                 if (logger.isDebugEnabled())
                     logger.debug("Scanning Bean " + beanName + " [class " + objClz.getName() + "] for @ServiceMetric methods");
