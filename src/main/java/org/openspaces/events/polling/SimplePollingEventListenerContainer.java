@@ -18,23 +18,36 @@ package org.openspaces.events.polling;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.openspaces.core.SpaceInterruptedException;
+import org.openspaces.events.AbstractEventListenerContainer;
 import org.openspaces.events.SpaceDataEventListener;
+import org.openspaces.events.polling.receive.ReceiveOperationHandler;
+import org.openspaces.events.polling.receive.SingleTakeReceiveOperationHandler;
+import org.openspaces.events.polling.trigger.TriggerOperationHandler;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.SchedulingAwareRunnable;
 import org.springframework.scheduling.SchedulingTaskExecutor;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Event listener container variant that uses plain Space take API, specifically a loop of
@@ -70,7 +83,7 @@ import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
  *
  * @author kimchy
  */
-public class SimplePollingEventListenerContainer extends AbstractPollingEventListenerContainer implements InternalDumpProcessor {
+public class SimplePollingEventListenerContainer extends AbstractEventListenerContainer implements InternalDumpProcessor {
 
     /**
      * Default thread name prefix: "DefaultPollingEventListenerContainer-".
@@ -82,6 +95,16 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
      * The default recovery interval: 5000 ms = 5 seconds.
      */
     public static final long DEFAULT_RECOVERY_INTERVAL = 5000;
+
+    /**
+     * The default receive timeout: 60000 ms = 60 seconds = 1 minute.
+     */
+    public static final long DEFAULT_RECEIVE_TIMEOUT = 60000;
+
+    private boolean passArrayAsIs = false;
+    private long receiveTimeout = DEFAULT_RECEIVE_TIMEOUT;
+    private ReceiveOperationHandler receiveOperationHandler;
+    private TriggerOperationHandler triggerOperationHandler;
 
     private TaskExecutor taskExecutor;
 
@@ -104,6 +127,84 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
     private Object currentRecoveryMarker = new Object();
 
     private final Object recoveryMonitor = new Object();
+
+    /* (non-Javadoc)
+     * @see org.openspaces.events.AbstractTransactionalEventListenerContainer#validateConfiguration()
+    */
+    @Override
+    protected void validateConfiguration() {
+        super.validateConfiguration();
+
+        if (!disableTransactionValidation && getTransactionManager() != null && getGigaSpace().getTxProvider().isEnabled() && getTransactionDefinition() != null){
+            int timeout = getTransactionDefinition().getTimeout();
+            if (timeout != TransactionDefinition.TIMEOUT_DEFAULT && (timeout * 1000)<= getReceiveTimeout())
+                throw new IllegalStateException("Receive timeout [" + getReceiveTimeout() + "ms] must be lower than the transaction timeout [" + getTransactionDefinition().getTimeout() * 1000 + "ms]");
+        }
+    }
+
+    /**
+     * If set to <code>true</code> will pass an array value returned from a
+     * {@link org.openspaces.events.polling.receive.ReceiveOperationHandler}
+     * directly to the listener without "serializing" it as one array element
+     * each time. Defaults to <code>false</code>
+     */
+    public void setPassArrayAsIs(boolean passArrayAsIs) {
+        this.passArrayAsIs = passArrayAsIs;
+    }
+
+    protected boolean isPassArrayAsIs() {
+        return this.passArrayAsIs;
+    }
+
+    /**
+     * Set the timeout to use for receive calls, in <b>milliseconds</b>. The default is 60000 ms,
+     * that is, 1 minute.
+     *
+     * <p><b>NOTE:</b> This value needs to be smaller than the transaction timeout used by the
+     * transaction manager (in the appropriate unit, of course).
+     *
+     * @see org.openspaces.core.GigaSpace#take(Object,long)
+     */
+    public void setReceiveTimeout(long receiveTimeout) {
+        this.receiveTimeout = receiveTimeout;
+    }
+
+    /**
+     * Returns the timeout used for receive calls, in <b>millisecond</b>. The default is 60000 ms,
+     * that is, 1 minute.
+     */
+    protected long getReceiveTimeout() {
+        return receiveTimeout;
+    }
+
+    /**
+     * Allows to set a receive operation handler that will perform the actual receive operation.
+     * Defaults to {@link org.openspaces.events.polling.receive.SingleTakeReceiveOperationHandler}.
+     */
+    public void setReceiveOperationHandler(ReceiveOperationHandler receiveOperationHandler) {
+        this.receiveOperationHandler = receiveOperationHandler;
+    }
+
+    protected ReceiveOperationHandler getReceiveOperationHandler() {
+        return this.receiveOperationHandler;
+    }
+
+    /**
+     * An advance feature allows for pluggable
+     * {@link TriggerOperationHandler triggerOperationHandler} which mainly makes sense when using
+     * transactions. The trigger operations handler allows to perform a trigger receive outside of a
+     * transaction scope, and if it returned a value, perform the take within a transaction. A
+     * useful implementation of it is
+     * {@link org.openspaces.events.polling.trigger.ReadTriggerOperationHandler}. Defaults to
+     * <code>null</code>.
+     */
+    public void setTriggerOperationHandler(TriggerOperationHandler triggerOperationHandler) {
+        this.triggerOperationHandler = triggerOperationHandler;
+    }
+
+    protected TriggerOperationHandler getTriggerOperationHandler() {
+        return this.triggerOperationHandler;
+    }
 
     /**
      * Set the Spring {@link org.springframework.core.task.TaskExecutor} to use for running the
@@ -313,6 +414,8 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
             }
         }
 
+        initReceiveOperationHandler();
+        initTriggerOperationHandler();
         // Proceed with actual listener initialization.
         super.initialize();
 
@@ -320,6 +423,54 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
         synchronized (this.activeInvokerMonitor) {
             for (int i = 0; i < this.concurrentConsumers; i++) {
                 scheduleNewInvoker();
+            }
+        }
+    }
+
+    private void initTriggerOperationHandler() {
+        if (triggerOperationHandler == null && getActualEventListener() != null) {
+            final AtomicReference<Method> ref = new AtomicReference<Method>();
+            ReflectionUtils.doWithMethods(AopUtils.getTargetClass(getActualEventListener()), new ReflectionUtils.MethodCallback() {
+                public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                    if (method.isAnnotationPresent(TriggerHandler.class)) {
+                        ref.set(method);
+                    }
+                }
+            });
+            if (ref.get() != null) {
+                ref.get().setAccessible(true);
+                try {
+                    setTriggerOperationHandler((TriggerOperationHandler) ref.get().invoke(getActualEventListener()));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Failed to set ReceiveOperationHandler from method [" + ref.get().getName() + "]", e);
+                }
+            }
+        }
+    }
+
+    private void initReceiveOperationHandler() {
+        if (receiveOperationHandler == null) {
+            if (getActualEventListener() != null) {
+                // try and find an annotated one
+                final AtomicReference<Method> ref = new AtomicReference<Method>();
+                ReflectionUtils.doWithMethods(AopUtils.getTargetClass(getActualEventListener()), new ReflectionUtils.MethodCallback() {
+                    public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                        if (method.isAnnotationPresent(ReceiveHandler.class)) {
+                            ref.set(method);
+                        }
+                    }
+                });
+                if (ref.get() != null) {
+                    ref.get().setAccessible(true);
+                    try {
+                        setReceiveOperationHandler((ReceiveOperationHandler) ref.get().invoke(getActualEventListener()));
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Failed to set ReceiveOperationHandler from method [" + ref.get().getName() + "]", e);
+                    }
+                }
+            }
+            if (receiveOperationHandler == null) {
+                receiveOperationHandler = new SingleTakeReceiveOperationHandler();
             }
         }
     }
@@ -382,7 +533,11 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
         this.taskExecutor.execute((Runnable) task);
     }
 
-    @Override
+    /**
+     * Template method that gets called right when a new message has been received, before
+     * attempting to process it. Allows subclasses to react to the event of an actual incoming
+     * message, for example adapting their consumer count.
+     */
     protected void eventReceived(Object event) {
         scheduleNewInvokerIfAppropriate();
     }
@@ -749,6 +904,146 @@ public class SimplePollingEventListenerContainer extends AbstractPollingEventLis
             if (invokerThread != null) {
                 invokerThread.interrupt();
             }
+        }
+    }
+
+    /**
+     * Execute the listener for a message received from the given consumer, wrapping the entire
+     * operation in an external transaction if demanded.
+     *
+     * @see #doReceiveAndExecute
+     */
+    protected boolean receiveAndExecute(SpaceDataEventListener eventListener) throws Throwable, TransactionException {
+        Object template = getReceiveTemplate();
+        // if trigger is configure, work using trigger outside of a possible transaction
+        if (triggerOperationHandler != null) {
+            Object trigger;
+            try {
+                trigger = triggerOperationHandler.triggerReceive(template, getGigaSpace(), receiveTimeout);
+            } catch (SpaceInterruptedException e) {
+                return false;
+            }
+            if (logger.isTraceEnabled()) {
+                logger.trace(message("Trigger operation handler returned [" + trigger + "]"));
+            }
+            if (trigger == null) {
+                return false;
+            }
+            // if we are going to use the trigger result as a template
+            if (triggerOperationHandler.isUseTriggerAsTemplate()) {
+                template = trigger;
+            }
+        }
+        if (this.getTransactionManager() != null) {
+            // Execute receive within transaction.
+            TransactionStatus status = this.getTransactionManager().getTransaction(this.getTransactionDefinition());
+            boolean messageReceived;
+            try {
+                messageReceived = doReceiveAndExecute(eventListener, template, status);
+            } catch (RuntimeException ex) {
+                rollbackOnException(status, ex);
+                throw ex;
+            } catch (Error err) {
+                rollbackOnException(status, err);
+                throw err;
+            }
+            // if no message is received, rollback the transaction (for better performance).
+            if (!status.isCompleted()) {
+                if (!messageReceived || status.isRollbackOnly()) {
+                    this.getTransactionManager().rollback(status);
+                } else {
+                    this.getTransactionManager().commit(status);
+                }
+            }
+            return messageReceived;
+        }
+
+        return doReceiveAndExecute(eventListener, template, null);
+    }
+
+    protected boolean doReceiveAndExecute(SpaceDataEventListener eventListener, Object template, TransactionStatus status) {
+        Object dataEvent = receiveEvent(template);
+        if (dataEvent != null) {
+            if (dataEvent instanceof Object[] && !passArrayAsIs) {
+                Object[] dataEvents = (Object[]) dataEvent;
+                for (Object dataEvent1 : dataEvents) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(message("Received event [" + dataEvent + "]"));
+                    }
+                    eventReceived(dataEvent1);
+                    try {
+                        invokeListener(eventListener, dataEvent1, status, null);
+                    } catch (Throwable ex) {
+                        if (status != null) {
+                            // in case of an exception, we rollback the transaction and return
+                            // (since we rolled back)
+                            if (logger.isTraceEnabled()) {
+                                logger.trace(message("Rolling back transaction because of listener exception thrown: " + ex));
+                            }
+                            status.setRollbackOnly();
+                            handleListenerException(ex);
+                            return true;
+                        }
+                        // in case we do not work within a transaction, just handle the
+                        // exception and continue
+                        handleListenerException(ex);
+                    }
+                }
+            } else {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(message("Received event [" + dataEvent + "]"));
+                }
+                if (passArrayAsIs && !(dataEvent instanceof Object[])) {
+                    Object dataEventArr = Array.newInstance(dataEvent.getClass(), 1);
+                    Array.set(dataEventArr, 0, dataEvent);
+                    dataEvent = dataEventArr;
+                }
+                eventReceived(dataEvent);
+                try {
+                    invokeListener(eventListener, dataEvent, status, null);
+                } catch (Throwable ex) {
+                    if (status != null) {
+                        if (logger.isTraceEnabled()) {
+                            logger.trace(message("Rolling back transaction because of listener exception thrown: " + ex));
+                        }
+                        status.setRollbackOnly();
+                    }
+                    handleListenerException(ex);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Perform a rollback, handling rollback exceptions properly.
+     *
+     * @param status object representing the transaction
+     * @param ex     the thrown application exception or error
+     */
+    private void rollbackOnException(TransactionStatus status, Throwable ex) {
+        logger.trace(message("Initiating transaction rollback on application exception"), ex);
+        try {
+            this.getTransactionManager().rollback(status);
+        } catch (RuntimeException ex2) {
+            logger.error(message("Application exception overridden by rollback exception"), ex);
+            throw ex2;
+        } catch (Error err) {
+            logger.error(message("Application exception overridden by rollback error"), ex);
+            throw err;
+        }
+    }
+
+    /**
+     * Receive an event
+     */
+    protected Object receiveEvent(Object template) throws DataAccessException {
+        try {
+            return receiveOperationHandler.receive(template, getGigaSpace(), getReceiveTimeout());
+        } catch (SpaceInterruptedException e) {
+            // we got an interrupted exception, it means no receive operation so return null.
+            return null;
         }
     }
 }

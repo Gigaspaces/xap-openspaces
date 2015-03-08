@@ -21,11 +21,11 @@ import org.springframework.dao.DataAccessException;
 
 /**
  * Perform the actual receive operations for
- * {@link org.openspaces.events.polling.AbstractPollingEventListenerContainer}. Can return either a
+ * {@link org.openspaces.events.polling.SimplePollingEventListenerContainer}. Can return either a
  * single object or an array of objects.
  * 
  * @author kimchy
- * @see org.openspaces.events.polling.AbstractPollingEventListenerContainer
+ * @see org.openspaces.events.polling.SimplePollingEventListenerContainer
  */
 public interface ReceiveOperationHandler {
 

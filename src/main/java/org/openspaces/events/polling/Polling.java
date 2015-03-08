@@ -103,7 +103,7 @@ public @interface Polling {
      *
      * @see org.openspaces.events.polling.SimplePollingEventListenerContainer#setReceiveTimeout(long)
      */
-    long receiveTimeout() default AbstractPollingEventListenerContainer.DEFAULT_RECEIVE_TIMEOUT;
+    long receiveTimeout() default SimplePollingEventListenerContainer.DEFAULT_RECEIVE_TIMEOUT;
 
     /**
      * If set to <code>true</code> will perform snapshot operation on the provided template
