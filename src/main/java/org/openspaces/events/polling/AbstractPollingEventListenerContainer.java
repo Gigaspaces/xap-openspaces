@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openspaces.core.SpaceInterruptedException;
-import org.openspaces.events.AbstractTransactionalEventListenerContainer;
+import org.openspaces.events.AbstractEventListenerContainer;
 import org.openspaces.events.SpaceDataEventListener;
 import org.openspaces.events.polling.receive.ReceiveOperationHandler;
 import org.openspaces.events.polling.receive.SingleTakeReceiveOperationHandler;
@@ -76,7 +76,7 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author kimchy
  */
-public abstract class AbstractPollingEventListenerContainer extends AbstractTransactionalEventListenerContainer {
+public abstract class AbstractPollingEventListenerContainer extends AbstractEventListenerContainer {
 
     /**
      * The default receive timeout: 60000 ms = 60 seconds = 1 minute.

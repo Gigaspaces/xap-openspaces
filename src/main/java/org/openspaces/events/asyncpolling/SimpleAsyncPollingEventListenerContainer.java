@@ -22,7 +22,7 @@ import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
 import org.openspaces.core.transaction.internal.TransactionalAsyncFutureListener;
-import org.openspaces.events.AbstractTransactionalEventListenerContainer;
+import org.openspaces.events.AbstractEventListenerContainer;
 import org.openspaces.events.ListenerExecutionFailedException;
 import org.openspaces.events.asyncpolling.receive.AsyncOperationHandler;
 import org.openspaces.events.asyncpolling.receive.SingleTakeAsyncOperationHandler;
@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author kimchy
  */
-public class SimpleAsyncPollingEventListenerContainer extends AbstractTransactionalEventListenerContainer implements InternalDumpProcessor {
+public class SimpleAsyncPollingEventListenerContainer extends AbstractEventListenerContainer implements InternalDumpProcessor {
 
     /**
      * The default receive timeout: 60000 ms = 60 seconds = 1 minute.

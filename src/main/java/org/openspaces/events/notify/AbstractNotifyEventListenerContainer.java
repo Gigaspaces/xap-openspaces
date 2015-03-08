@@ -29,7 +29,7 @@ import net.jini.core.lease.Lease;
 import net.jini.lease.LeaseListener;
 import org.openspaces.core.UnusableEntryException;
 import org.openspaces.core.util.SpaceUtils;
-import org.openspaces.events.AbstractTransactionalEventListenerContainer;
+import org.openspaces.events.AbstractEventListenerContainer;
 import org.springframework.core.Constants;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -89,7 +89,7 @@ import java.util.ArrayList;
  * @see com.gigaspaces.events.EventSessionConfig
  * @see com.gigaspaces.events.DataEventSession
  */
-public abstract class AbstractNotifyEventListenerContainer extends AbstractTransactionalEventListenerContainer {
+public abstract class AbstractNotifyEventListenerContainer extends AbstractEventListenerContainer {
 
     /**
      * Custom Communication type is deprecated since 9.7 - the default is multiplex and there are no benefits for using unicast.
