@@ -44,9 +44,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-import com.gigaspaces.internal.dump.InternalDump;
-import com.gigaspaces.internal.dump.InternalDumpProcessor;
-import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -83,7 +80,7 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author kimchy
  */
-public class SimplePollingEventListenerContainer extends AbstractEventListenerContainer implements InternalDumpProcessor {
+public class SimplePollingEventListenerContainer extends AbstractEventListenerContainer {
 
     /**
      * Default thread name prefix: "DefaultPollingEventListenerContainer-".
@@ -753,31 +750,24 @@ public class SimplePollingEventListenerContainer extends AbstractEventListenerCo
         return beanName;
     }
 
-    public void process(InternalDump dump) throws InternalDumpProcessorFailedException {
-        dump.addPrefix("event-containers/");
-        try {
-            PrintWriter writer = new PrintWriter(dump.createFileWriter(beanName + ".txt"));
-            writer.println("TYPE: Polling Container");
-            writer.println("===== CONFIGURATION =====");
-            writer.println("GigaSpace             : [" + getGigaSpace().getName() + "]");
-            writer.println("Template              : [" + getTemplate() + "]");
-            writer.println("Transactional         : [" + getTransactionManagerName() + "]");
-            writer.println("Receive Timeout       : [" + getReceiveTimeout() + "]");
-            writer.println("Receive Handler       : [" + getReceiveOperationHandler().toString() + "]");
-            if (getTriggerOperationHandler() != null) {
+    protected void dump(PrintWriter writer) {
+        writer.println("TYPE: Polling Container");
+        writer.println("===== CONFIGURATION =====");
+        writer.println("GigaSpace             : [" + getGigaSpace().getName() + "]");
+        writer.println("Template              : [" + getTemplate() + "]");
+        writer.println("Transactional         : [" + getTransactionManagerName() + "]");
+        writer.println("Receive Timeout       : [" + getReceiveTimeout() + "]");
+        writer.println("Receive Handler       : [" + getReceiveOperationHandler().toString() + "]");
+        if (getTriggerOperationHandler() != null) {
             writer.println("Trigger Handler       : [" + getTriggerOperationHandler().toString() + "]");
-            }
-            writer.println("Consumers             : [" + getConcurrentConsumers() + "]");
-            writer.println("Max Consumers         : [" + getMaxConcurrentConsumers() + "]");
-            writer.println("Pass Array            : [" + isPassArrayAsIs() + "]");
-            writer.println();
-            writer.println("===== RUNTIME =====");
-            writer.println("Status [" + getStatus() + "]");
-            writer.println("Events: Processed [" + getProcessedEvents() + "], Failed [" + getFailedEvents() + "]");
-            writer.close();
-        } finally {
-            dump.removePrefix();
         }
+        writer.println("Consumers             : [" + getConcurrentConsumers() + "]");
+        writer.println("Max Consumers         : [" + getMaxConcurrentConsumers() + "]");
+        writer.println("Pass Array            : [" + isPassArrayAsIs() + "]");
+        writer.println();
+        writer.println("===== RUNTIME =====");
+        writer.println("Status [" + getStatus() + "]");
+        writer.println("Events: Processed [" + getProcessedEvents() + "], Failed [" + getFailedEvents() + "]");
     }
 
     // -------------------------------------------------------------------------

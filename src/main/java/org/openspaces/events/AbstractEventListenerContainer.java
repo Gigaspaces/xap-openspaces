@@ -21,6 +21,9 @@ import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.cluster.activeelection.SpaceInitializationIndicator;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
+import com.gigaspaces.internal.dump.InternalDump;
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
+import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
 import com.gigaspaces.metrics.LongCounter;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
@@ -55,6 +58,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -71,7 +75,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author kimchy
  */
 public abstract class AbstractEventListenerContainer implements ApplicationContextAware, Lifecycle, BeanNameAware, InitializingBean,
-        DisposableBean, ApplicationListener<ApplicationEvent>, ServiceDetailsProvider, ServiceMonitorsProvider, QuiesceStateChangedListener {
+        DisposableBean, ApplicationListener<ApplicationEvent>, ServiceDetailsProvider, ServiceMonitorsProvider,
+        InternalDumpProcessor, QuiesceStateChangedListener {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -861,4 +866,17 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
             start();
         }
     }
+
+    public void process(InternalDump dump) throws InternalDumpProcessorFailedException {
+        dump.addPrefix("event-containers/");
+        try {
+            PrintWriter writer = new PrintWriter(dump.createFileWriter(beanName + ".txt"));
+            dump(writer);
+            writer.close();
+        } finally {
+            dump.removePrefix();
+        }
+    }
+
+    protected abstract void dump(PrintWriter writer);
 }
