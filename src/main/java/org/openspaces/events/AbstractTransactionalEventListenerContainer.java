@@ -25,7 +25,7 @@ import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 /**
  * @author kimchy
  */
-public abstract class AbstractTransactionalEventListenerContainer extends AbstractTemplateEventListenerContainer {
+public abstract class AbstractTransactionalEventListenerContainer extends AbstractEventListenerContainer {
 
     private PlatformTransactionManager transactionManager;
 

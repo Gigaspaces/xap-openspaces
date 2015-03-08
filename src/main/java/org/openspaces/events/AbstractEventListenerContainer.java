@@ -18,6 +18,7 @@ package org.openspaces.events;
 
 import com.gigaspaces.metrics.LongCounter;
 import org.openspaces.events.adapter.EventListenerAdapter;
+import org.openspaces.events.support.AnnotationProcessorUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,6 +50,12 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
     private final LongCounter processedEvents = new LongCounter();
 
     private final LongCounter failedEvents = new LongCounter();
+
+    private Object template;
+    private boolean performSnapshot = true; // enabled by default
+    private Object receiveTemplate;
+    private DynamicEventTemplateProvider dynamicTemplate;
+    private Object dynamicTemplateRef;
 
     protected EventExceptionHandler getExceptionHandler() {
         return exceptionHandler;
@@ -118,6 +125,56 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
 
     @Override
     public void initialize() throws DataAccessException {
+        initializeTemplate();
+        initializeExceptionHandler();
+        super.initialize();
+    }
+
+    private void initializeTemplate() {
+        Object possibleTemplateProvider = null;
+
+        if (template != null) {
+            // check if template object is actually a template provider
+            possibleTemplateProvider = template;
+        }
+        else {
+            Class<?> eventListenerType = getEventListenerClass();
+            if (eventListenerType != null) {
+                //check if listener object is also a template provider
+                possibleTemplateProvider = getActualEventListener();
+            }
+        }
+
+        if (possibleTemplateProvider != null) {
+            Object templateFromProvider = AnnotationProcessorUtils.findTemplateFromProvider(possibleTemplateProvider);
+            if (templateFromProvider != null) {
+                setTemplate(templateFromProvider);
+            }
+        }
+
+        if (dynamicTemplate == null && dynamicTemplateRef != null) {
+            Object dynamicTemplateProviderBean = dynamicTemplateRef;
+            dynamicTemplate = AnnotationProcessorUtils.findDynamicEventTemplateProvider(dynamicTemplateProviderBean);
+            if (dynamicTemplate == null) {
+                throw new IllegalArgumentException("Cannot find dynamic template provider in " + dynamicTemplateRef.getClass());
+            }
+        }
+
+        if (template != null && dynamicTemplate != null) {
+            throw new IllegalArgumentException("dynamicTemplate and template are mutually exclusive.");
+        }
+
+        if (performSnapshot && template != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace(message("Performing snapshot on template [" + template + "]"));
+            }
+            receiveTemplate = getGigaSpace().prepareTemplate(template);
+        } else {
+            receiveTemplate = template;
+        }
+    }
+
+    private void initializeExceptionHandler() {
         if (exceptionHandler == null && getActualEventListener() != null) {
             final AtomicReference<Method> ref = new AtomicReference<Method>();
             ReflectionUtils.doWithMethods(AopUtils.getTargetClass(getActualEventListener()), new ReflectionUtils.MethodCallback() {
@@ -135,9 +192,7 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
                     throw new IllegalArgumentException("Failed to set EventExceptionHandler from method [" + ref.get().getName() + "]", e);
                 }
             }
-
         }
-        super.initialize();
     }
 
     /**
@@ -228,5 +283,68 @@ public abstract class AbstractEventListenerContainer extends AbstractSpaceListen
 
     public long getFailedEvents() {
         return failedEvents.getCount();
+    }
+
+    /**
+     * Sets the specified template to be used with the polling space operation.
+     *
+     * @see org.openspaces.core.GigaSpace#take(Object,long)
+     */
+    public void setTemplate(Object template) {
+        this.template = template;
+    }
+
+    /**
+     * Returns the template that will be used. Note, in order to perform receive operations, the
+     * {@link #getReceiveTemplate()} should be used.
+     */
+    protected Object getTemplate() {
+        return this.template;
+    }
+
+    /**
+     * Called before each take and read polling operation to change the template
+     * Overrides any template defined with {@link #setTemplate(Object)}
+     * @param templateProvider -
+     *      An object that implements {@link DynamicEventTemplateProvider}
+     *      or has a method annotated with {@link DynamicEventTemplateProvider}
+     */
+    public void setDynamicTemplate(Object dynamicTemplate) {
+        this.dynamicTemplateRef = dynamicTemplate;
+    }
+
+    /**
+     * Returns whether dynamic template is configured
+     */
+    protected boolean isDynamicTemplate(){
+        return dynamicTemplate != null;
+    }
+
+    /**
+     * If set to <code>true</code> will perform snapshot operation on the provided template
+     * before invoking registering as an event listener.
+     *
+     * @see org.openspaces.core.GigaSpace#snapshot(Object)
+     */
+    public void setPerformSnapshot(boolean performSnapshot) {
+        this.performSnapshot = performSnapshot;
+    }
+
+    protected boolean isPerformSnapshot() {
+        return this.performSnapshot;
+    }
+
+    /**
+     * Returns the template to be used for receive operations. If
+     * {@link #setPerformSnapshot(boolean)} is set to <code>true</code> (the default)
+     * will return the snapshot of the provided template.
+     */
+    protected Object getReceiveTemplate() {
+
+        if (dynamicTemplate != null) {
+            return dynamicTemplate.getDynamicTemplate();
+        }
+
+        return receiveTemplate;
     }
 }
