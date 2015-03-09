@@ -72,7 +72,6 @@ import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.core.space.SpaceType;
 import org.openspaces.core.util.PlaceholderReplacer;
 import org.openspaces.core.util.PlaceholderReplacer.PlaceholderResolutionException;
-import org.openspaces.interop.DotnetProcessingUnitContainer;
 import org.openspaces.interop.DotnetProcessingUnitContainerProvider;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
@@ -1084,11 +1083,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             dumpProcessors.add((InternalDumpProcessor) container);
         }
 
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
-            final Map<String, InternalDumpProcessor> dumpProcessorsMap = applicationContext.getBeansOfType(InternalDumpProcessor.class);
-            dumpProcessors.addAll(dumpProcessorsMap.values());
-        }
+        dumpProcessors.addAll(container.getDumpProcessors());
 
         List<Object> sharedDumpProcessors = SharedServiceData.removeDumpProcessors(clusterInfo.getUniqueName());
         if (sharedDumpProcessors != null) {

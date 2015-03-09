@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container;
 
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
@@ -53,6 +54,8 @@ public abstract class ProcessingUnitContainer {
     public abstract Collection<ProcessingUnitUndeployingListener> getUndeployListeners();
 
     public abstract Collection<MemberAliveIndicator> getMemberAliveIndicators();
+
+    public abstract Collection<InternalDumpProcessor> getDumpProcessors();
 
     public abstract Map<String, InvocableService> getInvocableServices();
 }

@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container.spi;
 
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
@@ -67,6 +68,11 @@ public abstract class ApplicationContextProcessingUnitContainer extends Processi
     @Override
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
         return getBeansOfType(MemberAliveIndicator.class).values();
+    }
+
+    @Override
+    public Collection<InternalDumpProcessor> getDumpProcessors() {
+        return getBeansOfType(InternalDumpProcessor.class).values();
     }
 
     @Override

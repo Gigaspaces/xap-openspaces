@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.interop;
 
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.MemberAliveIndicator;
@@ -90,6 +91,11 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer {
     @Override
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
         return dotnetProcessingUnitBean.getMemberAliveIndicators();
+    }
+
+    @Override
+    public Collection<InternalDumpProcessor> getDumpProcessors() {
+        return dotnetProcessingUnitBean.getDumpProcessors();
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.openspaces.interop;
 
 import java.util.*;
 
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
@@ -395,5 +396,9 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
 
     public Map<String, InvocableService> getInvocableServices() {
         return Collections.EMPTY_MAP;
+    }
+
+    public Collection<InternalDumpProcessor> getDumpProcessors() {
+        return Collections.EMPTY_LIST;
     }
 }

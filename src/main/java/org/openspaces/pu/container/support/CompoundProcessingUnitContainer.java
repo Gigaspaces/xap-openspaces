@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container.support;
 
+import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
@@ -137,6 +138,20 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
                 if (result.isEmpty())
                     result = new ArrayList<MemberAliveIndicator>();
                 result.addAll(indicators);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<InternalDumpProcessor> getDumpProcessors() {
+        List<InternalDumpProcessor> result = Collections.EMPTY_LIST;
+        for (ProcessingUnitContainer container : containers) {
+            Collection<InternalDumpProcessor> processors = container.getDumpProcessors();
+            if (!processors.isEmpty()) {
+                if (result.isEmpty())
+                    result = new ArrayList<InternalDumpProcessor>();
+                result.addAll(processors);
             }
         }
         return result;
