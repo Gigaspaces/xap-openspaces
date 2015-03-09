@@ -17,7 +17,11 @@
 package org.openspaces.pu.container.spi;
 
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.ServiceMetricProvider;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * A processing unit container that is based on Spring {@link ApplicationContext}.
@@ -27,4 +31,12 @@ import org.springframework.context.ApplicationContext;
 public abstract class ApplicationContextProcessingUnitContainer extends ProcessingUnitContainer {
 
     public abstract ApplicationContext getApplicationContext();
+
+    @Override
+    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
+        ApplicationContext applicationContext = getApplicationContext();
+        return applicationContext != null
+                ? applicationContext.getBeansOfType(ServiceMetricProvider.class).values()
+                : Collections.EMPTY_LIST;
+    }
 }

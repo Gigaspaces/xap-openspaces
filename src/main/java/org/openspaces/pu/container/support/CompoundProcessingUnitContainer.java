@@ -18,6 +18,12 @@ package org.openspaces.pu.container.support;
 
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.ServiceMetricProvider;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Compound processing unit container wraps several processing unit containers and
@@ -47,5 +53,19 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
             container.close();
         }
         super.close();
+    }
+
+    @Override
+    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
+        List<ServiceMetricProvider> result = Collections.EMPTY_LIST;
+        for (ProcessingUnitContainer container : containers) {
+            Collection<ServiceMetricProvider> metricProviders = container.getServiceMetricProviders();
+            if (!metricProviders.isEmpty()) {
+                if (result.isEmpty())
+                    result = new ArrayList<ServiceMetricProvider>();
+                result.addAll(metricProviders);
+            }
+        }
+        return result;
     }
 }

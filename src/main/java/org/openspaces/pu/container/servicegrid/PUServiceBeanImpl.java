@@ -821,6 +821,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private void buildMetrics(MetricRegistrator registrator) {
+        final Collection<ServiceMetricProvider> metricProviders = container.getServiceMetricProviders();
+        for (ServiceMetricProvider metricProvider : metricProviders)
+            metricProvider.setMetricRegistrator(registrator.extend(metricProvider.getMetricPrefix()));
+
         if (container instanceof ApplicationContextProcessingUnitContainer) {
             ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
             for (String beanName : applicationContext.getBeanDefinitionNames()) {
@@ -836,11 +840,6 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                     if (annotation != null)
                         processMetricMethod(registrator, beanName, bean, m, annotation);
                 }
-            }
-
-            final Collection<ServiceMetricProvider> metricProviders = applicationContext.getBeansOfType(ServiceMetricProvider.class).values();
-            for (ServiceMetricProvider metricProvider : metricProviders) {
-                metricProvider.setMetricRegistrator(registrator.extend(metricProvider.getMetricPrefix()));
             }
         }
     }

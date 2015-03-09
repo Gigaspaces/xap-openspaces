@@ -33,12 +33,7 @@ import org.openspaces.events.notify.NotifyEventContainerServiceMonitors;
 import org.openspaces.events.polling.PollingEventContainerServiceDetails;
 import org.openspaces.events.polling.PollingEventContainerServiceMonitors;
 import org.openspaces.pu.container.ProcessingUnitContainerProvider;
-import org.openspaces.pu.service.CustomServiceDetails;
-import org.openspaces.pu.service.CustomServiceMonitors;
-import org.openspaces.pu.service.ServiceDetails;
-import org.openspaces.pu.service.ServiceDetailsProvider;
-import org.openspaces.pu.service.ServiceMonitors;
-import org.openspaces.pu.service.ServiceMonitorsProvider;
+import org.openspaces.pu.service.*;
 import org.openspaces.remoting.RemotingServiceDetails;
 import org.openspaces.remoting.RemotingServiceDetails.RemoteService;
 import org.openspaces.remoting.RemotingServiceMonitors;
@@ -369,5 +364,9 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
             plainMonitors.put(entry.getKey(), entry.getValue());
         
         return plainServiceMonitors;
+    }
+
+    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
+        return Collections.EMPTY_LIST;
     }
 }

@@ -23,10 +23,7 @@ import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
-import org.openspaces.pu.service.ServiceDetails;
-import org.openspaces.pu.service.ServiceDetailsProvider;
-import org.openspaces.pu.service.ServiceMonitors;
-import org.openspaces.pu.service.ServiceMonitorsProvider;
+import org.openspaces.pu.service.*;
 
 import java.util.Collection;
 
@@ -73,6 +70,11 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer imple
 
     public ServiceMonitors[] getServicesMonitors() {
         return dotnetProcessingUnitBean.getServicesMonitors();
+    }
+
+    @Override
+    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
+        return dotnetProcessingUnitBean.getServiceMetricProviders();
     }
 
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {

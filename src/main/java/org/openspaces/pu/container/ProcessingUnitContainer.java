@@ -16,6 +16,10 @@
 
 package org.openspaces.pu.container;
 
+import org.openspaces.pu.service.ServiceMetricProvider;
+
+import java.util.Collection;
+
 /**
  * A processing unit container represents a currently running processing unit context.
  *
@@ -30,4 +34,6 @@ public abstract class ProcessingUnitContainer {
      */
     public void close() throws CannotCloseContainerException {
     }
+
+    public abstract Collection<ServiceMetricProvider> getServiceMetricProviders();
 }
