@@ -17,6 +17,8 @@
 package org.openspaces.pu.container;
 
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
+import org.openspaces.core.cluster.MemberAliveIndicator;
+import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 
@@ -42,4 +44,8 @@ public abstract class ProcessingUnitContainer {
     public abstract Collection<ServiceDetailsProvider> getServiceDetailsProviders();
 
     public abstract Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners();
+
+    public abstract Collection<ProcessingUnitUndeployingListener> getUndeployListeners();
+
+    public abstract Collection<MemberAliveIndicator> getMemberAliveIndicators();
 }

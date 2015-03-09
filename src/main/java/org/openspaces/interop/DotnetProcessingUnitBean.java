@@ -22,10 +22,7 @@ import java.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
-import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.cluster.MemberAliveIndicator;
-import org.openspaces.core.cluster.SpaceMemberAliveIndicator;
+import org.openspaces.core.cluster.*;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
 import org.openspaces.core.space.SpaceServiceDetails;
@@ -384,6 +381,10 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
     }
 
     public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection<ProcessingUnitUndeployingListener> getUndeployListeners() {
         return Collections.EMPTY_LIST;
     }
 }

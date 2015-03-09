@@ -1144,17 +1144,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
     private void buildUndeployingEventListeners() {
         ArrayList<Callable<?>> undeployingListeners = new ArrayList<Callable<?>>();
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
-            Map<String, ProcessingUnitUndeployingListener> map = applicationContext.getBeansOfType(ProcessingUnitUndeployingListener.class);
-            for (final ProcessingUnitUndeployingListener listener : map.values()) {
-                undeployingListeners.add(new Callable<Object>() {
-                    public Object call() throws Exception {
-                        listener.processingUnitUndeploying();
-                        return null;
-                    }
-                });
-            }
+        Collection<ProcessingUnitUndeployingListener> listeners = container.getUndeployListeners();
+        for (final ProcessingUnitUndeployingListener listener : listeners) {
+            undeployingListeners.add(new Callable<Object>() {
+                public Object call() throws Exception {
+                    listener.processingUnitUndeploying();
+                    return null;
+                }
+            });
         }
 
         List<Callable> list = SharedServiceData.removeUndeployingEventListeners(clusterInfo.getUniqueName());
@@ -1169,26 +1166,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     private void buildMembersAliveIndicators() {
         // Handle Member Alive Indicators
         ArrayList<Callable<Boolean>> maIndicators = new ArrayList<Callable<Boolean>>();
-        Collection<MemberAliveIndicator> puIndicators;
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            puIndicators = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext().getBeansOfType(MemberAliveIndicator.class).values();
-        } else if (container instanceof DotnetProcessingUnitContainer) {
-            puIndicators = ((DotnetProcessingUnitContainer) container).getMemberAliveIndicators();
-        } else {
-            puIndicators = null;
-            if (logger.isDebugEnabled())
-                logger.debug("Processing Unit container does not support getMemberAliveIndicators - " + container.getClass().getName());
-        }
-
-        if (puIndicators != null) {
-            for (final MemberAliveIndicator memberAliveIndicator : puIndicators) {
-                if (memberAliveIndicator.isMemberAliveEnabled()) {
-                    maIndicators.add(new Callable<Boolean>() {
-                        public Boolean call() throws Exception {
-                            return memberAliveIndicator.isAlive();
-                        }
-                    });
-                }
+        final Collection<MemberAliveIndicator> puIndicators = container.getMemberAliveIndicators();
+        for (final MemberAliveIndicator memberAliveIndicator : puIndicators) {
+            if (memberAliveIndicator.isMemberAliveEnabled()) {
+                maIndicators.add(new Callable<Boolean>() {
+                    public Boolean call() throws Exception {
+                        return memberAliveIndicator.isAlive();
+                    }
+                });
             }
         }
 

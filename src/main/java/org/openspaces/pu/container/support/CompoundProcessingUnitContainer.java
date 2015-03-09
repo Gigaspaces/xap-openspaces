@@ -17,6 +17,8 @@
 package org.openspaces.pu.container.support;
 
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
+import org.openspaces.core.cluster.MemberAliveIndicator;
+import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -94,6 +96,34 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
                 if (result.isEmpty())
                     result = new ArrayList<QuiesceStateChangedListener>();
                 result.addAll(listeners);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<ProcessingUnitUndeployingListener> getUndeployListeners() {
+        List<ProcessingUnitUndeployingListener> result = Collections.EMPTY_LIST;
+        for (ProcessingUnitContainer container : containers) {
+            Collection<ProcessingUnitUndeployingListener> listeners = container.getUndeployListeners();
+            if (!listeners.isEmpty()) {
+                if (result.isEmpty())
+                    result = new ArrayList<ProcessingUnitUndeployingListener>();
+                result.addAll(listeners);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
+        List<MemberAliveIndicator> result = Collections.EMPTY_LIST;
+        for (ProcessingUnitContainer container : containers) {
+            Collection<MemberAliveIndicator> indicators = container.getMemberAliveIndicators();
+            if (!indicators.isEmpty()) {
+                if (result.isEmpty())
+                    result = new ArrayList<MemberAliveIndicator>();
+                result.addAll(indicators);
             }
         }
         return result;

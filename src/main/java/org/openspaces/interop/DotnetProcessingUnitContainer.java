@@ -20,6 +20,7 @@ package org.openspaces.interop;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.MemberAliveIndicator;
+import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.CannotCreateContainerException;
@@ -76,6 +77,12 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer imple
         return dotnetProcessingUnitBean.getQuiesceStateChangedListeners();
     }
 
+    @Override
+    public Collection<ProcessingUnitUndeployingListener> getUndeployListeners() {
+        return dotnetProcessingUnitBean.getUndeployListeners();
+    }
+
+    @Override
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
         return dotnetProcessingUnitBean.getMemberAliveIndicators();
     }
