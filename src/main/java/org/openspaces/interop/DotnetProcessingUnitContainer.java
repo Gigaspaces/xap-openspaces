@@ -25,7 +25,9 @@ import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
-import org.openspaces.pu.service.*;
+import org.openspaces.pu.service.ServiceDetailsProvider;
+import org.openspaces.pu.service.ServiceMetricProvider;
+import org.openspaces.pu.service.ServiceMonitorsProvider;
 
 import java.util.Collection;
 
@@ -58,10 +60,6 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer {
         super.close();
     }
     
-    public ServiceMonitors[] getServicesMonitors() {
-        return dotnetProcessingUnitBean.getServicesMonitors();
-    }
-
     @Override
     public Collection<ServiceMetricProvider> getServiceMetricProviders() {
         return dotnetProcessingUnitBean.getServiceMetricProviders();
