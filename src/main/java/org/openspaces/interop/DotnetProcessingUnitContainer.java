@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author kimchy
  * @since 6.6
  */
-public class DotnetProcessingUnitContainer extends ProcessingUnitContainer implements ServiceMonitorsProvider {
+public class DotnetProcessingUnitContainer extends ProcessingUnitContainer {
        
     private DotnetProcessingUnitBean dotnetProcessingUnitBean;
     
@@ -70,6 +70,11 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer imple
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return dotnetProcessingUnitBean.getServiceDetailsProviders();
+    }
+
+    @Override
+    public Collection<ServiceMonitorsProvider> getServiceMonitorsProviders() {
+        return dotnetProcessingUnitBean.getServiceMonitorsProviders();
     }
 
     @Override

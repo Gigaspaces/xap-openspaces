@@ -21,6 +21,7 @@ import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
+import org.openspaces.pu.service.ServiceMonitorsProvider;
 
 import java.util.Collection;
 
@@ -43,9 +44,12 @@ public abstract class ProcessingUnitContainer {
 
     public abstract Collection<ServiceDetailsProvider> getServiceDetailsProviders();
 
+    public abstract Collection<ServiceMonitorsProvider> getServiceMonitorsProviders();
+
     public abstract Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners();
 
     public abstract Collection<ProcessingUnitUndeployingListener> getUndeployListeners();
 
     public abstract Collection<MemberAliveIndicator> getMemberAliveIndicators();
+
 }

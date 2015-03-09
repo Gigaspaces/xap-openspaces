@@ -22,6 +22,7 @@ import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.pu.container.ProcessingUnitContainer;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
+import org.openspaces.pu.service.ServiceMonitorsProvider;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -44,6 +45,11 @@ public abstract class ApplicationContextProcessingUnitContainer extends Processi
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return getBeansOfType(ServiceDetailsProvider.class);
+    }
+
+    @Override
+    public Collection<ServiceMonitorsProvider> getServiceMonitorsProviders() {
+        return getBeansOfType(ServiceMonitorsProvider.class);
     }
 
     @Override

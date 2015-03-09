@@ -1061,32 +1061,21 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private void buildServiceMonitors() {
-        if (container instanceof ServiceMonitorsProvider) {
-            serviceMonitors.add(new Callable() {
-                public Object call() throws Exception {
-                    return ((ServiceMonitorsProvider) container).getServicesMonitors();
-                }
-            });
-        }
-
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
-            final Map<String, ServiceMonitorsProvider> monitorsMap = applicationContext.getBeansOfType(ServiceMonitorsProvider.class);
-            serviceMonitors.add(new Callable() {
-                public Object call() throws Exception {
-                    ArrayList<ServiceMonitors> retMonitors = new ArrayList<ServiceMonitors>();
-                    for (ServiceMonitorsProvider serviceMonitorsProvider : monitorsMap.values()) {
-                        ServiceMonitors[] monitors = serviceMonitorsProvider.getServicesMonitors();
-                        if (monitors != null) {
-                            for (ServiceMonitors mon : monitors) {
-                                retMonitors.add(mon);
-                            }
+        final Collection<ServiceMonitorsProvider> serviceMonitorsProviders = container.getServiceMonitorsProviders();
+        serviceMonitors.add(new Callable() {
+            public Object call() throws Exception {
+                ArrayList<ServiceMonitors> retMonitors = new ArrayList<ServiceMonitors>();
+                for (ServiceMonitorsProvider serviceMonitorsProvider : serviceMonitorsProviders) {
+                    ServiceMonitors[] monitors = serviceMonitorsProvider.getServicesMonitors();
+                    if (monitors != null) {
+                        for (ServiceMonitors mon : monitors) {
+                            retMonitors.add(mon);
                         }
                     }
-                    return retMonitors.toArray(new Object[retMonitors.size()]);
                 }
-            });
-        }
+                return retMonitors.toArray(new Object[retMonitors.size()]);
+            }
+        });
 
         List<Callable> sharedMonitors = SharedServiceData.removeServiceMonitors(clusterInfo.getUniqueName());
         if (sharedMonitors != null) {

@@ -79,6 +79,7 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
     private BeanLevelProperties beanLevelProperties;
 
     private Collection<ServiceDetailsProvider> serviceDetailsProviders = Collections.singleton((ServiceDetailsProvider)this);
+    private Collection<ServiceMonitorsProvider> serviceMonitorsProviders = Collections.singleton((ServiceMonitorsProvider)this);
 
     /**
      * Injects the .Net processing unit implementation's assembly file
@@ -378,6 +379,10 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
 
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return serviceDetailsProviders;
+    }
+
+    public Collection<ServiceMonitorsProvider> getServiceMonitorsProviders() {
+        return serviceMonitorsProviders;
     }
 
     public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
