@@ -1048,16 +1048,12 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
 
     protected void buildInvocableServices() {
-        if (container instanceof InvocableService) {
+        if (container instanceof InvocableService)
             invocableServiceMap.put("__container__", (InvocableService) container);
-        }
-        //not always true (e.g. DotNet and JEE PU container)
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
-            final Map<String, InvocableService> appContextInvocableServiceMap = applicationContext.getBeansOfType(InvocableService.class);
-            logger.info("registering invocable services: " + appContextInvocableServiceMap);
-            invocableServiceMap.putAll(appContextInvocableServiceMap);
-        }
+
+        final Map<String, InvocableService> invocableServices = container.getInvocableServices();
+        logger.info("registering invocable services: " + invocableServices);
+        invocableServiceMap.putAll(invocableServices);
     }
 
     private void buildServiceMonitors() {

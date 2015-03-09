@@ -19,11 +19,13 @@ package org.openspaces.pu.container;
 import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
+import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 import org.openspaces.pu.service.ServiceMonitorsProvider;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * A processing unit container represents a currently running processing unit context.
@@ -52,4 +54,5 @@ public abstract class ProcessingUnitContainer {
 
     public abstract Collection<MemberAliveIndicator> getMemberAliveIndicators();
 
+    public abstract Map<String, InvocableService> getInvocableServices();
 }

@@ -21,14 +21,12 @@ import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 import org.openspaces.pu.service.ServiceMonitorsProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Compound processing unit container wraps several processing unit containers and
@@ -139,6 +137,20 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
                 if (result.isEmpty())
                     result = new ArrayList<MemberAliveIndicator>();
                 result.addAll(indicators);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Map<String, InvocableService> getInvocableServices() {
+        Map<String, InvocableService> result = Collections.EMPTY_MAP;
+        for (ProcessingUnitContainer container : containers) {
+            Map<String, InvocableService> services = container.getInvocableServices();
+            if (!services.isEmpty()) {
+                if (result.isEmpty())
+                    result = new HashMap<String, InvocableService>();
+                result.putAll(services);
             }
         }
         return result;

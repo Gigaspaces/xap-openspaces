@@ -20,6 +20,7 @@ import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.cluster.ProcessingUnitUndeployingListener;
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 import org.openspaces.pu.service.ServiceMonitorsProvider;
@@ -27,6 +28,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * A processing unit container that is based on Spring {@link ApplicationContext}.
@@ -39,38 +41,43 @@ public abstract class ApplicationContextProcessingUnitContainer extends Processi
 
     @Override
     public Collection<ServiceMetricProvider> getServiceMetricProviders() {
-        return getBeansOfType(ServiceMetricProvider.class);
+        return getBeansOfType(ServiceMetricProvider.class).values();
     }
 
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
-        return getBeansOfType(ServiceDetailsProvider.class);
+        return getBeansOfType(ServiceDetailsProvider.class).values();
     }
 
     @Override
     public Collection<ServiceMonitorsProvider> getServiceMonitorsProviders() {
-        return getBeansOfType(ServiceMonitorsProvider.class);
+        return getBeansOfType(ServiceMonitorsProvider.class).values();
     }
 
     @Override
     public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
-        return getBeansOfType(QuiesceStateChangedListener.class);
+        return getBeansOfType(QuiesceStateChangedListener.class).values();
     }
 
     @Override
     public Collection<ProcessingUnitUndeployingListener> getUndeployListeners() {
-        return getBeansOfType(ProcessingUnitUndeployingListener.class);
+        return getBeansOfType(ProcessingUnitUndeployingListener.class).values();
     }
 
     @Override
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
-        return getBeansOfType(MemberAliveIndicator.class);
+        return getBeansOfType(MemberAliveIndicator.class).values();
     }
 
-    private <T> Collection<T> getBeansOfType(Class<T> type) {
+    @Override
+    public Map<String, InvocableService> getInvocableServices() {
+        return getBeansOfType(InvocableService.class);
+    }
+
+    private <T> Map<String, T> getBeansOfType(Class<T> type) {
         ApplicationContext applicationContext = getApplicationContext();
         return applicationContext != null
-                ? applicationContext.getBeansOfType(type).values()
-                : Collections.EMPTY_LIST;
+                ? applicationContext.getBeansOfType(type)
+                : Collections.EMPTY_MAP;
     }
 }

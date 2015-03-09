@@ -25,11 +25,13 @@ import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.InvocableService;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 import org.openspaces.pu.service.ServiceMonitorsProvider;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author kimchy
@@ -37,7 +39,7 @@ import java.util.Collection;
  */
 public class DotnetProcessingUnitContainer extends ProcessingUnitContainer {
        
-    private DotnetProcessingUnitBean dotnetProcessingUnitBean;
+    private final DotnetProcessingUnitBean dotnetProcessingUnitBean;
     
     public DotnetProcessingUnitContainer(ClusterInfo clusterInfo, BeanLevelProperties beanLevelProperties) throws CannotCreateContainerException{       
         dotnetProcessingUnitBean = new DotnetProcessingUnitBean();
@@ -88,5 +90,10 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer {
     @Override
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {
         return dotnetProcessingUnitBean.getMemberAliveIndicators();
+    }
+
+    @Override
+    public Map<String, InvocableService> getInvocableServices() {
+        return dotnetProcessingUnitBean.getInvocableServices();
     }
 }

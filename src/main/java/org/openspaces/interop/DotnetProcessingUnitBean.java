@@ -392,4 +392,8 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
     public Collection<ProcessingUnitUndeployingListener> getUndeployListeners() {
         return Collections.EMPTY_LIST;
     }
+
+    public Map<String, InvocableService> getInvocableServices() {
+        return Collections.EMPTY_MAP;
+    }
 }
