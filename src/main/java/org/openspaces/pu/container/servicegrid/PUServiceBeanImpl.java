@@ -90,7 +90,6 @@ import org.openspaces.pu.service.*;
 import org.openspaces.pu.sla.monitor.ApplicationContextMonitor;
 import org.openspaces.pu.sla.monitor.Monitor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -838,6 +837,11 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                         processMetricMethod(registrator, beanName, bean, m, annotation);
                 }
             }
+
+            final Collection<ServiceMetricProvider> metricProviders = applicationContext.getBeansOfType(ServiceMetricProvider.class).values();
+            for (ServiceMetricProvider metricProvider : metricProviders) {
+                metricProvider.setMetricRegistrator(registrator.extend(metricProvider.getMetricPrefix()));
+            }
         }
     }
 
@@ -1050,7 +1054,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
         //not always true (e.g. DotNet and JEE PU container)
         if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
+            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
             final Map<String, InvocableService> appContextInvocableServiceMap = applicationContext.getBeansOfType(InvocableService.class);
             logger.info("registering invocable services: " + appContextInvocableServiceMap);
             invocableServiceMap.putAll(appContextInvocableServiceMap);
@@ -1067,7 +1071,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
+            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
             final Map<String, ServiceMonitorsProvider> monitorsMap = applicationContext.getBeansOfType(ServiceMonitorsProvider.class);
             serviceMonitors.add(new Callable() {
                 public Object call() throws Exception {
@@ -1097,7 +1101,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
+            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
             final Map<String, InternalDumpProcessor> dumpProcessorsMap = applicationContext.getBeansOfType(InternalDumpProcessor.class);
             dumpProcessors.addAll(dumpProcessorsMap.values());
         }
@@ -1125,7 +1129,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
+            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
             Map<String, ServiceDetailsProvider> map = applicationContext.getBeansOfType(ServiceDetailsProvider.class);
             for (ServiceDetailsProvider serviceDetailsProvider : map.values()) {
                 ServiceDetails[] details = serviceDetailsProvider.getServicesDetails();
