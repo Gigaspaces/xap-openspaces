@@ -211,11 +211,10 @@ public interface GigaSpace {
      * <p>Notice: The clear operation does not remove notify templates, i.e. registration for notifications.
      *
      * @param template the template to use for matching
-     * @return The number of cleared entries
      * @throws DataAccessException In the event of an error, DataAccessException will
      *         wrap a ClearException, accessible via DataAccessException.getRootCause().
      */
-    int clear(Object template) throws DataAccessException;
+    void clear(Object template) throws DataAccessException;
 
     /**
      * @deprecated since 9.0.1 - use {@link #clear(Object, ClearModifiers)} instead.
