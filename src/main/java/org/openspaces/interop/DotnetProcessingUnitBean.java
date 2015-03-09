@@ -80,6 +80,8 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
 
     private BeanLevelProperties beanLevelProperties;
 
+    private Collection<ServiceDetailsProvider> serviceDetailsProviders = Collections.singleton((ServiceDetailsProvider)this);
+
     /**
      * Injects the .Net processing unit implementation's assembly file
      */
@@ -177,14 +179,20 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
     }
 
     public ServiceDetails[] getServicesDetails() {
+        ArrayList<ServiceDetails> serviceDetails = new ArrayList<ServiceDetails>();
         PUDetailsHolder puDetails = proxy.getPUDetailsHolder();
-        ArrayList<ServiceDetails> dotnetServiceDetails = new ArrayList<ServiceDetails>();
-        dotnetServiceDetails.add(new DotnetContainerServiceDetails(puDetails.getDotnetPUContainerShortName(), "interop", puDetails.getDotnetPUContainerShortName(), puDetails.getDotnetPUContainerQualifiedName()));
+        serviceDetails.add(new DotnetContainerServiceDetails(puDetails.getDotnetPUContainerShortName(), "interop", puDetails.getDotnetPUContainerShortName(), puDetails.getDotnetPUContainerQualifiedName()));
         for (IJSpace space : proxy.getContextProxies()) {
-            dotnetServiceDetails.add(new SpaceServiceDetails(space));
+            serviceDetails.add(new SpaceServiceDetails(space));
         }
-        buildServiceDetails(puDetails, dotnetServiceDetails);
-        return dotnetServiceDetails.toArray(new ServiceDetails[dotnetServiceDetails.size()]);
+        buildServiceDetails(puDetails, serviceDetails);
+        for (ServiceDetails detail : serviceDetails) {
+            if (detail instanceof DotnetContainerServiceDetails) {
+                ((DotnetContainerServiceDetails) detail).setSubType("pure");
+            }
+        }
+
+        return serviceDetails.toArray(new ServiceDetails[serviceDetails.size()]);
     }
 
     private void buildServiceDetails(PUDetailsHolder puDetails, ArrayList<ServiceDetails> serviceDetails) {
@@ -368,5 +376,9 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
 
     public Collection<ServiceMetricProvider> getServiceMetricProviders() {
         return Collections.EMPTY_LIST;
+    }
+
+    public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
+        return serviceDetailsProviders;
     }
 }

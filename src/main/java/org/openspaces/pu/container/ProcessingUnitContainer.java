@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container;
 
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 
 import java.util.Collection;
@@ -36,4 +37,6 @@ public abstract class ProcessingUnitContainer {
     }
 
     public abstract Collection<ServiceMetricProvider> getServiceMetricProviders();
+
+    public abstract Collection<ServiceDetailsProvider> getServiceDetailsProviders();
 }

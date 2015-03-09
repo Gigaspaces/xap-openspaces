@@ -17,6 +17,7 @@
 package org.openspaces.pu.container.spi;
 
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 import org.springframework.context.ApplicationContext;
 
@@ -34,9 +35,18 @@ public abstract class ApplicationContextProcessingUnitContainer extends Processi
 
     @Override
     public Collection<ServiceMetricProvider> getServiceMetricProviders() {
+        return getBeansOfType(ServiceMetricProvider.class);
+    }
+
+    @Override
+    public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
+        return getBeansOfType(ServiceDetailsProvider.class);
+    }
+
+    private Collection getBeansOfType(Class type) {
         ApplicationContext applicationContext = getApplicationContext();
         return applicationContext != null
-                ? applicationContext.getBeansOfType(ServiceMetricProvider.class).values()
+                ? applicationContext.getBeansOfType(type).values()
                 : Collections.EMPTY_LIST;
     }
 }

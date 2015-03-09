@@ -31,7 +31,7 @@ import java.util.Collection;
  * @author kimchy
  * @since 6.6
  */
-public class DotnetProcessingUnitContainer extends ProcessingUnitContainer implements ServiceDetailsProvider, ServiceMonitorsProvider {
+public class DotnetProcessingUnitContainer extends ProcessingUnitContainer implements ServiceMonitorsProvider {
        
     private DotnetProcessingUnitBean dotnetProcessingUnitBean;
     
@@ -56,18 +56,6 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer imple
         super.close();
     }
     
-    public ServiceDetails[] getServicesDetails() {
-        ServiceDetails[] details = dotnetProcessingUnitBean.getServicesDetails();
-        if (details != null) {
-            for (ServiceDetails detail : details) {
-                if (detail instanceof DotnetContainerServiceDetails) {
-                    ((DotnetContainerServiceDetails) detail).setSubType("pure");
-                }
-            }
-        }
-        return details;
-    }
-
     public ServiceMonitors[] getServicesMonitors() {
         return dotnetProcessingUnitBean.getServicesMonitors();
     }
@@ -75,6 +63,11 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer imple
     @Override
     public Collection<ServiceMetricProvider> getServiceMetricProviders() {
         return dotnetProcessingUnitBean.getServiceMetricProviders();
+    }
+
+    @Override
+    public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
+        return dotnetProcessingUnitBean.getServiceDetailsProviders();
     }
 
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {

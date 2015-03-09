@@ -18,6 +18,7 @@ package org.openspaces.pu.container.support;
 
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
 
 import java.util.ArrayList;
@@ -59,13 +60,28 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
     public Collection<ServiceMetricProvider> getServiceMetricProviders() {
         List<ServiceMetricProvider> result = Collections.EMPTY_LIST;
         for (ProcessingUnitContainer container : containers) {
-            Collection<ServiceMetricProvider> metricProviders = container.getServiceMetricProviders();
-            if (!metricProviders.isEmpty()) {
+            Collection<ServiceMetricProvider> providers = container.getServiceMetricProviders();
+            if (!providers.isEmpty()) {
                 if (result.isEmpty())
                     result = new ArrayList<ServiceMetricProvider>();
-                result.addAll(metricProviders);
+                result.addAll(providers);
             }
         }
         return result;
     }
+
+    @Override
+    public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
+        List<ServiceDetailsProvider> result = Collections.EMPTY_LIST;
+        for (ProcessingUnitContainer container : containers) {
+            Collection<ServiceDetailsProvider> providers = container.getServiceDetailsProviders();
+            if (!providers.isEmpty()) {
+                if (result.isEmpty())
+                    result = new ArrayList<ServiceDetailsProvider>();
+                result.addAll(providers);
+            }
+        }
+        return result;
+    }
+
 }

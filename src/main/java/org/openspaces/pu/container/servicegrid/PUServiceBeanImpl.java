@@ -1118,24 +1118,12 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     private ArrayList<Object> buildServiceDetails() {
         ArrayList<Object> serviceDetails = new ArrayList<Object>();
 
-        if (container instanceof ServiceDetailsProvider) {
-            ServiceDetails[] details = ((ServiceDetailsProvider) container).getServicesDetails();
+        Collection<ServiceDetailsProvider> serviceDetailsProviders = container.getServiceDetailsProviders();
+        for (ServiceDetailsProvider serviceDetailsProvider : serviceDetailsProviders) {
+            ServiceDetails[] details = serviceDetailsProvider.getServicesDetails();
             if (details != null) {
                 for (ServiceDetails detail : details) {
                     serviceDetails.add(detail);
-                }
-            }
-        }
-
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer) container).getApplicationContext();
-            Map<String, ServiceDetailsProvider> map = applicationContext.getBeansOfType(ServiceDetailsProvider.class);
-            for (ServiceDetailsProvider serviceDetailsProvider : map.values()) {
-                ServiceDetails[] details = serviceDetailsProvider.getServicesDetails();
-                if (details != null) {
-                    for (ServiceDetails detail : details) {
-                        serviceDetails.add(detail);
-                    }
                 }
             }
         }
