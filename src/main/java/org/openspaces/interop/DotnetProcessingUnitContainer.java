@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.interop;
 
+import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.MemberAliveIndicator;
 import org.openspaces.core.properties.BeanLevelProperties;
@@ -68,6 +69,11 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer imple
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return dotnetProcessingUnitBean.getServiceDetailsProviders();
+    }
+
+    @Override
+    public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
+        return dotnetProcessingUnitBean.getQuiesceStateChangedListeners();
     }
 
     public Collection<MemberAliveIndicator> getMemberAliveIndicators() {

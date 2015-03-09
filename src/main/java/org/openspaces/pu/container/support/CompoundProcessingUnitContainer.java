@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container.support;
 
+import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.pu.container.CannotCloseContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -84,4 +85,17 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
         return result;
     }
 
+    @Override
+    public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
+        List<QuiesceStateChangedListener> result = Collections.EMPTY_LIST;
+        for (ProcessingUnitContainer container : containers) {
+            Collection<QuiesceStateChangedListener> listeners = container.getQuiesceStateChangedListeners();
+            if (!listeners.isEmpty()) {
+                if (result.isEmpty())
+                    result = new ArrayList<QuiesceStateChangedListener>();
+                result.addAll(listeners);
+            }
+        }
+        return result;
+    }
 }

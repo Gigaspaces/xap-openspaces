@@ -21,6 +21,7 @@ import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.cluster.MemberAliveIndicator;
@@ -380,5 +381,9 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
 
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return serviceDetailsProviders;
+    }
+
+    public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
+        return Collections.EMPTY_LIST;
     }
 }

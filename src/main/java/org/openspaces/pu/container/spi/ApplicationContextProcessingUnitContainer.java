@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container.spi;
 
+import org.openspaces.admin.quiesce.QuiesceStateChangedListener;
 import org.openspaces.pu.container.ProcessingUnitContainer;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 import org.openspaces.pu.service.ServiceMetricProvider;
@@ -41,6 +42,11 @@ public abstract class ApplicationContextProcessingUnitContainer extends Processi
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return getBeansOfType(ServiceDetailsProvider.class);
+    }
+
+    @Override
+    public Collection<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
+        return getBeansOfType(QuiesceStateChangedListener.class);
     }
 
     private Collection getBeansOfType(Class type) {

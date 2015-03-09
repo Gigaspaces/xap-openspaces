@@ -1727,22 +1727,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     private void informQuiesceToListeners(QuiesceStateChangedEvent event) {
-        List<QuiesceStateChangedListener> listeners = getQuiesceStateChangedListeners();
+        Collection<QuiesceStateChangedListener> listeners = container.getQuiesceStateChangedListeners();
         for(QuiesceStateChangedListener listener : listeners){
             listener.quiesceStateChanged(event);
         }
-    }
-
-    private List<QuiesceStateChangedListener> getQuiesceStateChangedListeners() {
-        List<QuiesceStateChangedListener> res = new ArrayList<QuiesceStateChangedListener>();
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
-            Map<String, QuiesceStateChangedListener> beansOfType = applicationContext.getBeansOfType(QuiesceStateChangedListener.class);
-            for (QuiesceStateChangedListener listener : beansOfType.values()) {
-                res.add(listener);
-            }
-        }
-        return res;
     }
 
     private boolean containsEmbeddedSpace(Object serviceDetails) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
