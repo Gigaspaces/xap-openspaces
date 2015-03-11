@@ -6,28 +6,28 @@
     <version>1.0-SNAPSHOT</version>
     <name>${puArtifactId}</name>
     <packaging>pom</packaging>
-	<repositories>
-	    <repository>
-	      <id>org.openspaces</id>
-	      <url>http://maven-repository.openspaces.org</url>
-	    </repository>
-	      <repository>
+    <repositories>
+        <repository>
+            <id>org.openspaces</id>
+            <url>http://maven-repository.openspaces.org</url>
+        </repository>
+        <repository>
             <id>mulesoft-releases</id>
             <name>MuleSoft Repository</name>
             <url>https://repository-master.mulesoft.org/releases/</url>
             <layout>default</layout>
         </repository>
-		
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>org.openspaces</id>
-			<url>http://maven-repository.openspaces.org</url>
-		</pluginRepository>
-	</pluginRepositories>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>org.openspaces</id>
+            <url>http://maven-repository.openspaces.org</url>
+        </pluginRepository>
+    </pluginRepositories>
     <properties>
         <gsVersion>${pluginVersion}</gsVersion>
         <muleVersion>3.5.0</muleVersion>
+        <spring.version>3.2.4.RELEASE</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modules>
@@ -206,19 +206,80 @@
             </plugin>
         </plugins>
     </build>
-    
-    	
-	<!-- Align spring versions for all projects using openspaces -->
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.gigaspaces</groupId>
-        <artifactId>gs-openspaces</artifactId>
-        <version>${gsVersion}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+
+
+    <!-- Align spring versions for all projects using openspaces -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.gigaspaces</groupId>
+                <artifactId>gs-openspaces</artifactId>
+                <version>${gsVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--force to use mule compatible old version of spring.-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
