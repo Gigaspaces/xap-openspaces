@@ -91,6 +91,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
     private SpaceMode currentSpaceMode;
     private volatile boolean autoStart = true;
     private volatile boolean quiesced = false;
+    private volatile boolean resumeAfterUnquiesce = false;
     private MetricRegistrator metricRegistrator = DummyMetricRegistrator.get();
 
     private SpaceDataEventListener eventListener;
@@ -514,6 +515,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
         doBeforeStop();
         synchronized (this.lifecycleMonitor) {
             this.running = false;
+            this.resumeAfterUnquiesce = false;
             this.lifecycleMonitor.notifyAll();
             metricRegistrator.clear();
         }
@@ -860,13 +862,19 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
         return "[" + getBeanName() + "] " + message;
     }
 
-    public void quiesceStateChanged(QuiesceStateChangedEvent event){
+    public void
+    quiesceStateChanged(QuiesceStateChangedEvent event){
         quiesced = event.getQuiesceState().equals(QuiesceState.QUIESCED);
         if (quiesced){
+            // if container was running before calling quiesce it should resume working after unquiesce
+            boolean runningBeforeQuiesce = this.running;
             stop();
+            this.resumeAfterUnquiesce = runningBeforeQuiesce;
         }
         else {
-            start();
+            // resume only if container was running before calling quiesce
+            if (resumeAfterUnquiesce)
+                start();
         }
     }
 
