@@ -38,12 +38,6 @@
     <dependencies>
         <dependency>
             <groupId>com.gigaspaces</groupId>
-            <artifactId>gs-openspaces</artifactId>
-            <version>${gsVersion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.gigaspaces</groupId>
             <artifactId>mule-os</artifactId>
             <version>${gsVersion}</version>
             <scope>provided</scope>
@@ -214,7 +208,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.gigaspaces</groupId>
-                <artifactId>gs-openspaces</artifactId>
+                <artifactId>mule-os</artifactId>
                 <version>${gsVersion}</version>
                 <type>pom</type>
                 <scope>import</scope>
