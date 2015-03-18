@@ -14,7 +14,7 @@ export EDITION=`${JAVACMD} -cp ${GS_JARS} org.openspaces.maven.support.OutputVer
 export XAP_VERSION=`${JAVACMD} -cp ${GS_JARS} org.openspaces.maven.support.OutputVersion XAP`
 
 # Dependencies that will be installed into the local maven repository
-DEPENDENCY_LIST="gs-openspaces,gs-openspaces-jetty,mongo-datasource"
+DEPENDENCY_LIST="gs-openspaces,gs-openspaces-jetty,mongo-datasource,mule-os"
 ${JAVACMD} -cp ${GS_JARS} org.openspaces.maven.support.POMGenerator ${TMPDIR} ${DEPENDENCY_LIST}
 
 echo ""

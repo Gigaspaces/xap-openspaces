@@ -20,7 +20,7 @@ FOR /F "usebackq tokens=*" %%i IN (`installmavenrep.bat edition`) DO @set EDITIO
 FOR /F "usebackq tokens=*" %%i IN (`installmavenrep.bat XAP`) DO @set XAP_VERSION=%%i
 
 REM Dependencies that will be installed into the local maven repository
-set DEPENDENCY_LIST=gs-openspaces,gs-openspaces-jetty,mongo-datasource
+set DEPENDENCY_LIST=gs-openspaces,gs-openspaces-jetty,mongo-datasource,mule-os
 
 %JAVACMD% -cp %GS_JARS% org.openspaces.maven.support.POMGenerator "%TEMP%" "%DEPENDENCY_LIST%"
 
