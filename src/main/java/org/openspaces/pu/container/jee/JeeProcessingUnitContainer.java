@@ -19,6 +19,10 @@ package org.openspaces.pu.container.jee;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainer;
 import org.openspaces.pu.service.ServiceDetailsProvider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * An extension to the {@link org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainer}
  * that can handle JEE processing units.
@@ -27,4 +31,10 @@ import org.openspaces.pu.service.ServiceDetailsProvider;
  */
 public abstract class JeeProcessingUnitContainer extends ApplicationContextProcessingUnitContainer implements ServiceDetailsProvider {
 
+    @Override
+    public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
+        Collection<ServiceDetailsProvider> result = super.getServiceDetailsProviders();
+        result.add(this);
+        return result;
+    }
 }
