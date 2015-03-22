@@ -34,36 +34,47 @@ BUILDING, PACKAGING, RUNNING, DEPLOYING
 
   In order to use Mule with GigaSpaces, mule jar files must be copied to the GigaSpaces
 installation under GSHOME/lib/platform/mule (if the mule directory does not exists, create it).
-In order to obtain the mule jar files, please download mule 3.1 from http://www.mulesoft.org
+In order to obtain the mule jar files, please download mule 3.5 from http://www.mulesoft.org
 
 The following needs to be copied:
-  - From MULEHOME/lib/mule and into GSHOME/lib/platform/mule: mule-core, mule-module-client,
-mule-module-spring-config, mule-module-spring-extras, mule-transport-quartz, mule-transport-stdio,
-mule-transport-vm, mule-transport-http.
-  - From MULEHOME/lib/opt and into GSHOME/lib/platform/mule: commons-beanutils, commons-collections,
-commons-io, commons-lang, commons-pool, jug.osgi-2.0.0, quartz-all, backport-util-concurrent.
+- From <Mule Root>\lib\mule to <XAP Root>\lib\platform\mule: mule-commons, mule-core, mule-core-tests, mule-module-annotations, mule-module-client, mule-module-jbossts, mule-module-spring-config, mule-module-spring-extras, mule-mvel2-2.1.9-MULE-003, mule-transport-http, mule-transport-quartz, mule-transport-stdio, mule-transport-vm.
+
+- From <Mule Root>\lib\opt to <XAP Root>\lib\platform\mule: commons-beanutils, commons-io, commons-lang, dom4j, guava, jaxen, quartz, uuid, jgrapht-jdk1.5.
+
+- From <Mule Root>\lib\boot to <XAP Root>\lib\platform\mule: commons-cli, log4j, mule-module-logging, wrapper.
 
 Libraries Required:
 The following libraries should be located at your GigaSpaces Root\lib\platform\mule folder before deploying the example. 
-mule-transport-stdio-3.1.0.jar
-mule-transport-vm-3.1.0.jar
-mule-core-3.1.0.jar
-mule-module-spring-config-3.1.0.jar
-mule-module-spring-extras-3.1.0.jar
-backport-util-concurrent-3.1-osgi.jar
 commons-beanutils-1.8.0.jar
-commons-collections-3.2.1.jar
+commons-cli-1.2.jar
 commons-io-1.4.jar
 commons-lang-2.4.jar
-commons-pool-1.5.3.jar
-jug-2.0.0-osgi-asl.jar
-mule-transport-quartz-3.1.0.jar
-quartz-all-1.6.0-osgi.jar
-mule-module-annotations-3.1.0.jar
+dom4j-1.6.1.jar
+guava-16.0.1.jar
+jaxen-1.1.1.jar
+jgrapht-jdk1.5-0.7.3.jar
+log4j-1.2.16.jar
+mule-common-3.5.0.jar
+mule-core-3.5.0.jar
+mule-core-3.5.0-tests.jar
+mule-module-annotations-3.5.0.jar
+mule-module-client-3.5.0.jar
+mule-module-jbossts-3.5.0.jar
+mule-module-logging-3.5.0.jar
+mule-module-spring-config-3.5.0.jar
+mule-module-spring-extras-3.5.0.jar
+mule-mvel2-2.1.9-MULE-003.jar
+mule-transport-http-3.5.0.jar
+mule-transport-quartz-3.5.0.jar
+mule-transport-stdio-3.5.0.jar
+mule-transport-vm-3.5.0.jar
+quartz-1.8.5.jar
+uuid-3.4.0.jar
+wrapper-3.2.3.jar
 
 The above creates the ability to deploy a mule processing unit that does not have the mule jars files
 in it. It is also possible to package the mule jar files into the processing unit "lib" directory, without
-the need to create the GSHOME/lib/mule directory at all.
+the need to create the GSHOME/lib/platform/mule directory at all.
 
 Quick list:
 
@@ -71,7 +82,6 @@ Quick list:
 * mvn os:run: Runs the project.
 * mvn test: Runs the tests in the project.
 * mvn package: Compiles and packages the project.
-* mvn os:run-standalone: Runs a packaged application (from the jars).
 * mvn os:deploy: Deploys the project onto the Service Grid.
 * mvn os:undeploy: Removes the project from the Service Grid.
 
@@ -146,7 +156,7 @@ MAVEN PLUGIN WIKI PAGE
 ---------------------------------
 
   For more information about the Maven Plugin please refer to:
-http://docs.gigaspaces.com/xap100/maven-plugin.html
+http://docs.gigaspaces.com/xap101/maven-plugin.html
 
   For more information about the Mule ESB please refer to:
-http://docs.gigaspaces.com/xap100/mule-esb.html
+http://docs.gigaspaces.com/xap101/mule-esb.html
