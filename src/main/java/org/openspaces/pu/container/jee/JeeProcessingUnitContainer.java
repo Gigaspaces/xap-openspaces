@@ -33,8 +33,9 @@ public abstract class JeeProcessingUnitContainer extends ApplicationContextProce
 
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
-        Collection<ServiceDetailsProvider> result = super.getServiceDetailsProviders();
+        Collection<ServiceDetailsProvider> result = new ArrayList<ServiceDetailsProvider>();
         result.add(this);
+        result.addAll(super.getServiceDetailsProviders());
         return result;
     }
 }
