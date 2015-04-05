@@ -40,7 +40,7 @@ public class DefaultApplication implements InternalApplication {
     private final InternalProcessingUnits processingUnits;
     private final String name;
     private final InternalAdmin admin;
-    
+
     public DefaultApplication(InternalAdmin admin, String name) {
         if (name == null) {
             throw new IllegalArgumentException("Application name cannot be null");
@@ -79,9 +79,7 @@ public class DefaultApplication implements InternalApplication {
     
     @Override
     public void setStatisticsHistorySize(int historySize) {
-        for (ProcessingUnit processingUnit : processingUnits) {
-        	processingUnit.setStatisticsHistorySize(historySize);
-        }
+        processingUnits.setStatisticsHistorySize(historySize);
     }
     
 

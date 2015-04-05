@@ -78,7 +78,8 @@ public interface Application {
     boolean undeployAndWait(long timeout, TimeUnit timeUnit);
 
     /**
-     * Sets the history size of number for the processing units
+     * Processing Unit instance service statistics history size;
+     * Default {@link org.openspaces.admin.StatisticsMonitor#DEFAULT_HISTORY_SIZE}.
      */
     void setStatisticsHistorySize(int historySize);
 
