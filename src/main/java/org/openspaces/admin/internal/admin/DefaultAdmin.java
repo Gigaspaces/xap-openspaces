@@ -273,21 +273,22 @@ public class DefaultAdmin implements InternalAdmin {
     private long executorSingleThreadId;
 
     private volatile int statisticsHistorySize = StatisticsMonitor.DEFAULT_HISTORY_SIZE;
+    private volatile long statisticsInterval = StatisticsMonitor.DEFAULT_MONITOR_INTERVAL;
 
     private final AlertManager alertManager;
 
     private final boolean useDaemonThreads;
-    
+
     private final AtomicInteger eventListenersCount = new AtomicInteger();
-    
+
     private AdminFilter adminFilter;
-    
+
     //removedProcessingUnitInstances needs to be locked under DefaultAdmin.this
     private final List<ProcessingUnitInstance> removedProcessingUnitInstances = new LinkedList<ProcessingUnitInstance>();
 
     //removedSpacesPerProcessingUnit needs to be locked under DefaultAdmin.this
     private final Map<ProcessingUnit, Space> removedSpacesPerProcessingUnit = new HashMap<ProcessingUnit,Space>();
-        
+
     /**
      * @param useDaemonThreads
      *            Sets worker and events threads to be automatically closed when the process dies.
@@ -360,6 +361,7 @@ public class DefaultAdmin implements InternalAdmin {
     
     @Override
     public void setStatisticsInterval(long interval, TimeUnit timeUnit) {
+        this.statisticsInterval = timeUnit.toMillis(interval);
         this.spaces.setStatisticsInterval(interval, timeUnit);
         this.virtualMachines.setStatisticsInterval(interval, timeUnit);
         this.transports.setStatisticsInterval(interval, timeUnit);
@@ -1418,7 +1420,8 @@ public class DefaultAdmin implements InternalAdmin {
         InternalApplication application = (InternalApplication) applications.getApplication(applicationName);
         if (application == null) {
             application = new DefaultApplication(this, applicationName);
-            application.setStatisticsHistorySize(statisticsHistorySize);
+            application.getProcessingUnits().setStatisticsHistorySize(statisticsHistorySize);
+            application.getProcessingUnits().setStatisticsInterval(statisticsInterval, TimeUnit.MILLISECONDS);
         }
         applications.addApplication(application, processingUnit);
     }

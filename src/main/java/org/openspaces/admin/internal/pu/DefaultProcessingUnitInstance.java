@@ -252,8 +252,8 @@ public class DefaultProcessingUnitInstance extends AbstractGridComponent impleme
     
     public String getProcessingUnitInstanceName() {
         
-        return NameUtils.getSpaceInstanceName( 
-                    getName(), getClusterInfo().getInstanceId(), getBackupId(), 
+        return NameUtils.getSpaceInstanceName(
+                    getName(), getClusterInfo().getInstanceId(), getBackupId(),
                     getClusterInfo().getNumberOfBackups() );
     }
     
@@ -572,7 +572,7 @@ public class DefaultProcessingUnitInstance extends AbstractGridComponent impleme
             }
             serviceMonitorsById.put(serviceMonitors.getId(), serviceMonitors);
         }
-        
+
         DefaultProcessingUnitInstanceServiceStatistics statistics = new DefaultProcessingUnitInstanceServiceStatistics(
                 puMonitors.getTimestamp(), 
                 serviceMonitorsById, 

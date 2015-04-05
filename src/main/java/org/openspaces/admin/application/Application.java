@@ -78,9 +78,12 @@ public interface Application {
     boolean undeployAndWait(long timeout, TimeUnit timeUnit);
 
     /**
+     * @param historySize the amount of statistics objects to keep.
+     * @deprecated Deprecation since 10.1.1 - apply using {@link #getProcessingUnits()}.
      * Processing Unit instance service statistics history size;
      * Default {@link org.openspaces.admin.StatisticsMonitor#DEFAULT_HISTORY_SIZE}.
      */
+    @Deprecated
     void setStatisticsHistorySize(int historySize);
 
 }
