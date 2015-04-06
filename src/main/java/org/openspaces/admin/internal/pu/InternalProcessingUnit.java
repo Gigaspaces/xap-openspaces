@@ -148,7 +148,15 @@ public interface InternalProcessingUnit extends ProcessingUnit, InternalProcessi
 	void setBackupGsmInSync(boolean isBackupInSync);
 	
 	/**
-     * @param isBackupInSync - true if backup GSM is in sync with primary GSM, false if out of sync or no backup gsm.
+     * @return true if backup GSM is in sync with primary GSM, false if out of sync or no backup gsm.
      */
 	boolean isBackupGsmInSync();
+
+    /**
+     * returns the processing unit instance based on its uid (see {@link ProcessingUnitInstance#getUid()})
+     * @param uid the unique id of the processing unit instance
+     * @return the processing unit instance or null
+     * @since 10.1.1
+     */
+    ProcessingUnitInstance getProcessingUnitInstanceByUid(String uid);
 }

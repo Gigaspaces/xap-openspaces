@@ -1261,7 +1261,12 @@ public class DefaultProcessingUnit implements InternalProcessingUnit {
     public boolean isBackupGsmInSync() {
     	return backupGsmIsInSync;
     }
-    
+
+    @Override
+    public ProcessingUnitInstance getProcessingUnitInstanceByUid(String uid) {
+        return processingUnitInstances.get(uid);
+    }
+
     @Override
     public void setBackupGsmInSync(boolean backupGsmIsInSync) {
     	this.backupGsmIsInSync = backupGsmIsInSync;
