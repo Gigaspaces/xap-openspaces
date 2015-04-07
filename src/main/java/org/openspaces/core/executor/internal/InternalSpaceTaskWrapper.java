@@ -20,26 +20,26 @@ import com.gigaspaces.annotation.pojo.SpaceRouting;
 import com.gigaspaces.executor.SpaceTask;
 import com.gigaspaces.executor.SpaceTaskWrapper;
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.SpaceContext;
+import com.j_spaces.kernel.ClassLoaderHelper;
 import net.jini.core.transaction.Transaction;
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.transaction.manager.ExistingJiniTransactionManager;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serializable;
+import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
- * An internal implemenation of {@link SpaceTask} that wraps the actual {@link org.openspaces.core.executor.Task}
+ * An internal implementation of {@link SpaceTask} that wraps the actual {@link org.openspaces.core.executor.Task}
  * to be executed.
- * 
+ *
  * @author kimchy
  */
 public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTask<T>, SpaceTaskWrapper, Externalizable {
 
     private static final long serialVersionUID = -7391977361461247102L;
-    
+
     private Task<T> task;
 
     private Object routing;
@@ -87,7 +87,30 @@ public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTa
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        task = (Task<T>) in.readObject();
+        task = readTaskUsingFreshClassLoader(in);
         routing = in.readObject();
+    }
+
+    /**
+     * Tasks are loaded with a fresh class loader.
+     * When the task is done this fresh class loader is removed.
+     * This will make it possible to load a modified version of this class
+     * GS-12351- Running Distributed Task can throw ClassNotFoundException, if this task was loaded by a client that already shutdown and the class has more dependencies to load.
+     * GS-12352 - Distributed Task class is not unloaded after the task finish.
+     *
+     * @throws ClassNotFoundException
+     * @throws IOException
+     * @see com.gigaspaces.internal.server.space.SpaceImpl#executeTask(SpaceTask, Transaction, SpaceContext, boolean)
+     */
+    private Task<T> readTaskUsingFreshClassLoader(ObjectInput in) throws ClassNotFoundException, IOException {
+        ClassLoader old = ClassLoaderHelper.getContextClassLoader();
+        try {
+            ClassLoaderHelper.setContextClassLoader(new URLClassLoader(new URL[]{}, old), true);
+            //noinspection unchecked
+            return (Task<T>) in.readObject();
+        } finally {
+            ClassLoaderHelper.setContextClassLoader(old, true);
+
+        }
     }
 }
