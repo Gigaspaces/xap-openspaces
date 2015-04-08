@@ -33,4 +33,12 @@ public interface InternalSpace extends Space, InternalSpaceInstancesAware {
     void refreshScheduledSpaceMonitors();
 
     Admin getAdmin();
+
+    /**
+     * returns the Space instance based on its uid (see {@link SpaceInstance#getUid()})
+     * @param uid the unique id of the Space instance
+     * @return the Space instance or null
+     * @since 10.1.1
+     */
+    SpaceInstance getSpaceInstanceByUid(String uid);
 }

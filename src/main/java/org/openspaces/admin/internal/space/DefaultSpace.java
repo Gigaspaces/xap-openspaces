@@ -598,6 +598,11 @@ public class DefaultSpace implements InternalSpace {
         return this.admin;
     }
 
+    @Override
+    public SpaceInstance getSpaceInstanceByUid(String uid) {
+        return spaceInstancesByUID.get(uid);
+    }
+
     private <T> T doWithInstance(InstanceCallback<T> callback, T naValue) {
         for (SpaceInstance spaceInstance : spaceInstancesByUID.values()) {
             return callback.doWithinstance((InternalSpaceInstance) spaceInstance);
