@@ -21,9 +21,13 @@ import java.util.concurrent.TimeUnit;
 import org.openspaces.admin.LogProviderGridComponent;
 import org.openspaces.admin.dump.DumpProvider;
 import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.gsm.GridServiceManager;
+import org.openspaces.admin.gsm.GridServiceManagers;
 import org.openspaces.admin.lus.LookupService;
+import org.openspaces.admin.lus.LookupServices;
 import org.openspaces.admin.metrics.MetricProvider;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
@@ -153,8 +157,35 @@ public interface GridServiceAgent extends LogProviderGridComponent, DumpProvider
     
     /**
      * @return the list of zones that the GSA satisfies
-     * @see {@link ProcessingUnit#getRequiredAgentZones()}
+     * @see {@link ProcessingUnit#getRequiredContainerZones()}
      * @since 9.1.0 
      */
     ExactZonesConfig getExactZones();
+
+    /**
+     * @since 10.1.1
+     * @return Returns the {@link GridServiceContainers} started by this {@link GridServiceAgent}
+     */
+    GridServiceContainers getGridServiceContainers();
+
+
+    /**
+     * @since 10.1.1
+     * @return Returns all the {@link GridServiceManagers} started by this {@link GridServiceAgent}
+     */
+    GridServiceManagers getGridServiceManagers();
+
+    /**
+     * @since 10.1.1
+     * @return Returns all the {@link ElasticServiceManagers} started by this {@link GridServiceAgent}
+     */
+    ElasticServiceManagers getElasticServiceManagers();
+
+    /**
+     * @since 10.1.1
+     * @return Returns all the {@link LookupServices} started by this {@link GridServiceAgent}
+     */
+    LookupServices getLookupServices();
+
+
 }

@@ -24,6 +24,7 @@ import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.gsm.GridServiceManagers;
 import org.openspaces.admin.lus.LookupServices;
 import org.openspaces.admin.os.OperatingSystem;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventManager;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
@@ -111,6 +112,12 @@ public interface Machine extends DumpProvider {
      * Returns the transports "running" on the machine.
      */
     Transports getTransports();
+
+    /**
+     * @since 10.1.1
+     * @return Returns the {@link ProcessingUnit} of the processing unit instances running on the machine.
+     */
+    ProcessingUnit[] getProcessingUnits();
 
     /**
      * Returns all the processing unit instances running on the machine.

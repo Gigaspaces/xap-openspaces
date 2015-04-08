@@ -36,6 +36,7 @@ import net.jini.core.lookup.ServiceID;
 import org.openspaces.admin.AdminException;
 import org.openspaces.admin.dump.DumpResult;
 import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.esm.events.ElasticServiceManagerAddedEventListener;
 import org.openspaces.admin.gsa.ElasticServiceManagerOptions;
 import org.openspaces.admin.gsa.GSAReservationId;
@@ -44,20 +45,32 @@ import org.openspaces.admin.gsa.GridServiceManagerOptions;
 import org.openspaces.admin.gsa.GridServiceOptions;
 import org.openspaces.admin.gsa.LookupServiceOptions;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsm.GridServiceManager;
+import org.openspaces.admin.gsm.GridServiceManagers;
 import org.openspaces.admin.gsm.events.GridServiceManagerAddedEventListener;
 import org.openspaces.admin.internal.admin.InternalAdmin;
 import org.openspaces.admin.internal.dump.InternalDumpResult;
+import org.openspaces.admin.internal.esm.DefaultElasticServiceManagers;
 import org.openspaces.admin.internal.esm.InternalElasticServiceManager;
+import org.openspaces.admin.internal.esm.InternalElasticServiceManagers;
+import org.openspaces.admin.internal.gsc.DefaultGridServiceContainers;
 import org.openspaces.admin.internal.gsc.InternalGridServiceContainer;
+import org.openspaces.admin.internal.gsc.InternalGridServiceContainers;
+import org.openspaces.admin.internal.gsm.DefaultGridServiceManagers;
 import org.openspaces.admin.internal.gsm.InternalGridServiceManager;
+import org.openspaces.admin.internal.gsm.InternalGridServiceManagers;
+import org.openspaces.admin.internal.lus.DefaultLookupServices;
 import org.openspaces.admin.internal.lus.InternalLookupService;
+import org.openspaces.admin.internal.lus.InternalLookupServices;
 import org.openspaces.admin.internal.pu.elastic.GridServiceContainerConfig;
 import org.openspaces.admin.internal.support.AbstractGridComponent;
 import org.openspaces.admin.internal.support.InternalAgentGridComponent;
 import org.openspaces.admin.internal.support.NetworkExceptionHelper;
+import org.openspaces.admin.internal.vm.InternalVirtualMachine;
 import org.openspaces.admin.lus.LookupService;
+import org.openspaces.admin.lus.LookupServices;
 import org.openspaces.admin.lus.events.LookupServiceAddedEventListener;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
 import org.openspaces.admin.zone.config.ExactZonesConfigurer;
@@ -91,6 +104,14 @@ public class DefaultGridServiceAgent extends AbstractGridComponent implements In
 
     private ConcurrentHashMap<Integer,InternalAgentGridComponent> removedAgentGridComponents = new ConcurrentHashMap<Integer,InternalAgentGridComponent>();
 
+    private final InternalGridServiceContainers gridServiceContainers;
+
+    private final InternalGridServiceManagers gridServiceManagers;
+
+    private final InternalLookupServices lookupServices;
+
+    private final InternalElasticServiceManagers elasticServiceManagers;
+
     private static final String RESERVATION_PROPERTY = "com.gs.agent.reservationid";
     
     public DefaultGridServiceAgent(ServiceID serviceID, GSA gsa, InternalAdmin admin, AgentProcessesDetails processesDetails, JVMDetails jvmDetails) {
@@ -98,6 +119,10 @@ public class DefaultGridServiceAgent extends AbstractGridComponent implements In
         this.serviceID = serviceID;
         this.gsa = gsa;
         this.processesDetails = processesDetails;
+        this.gridServiceContainers = new DefaultGridServiceContainers(admin);
+        this.gridServiceManagers = new DefaultGridServiceManagers(admin);
+        this.lookupServices = new DefaultLookupServices(admin);
+        this.elasticServiceManagers = new DefaultElasticServiceManagers(admin);
     }
 
     public String getUid() {
@@ -531,12 +556,30 @@ public class DefaultGridServiceAgent extends AbstractGridComponent implements In
     public void removeAgentGridComponent(InternalAgentGridComponent agentGridComponent) {
         assertStateChangesPermitted();
         removedAgentGridComponents.put(agentGridComponent.getAgentId(), agentGridComponent);
+        if (agentGridComponent instanceof GridServiceContainer) {
+            gridServiceContainers.removeGridServiceContainer(agentGridComponent.getUid());
+        } else if (agentGridComponent instanceof GridServiceManager) {
+            gridServiceManagers.removeGridServiceManager(agentGridComponent.getUid());
+        } else if (agentGridComponent instanceof LookupService) {
+            lookupServices.removeLookupService(agentGridComponent.getUid());
+        } else if (agentGridComponent instanceof ElasticServiceManager) {
+            elasticServiceManagers.removeElasticServiceManager(agentGridComponent.getUid());
+        }
     }
     
     @Override
     public void addAgentGridComponent(InternalAgentGridComponent agentGridComponent) {
         assertStateChangesPermitted();
         removedAgentGridComponents.remove(agentGridComponent.getAgentId());
+        if (agentGridComponent instanceof GridServiceContainer) {
+            gridServiceContainers.addGridServiceContainer((InternalGridServiceContainer) agentGridComponent);
+        } else if (agentGridComponent instanceof GridServiceManager) {
+            gridServiceManagers.addGridServiceManager((InternalGridServiceManager) agentGridComponent);
+        } else if (agentGridComponent instanceof LookupService) {
+            lookupServices.addLookupService((InternalLookupService) agentGridComponent);
+        } else if (agentGridComponent instanceof ElasticServiceManager) {
+            elasticServiceManagers.addElasticServiceManager((InternalElasticServiceManager) agentGridComponent);
+        }
     }
     
     @Override
@@ -548,6 +591,26 @@ public class DefaultGridServiceAgent extends AbstractGridComponent implements In
     @Override
     public ExactZonesConfig getExactZones() {
         return new ExactZonesConfigurer().addZones(getZones().keySet()).create();
+    }
+
+    @Override
+    public GridServiceContainers getGridServiceContainers() {
+        return gridServiceContainers;
+    }
+
+    @Override
+    public GridServiceManagers getGridServiceManagers() {
+        return gridServiceManagers;
+    }
+
+    @Override
+    public ElasticServiceManagers getElasticServiceManagers() {
+        return elasticServiceManagers;
+    }
+
+    @Override
+    public LookupServices getLookupServices() {
+        return lookupServices;
     }
 
     @Override

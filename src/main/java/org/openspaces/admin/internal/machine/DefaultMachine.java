@@ -17,8 +17,7 @@
  ******************************************************************************/
 package org.openspaces.admin.internal.machine;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.openspaces.admin.AdminException;
 import org.openspaces.admin.dump.CompoundDumpResult;
@@ -54,6 +53,7 @@ import org.openspaces.admin.internal.vm.InternalVirtualMachines;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.admin.lus.LookupServices;
 import org.openspaces.admin.os.OperatingSystem;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventManager;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
@@ -170,6 +170,18 @@ public class DefaultMachine implements InternalMachine {
     @Override
     public Transports getTransports() {
         return transports;
+    }
+
+    @Override
+    public ProcessingUnit[] getProcessingUnits() {
+        if (processingUnitInstances.getInstances().length == 0)
+            return new ProcessingUnit[0];
+
+        Set<ProcessingUnit> processingUnitSet = new HashSet<ProcessingUnit>();
+        for (ProcessingUnitInstance processingUnitInstance : processingUnitInstances.getInstances()) {
+            processingUnitSet.add(processingUnitInstance.getProcessingUnit());
+        }
+        return processingUnitSet.toArray(new ProcessingUnit[processingUnitSet.size()]);
     }
 
     @Override
