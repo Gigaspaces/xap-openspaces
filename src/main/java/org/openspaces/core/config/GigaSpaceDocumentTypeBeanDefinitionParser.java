@@ -16,10 +16,7 @@
 
 package org.openspaces.core.config;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -176,6 +173,14 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
             builder.addPropertyValue("sequenceNumberProperty", name);
         }
 
+        SortedMap<String, String> fixedProperties = new TreeMap<String, String>();
+        List<Element> fixedPropertiesElements = DomUtils.getChildElementsByTagName(element, "fixed-property");
+        for(int i=0; i < fixedPropertiesElements.size(); i++) {
+            String name = fixedPropertiesElements.get(i).getAttribute("property-name");
+            String type = fixedPropertiesElements.get(i).getAttribute("property-class");
+            fixedProperties.put(name, type);
+        }
+        builder.addPropertyValue("fixedProperties", fixedProperties);
     }
 
     private String extractPropertyName(String attributeName) {

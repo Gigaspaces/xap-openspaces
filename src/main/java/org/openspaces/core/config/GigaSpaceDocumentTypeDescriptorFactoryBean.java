@@ -19,7 +19,6 @@ package org.openspaces.core.config;
 
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.document.SpaceDocument;
-import com.gigaspaces.metadata.SpacePropertyDescriptor;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.metadata.SpaceTypeDescriptorBuilder;
 import com.gigaspaces.metadata.StorageType;
@@ -28,6 +27,7 @@ import com.j_spaces.kernel.ClassLoaderHelper;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -37,7 +37,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
 
     private String _typeName;
     private SpaceTypeDescriptor _superTypeDescriptor;
-    private SortedMap<String, SpacePropertyDescriptor> _fixedProperties;
+    private SortedMap<String, String> _fixedProperties;
     private FifoSupport _fifoSupport;
     private Boolean _replicable;
     private Boolean _supportsOptimisticLocking;
@@ -71,7 +71,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
         if (typeDescriptor == null) {
             SpaceTypeDescriptorBuilder typeDescriptorBuilder = new SpaceTypeDescriptorBuilder(_typeName,
                     _superTypeDescriptor);
-            
+
             if(_idProperty != null)
             {
                 if ( _idProperty.getIndex() == null)
@@ -92,24 +92,24 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
 
             if(_fifoSupport != null)
                 typeDescriptorBuilder.fifoSupport(_fifoSupport);
-            
+
             if(_supportsOptimisticLocking != null)
                 typeDescriptorBuilder.supportsOptimisticLocking(_supportsOptimisticLocking);
-            
+
             if(_replicable != null)
                 typeDescriptorBuilder.replicable(_replicable);
-            
+
             if (_blobstoreEnabled != null)
                 typeDescriptorBuilder.setBlobstoreEnabled(_blobstoreEnabled);
-            	
-            	
+
+
             if(_documentWrapperClassName != null)
             {
                 _documentWrapperClassName = _documentWrapperClassName.trim();
                 Class<? extends SpaceDocument> documentWrapperClass = ClassLoaderHelper.loadClass(_documentWrapperClassName);
                 typeDescriptorBuilder.documentWrapperClass(documentWrapperClass);
             }
-            
+
             if(_indexes != null)
             {
                 for (SpaceIndex index : _indexes) {
@@ -128,7 +128,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
                     }
                 }
             }
-            
+
             if(_storageType != null)
                 typeDescriptorBuilder.storageType(_storageType);
             if(_fifoGroupingPropertyPath != null)
@@ -141,7 +141,13 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
             if(_sequenceNumberProperty != null)
                 typeDescriptorBuilder.sequenceNumberProperty(_sequenceNumberProperty, true);
 
-            
+            if (_fixedProperties != null) {
+                for (Map.Entry<String, String> entry : _fixedProperties.entrySet()) {
+                    typeDescriptorBuilder.addFixedProperty(entry.getKey(), entry.getValue());
+                }
+
+            }
+
             typeDescriptor = typeDescriptorBuilder.create();
         }
     }
@@ -177,7 +183,7 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
     public void setIndexes(SpaceIndex... indexes) {
         _indexes = indexes;
     }
-   
+
      public void setDocumentClass(String documentWrapperClassName) throws ClassNotFoundException {
         _documentWrapperClassName = documentWrapperClassName;
     }
@@ -206,22 +212,28 @@ public class GigaSpaceDocumentTypeDescriptorFactoryBean implements FactoryBean<S
         this._sequenceNumberProperty = sequenceNumberProperty;
     }
 
-
     public Set<String> getFifoGroupingIndexesPaths() {
         return _fifoGroupingIndexesPaths;
     }
 
+
     public void setFifoGroupingIndexesPaths(Set<String> fifoGroupingIndexesPaths) {
         this._fifoGroupingIndexesPaths = fifoGroupingIndexesPaths;
     }
-    
+
     public boolean getBlobstoreEnabled() {
-    	return _blobstoreEnabled; 
+    	return _blobstoreEnabled;
     			}
 
-    
     public void setBlobstoreEnabled(boolean blobstoreEnabled) {
     	_blobstoreEnabled = blobstoreEnabled;
     }
 
+    public void setFixedProperties(SortedMap<String, String> _fixedProperties) {
+        this._fixedProperties = _fixedProperties;
+    }
+
+    public SortedMap<String, String> getFixedProperties() {
+        return _fixedProperties;
+    }
 }
