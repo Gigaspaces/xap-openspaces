@@ -23,8 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jini.rio.boot.SharedServiceData;
 import org.openspaces.core.cluster.*;
 import org.openspaces.core.properties.BeanLevelProperties;
-import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.openspaces.pu.container.jee.JeeProcessingUnitContainerProvider;
 import org.openspaces.pu.container.jee.stats.RequestStatisticsFilter;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainerProvider;
@@ -90,14 +89,13 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
         servletContext.setAttribute(BOOTSTRAP_CONTEXT_KEY, true);
 
         logger.info("Booting OpenSpaces Web Application Support");
-        ClusterInfo clusterInfo = null;
-        BeanLevelProperties beanLevelProperties = null;
+        final ProcessingUnitContainerConfig config = new ProcessingUnitContainerConfig();
 
         InputStream is = servletContext.getResourceAsStream(MARSHALLED_CLUSTER_INFO);
         if (is != null) {
             try {
-                clusterInfo = (ClusterInfo) objectFromByteBuffer(FileCopyUtils.copyToByteArray(is));
-                servletContext.setAttribute(JeeProcessingUnitContainerProvider.CLUSTER_INFO_CONTEXT, clusterInfo);
+                config.setClusterInfo((ClusterInfo) objectFromByteBuffer(FileCopyUtils.copyToByteArray(is)));
+                servletContext.setAttribute(JeeProcessingUnitContainerProvider.CLUSTER_INFO_CONTEXT, config.getClusterInfo());
             } catch (Exception e) {
                 logger.warn("Failed to read cluster info from " + MARSHALLED_CLUSTER_INFO, e);
             }
@@ -107,8 +105,8 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
         is = servletContext.getResourceAsStream(MARSHALLED_BEAN_LEVEL_PROPERTIES);
         if (is != null) {
             try {
-                beanLevelProperties = (BeanLevelProperties) objectFromByteBuffer(FileCopyUtils.copyToByteArray(is));
-                servletContext.setAttribute(JeeProcessingUnitContainerProvider.BEAN_LEVEL_PROPERTIES_CONTEXT, beanLevelProperties);
+                config.setBeanLevelProperties((BeanLevelProperties) objectFromByteBuffer(FileCopyUtils.copyToByteArray(is)));
+                servletContext.setAttribute(JeeProcessingUnitContainerProvider.BEAN_LEVEL_PROPERTIES_CONTEXT, config.getBeanLevelProperties());
             } catch (Exception e) {
                 logger.warn("Failed to read bean level properties from " + MARSHALLED_BEAN_LEVEL_PROPERTIES, e);
             }
@@ -124,16 +122,8 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
         if (resource != null && resource.exists()) {
             logger.debug("Loading [" + resource + "]");
             // create the Spring application context
-            final ResourceApplicationContext applicationContext = new ResourceApplicationContext(new Resource[] {resource}, null);
-            // add config information if provided
-            if (beanLevelProperties != null) {
-                applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, clusterInfo));
-                applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
-            }
-            if (clusterInfo != null) {
-                applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
-                applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
-            }
+            final ResourceApplicationContext applicationContext = new ResourceApplicationContext(new Resource[] {resource},
+                    null, config);
             // "start" the application context
             applicationContext.refresh();
 
@@ -144,8 +134,8 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
                     servletContext.setAttribute(beanName, applicationContext.getBean(beanName));
             }
 
-            if (clusterInfo != null && SystemBoot.isRunningWithinGSC()) {
-                final String key = clusterInfo.getUniqueName();
+            if (config.getClusterInfo() != null && SystemBoot.isRunningWithinGSC()) {
+                final String key = config.getClusterInfo().getUniqueName();
 
                 SharedServiceData.addServiceDetails(key, new Callable() {
                     public Object call() throws Exception {
@@ -212,8 +202,8 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
         }
 
         // load jee specific context listener
-        if (beanLevelProperties != null) {
-            String jeeContainer = JeeProcessingUnitContainerProvider.getJeeContainer(beanLevelProperties);
+        if (config.getBeanLevelProperties() != null) {
+            String jeeContainer = JeeProcessingUnitContainerProvider.getJeeContainer(config.getBeanLevelProperties());
             String className = "org.openspaces.pu.container.jee." + jeeContainer + "." + StringUtils.capitalize(jeeContainer) + "WebApplicationContextListener";
             Class clazz = null;
             try {
@@ -232,8 +222,8 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
         }
 
         // set the class loader used so the service bean can use it
-        if (clusterInfo != null && SystemBoot.isRunningWithinGSC()) {
-            SharedServiceData.putWebAppClassLoader(clusterInfo.getUniqueName(), Thread.currentThread().getContextClassLoader());
+        if (config.getClusterInfo() != null && SystemBoot.isRunningWithinGSC()) {
+            SharedServiceData.putWebAppClassLoader(config.getClusterInfo().getUniqueName(), Thread.currentThread().getContextClassLoader());
         }
     }
 

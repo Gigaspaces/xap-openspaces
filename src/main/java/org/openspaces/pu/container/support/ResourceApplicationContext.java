@@ -16,6 +16,15 @@
 
 package org.openspaces.pu.container.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
+import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
+import org.openspaces.core.metrics.ServiceMetricBeanPostProcessor;
+import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
+import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +32,8 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A Spring {@link org.springframework.context.ApplicationContext} implementation that works with
@@ -37,9 +46,9 @@ import java.util.List;
  */
 public class ResourceApplicationContext extends AbstractXmlApplicationContext {
 
+    private static final Log logger = LogFactory.getLog(ResourceApplicationContext.class);
     private Resource[] resources;
-
-    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
+    private final CompoundBeanPostProcessor compoundBeanPostProcessor = new CompoundBeanPostProcessor();
 
     /**
      * Create this application context with a list of resources for configuration and an optional
@@ -53,6 +62,21 @@ public class ResourceApplicationContext extends AbstractXmlApplicationContext {
     public ResourceApplicationContext(Resource[] resources, ApplicationContext parent) {
         super(parent);
         this.resources = resources;
+    }
+
+    public ResourceApplicationContext(Resource[] resources, ApplicationContext parent, ProcessingUnitContainerConfig config) {
+        this(resources, parent);
+        if (config.getBeanLevelProperties() != null) {
+            addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(config.getBeanLevelProperties(), config.getClusterInfo()));
+            addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(config.getBeanLevelProperties()));
+        }
+        if (config.getClusterInfo() != null) {
+            addBeanPostProcessor(new ClusterInfoBeanPostProcessor(config.getClusterInfo()));
+        }
+        addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(config.getClusterInfo()));
+        if (config.getMetricRegistrator() != null) {
+            addBeanPostProcessor(new ServiceMetricBeanPostProcessor(config.getMetricRegistrator()));
+        }
     }
 
     /**
@@ -71,7 +95,7 @@ public class ResourceApplicationContext extends AbstractXmlApplicationContext {
      *            The bean post processor to add
      */
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
-        this.beanPostProcessors.add(beanPostProcessor);
+        this.compoundBeanPostProcessor.add(beanPostProcessor);
     }
 
     /**
@@ -80,9 +104,7 @@ public class ResourceApplicationContext extends AbstractXmlApplicationContext {
      */
     protected DefaultListableBeanFactory createBeanFactory() {
         DefaultListableBeanFactory beanFactory = super.createBeanFactory();
-        for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
-            beanFactory.addBeanPostProcessor(beanPostProcessor);
-        }
+        beanFactory.addBeanPostProcessor(compoundBeanPostProcessor);
         return beanFactory;
     }
 
@@ -92,5 +114,32 @@ public class ResourceApplicationContext extends AbstractXmlApplicationContext {
      */
     protected ResourcePatternResolver getResourcePatternResolver() {
         return new PUPathMatchingResourcePatternResolver();
+    }
+
+    private static class CompoundBeanPostProcessor implements BeanPostProcessor {
+
+        private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<BeanPostProcessor>();
+
+        @Override
+        public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+            if (logger.isDebugEnabled())
+                logger.debug("postProcessBeforeInitialization(" + beanName + ")");
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessors)
+                bean = beanPostProcessor.postProcessBeforeInitialization(bean, beanName);
+            return bean;
+        }
+
+        @Override
+        public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+            if (logger.isDebugEnabled())
+                logger.debug("postProcessAfterInitialization(" + beanName + ")");
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessors)
+                bean = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
+            return bean;
+        }
+
+        public void add(BeanPostProcessor beanPostProcessor) {
+            this.beanPostProcessors.add(beanPostProcessor);
+        }
     }
 }

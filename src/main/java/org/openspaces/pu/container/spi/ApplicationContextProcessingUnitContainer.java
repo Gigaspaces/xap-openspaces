@@ -41,11 +41,6 @@ public abstract class ApplicationContextProcessingUnitContainer extends Processi
     public abstract ApplicationContext getApplicationContext();
 
     @Override
-    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
-        return getBeansOfType(ServiceMetricProvider.class).values();
-    }
-
-    @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return getBeansOfType(ServiceDetailsProvider.class).values();
     }

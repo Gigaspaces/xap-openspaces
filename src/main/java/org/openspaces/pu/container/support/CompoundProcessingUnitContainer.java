@@ -60,20 +60,6 @@ public class CompoundProcessingUnitContainer extends ProcessingUnitContainer {
     }
 
     @Override
-    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
-        List<ServiceMetricProvider> result = Collections.EMPTY_LIST;
-        for (ProcessingUnitContainer container : containers) {
-            Collection<ServiceMetricProvider> providers = container.getServiceMetricProviders();
-            if (!providers.isEmpty()) {
-                if (result.isEmpty())
-                    result = new ArrayList<ServiceMetricProvider>();
-                result.addAll(providers);
-            }
-        }
-        return result;
-    }
-
-    @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         List<ServiceDetailsProvider> result = Collections.EMPTY_LIST;
         for (ProcessingUnitContainer container : containers) {

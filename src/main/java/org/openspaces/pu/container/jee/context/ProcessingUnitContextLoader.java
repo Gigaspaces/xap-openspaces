@@ -21,6 +21,7 @@ import org.openspaces.core.cluster.*;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
 import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.openspaces.pu.container.jee.JeeProcessingUnitContainerProvider;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceDetailsProvider;
@@ -138,22 +139,10 @@ public class ProcessingUnitContextLoader extends ContextLoader {
      * themself are bounded in the {@link javax.servlet.ServletContext}.
      */
     protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
-        ProcessingUnitWebApplicationContext wac = new ProcessingUnitWebApplicationContext();
-
-        ClusterInfo clusterInfo = (ClusterInfo) servletContext.getAttribute(JeeProcessingUnitContainerProvider.CLUSTER_INFO_CONTEXT);
-
-        BeanLevelProperties beanLevelProperties = (BeanLevelProperties) servletContext.getAttribute(JeeProcessingUnitContainerProvider.BEAN_LEVEL_PROPERTIES_CONTEXT);
-
-        if (beanLevelProperties != null) {
-            wac.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, clusterInfo));
-            wac.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
-        }
-
-        if (clusterInfo != null) {
-            wac.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
-            wac.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
-        }
-
+        ProcessingUnitContainerConfig config = new ProcessingUnitContainerConfig();
+        config.setClusterInfo((ClusterInfo) servletContext.getAttribute(JeeProcessingUnitContainerProvider.CLUSTER_INFO_CONTEXT));
+        config.setBeanLevelProperties((BeanLevelProperties) servletContext.getAttribute(JeeProcessingUnitContainerProvider.BEAN_LEVEL_PROPERTIES_CONTEXT));
+        ProcessingUnitWebApplicationContext wac = new ProcessingUnitWebApplicationContext(config);
         wac.setParent(parent);
         wac.setServletContext(servletContext);
         wac.setConfigLocation(servletContext.getInitParameter(CONFIG_LOCATION_PARAM));

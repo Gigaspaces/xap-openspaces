@@ -51,8 +51,7 @@ import org.jini.rio.opstring.OpStringLoader;
 import org.openspaces.admin.pu.ProcessingUnitType;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.properties.BeanLevelProperties;
-import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.openspaces.pu.container.jee.JeeProcessingUnitContainerProvider;
 import org.openspaces.pu.container.support.BeanLevelPropertiesParser;
 import org.openspaces.pu.container.support.ClusterInfoParser;
@@ -521,11 +520,9 @@ public class Deploy {
                 }
             } else {
                 // if we have specific sla file, load it as usual, so we can have deploy properties / system properties injected to it
-                ResourceApplicationContext applicationContext = new ResourceApplicationContext(new Resource[]{resource}, null);
-                if (beanLevelProperties != null) {
-                    applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, null));
-                    applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
-                }
+                ProcessingUnitContainerConfig config = new ProcessingUnitContainerConfig();
+                config.setBeanLevelProperties(beanLevelProperties);
+                ResourceApplicationContext applicationContext = new ResourceApplicationContext(new Resource[]{resource}, null, config);
                 // start the application context
                 applicationContext.refresh();
                 try {

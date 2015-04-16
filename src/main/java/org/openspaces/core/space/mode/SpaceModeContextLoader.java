@@ -21,13 +21,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
-import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
-import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.openspaces.core.properties.BeanLevelPropertiesAware;
-import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.core.util.SpaceUtils;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
@@ -75,9 +72,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
 
     private ApplicationContext parentApplicationContext;
 
-    private BeanLevelProperties beanLevelProperties;
-
-    private ClusterInfo clusterInfo;
+    private ProcessingUnitContainerConfig config = new ProcessingUnitContainerConfig();
 
     protected volatile ResourceApplicationContext applicationContext;
 
@@ -110,7 +105,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      */
     @Override
     public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
-        this.beanLevelProperties = beanLevelProperties;
+        config.setBeanLevelProperties(beanLevelProperties);
     }
 
     /**
@@ -118,7 +113,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
      */
     @Override
     public void setClusterInfo(ClusterInfo clusterInfo) {
-        this.clusterInfo = clusterInfo;
+        config.setClusterInfo(clusterInfo);
     }
 
     /**
@@ -205,16 +200,7 @@ public class SpaceModeContextLoader implements ApplicationContextAware, Initiali
         if (logger.isDebugEnabled()) {
             logger.debug("Loading application context [" + location + "]");
         }
-        applicationContext = new ResourceApplicationContext(new Resource[]{location}, parentApplicationContext);
-        // add config information if provided
-        if (beanLevelProperties != null) {
-            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, clusterInfo));
-            applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
-        }
-        if (clusterInfo != null) {
-            applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
-        }
-        applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
+        applicationContext = new ResourceApplicationContext(new Resource[]{location}, parentApplicationContext, config);
         try {
             applicationContext.refresh();
         } catch (Exception e) {
