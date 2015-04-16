@@ -2909,14 +2909,14 @@
                                 </xsd:documentation>
                             </xsd:annotation>
                             <xsd:complexType>
-                                <xsd:attribute name="property-name" type="xsd:string" use="required">
+                                <xsd:attribute name="name" type="xsd:string" use="required">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             property name.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="property-class" type="xsd:string" use="required">
+                                <xsd:attribute name="type-name" type="xsd:string" use="required">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             property full class name.

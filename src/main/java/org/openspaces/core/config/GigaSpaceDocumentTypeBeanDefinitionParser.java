@@ -176,8 +176,8 @@ public class GigaSpaceDocumentTypeBeanDefinitionParser extends AbstractSingleBea
         SortedMap<String, String> fixedProperties = new TreeMap<String, String>();
         List<Element> fixedPropertiesElements = DomUtils.getChildElementsByTagName(element, "fixed-property");
         for(int i=0; i < fixedPropertiesElements.size(); i++) {
-            String name = fixedPropertiesElements.get(i).getAttribute("property-name");
-            String type = fixedPropertiesElements.get(i).getAttribute("property-class");
+            String name = fixedPropertiesElements.get(i).getAttribute("name");
+            String type = fixedPropertiesElements.get(i).getAttribute("type-name");
             fixedProperties.put(name, type);
         }
         builder.addPropertyValue("fixedProperties", fixedProperties);
