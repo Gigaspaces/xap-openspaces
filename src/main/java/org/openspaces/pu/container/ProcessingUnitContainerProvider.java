@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container;
 
+import com.gigaspaces.metrics.MetricRegistrator;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.properties.BeanLevelProperties;
@@ -36,8 +37,7 @@ public abstract class ProcessingUnitContainerProvider implements ClusterInfoAwar
     public static final String CONTAINER_CLASS_PROP = "pu.container.class";
     public static final String CONTEXT_PROPERTY_DEPLOY_PATH = "deployPath";
 
-    private ClusterInfo clusterInfo;
-    private BeanLevelProperties beanLevelProperties;
+    private final ProcessingUnitContainerConfig config = new ProcessingUnitContainerConfig();
 
     /**
      * Creates a processing unit container.
@@ -60,20 +60,28 @@ public abstract class ProcessingUnitContainerProvider implements ClusterInfoAwar
     }
 
     public ClusterInfo getClusterInfo() {
-        return clusterInfo;
+        return config.getClusterInfo();
     }
 
     @Override
     public void setClusterInfo(ClusterInfo clusterInfo) {
-        this.clusterInfo = clusterInfo;
+        config.setClusterInfo(clusterInfo);
     }
 
     public BeanLevelProperties getBeanLevelProperties() {
-        return beanLevelProperties;
+        return config.getBeanLevelProperties();
     }
 
     @Override
     public void setBeanLevelProperties(BeanLevelProperties beanLevelProperties) {
-        this.beanLevelProperties = beanLevelProperties;
+        config.setBeanLevelProperties(beanLevelProperties);
+    }
+
+    public void setMetricRegistrator(MetricRegistrator metricRegistrator) {
+        config.setMetricRegistrator(metricRegistrator);
+    }
+
+    public ProcessingUnitContainerConfig getConfig() {
+        return config;
     }
 }

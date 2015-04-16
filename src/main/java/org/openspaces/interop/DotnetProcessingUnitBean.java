@@ -374,10 +374,6 @@ public class DotnetProcessingUnitBean implements InitializingBean, DisposableBea
         return plainServiceMonitors;
     }
 
-    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
-        return Collections.EMPTY_LIST;
-    }
-
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
         return serviceDetailsProviders;
     }

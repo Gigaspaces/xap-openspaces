@@ -43,8 +43,6 @@ public abstract class ProcessingUnitContainer {
     public void close() throws CannotCloseContainerException {
     }
 
-    public abstract Collection<ServiceMetricProvider> getServiceMetricProviders();
-
     public abstract Collection<ServiceDetailsProvider> getServiceDetailsProviders();
 
     public abstract Collection<ServiceMonitorsProvider> getServiceMonitorsProviders();

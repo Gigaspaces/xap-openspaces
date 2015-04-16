@@ -24,13 +24,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
-import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.openspaces.core.properties.BeanLevelProperties;
-import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.pu.container.CannotCreateContainerException;
 import org.openspaces.pu.container.ProcessingUnitContainer;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainerProvider;
 import org.openspaces.pu.container.support.ClusterInfoParser;
 import org.openspaces.pu.container.support.CompoundProcessingUnitContainer;
@@ -200,7 +197,8 @@ public class IntegratedProcessingUnitContainerProvider extends ApplicationContex
             }
         }
 
-        final ClusterInfo clusterInfo = getClusterInfo();
+        final ProcessingUnitContainerConfig config = getConfig();
+        final ClusterInfo clusterInfo = config.getClusterInfo();
         if (clusterInfo != null) {
             ClusterInfoParser.guessSchema(clusterInfo);
         }
@@ -229,7 +227,7 @@ public class IntegratedProcessingUnitContainerProvider extends ApplicationContex
         }
 
         // handle security
-        final BeanLevelProperties beanLevelProperties = getBeanLevelProperties();
+        final BeanLevelProperties beanLevelProperties = config.getBeanLevelProperties();
         if (credentialsProvider != null) {
             try {
                 CredentialsProviderHelper.appendMarshalledCredentials(beanLevelProperties.getContextProperties(), null, credentialsProvider);
@@ -242,16 +240,7 @@ public class IntegratedProcessingUnitContainerProvider extends ApplicationContex
 
         Resource[] resources = configResources.toArray(new Resource[configResources.size()]);
         // create the Spring application context
-        ResourceApplicationContext applicationContext = new ResourceApplicationContext(resources, parentContext);
-        // add config information if provided
-        if (beanLevelProperties != null) {
-            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, clusterInfo));
-            applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
-        }
-        if (clusterInfo != null) {
-            applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
-        }
-        applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
+        ResourceApplicationContext applicationContext = new ResourceApplicationContext(resources, parentContext, config);
         if (classLoader != null) {
             applicationContext.setClassLoader(classLoader);
         }

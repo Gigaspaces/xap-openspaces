@@ -18,11 +18,7 @@ package org.openspaces.pu.container.jee;
 
 import com.gigaspaces.start.Locator;
 import org.jini.rio.boot.SharedServiceData;
-import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
-import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.openspaces.core.properties.BeanLevelProperties;
-import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainerProvider;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -155,16 +151,8 @@ public abstract class JeeProcessingUnitContainerProvider extends ApplicationCont
     protected ResourceApplicationContext initApplicationContext() {
         Resource[] resources = configResources.toArray(new Resource[configResources.size()]);
         // create the Spring application context
-        ResourceApplicationContext applicationContext = new ResourceApplicationContext(resources, parentContext);
-        // add config information if provided
-        if (getBeanLevelProperties() != null) {
-            applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(getBeanLevelProperties(), getClusterInfo()));
-            applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(getBeanLevelProperties()));
-        }
-        if (getClusterInfo() != null) {
-            applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(getClusterInfo()));
-        }
-        applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(getClusterInfo()));
+        ResourceApplicationContext applicationContext = new ResourceApplicationContext(resources, parentContext,
+                getConfig());
         if (classLoader != null) {
             applicationContext.setClassLoader(classLoader);
         }

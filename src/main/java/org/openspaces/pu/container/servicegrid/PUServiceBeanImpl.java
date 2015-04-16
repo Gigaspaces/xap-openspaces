@@ -99,7 +99,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.*;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
@@ -319,6 +318,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         super.stop(force);
     }
 
+    private static InputStream openUrlStream(String s) {
+        try {
+            return new URL(s).openStream();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private void startPU(String springXml) throws IOException, ClassNotFoundException {
         if (logger.isDebugEnabled()) {
             logger.debug(logMessage("Starting PU with [" + springXml + "]"));
@@ -388,26 +395,12 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         //create PU Container
         ProcessingUnitContainerProvider factory;
         // identify if this is a web app
-        InputStream webXml = null;
-        try {
-            webXml = new URL(codeserver + puPath + "/WEB-INF/web.xml").openStream();
-        } catch (IOException e) {
-            // does not exists
-        }
+        final InputStream webXml = openUrlStream(codeserver + puPath + "/WEB-INF/web.xml");
         // identify if this is a .NET one
-        InputStream puConfig = null;
-        try {
-            puConfig = new URL(codeserver + puPath + "/pu.config").openStream();
-        } catch (IOException e) {
-            // does not exists
-        }
+        final InputStream puConfig = openUrlStream(codeserver + puPath + "/pu.config");
         // identify if this is a .NET interop one
-        InputStream puInteropConfig = null;
-        try {
-            puInteropConfig = new URL(codeserver + puPath + "/pu.interop.config").openStream();
-        } catch (IOException e) {
-            // does not exists
-        }
+        final InputStream puInteropConfig = openUrlStream(codeserver + puPath + "/pu.interop.config");
+
         String processingUnitContainerProviderClass;
         if (webXml != null) {
             webXml.close();
@@ -758,6 +751,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
         factory.setClusterInfo(clusterInfo);
         factory.setBeanLevelProperties(beanLevelProperties);
+        factory.setMetricRegistrator(puMetricRegistrator);
 
         container = factory.createContainer();
 
@@ -778,8 +772,6 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         buildServiceMonitors();
 
         buildInvocableServices();
-
-        buildMetrics(puMetricRegistrator);
 
         this.puDetails = new PUDetails(context.getParentServiceID(), clusterInfo, beanLevelProperties, serviceDetails.toArray(new Object[serviceDetails.size()]));
 
@@ -817,88 +809,6 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         if (bid == null)
             bid = Integer.valueOf(0);
         return id + "_" + (bid+1);
-    }
-
-    private void buildMetrics(MetricRegistrator registrator) {
-        final Collection<ServiceMetricProvider> metricProviders = container.getServiceMetricProviders();
-        for (ServiceMetricProvider metricProvider : metricProviders)
-            metricProvider.setMetricRegistrator(registrator.extend(metricProvider.getMetricPrefix()));
-
-        if (container instanceof ApplicationContextProcessingUnitContainer) {
-            ApplicationContext applicationContext = ((ApplicationContextProcessingUnitContainer)container).getApplicationContext();
-            for (String beanName : applicationContext.getBeanDefinitionNames()) {
-                Object bean = applicationContext.getBean(beanName);
-                // safety check, e.g. in case bean is org.springframework.beans.factory.config.MethodInvokingFactoryBean
-                if (bean == null)
-                    continue;
-                Class<?> objClz = bean.getClass();
-                if (logger.isDebugEnabled())
-                    logger.debug("Scanning Bean " + beanName + " [class " + objClz.getName() + "] for @ServiceMetric methods");
-                for (Method m : objClz.getDeclaredMethods()) {
-                    ServiceMetric annotation = m.getAnnotation(ServiceMetric.class);
-                    if (annotation != null)
-                        processMetricMethod(registrator, beanName, bean, m, annotation);
-                }
-            }
-        }
-    }
-
-    private void processMetricMethod(MetricRegistrator registrator, String beanName, Object bean, Method method, ServiceMetric annotation) {
-        if (logger.isDebugEnabled())
-            logger.debug("Bean " + beanName + " [class " + bean.getClass().getName() + "] has metric method " + method.getName());
-
-        final Metric metric = getMetricFromMethod(method, bean);
-        if (metric != null) {
-            String name = annotation.name();
-            if (logger.isDebugEnabled())
-                logger.debug("Registering ServiceMetric '" + name + "' => " + metric);
-            registrator.register(name, metric);
-        }
-    }
-
-    private static Metric getMetricFromMethod(final Method method, final Object bean) {
-        if (method.getParameterTypes().length != 0) {
-            if (logger.isWarnEnabled())
-                logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName()+
-                        " is skipped - metric method cannot have parameters");
-            return null;
-        }
-        if (method.getReturnType().equals(Void.TYPE)) {
-            if (logger.isWarnEnabled())
-                logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
-                        " is skipped - metric method cannot return void");
-            return null;
-        }
-
-        if (Modifier.isStatic(method.getModifiers())) {
-            if (logger.isWarnEnabled())
-                logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
-                        " is skipped - metric method cannot be static");
-            return null;
-        }
-
-        if (Metric.class.isAssignableFrom(method.getReturnType())) {
-            try {
-                return (Metric) method.invoke(bean);
-            } catch (IllegalAccessException e) {
-                if (logger.isWarnEnabled())
-                    logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
-                            " is skipped - failed to get metric - " + e.getMessage());
-                return null;
-            } catch (InvocationTargetException e) {
-                if (logger.isWarnEnabled())
-                    logger.warn("Metric registration of method " + method.getName() + " in " + bean.getClass().getName() +
-                            " is skipped - failed to get metric - " + e.getMessage());
-                return null;
-            }
-        }
-
-        return new Gauge<Object>() {
-            @Override
-            public Object getValue() throws Exception {
-                return method.invoke(bean);
-            }
-        };
     }
 
     private long copyPu(String puPath, File puWorkFolder) throws IOException {

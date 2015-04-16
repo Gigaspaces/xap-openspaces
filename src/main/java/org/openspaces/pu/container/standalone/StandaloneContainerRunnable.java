@@ -17,12 +17,9 @@
 package org.openspaces.pu.container.standalone;
 
 import org.openspaces.core.cluster.ClusterInfo;
-import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
-import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
 import org.openspaces.core.properties.BeanLevelProperties;
-import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
-import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.pu.container.CannotCreateContainerException;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.openspaces.pu.container.spi.ApplicationContextProcessingUnitContainerProvider;
 import org.openspaces.pu.container.support.ResourceApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -49,9 +46,7 @@ import java.util.List;
  */
 public class StandaloneContainerRunnable implements Runnable {
 
-    private BeanLevelProperties beanLevelProperties;
-
-    private ClusterInfo clusterInfo;
+    private final ProcessingUnitContainerConfig config = new ProcessingUnitContainerConfig();
 
     private List<String> configLocations;
 
@@ -78,8 +73,8 @@ public class StandaloneContainerRunnable implements Runnable {
      */
     public StandaloneContainerRunnable(BeanLevelProperties beanLevelProperties, ClusterInfo clusterInfo,
             List<String> configLocations) {
-        this.beanLevelProperties = beanLevelProperties;
-        this.clusterInfo = clusterInfo;
+        this.config.setBeanLevelProperties(beanLevelProperties);
+        this.config.setClusterInfo(clusterInfo);
         this.configLocations = configLocations;
     }
 
@@ -117,16 +112,7 @@ public class StandaloneContainerRunnable implements Runnable {
                 resources = tempResourcesList.toArray(new Resource[tempResourcesList.size()]);
             }
             // create the Spring application context
-            applicationContext = new ResourceApplicationContext(resources, null);
-            // add config information if provided
-            if (beanLevelProperties != null) {
-                applicationContext.addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(beanLevelProperties, clusterInfo));
-                applicationContext.addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(beanLevelProperties));
-            }
-            if (clusterInfo != null) {
-                applicationContext.addBeanPostProcessor(new ClusterInfoBeanPostProcessor(clusterInfo));
-            }
-            applicationContext.addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(clusterInfo));
+            applicationContext = new ResourceApplicationContext(resources, null, config);
             // "start" the application context
             applicationContext.refresh();
             this.running = true;

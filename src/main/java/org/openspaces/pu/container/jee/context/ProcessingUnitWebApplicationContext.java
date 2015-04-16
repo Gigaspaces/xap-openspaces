@@ -16,6 +16,11 @@
 
 package org.openspaces.pu.container.jee.context;
 
+import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
+import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
+import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
+import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
+import org.openspaces.pu.container.ProcessingUnitContainerConfig;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -32,6 +37,17 @@ import java.util.List;
 public class ProcessingUnitWebApplicationContext extends XmlWebApplicationContext {
 
     private List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
+
+    public ProcessingUnitWebApplicationContext(ProcessingUnitContainerConfig config) {
+        if (config.getBeanLevelProperties() != null) {
+            addBeanFactoryPostProcessor(new BeanLevelPropertyPlaceholderConfigurer(config.getBeanLevelProperties(), config.getClusterInfo()));
+            addBeanPostProcessor(new BeanLevelPropertyBeanPostProcessor(config.getBeanLevelProperties()));
+        }
+        if (config.getClusterInfo() != null) {
+            addBeanPostProcessor(new ClusterInfoBeanPostProcessor(config.getClusterInfo()));
+            addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(config.getClusterInfo()));
+        }
+    }
 
     /**
      * Adds Spring bean post processor. Note, this method should be called before the

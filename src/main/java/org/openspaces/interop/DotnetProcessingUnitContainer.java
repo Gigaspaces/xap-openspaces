@@ -62,11 +62,6 @@ public class DotnetProcessingUnitContainer extends ProcessingUnitContainer {
         }
         super.close();
     }
-    
-    @Override
-    public Collection<ServiceMetricProvider> getServiceMetricProviders() {
-        return dotnetProcessingUnitBean.getServiceMetricProviders();
-    }
 
     @Override
     public Collection<ServiceDetailsProvider> getServiceDetailsProviders() {
