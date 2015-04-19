@@ -6,7 +6,7 @@
 
 
 
-       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/10.0/sla/openspaces-sla.xsd">
+       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/10.1/sla/openspaces-sla.xsd">
 
     <os-sla:sla>
         <os-sla:member-alive-indicator invocation-delay="1" retry-count="2" retry-timeout="3" />
