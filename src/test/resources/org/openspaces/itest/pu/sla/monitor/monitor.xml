@@ -6,7 +6,7 @@
 
 
 
-       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/10.0/sla/openspaces-sla.xsd">
+       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/10.2/sla/openspaces-sla.xsd">
 
     <os-sla:sla>
         <os-sla:monitors>
