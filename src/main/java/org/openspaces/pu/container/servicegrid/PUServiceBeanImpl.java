@@ -723,9 +723,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         for (Map.Entry<String, String> entry : puTags.entrySet())
             beanLevelProperties.getContextProperties().setProperty("metrics." + entry.getKey(), entry.getValue());
         //inject quiesce state changed event in order let space know to be initialized in quiesced mode
-        if (quiesceDetails != null)
-            beanLevelProperties.getContextProperties().put("quiesce.state_changed_event",
-                    new QuiesceStateChangedEvent(quiesceDetails.getStatus(), quiesceDetails.getToken(), quiesceDetails.getDescription()));
+        if (quiesceDetails != null && quiesceDetails.getStatus() == QuiesceState.QUIESCED) {
+            beanLevelProperties.getContextProperties().setProperty("quiesce.token", quiesceDetails.getToken().toString());
+            beanLevelProperties.getContextProperties().setProperty("quiesce.description", quiesceDetails.getDescription());
+        }
         factory = createContainerProvider(processingUnitContainerProviderClass);
         factory.setDeployPath(deployPath);
         factory.setClassLoader(contextClassLoader);
