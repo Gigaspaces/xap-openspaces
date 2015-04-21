@@ -160,10 +160,10 @@ public class AlertBeanUtils {
     public static String getSpaceInstanceDescription(SpaceInstance spaceInstance) {
         StringBuilder sb = new StringBuilder();
         if (spaceInstance.getSpaceUrl().getSchema().equals("mirror")) {
-            sb.append("Mirror ").append(spaceInstance.getSpace().getName()).append(" on ").append(
+            sb.append("Mirror ").append(spaceInstance.getSpaceInstanceName()).append(" on ").append(
                     getMachineDescription(spaceInstance.getMachine()));
        }else if (spaceInstance.getSpaceUrl().getSchema().equals("default")) {
-           sb.append("Space ").append(spaceInstance.getSpace().getName()).append(" on ").append(
+           sb.append("Space ").append(spaceInstance.getSpaceInstanceName()).append(" on ").append(
                    getMachineDescription(spaceInstance.getMachine()));
        }else {
             sb.append(spaceInstance.getSpace().getName())
