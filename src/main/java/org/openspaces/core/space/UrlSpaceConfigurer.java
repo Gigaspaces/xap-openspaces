@@ -335,6 +335,12 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
         urlSpaceFactoryBean.setPrimaryBackupListener(primaryBackupListener);
         return this;
     }
+
+    public UrlSpaceConfigurer enableLastPrimaryStateKeeper(Boolean enableLastPrimaryStateKeeper) {
+        validate();
+        urlSpaceFactoryBean.setEnableLastPrimaryStateKeeper(enableLastPrimaryStateKeeper);
+        return this;
+    }
     
     
     /**

@@ -57,6 +57,10 @@ public class InternalSpaceFactory {
         factory.setCachePolicyProperties(cachePolicy == null ? null : cachePolicy.toProps());
     }
 
+    public void setEnableLastPrimaryStateKeeper(Boolean enableLastPrimaryStateKeeper) {
+        factory.setEnableLastPrimaryStateKeeper(enableLastPrimaryStateKeeper == null ? false : enableLastPrimaryStateKeeper);
+    }
+
     public void setGatewayTargets(GatewayTargetsFactoryBean gatewayTargets) {
         factory.setGatewayPolicy(gatewayTargets == null ? null : gatewayTargets.asGatewaysPolicy());
     }
