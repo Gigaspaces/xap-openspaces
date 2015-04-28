@@ -919,6 +919,8 @@ public class DefaultAdmin implements InternalAdmin {
                 for (Zone zone : lookupService.getZones().values()) {
                     ((InternalLookupServices) zone.getLookupServices()).removeLookupService(uid);
                 }
+
+                processAgentOnServiceRemoval(lookupService);
             }
     
             flushEvents();
@@ -988,6 +990,8 @@ public class DefaultAdmin implements InternalAdmin {
                 for (Zone zone : gridServiceManager.getZones().values()) {
                     ((InternalGridServiceManagers) zone.getGridServiceManagers()).removeGridServiceManager(uid);
                 }
+
+                processAgentOnServiceRemoval(gridServiceManager);
             }
     
             flushEvents();
@@ -1054,6 +1058,8 @@ public class DefaultAdmin implements InternalAdmin {
                 for (Zone zone : elasticServiceManager.getZones().values()) {
                     ((InternalElasticServiceManagers) zone.getElasticServiceManagers()).removeElasticServiceManager(uid);
                 }
+
+                processAgentOnServiceRemoval(elasticServiceManager);
             }
     
             flushEvents();
@@ -1119,10 +1125,7 @@ public class DefaultAdmin implements InternalAdmin {
                     ((InternalGridServiceContainers) zone.getGridServiceContainers()).removeGridServiceContainer(uid);
                 }
                 
-                InternalGridServiceAgent agent = (InternalGridServiceAgent)gridServiceContainer.getGridServiceAgent();
-                if (agent != null) {
-                    agent.removeAgentGridComponent(gridServiceContainer);
-                }
+                processAgentOnServiceRemoval(gridServiceContainer);
             }
     
             flushEvents();
@@ -1326,6 +1329,13 @@ public class DefaultAdmin implements InternalAdmin {
         } else {
             agentGridComponent.setGridServiceAgent(gridServiceAgent);
             gridServiceAgent.addAgentGridComponent(agentGridComponent);
+        }
+    }
+
+    private void processAgentOnServiceRemoval(InternalAgentGridComponent agentGridComponent) {
+        InternalGridServiceAgent agent = (InternalGridServiceAgent)agentGridComponent.getGridServiceAgent();
+        if (agent != null) {
+            agent.removeAgentGridComponent(agentGridComponent);
         }
     }
 
