@@ -158,6 +158,11 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implemen
             setCachePolicy(blobStoreDataPolicy.asCachePolicy());
     }
 
+    public void setEnableLastPrimaryStateKeeper(Boolean enableLastPrimaryStateKeeper) {
+        if (enableLastPrimaryStateKeeper != null)
+            factory.setEnableLastPrimaryStateKeeper(enableLastPrimaryStateKeeper);
+    }
+
 	@Override
 	public void setMergedBeanLevelProperties(Properties beanLevelProperties) {
         factory.getFactory().setBeanLevelProperties(beanLevelProperties);
