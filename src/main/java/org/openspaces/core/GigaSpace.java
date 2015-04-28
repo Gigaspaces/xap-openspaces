@@ -1200,10 +1200,9 @@ public interface GigaSpace {
     /**
      * Read objects from the space matching their IDs and the specified class.
      *
-     * <p>Note, if the space is partitioned and the Class defines a specific property
-     * for its routing value (which means that the ID property is not used for routing),
-     * the operation will broadcast to all partitions. The {@link #readByIds(Class, Object[], Object)} overload
-     * can be used to specify the routing explicitly.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will broadcast to all partitions. Use {@link #readByIds(Class, Object[], Object)} to specify
+     * the routing explicitly and avoid broadcast if needed.
      *
      * @param clazz The class.
      * @param ids   The object IDs array.
@@ -1220,8 +1219,9 @@ public interface GigaSpace {
     /**
      * Read objects from the space matching their IDs, the specified class and routing key.
      *
-     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
-     * to all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKey</code>. If it is null, the operation will broadcast
+     * to all partitions.
      *
      * @param clazz         The class.
      * @param ids           The object IDs array.
@@ -1240,8 +1240,9 @@ public interface GigaSpace {
      * Read objects from the space matching their IDs, the specified class type and routing key, with the
      * provided {@link ReadModifiers}.
      *
-     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
-     * to all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKey</code>. If it is null, the operation will broadcast
+     * to all partitions.
      *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
@@ -1258,10 +1259,10 @@ public interface GigaSpace {
     /**
      * Read objects from the space matching their IDs, the specified class and the routing keys.
      *
-     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
-     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
-     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKeys</code>. If it is null, the operation will broadcast
+     * to all partitions. <code>routingKeys</code> should be correlated with <code>ids</code>, i.e. their length should
+     * be the same, and the routing key of ID i in the IDs array is the element at position i in the routing keys array.
      *
      * @param clazz         The class.
      * @param ids           The object IDs array.
@@ -1280,10 +1281,10 @@ public interface GigaSpace {
      * Read objects from the space matching their IDs, the specified class and the routing keys, with the
      * provided {@link ReadModifiers}.
      *
-     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
-     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
-     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKeys</code>. If it is null, the operation will broadcast
+     * to all partitions. <code>routingKeys</code> should be correlated with <code>ids</code>, i.e. their length should
+     * be the same, and the routing key of ID i in the IDs array is the element at position i in the routing keys array.
      *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
@@ -1326,10 +1327,9 @@ public interface GigaSpace {
     /**
      * Take (remove) objects from the space matching their IDs and the specified class.
      *
-     * <p>Note, if the space is partitioned, or the Class defines a specific property
-     * for its routing value (which means that the ID property is not used for routing),
-     * the operation will broadcast to all partitions. The {@link #takeByIds(Class, Object[], Object)} overload
-     * can be used to specify the routing explicitly.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will broadcast to all partitions. Use {@link #readByIds(Class, Object[], Object)} to specify
+     * the routing explicitly and avoid broadcast if needed.
      *
      * @param clazz The class.
      * @param ids   The object IDs array.
@@ -1346,8 +1346,9 @@ public interface GigaSpace {
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and routing key.
      *
-     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
-     * to all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKey</code>. If it is null, the operation will broadcast
+     * to all partitions.
      *
      * @param clazz         The class.
      * @param ids           The object IDs array.
@@ -1366,8 +1367,9 @@ public interface GigaSpace {
      * Take (remove) objects from the space matching their IDs, the specified class type and routing key, with the
      * provided {@link ReadModifiers}.
      *
-     * <p>Note, if routing key is null and the cluster is partitioned, the operation will broadcast
-     * to all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKey</code>. If it is null, the operation will broadcast
+     * to all partitions.
      *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
@@ -1383,10 +1385,10 @@ public interface GigaSpace {
     /**
      * Take (remove) objects from the space matching their IDs, the specified class and the routing keys.
      *
-     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
-     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
-     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKeys</code>. If it is null, the operation will broadcast
+     * to all partitions. <code>routingKeys</code> should be correlated with <code>ids</code>, i.e. their length should
+     * be the same, and the routing key of ID i in the IDs array is the element at position i in the routing keys array.
      *
      * @param clazz         The class.
      * @param ids           The object IDs array.
@@ -1405,10 +1407,10 @@ public interface GigaSpace {
      * Take (remove) objects from the space matching their IDs, the specified class and the routing keys, with the
      * provided {@link ReadModifiers}.
      *
-     * <p>Note, the IDs array and routing keys array are correlated and should be of the same size.
-     * The routing key of ID i in the IDs array is the element at position i in the routing keys array.
-     * If routingKeys is <code>null</code> and the cluster is partitioned, the operation will broadcast to
-     * all of the partitions.
+     * <p>Note, if the space is partitioned and the Class defines that routing is not done via the Id property,
+     * the operation will be routed according to <code>routingKeys</code>. If it is null, the operation will broadcast
+     * to all partitions. <code>routingKeys</code> should be correlated with <code>ids</code>, i.e. their length should
+     * be the same, and the routing key of ID i in the IDs array is the element at position i in the routing keys array.
      *
      * <p>{@link ReadModifiers#FIFO} is not supported by this operation -
      * the results are always ordered in correlation with the input IDs array.
