@@ -153,6 +153,11 @@ public abstract class AbstractSpaceBeanDefinitionParser extends AbstractSimpleBe
             builder.addPropertyValue("cachePolicy", cachePolicy);
         }
 
+        String enableLastPrimaryStateKeeper = element.getAttribute("enable-last-primary-state-keeper");
+        if (enableLastPrimaryStateKeeper != null) {
+            builder.addPropertyValue("enableLastPrimaryStateKeeper", enableLastPrimaryStateKeeper);
+        }
+
         List<Element> documentTypeElements = DomUtils.getChildElementsByTagName(element, "space-type");
         ManagedList typesList = new ManagedList();
         for (Element ele : documentTypeElements) {
