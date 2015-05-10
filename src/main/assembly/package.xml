@@ -134,6 +134,7 @@
 				<include>commons-pool-*</include>
 				<include>commons-lang-*</include>
 				<include>commons-dbcp-*</include>
+                <include>commons-codec-*</include>
 			</includes>
 		</fileSet>	
 		<!--  Add javadoc file to package -->
