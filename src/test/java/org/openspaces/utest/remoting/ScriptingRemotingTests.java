@@ -141,8 +141,7 @@ public class ScriptingRemotingTests   {
         assertTrue(cacheTime < nonCacheTime);
     }
 
-     //TOOD this test is temporarily disabled.
-     //@Test
+     @Test
      public void testLazyLoadingGroovyScript() {
         gigaSpace.clear(null);
         Integer value = (Integer) executorScriptingExecutor.execute(new ResourceLazyLoadingScript("testLazyLoadingGroovyScript", "groovy", "classpath:/org/openspaces/itest/remoting/scripting/test.groovy"));
