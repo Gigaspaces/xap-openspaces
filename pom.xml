@@ -613,7 +613,7 @@
                     </additionalJOptions>
                     <doctitle>&lt;h1&gt;GigaSpaces XAP 9.5 API&lt;/h1&gt;</doctitle>
                     <bottom>
-                        &lt;i&gt;Copyright &copy;
+                        &lt;i&gt;Copyright &amp;copy;
                         &lt;a href="http://www.gigaspaces.com/"
                         target="_top"&gt;GigaSpaces&lt;/a&gt;.&lt;/i&gt;
                     </bottom>
