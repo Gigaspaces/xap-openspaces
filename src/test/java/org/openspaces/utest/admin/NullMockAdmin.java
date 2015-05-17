@@ -325,6 +325,11 @@ public class NullMockAdmin implements InternalAdmin {
         
     }
 
+    @Override
+    public void pushScheduleMonitorCorrelatedEvent(Object listener, Runnable notifier) {
+        // TODO Auto-generated method stub
+    }
+
     public void pushEventAsFirst(Object listener, Runnable notifier) {
         // TODO Auto-generated method stub
         

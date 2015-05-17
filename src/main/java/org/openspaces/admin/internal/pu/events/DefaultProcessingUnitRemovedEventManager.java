@@ -44,7 +44,7 @@ public class DefaultProcessingUnitRemovedEventManager implements InternalProcess
 
     public void processingUnitRemoved(final ProcessingUnit processingUnit) {
         for (final ProcessingUnitRemovedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitRemoved(processingUnit);
                 }

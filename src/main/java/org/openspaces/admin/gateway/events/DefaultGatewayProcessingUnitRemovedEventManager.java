@@ -46,10 +46,10 @@ public class DefaultGatewayProcessingUnitRemovedEventManager implements Internal
     @Override
     public void gatewayProcessingUnitRemoved(final GatewayProcessingUnit gatewayProcessingUnit) {
         for (final GatewayProcessingUnitRemovedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
-            	@Override
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
+                @Override
                 public void run() {
-                    listener.gatewayProcessingUnitRemoved( gatewayProcessingUnit );
+                    listener.gatewayProcessingUnitRemoved(gatewayProcessingUnit);
                 }
             });
         }

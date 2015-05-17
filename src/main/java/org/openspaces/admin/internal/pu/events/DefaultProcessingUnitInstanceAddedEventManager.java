@@ -44,7 +44,7 @@ public class DefaultProcessingUnitInstanceAddedEventManager implements InternalP
 
     public void processingUnitInstanceAdded(final ProcessingUnitInstance processingUnitInstance) {
         for (final ProcessingUnitInstanceAddedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitInstanceAdded(processingUnitInstance);
                 }

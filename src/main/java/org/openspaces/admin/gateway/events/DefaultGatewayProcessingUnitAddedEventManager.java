@@ -46,10 +46,10 @@ public class DefaultGatewayProcessingUnitAddedEventManager implements InternalGa
     @Override
     public void gatewayProcessingUnitAdded(final GatewayProcessingUnit gatewayProcessingUnit) {
         for (final GatewayProcessingUnitAddedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
-            	@Override
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
+                @Override
                 public void run() {
-                    listener.gatewayProcessingUnitAdded( gatewayProcessingUnit );
+                    listener.gatewayProcessingUnitAdded(gatewayProcessingUnit);
                 }
             });
         }

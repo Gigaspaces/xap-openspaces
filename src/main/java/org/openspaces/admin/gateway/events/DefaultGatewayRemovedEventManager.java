@@ -46,10 +46,10 @@ public class DefaultGatewayRemovedEventManager implements InternalGatewayRemoved
     @Override
     public void gatewayRemoved(final Gateway gateway) {
         for (final GatewayRemovedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
-            	@Override
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
+                @Override
                 public void run() {
-                    listener.gatewayRemoved( gateway );
+                    listener.gatewayRemoved(gateway);
                 }
             });
         }

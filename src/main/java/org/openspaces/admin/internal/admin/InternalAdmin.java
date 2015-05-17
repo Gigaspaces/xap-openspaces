@@ -64,6 +64,11 @@ public interface InternalAdmin extends Admin {
 
     void pushEvent(Object listener, Runnable notifier);
 
+    /**
+     * All events that need to be correlated with the Admin ScheduledMonitor polling mechanism.
+     */
+    void pushScheduleMonitorCorrelatedEvent(Object listener, Runnable notifier);
+
     void pushEventAsFirst(Object listener, Runnable notifier);
 
     void raiseEvent(Object listener, Runnable notifier);

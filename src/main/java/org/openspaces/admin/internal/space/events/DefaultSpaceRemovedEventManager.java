@@ -44,7 +44,7 @@ public class DefaultSpaceRemovedEventManager implements InternalSpaceRemovedEven
 
     public void spaceRemoved(final Space space) {
         for (final SpaceRemovedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.spaceRemoved(space);
                 }

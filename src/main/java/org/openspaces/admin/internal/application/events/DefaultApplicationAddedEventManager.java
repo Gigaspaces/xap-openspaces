@@ -42,7 +42,7 @@ public class DefaultApplicationAddedEventManager implements InternalApplicationA
     @Override
     public void applicationAdded(final Application application) {
         for (final ApplicationAddedEventListener listener : applicationAddedEventListeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 @Override
                 public void run() {
                     listener.applicationAdded(application);

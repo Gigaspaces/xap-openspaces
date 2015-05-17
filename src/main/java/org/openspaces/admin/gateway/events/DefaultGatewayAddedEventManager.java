@@ -46,10 +46,10 @@ public class DefaultGatewayAddedEventManager implements InternalGatewayAddedEven
     @Override
     public void gatewayAdded(final Gateway gateway ) {
         for (final GatewayAddedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
-            	@Override
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
+                @Override
                 public void run() {
-                    listener.gatewayAdded( gateway );
+                    listener.gatewayAdded(gateway);
                 }
             });
         }

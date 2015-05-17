@@ -48,7 +48,7 @@ public class DefaultProcessingUnitStatusChangedEventManager implements InternalP
 
     public void processingUnitStatusChanged(final ProcessingUnitStatusChangedEvent event) {
         for (final ProcessingUnitStatusChangedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitStatusChanged(event);
                 }

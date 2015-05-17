@@ -40,7 +40,7 @@ public class DefaultSpaceInstanceRemovedEventManager implements InternalSpaceIns
 
     public void spaceInstanceRemoved(final SpaceInstance spaceInstance) {
         for (final SpaceInstanceRemovedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.spaceInstanceRemoved(spaceInstance);
                 }

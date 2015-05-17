@@ -44,7 +44,7 @@ public class DefaultProcessingUnitAddedEventManager implements InternalProcessin
 
     public void processingUnitAdded(final ProcessingUnit processingUnit) {
         for (final ProcessingUnitAddedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitAdded(processingUnit);
                 }

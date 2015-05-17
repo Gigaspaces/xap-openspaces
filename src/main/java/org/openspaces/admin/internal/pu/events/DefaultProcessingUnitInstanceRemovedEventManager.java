@@ -40,7 +40,7 @@ public class DefaultProcessingUnitInstanceRemovedEventManager implements Interna
 
     public void processingUnitInstanceRemoved(final ProcessingUnitInstance processingUnitInstance) {
         for (final ProcessingUnitInstanceRemovedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitInstanceRemoved(processingUnitInstance);
                 }

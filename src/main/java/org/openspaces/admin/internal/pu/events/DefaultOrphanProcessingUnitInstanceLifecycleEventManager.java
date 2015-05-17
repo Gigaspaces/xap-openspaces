@@ -44,7 +44,7 @@ public class DefaultOrphanProcessingUnitInstanceLifecycleEventManager implements
     @Override
     public void orphanProcessingUnitInstanceRemoved(final ProcessingUnitInstance processingUnitInstance) {
         for (final InternalOrphanProcessingUnitInstanceLifecycleEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.orphanProcessingUnitInstanceRemoved(processingUnitInstance);
                 }
@@ -57,7 +57,7 @@ public class DefaultOrphanProcessingUnitInstanceLifecycleEventManager implements
 	public void orphanProcessingUnitInstanceAdded(final ProcessingUnitInstance processingUnitInstance) {
 		
 		for (final InternalOrphanProcessingUnitInstanceLifecycleEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.orphanProcessingUnitInstanceAdded(processingUnitInstance);
                 }

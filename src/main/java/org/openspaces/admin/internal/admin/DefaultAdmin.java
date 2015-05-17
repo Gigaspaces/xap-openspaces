@@ -246,6 +246,7 @@ public class DefaultAdmin implements InternalAdmin {
     private final ExecutorService longRunningExecutorService;
     
     private LinkedList<Runnable>[] eventsQueue;
+    private LinkedList<Runnable>[] scheduleMonitorCorrelatedEventsQueue;
 
     private volatile long scheduledProcessingUnitMonitorInterval = 1000; // default to one second
 
@@ -310,9 +311,11 @@ public class DefaultAdmin implements InternalAdmin {
         final int numberOfThreads = singleThreadedEventListeners ? 1 :  DEFAULT_EVENT_LISTENER_THREADS;
         this.eventsExecutorServices = new ExecutorService[numberOfThreads];
         eventsQueue = new LinkedList[numberOfThreads];
+        scheduleMonitorCorrelatedEventsQueue = new LinkedList[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {
             eventsExecutorServices[i] = createThreadPoolExecutor("admin-event-executor-thread", 1, singleThreadedEventListeners);
             eventsQueue[i] = new LinkedList<Runnable>();
+            scheduleMonitorCorrelatedEventsQueue[i] = new LinkedList<Runnable>();
         }
         
         if (lifecycleLogger.isTraceEnabled()) {
@@ -716,6 +719,14 @@ public class DefaultAdmin implements InternalAdmin {
     }
 
     @Override
+    public void pushScheduleMonitorCorrelatedEvent(Object listener, Runnable notifier) {
+        assertStateChangesPermitted();
+        synchronized (DefaultAdmin.this) {
+            scheduleMonitorCorrelatedEventsQueue[Math.abs(listener.hashCode() % eventsExecutorServices.length)].add(toLoggerRunnable(notifier));
+        }
+    }
+
+    @Override
     public void pushEventAsFirst(Object listener, Runnable notifier) {
         assertStateChangesPermitted();
         synchronized (DefaultAdmin.this) {
@@ -739,6 +750,26 @@ public class DefaultAdmin implements InternalAdmin {
                     eventsExecutorServices[i].submit(notifier);
                 }
                 eventsQueue[i].clear();
+            }
+        }
+    }
+
+    public void flushScheduleMonitorCorrelatedEvents() {
+        assertStateChangesPermitted();
+        synchronized (DefaultAdmin.this) {
+            if (closeStarted.get()) {
+                //clear all pending events in queue that may have arrived just before closing of the admin.
+                for (LinkedList<Runnable> l : scheduleMonitorCorrelatedEventsQueue) {
+                    l.clear();
+                }
+                return;
+            }
+
+            for (int i = 0; i < eventsExecutorServices.length; i++) {
+                for (Runnable notifier : scheduleMonitorCorrelatedEventsQueue[i]) {
+                    eventsExecutorServices[i].submit(notifier);
+                }
+                scheduleMonitorCorrelatedEventsQueue[i].clear();
             }
         }
     }
@@ -1956,6 +1987,7 @@ public class DefaultAdmin implements InternalAdmin {
                 }
 
                 flushEvents();
+                flushScheduleMonitorCorrelatedEvents();
             }
         }
 

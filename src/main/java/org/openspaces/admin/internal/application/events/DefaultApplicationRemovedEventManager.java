@@ -42,7 +42,7 @@ public class DefaultApplicationRemovedEventManager implements InternalApplicatio
     @Override
     public void applicationRemoved(final Application application) {
         for (final ApplicationRemovedEventListener listener : applicationRemovedEventListeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 @Override
                 public void run() {
                     listener.applicationRemoved(application);

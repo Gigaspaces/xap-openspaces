@@ -45,7 +45,7 @@ public class DefaultProcessingUnitSpaceCorrelatedEventManager implements Interna
 
     public void processingUnitSpaceCorrelated(final ProcessingUnitSpaceCorrelatedEvent event) {
         for (final ProcessingUnitSpaceCorrelatedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitSpaceCorrelated(event);
                 }

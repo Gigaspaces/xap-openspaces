@@ -99,7 +99,7 @@ public class DefaultProcessingUnitInstanceProvisionStatusChangedEventManager imp
             // We delay the event until the next 'flushEvents()' is called, since GSCs and processing
             // unit instances may have not been discovered yet. We make a best effort to return a 
             // value (instead of null) from the calls to event.getGridServiceContainer() and event.getProcessingUnitInstance()
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.processingUnitInstanceProvisionStatusChanged(event);
                 }

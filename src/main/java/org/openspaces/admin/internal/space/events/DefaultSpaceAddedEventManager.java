@@ -45,7 +45,7 @@ public class DefaultSpaceAddedEventManager implements InternalSpaceAddedEventMan
     @Override
     public void spaceAdded(final Space space) {
         for (final SpaceAddedEventListener listener : listeners) {
-            admin.pushEvent(listener, new Runnable() {
+            admin.pushScheduleMonitorCorrelatedEvent(listener, new Runnable() {
                 public void run() {
                     listener.spaceAdded(space);
                 }
