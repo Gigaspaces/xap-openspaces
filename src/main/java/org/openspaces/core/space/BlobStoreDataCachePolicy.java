@@ -34,6 +34,8 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
     private Boolean recoverFromBlobStore;
+    private Boolean persistent;
+
     private BlobStoreStorageHandler blobStoreHandler;
 
     private static final long DEFAULT_AVG_OBJECT_SIZE_KB = 5;
@@ -56,6 +58,10 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     public void setRecoverFromBlobStore(Boolean recoverFromBlobStore) {
         this.recoverFromBlobStore = recoverFromBlobStore;
+    }
+
+    public void setPersistent(Boolean persistent) {
+        this.persistent = persistent;
     }
 
     public Properties toProps() {
@@ -92,6 +98,12 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
         if(recoverFromBlobStore != null){
             props.put(Constants.CacheManager.CACHE_MANAGER_RECOVER_FROM_BLOBSTORE_PROP, String.valueOf(recoverFromBlobStore));
+        }
+
+        if(persistent != null){
+            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_PERSISTENT_PROP, String.valueOf(persistent));
+        }else{
+            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_PERSISTENT_PROP, String.valueOf(true));
         }
 
         if(blobStoreHandler != null){

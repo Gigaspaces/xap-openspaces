@@ -31,6 +31,8 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
     private Boolean recoverFromBlobStore;
+    private Boolean persistent;
+
     private BlobStoreStorageHandler blobStoreHandler;
 
     public Long getAvgObjectSizeKB() {
@@ -57,6 +59,14 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
         this.recoverFromBlobStore = recoverFromBlobStore;
     }
 
+    public Boolean getPersistent() {
+        return persistent;
+    }
+
+    public void setPersistent(Boolean persistent) {
+        this.persistent = persistent;
+    }
+
     public BlobStoreStorageHandler getBlobStoreHandler() {
         return blobStoreHandler;
     }
@@ -79,6 +89,11 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
             policy.setRecoverFromBlobStore(recoverFromBlobStore);
         } else {
             policy.setRecoverFromBlobStore(true);
+        }
+        if (persistent != null) {
+            policy.setPersistent(persistent);
+        } else {
+            policy.setPersistent(true);
         }
         if (blobStoreHandler != null)
             policy.setBlobStoreHandler(blobStoreHandler);

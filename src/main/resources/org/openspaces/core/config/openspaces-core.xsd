@@ -223,6 +223,12 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
+                                <xsd:attribute name="persistent" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
                                 <xsd:attribute name="blob-store-handler" type="xsd:string" use="required">
                                     <xsd:annotation>
                                         <xsd:documentation
@@ -667,6 +673,12 @@
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Whether to recover from blob store or not.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="persistent" type="xsd:boolean" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
