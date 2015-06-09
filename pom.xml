@@ -240,7 +240,7 @@
         <dependency>
             <groupId>org.jboss.jbossts</groupId>
             <artifactId>jbossjta</artifactId>
-            <version>4.15.0.Final</version>
+            <version>4.16.6.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.logging</groupId>
