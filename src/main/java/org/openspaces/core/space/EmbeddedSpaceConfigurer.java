@@ -225,10 +225,4 @@ public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
         factoryBean.setBlobStoreDataPolicy(blobStoreDataPolicy);
         return this;
     }
-
-    public EmbeddedSpaceConfigurer enableLastPrimaryStateKeeper(Boolean enableLastPrimaryStateKeeper) {
-        validate();
-        factoryBean.setEnableLastPrimaryStateKeeper(enableLastPrimaryStateKeeper);
-        return this;
-    }
 }

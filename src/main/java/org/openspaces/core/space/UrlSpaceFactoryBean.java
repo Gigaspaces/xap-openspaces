@@ -323,9 +323,4 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         if (blobStoreDataPolicy != null)
             setCachePolicy(blobStoreDataPolicy.asCachePolicy());
     }
-
-    public void setEnableLastPrimaryStateKeeper(Boolean enableLastPrimaryStateKeeper) {
-        if (enableLastPrimaryStateKeeper != null)
-            factory.setEnableLastPrimaryStateKeeper(enableLastPrimaryStateKeeper);
-    }
 }

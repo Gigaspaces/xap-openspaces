@@ -216,13 +216,6 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="recover-from-blob-store" type="xsd:boolean" use="optional">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            Whether to recover from blob store or not.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:attribute>
                                 <xsd:attribute name="persistent" type="xsd:boolean" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
@@ -546,12 +539,6 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="enable-last-primary-state-keeper" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -666,13 +653,6 @@
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Cverage object size.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:attribute>
-                                <xsd:attribute name="recover-from-blob-store" type="xsd:boolean" use="optional">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            Whether to recover from blob store or not.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
@@ -946,12 +926,6 @@
                                     <tool:expected-type type="org.openspaces.core.gateway.GatewayTargetsFactoryBean"/>
                                 </tool:annotation>
                             </xsd:appinfo>
-                        </xsd:annotation>
-                    </xsd:attribute>
-                    <xsd:attribute name="enable-last-primary-state-keeper" type="xsd:boolean">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                            </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
                 </xsd:extension>

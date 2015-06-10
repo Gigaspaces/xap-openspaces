@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.core.space;
 
+import com.gigaspaces.server.blobstore.BlobStoreException;
 import com.gigaspaces.server.blobstore.BlobStoreStorageHandler;
 import com.j_spaces.core.Constants;
 
@@ -33,7 +34,6 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
-    private Boolean recoverFromBlobStore;
     private Boolean persistent;
 
     private BlobStoreStorageHandler blobStoreHandler;
@@ -54,10 +54,6 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
 
     public void setCacheEntriesPercentage(Integer cacheEntriesPercentage) {
         this.cacheEntriesPercentage = cacheEntriesPercentage;
-    }
-
-    public void setRecoverFromBlobStore(Boolean recoverFromBlobStore) {
-        this.recoverFromBlobStore = recoverFromBlobStore;
     }
 
     public void setPersistent(Boolean persistent) {
@@ -93,21 +89,18 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
             blobStoreCacheSize = 0;
         }
 
-        props.setProperty(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_CACHE_SIZE_PROP, String.valueOf(blobStoreCacheSize));
+        props.setProperty(Constants.CacheManager.FULL_CACHE_MANAGER_BLOBSTORE_CACHE_SIZE_PROP, String.valueOf(blobStoreCacheSize));
         _logger.info("Blob Store Cache size [ " +blobStoreCacheSize +" ]");
 
-        if(recoverFromBlobStore != null){
-            props.put(Constants.CacheManager.CACHE_MANAGER_RECOVER_FROM_BLOBSTORE_PROP, String.valueOf(recoverFromBlobStore));
-        }
 
         if(persistent != null){
-            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_PERSISTENT_PROP, String.valueOf(persistent));
+            props.put(Constants.CacheManager.FULL_CACHE_MANAGER_BLOBSTORE_PERSISTENT_PROP, String.valueOf(persistent));
         }else{
-            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_PERSISTENT_PROP, String.valueOf(true));
+            throw new BlobStoreException("persistent attribute in Blobstore space must be configured");
         }
 
         if(blobStoreHandler != null){
-            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_STORAGE_HANDLER_PROP, blobStoreHandler);
+            props.put(Constants.CacheManager.FULL_CACHE_MANAGER_BLOBSTORE_STORAGE_HANDLER_PROP, blobStoreHandler);
         }
 
         return props;

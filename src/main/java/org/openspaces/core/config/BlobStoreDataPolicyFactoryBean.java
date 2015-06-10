@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.openspaces.core.config;
 
+import com.gigaspaces.server.blobstore.BlobStoreException;
 import com.gigaspaces.server.blobstore.BlobStoreStorageHandler;
 import org.openspaces.core.space.BlobStoreDataCachePolicy;
 import org.openspaces.core.space.CachePolicy;
@@ -23,14 +24,13 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * A factory for creating {@link org.openspaces.core.space.BlobStoreDataCachePolicy} instance.
  * @author Kobi
- * @since 10.0.0
+ * @since 10.0.0,10.2.0
  *
  */
 public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
 
     private Long avgObjectSizeKB;
     private Integer cacheEntriesPercentage;
-    private Boolean recoverFromBlobStore;
     private Boolean persistent;
 
     private BlobStoreStorageHandler blobStoreHandler;
@@ -49,14 +49,6 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
 
     public void setCacheEntriesPercentage(Integer cacheEntriesPercentage) {
         this.cacheEntriesPercentage = cacheEntriesPercentage;
-    }
-
-    public Boolean getRecoverFromBlobStore() {
-        return recoverFromBlobStore;
-    }
-
-    public void setRecoverFromBlobStore(Boolean recoverFromBlobStore) {
-        this.recoverFromBlobStore = recoverFromBlobStore;
     }
 
     public Boolean getPersistent() {
@@ -85,15 +77,10 @@ public class BlobStoreDataPolicyFactoryBean implements InitializingBean {
             policy.setAvgObjectSizeKB(avgObjectSizeKB);
         if (cacheEntriesPercentage != null)
             policy.setCacheEntriesPercentage(cacheEntriesPercentage);
-        if (recoverFromBlobStore != null) {
-            policy.setRecoverFromBlobStore(recoverFromBlobStore);
-        } else {
-            policy.setRecoverFromBlobStore(true);
-        }
         if (persistent != null) {
             policy.setPersistent(persistent);
         } else {
-            policy.setPersistent(true);
+            throw new BlobStoreException("persistent attribute in Blobstore space must be configured");
         }
         if (blobStoreHandler != null)
             policy.setBlobStoreHandler(blobStoreHandler);

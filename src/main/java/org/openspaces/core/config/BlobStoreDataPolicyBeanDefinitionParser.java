@@ -32,7 +32,6 @@ public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanD
 
     private static final String AVG_OBJECT_SIZE_KB = "avg-object-size-KB";
     private static final String CACHE_ENTRIES_PERCENTAGE = "cache-entries-percentage";
-    private static final String RECOVER_FROM_BLOB_STORE = "recover-from-blob-store";
     private static final String PERSISTENT = "persistent";
     private static final String STORAGE_HANDLER = "blob-store-handler";
 
@@ -51,10 +50,6 @@ public class BlobStoreDataPolicyBeanDefinitionParser extends AbstractSimpleBeanD
         final String cacheEntriesPercentage = element.getAttribute(CACHE_ENTRIES_PERCENTAGE);
         if (StringUtils.hasText(cacheEntriesPercentage))
             builder.addPropertyValue("cacheEntriesPercentage", cacheEntriesPercentage);
-
-        final String recoverFromBlobStore = element.getAttribute(RECOVER_FROM_BLOB_STORE);
-        if (StringUtils.hasText(recoverFromBlobStore))
-            builder.addPropertyValue("recoverFromBlobStore", recoverFromBlobStore);
 
         final String persistent = element.getAttribute(PERSISTENT);
         if (StringUtils.hasText(persistent))
