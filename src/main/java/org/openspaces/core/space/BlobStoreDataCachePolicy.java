@@ -100,7 +100,7 @@ public class BlobStoreDataCachePolicy implements CachePolicy {
         }
 
         if(blobStoreHandler != null){
-            props.put(Constants.CacheManager.FULL_CACHE_MANAGER_BLOBSTORE_STORAGE_HANDLER_PROP, blobStoreHandler);
+            props.put(Constants.CacheManager.CACHE_MANAGER_BLOBSTORE_STORAGE_HANDLER_PROP, blobStoreHandler);
         }
 
         return props;
