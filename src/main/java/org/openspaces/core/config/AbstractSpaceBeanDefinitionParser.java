@@ -149,6 +149,12 @@ public abstract class AbstractSpaceBeanDefinitionParser extends AbstractSimpleBe
             builder.addPropertyValue("blobStoreDataPolicy", blobStoreDataPolicyFactoryBean);
         }
 
+        Element attributeStoreEle = DomUtils.getChildElementByTagName(element, "attribute-store");
+        if (attributeStoreEle != null) {
+            Object AttributeStoreFactoryBean = parserContext.getDelegate().parsePropertySubElement(attributeStoreEle, builder.getRawBeanDefinition());
+            builder.addPropertyValue("attributeStore", AttributeStoreFactoryBean);
+        }
+
         if (cachePolicy != null) {
             builder.addPropertyValue("cachePolicy", cachePolicy);
         }

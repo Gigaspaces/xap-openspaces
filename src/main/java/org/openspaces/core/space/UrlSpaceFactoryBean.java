@@ -19,8 +19,10 @@ package org.openspaces.core.space;
 import java.util.Map;
 import java.util.Properties;
 
+import com.gigaspaces.internal.attribute_store.AttributeStore;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.config.AttributeStoreFactoryBean;
 import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
 import org.openspaces.core.config.CustomCachePolicyFactoryBean;
 import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
@@ -289,6 +291,9 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         factory.getFactory().setBeanLevelProperties(beanLevelProperties);
     }
 
+    public void setAttributeStore(AttributeStore attributeStore) {
+        factory.setAttributeStore(attributeStore);
+    }
     /**
      * Injected thanks to this bean implementing {@link ClusterInfoAware}. If set will use the
      * cluster information in order to configure the url based on it.
@@ -322,5 +327,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
         if (blobStoreDataPolicy != null)
             setCachePolicy(blobStoreDataPolicy.asCachePolicy());
+    }
+
+    public void setAttributeStore(AttributeStoreFactoryBean attributeStore) {
+        if (attributeStore != null)
+            factory.setAttributeStore(attributeStore.getStoreHandler());
     }
 }

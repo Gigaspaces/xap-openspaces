@@ -64,6 +64,7 @@ public class CoreNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("tx-support", new DistributedTransactionProcessingConfigurationBeanDefinitionParser());
         registerBeanDefinitionParser("custom-cache-policy", new CustomCachePolicyBeanDefinitionParser());
         registerBeanDefinitionParser("blob-store-data-policy", new BlobStoreDataPolicyBeanDefinitionParser());
+        registerBeanDefinitionParser("attribute-store", new AttributeStoreBeanDefinitionParser());
 
         SpaceProxyOperationModifierBeanDefinitionParser defaultModifiersParser = 
                 new SpaceProxyOperationModifierBeanDefinitionParser();

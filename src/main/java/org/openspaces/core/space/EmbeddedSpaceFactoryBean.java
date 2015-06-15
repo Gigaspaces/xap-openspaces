@@ -24,6 +24,7 @@ import com.j_spaces.core.IJSpace;
 
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.core.config.AttributeStoreFactoryBean;
 import org.openspaces.core.config.BlobStoreDataPolicyFactoryBean;
 import org.openspaces.core.config.CustomCachePolicyFactoryBean;
 import org.openspaces.core.gateway.GatewayTargetsFactoryBean;
@@ -156,6 +157,11 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implemen
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
         if (blobStoreDataPolicy != null)
             setCachePolicy(blobStoreDataPolicy.asCachePolicy());
+    }
+
+    public void setAttributeStore(AttributeStoreFactoryBean attributeStore) {
+        if (attributeStore != null)
+            factory.setAttributeStore(attributeStore.getStoreHandler());
     }
 
 	@Override

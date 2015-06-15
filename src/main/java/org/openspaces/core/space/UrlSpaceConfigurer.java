@@ -20,6 +20,7 @@ import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
+import com.gigaspaces.internal.attribute_store.AttributeStore;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
@@ -333,6 +334,15 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     public UrlSpaceConfigurer primaryBackupListener(ISpaceModeListener primaryBackupListener) {
         validate();
         urlSpaceFactoryBean.setPrimaryBackupListener(primaryBackupListener);
+        return this;
+    }
+
+    /**
+     * Sets an attribute store
+     */
+    public UrlSpaceConfigurer attributeStore(AttributeStore attributeStore) {
+        validate();
+        urlSpaceFactoryBean.setAttributeStore(attributeStore);
         return this;
     }
     

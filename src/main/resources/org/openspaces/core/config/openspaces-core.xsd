@@ -241,6 +241,24 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
+                        <xsd:element name="attribute-store">
+                            <xsd:complexType>
+                                <xsd:attribute name="store-handler" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation
+                                                source="java:com.gigaspaces.internal.attribute_store.AttributeStore">
+                                            Properties file based store.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type
+                                                        type="com.gigaspaces.internal.attribute_store.AttributeStore"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
@@ -473,7 +491,7 @@
                     <xsd:attribute name="register-for-space-mode-notifications" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:documentation>
-                                Indicates that this space will register for space mode notifications.
+                                Indicates that this space will register for space mode notifications.-s
                                 Default behavior (if the flag was not set) will register to primary backup notification
                                 if the space was found using an embedded protocol, and will not register for
                                 notification if the space was found using rmi or jini protocols.
@@ -675,6 +693,24 @@
                                             <tool:annotation kind="ref">
                                                 <tool:expected-type
                                                         type="com.j_spaces.core.cache.offHeap.OffHeapStorageHandler"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="attribute-store">
+                            <xsd:complexType>
+                                <xsd:attribute name="store-handler" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation
+                                                source="java:com.gigaspaces.internal.attribute_store.AttributeStore">
+                                            Properties file based store.
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type
+                                                        type="com.gigaspaces.internal.attribute_store.AttributeStore"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -2991,6 +3027,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
     <xsd:simpleType name="percentage">
         <xsd:restriction base="xsd:decimal">
             <xsd:minInclusive value="0"/>
