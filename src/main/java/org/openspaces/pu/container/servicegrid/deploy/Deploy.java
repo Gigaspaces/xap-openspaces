@@ -626,8 +626,24 @@ public class Deploy {
 
     private boolean isOnGsmHost() throws UnknownHostException, RemoteException {
         InetAddress localHost = InetAddress.getLocalHost();
-        InetAddress gsmHost = InetAddress.getByName(gsm.getOSDetails().getHostName());
-        return localHost.equals(gsmHost);
+        InetAddress gsmHostByName = null;
+        InetAddress gsmHostByAddress = null;
+
+        try {
+            gsmHostByName = InetAddress.getByName(gsm.getOSDetails().getHostName());
+        } catch (UnknownHostException e1) {
+            try {
+                gsmHostByAddress = InetAddress.getByName(gsm.getOSDetails().getHostAddress());
+            } catch (UnknownHostException e2) {
+                throw new UnknownHostException("failed to resolve host by name (" + gsm.getOSDetails().getHostName() + ")  - caused by " + e1
+                        + "; failed to resolve host by address (" + gsm.getOSDetails().getHostAddress() + ") - caused by " + e2.toString());
+            }
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("local host: " + localHost + " GSM host-by-name: " + gsmHostByName +" host-by-address: " + gsmHostByAddress);
+        }
+        return localHost.equals(gsmHostByName) || localHost.equals(gsmHostByAddress);
     }
         
     private void processSecurityParameters(BeanLevelProperties beanLevelProperties, Parameter[] params) 
