@@ -19,6 +19,7 @@ package org.openspaces.core.space;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
+import com.gigaspaces.internal.attribute_store.AttributeStore;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
@@ -223,6 +224,15 @@ public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
     public EmbeddedSpaceConfigurer blobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
         validate();
         factoryBean.setBlobStoreDataPolicy(blobStoreDataPolicy);
+        return this;
+    }
+
+    /**
+     * Sets an attribute store
+     */
+    public EmbeddedSpaceConfigurer attributeStore(AttributeStore attributeStore) {
+        validate();
+        factoryBean.setAttributeStore(attributeStore);
         return this;
     }
 }

@@ -18,6 +18,7 @@ package org.openspaces.core.space;
 
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
+import com.gigaspaces.internal.attribute_store.AttributeStore;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
@@ -157,6 +158,10 @@ public class EmbeddedSpaceFactoryBean extends AbstractSpaceFactoryBean  implemen
     public void setBlobStoreDataPolicy(BlobStoreDataPolicyFactoryBean blobStoreDataPolicy) {
         if (blobStoreDataPolicy != null)
             setCachePolicy(blobStoreDataPolicy.asCachePolicy());
+    }
+
+    public void setAttributeStore(AttributeStore attributeStore) {
+        factory.setAttributeStore(attributeStore);
     }
 
     public void setAttributeStore(AttributeStoreFactoryBean attributeStore) {
