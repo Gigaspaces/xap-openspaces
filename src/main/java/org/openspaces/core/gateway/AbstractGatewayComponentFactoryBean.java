@@ -38,9 +38,7 @@ import org.springframework.beans.factory.InitializingBean;
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
-import com.gigaspaces.internal.license.LicenseManager;
 import com.gigaspaces.internal.utils.StringUtils;
-import com.gigaspaces.license.LicenseException;
 import com.gigaspaces.lrmi.ProtocolAdapter;
 import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
@@ -228,11 +226,6 @@ public abstract class AbstractGatewayComponentFactoryBean implements DisposableB
     }
     
     public void afterPropertiesSet() throws Exception {
-        
-        LicenseManager licenseManager = LicenseManager.getInstance();
-        licenseManager.validate();
-        if (!licenseManager.isLicensedForWAN())
-            throw LicenseException.invalid(licenseManager.getLicenseKey(), "This license does not permits GigaSpaces WAN module. Please contact support for more details: http://www.gigaspaces.com/supportcenter");
 
         // Security details provided on deployment
         if (beanLevelProperties != null) {
