@@ -67,6 +67,8 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
 
     private transient Integer instanceId;
 
+    private transient SpaceRemotingServiceExporter serviceExporter;
+
     /**
      * Should not be used. Used for externalizable.
      */
@@ -89,7 +91,18 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
     }
 
     public InternalExecutorResult<T> execute() throws Exception {
-        SpaceRemotingServiceExporter serviceExporter = null;
+        try {
+            Object result = getServiceExporter().invokeExecutor(this);
+            return new InternalExecutorResult<T>((T) result, instanceId);
+        } catch (Throwable e) {
+            throw new InternalExecutorException(e, instanceId, lookupName, methodName);
+        }
+    }
+
+    private SpaceRemotingServiceExporter getServiceExporter() {
+        if (serviceExporter != null)
+            return serviceExporter;
+
         try {
             serviceExporter = (SpaceRemotingServiceExporter) applicationContext.getBean("serviceExporter");
         } catch (NoSuchBeanDefinitionException e) {
@@ -98,15 +111,9 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
                 serviceExporter = (SpaceRemotingServiceExporter) applicationContext.getBean(names[0]);
             }
         }
-        if (serviceExporter == null) {
+        if (serviceExporter == null)
             throw new IllegalStateException("Failed to find remoting service exporter defined within the application context");
-        }
-        try {
-            Object result = serviceExporter.invokeExecutor(this);
-            return new InternalExecutorResult<T>((T) result, instanceId);
-        } catch (Throwable e) {
-            throw new InternalExecutorException(e, instanceId, lookupName, methodName);
-        }
+        return serviceExporter;
     }
 
     public List<AsyncResult<InternalExecutorResult<T>>> reduce(List<AsyncResult<InternalExecutorResult<T>>> results) throws Exception {
