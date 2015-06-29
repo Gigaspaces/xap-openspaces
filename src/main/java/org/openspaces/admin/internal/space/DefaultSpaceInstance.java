@@ -79,6 +79,7 @@ import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.client.SpaceURLParser;
 import com.j_spaces.core.filters.StatisticsHolder;
 import com.j_spaces.kernel.time.SystemTime;
+import org.openspaces.pu.container.servicegrid.PUServiceBeanImpl;
 
 /**
  * @author kimchy
@@ -145,7 +146,7 @@ public class DefaultSpaceInstance extends AbstractGridComponent implements Inter
 
     public DefaultSpaceInstance(ServiceID serviceID, IJSpace directSpace, IInternalRemoteJSpaceAdmin spaceAdmin, InternalAdmin admin, JVMDetails jvmDetails) {
         super(admin, jvmDetails);
-        this.puService = null;
+        this.puService = new PUServiceBeanImpl(); //unmanaged Space
         this.uid = serviceID.toString();
         this.serviceID = serviceID;
         setIJSpace((ISpaceProxy) directSpace);
