@@ -291,7 +291,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
         factory.getFactory().setBeanLevelProperties(beanLevelProperties);
     }
 
-    public void setAttributeStore(AttributeStore attributeStore) {
+    public void attributeStore(AttributeStore attributeStore) {
         factory.setAttributeStore(attributeStore);
     }
     /**

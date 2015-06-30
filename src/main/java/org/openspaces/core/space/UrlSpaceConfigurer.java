@@ -342,7 +342,7 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
      */
     public UrlSpaceConfigurer attributeStore(AttributeStore attributeStore) {
         validate();
-        urlSpaceFactoryBean.setAttributeStore(attributeStore);
+        urlSpaceFactoryBean.attributeStore(attributeStore);
         return this;
     }
     
