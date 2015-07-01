@@ -15,7 +15,7 @@
  *******************************************************************************/
 package org.openspaces.core.config;
 
-import com.gigaspaces.internal.attribute_store.AttributeStore;
+import com.gigaspaces.attribute_store.AttributeStore;
 import org.springframework.beans.factory.InitializingBean;
 
 /**

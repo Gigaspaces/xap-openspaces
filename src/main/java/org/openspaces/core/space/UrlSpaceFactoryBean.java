@@ -19,7 +19,7 @@ package org.openspaces.core.space;
 import java.util.Map;
 import java.util.Properties;
 
-import com.gigaspaces.internal.attribute_store.AttributeStore;
+import com.gigaspaces.attribute_store.AttributeStore;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.config.AttributeStoreFactoryBean;

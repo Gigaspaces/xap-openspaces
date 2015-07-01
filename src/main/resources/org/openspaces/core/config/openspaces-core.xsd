@@ -253,7 +253,7 @@
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
                                                 <tool:expected-type
-                                                        type="com.gigaspaces.internal.attribute_store.AttributeStore"/>
+                                                        type="com.gigaspaces.attribute_store.AttributeStore"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>
@@ -711,7 +711,7 @@
                                         <xsd:appinfo>
                                             <tool:annotation kind="ref">
                                                 <tool:expected-type
-                                                        type="com.gigaspaces.internal.attribute_store.AttributeStore"/>
+                                                        type="com.gigaspaces.attribute_store.AttributeStore"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>

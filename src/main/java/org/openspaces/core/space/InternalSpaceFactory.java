@@ -19,7 +19,7 @@ package org.openspaces.core.space;
 
 import com.gigaspaces.client.ClusterConfig;
 import com.gigaspaces.client.SpaceProxyFactory;
-import com.gigaspaces.internal.attribute_store.AttributeStore;
+import com.gigaspaces.attribute_store.AttributeStore;
 import com.gigaspaces.internal.lookup.SpaceUrlUtils;
 import com.gigaspaces.internal.sync.mirror.MirrorDistributedTxnConfig;
 import com.j_spaces.core.IJSpace;

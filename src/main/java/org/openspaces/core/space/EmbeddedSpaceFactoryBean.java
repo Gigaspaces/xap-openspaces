@@ -18,7 +18,7 @@ package org.openspaces.core.space;
 
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
-import com.gigaspaces.internal.attribute_store.AttributeStore;
+import com.gigaspaces.attribute_store.AttributeStore;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.sync.SpaceSynchronizationEndpoint;
 import com.j_spaces.core.IJSpace;
