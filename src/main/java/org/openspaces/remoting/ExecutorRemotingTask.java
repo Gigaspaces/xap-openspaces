@@ -67,7 +67,8 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
 
     private transient Integer instanceId;
 
-    private transient SpaceRemotingServiceExporter serviceExporter;
+    private static final Object lock = new Object();
+    private static volatile SpaceRemotingServiceExporter serviceExporter;
 
     /**
      * Should not be used. Used for externalizable.
@@ -100,19 +101,27 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
     }
 
     private SpaceRemotingServiceExporter getServiceExporter() {
-        if (serviceExporter != null)
-            return serviceExporter;
-
-        try {
-            serviceExporter = (SpaceRemotingServiceExporter) applicationContext.getBean("serviceExporter");
-        } catch (NoSuchBeanDefinitionException e) {
-            String[] names = applicationContext.getBeanNamesForType(SpaceRemotingServiceExporter.class, false, true);
-            if (names != null && names.length > 0) {
-                serviceExporter = (SpaceRemotingServiceExporter) applicationContext.getBean(names[0]);
+        if (serviceExporter == null) {
+            synchronized (lock) {
+                if (serviceExporter == null) {
+                    try {
+                        if (logger.isDebugEnabled())
+                            logger.debug("Looking for default serviceExporter - applicationContext.getBean(\"serviceExporter\")");
+                        serviceExporter = (SpaceRemotingServiceExporter) applicationContext.getBean("serviceExporter");
+                    } catch (NoSuchBeanDefinitionException e) {
+                        String[] names = applicationContext.getBeanNamesForType(SpaceRemotingServiceExporter.class, false, true);
+                        if (names != null && names.length > 0) {
+                            String name = names[0];
+                            if (logger.isDebugEnabled())
+                                logger.debug("Looking for first serviceExporter - applicationContext.getBean(" + name + ")");
+                            serviceExporter = (SpaceRemotingServiceExporter) applicationContext.getBean(name);
+                        }
+                    }
+                    if (serviceExporter == null)
+                        throw new IllegalStateException("Failed to find remoting service exporter defined within the application context");
+                }
             }
         }
-        if (serviceExporter == null)
-            throw new IllegalStateException("Failed to find remoting service exporter defined within the application context");
         return serviceExporter;
     }
 
