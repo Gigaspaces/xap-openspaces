@@ -21,6 +21,7 @@ import com.gigaspaces.executor.SpaceTask;
 import com.gigaspaces.executor.SpaceTaskWrapper;
 import com.gigaspaces.internal.version.PlatformLogicalVersion;
 import com.gigaspaces.lrmi.LRMIInvocationContext;
+import com.gigaspaces.lrmi.classloading.TaskClassLoader;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.kernel.*;
@@ -134,7 +135,7 @@ public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTa
     private Task<T> readTaskUsingFreshClassLoader(ObjectInput in) throws ClassNotFoundException, IOException {
         ClassLoader old = ClassLoaderHelper.getContextClassLoader();
         try {
-            ClassLoaderHelper.setContextClassLoader(new URLClassLoader(new URL[]{}, old), true);
+            ClassLoaderHelper.setContextClassLoader(new TaskClassLoader(new URL[]{}, old), true);
             //noinspection unchecked
             return (Task<T>) in.readObject();
         } finally {
