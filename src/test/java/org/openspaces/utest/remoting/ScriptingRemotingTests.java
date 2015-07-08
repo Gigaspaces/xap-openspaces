@@ -104,43 +104,6 @@ public class ScriptingRemotingTests   {
         assertEquals(1, value.intValue());
     }
 
-     @Test public void testSimpleCachingWithJRuby() {
-        // warmup
-        Long value = (Long) executorScriptingExecutor.execute(new StaticScript("testSimpleCachingWithJRuby-warmup", "ruby", "$number").parameter("number", 1));
-        assertEquals(1, value.intValue());
-
-        long time = System.nanoTime();
-        for (int i = 0; i < 10; i++) {
-            value = (Long) executorScriptingExecutor.execute(new StaticScript("testSimpleCachingWithJRuby-cached", "ruby", "$number").parameter("number", 1).cache(true));
-            assertEquals(1, value.intValue());
-        }
-        long cacheTime = System.nanoTime() - time;
-        time = System.nanoTime();
-        for (int i = 0; i < 10; i++) {
-            value = (Long) executorScriptingExecutor.execute(new StaticScript("testSimpleCachingWithJRuby-not-cached", "ruby", "$number").parameter("number", 1).cache(false));
-            assertEquals(1, value.intValue());
-        }
-        long nonCacheTime = System.nanoTime() - time;
-        
-        //repeat
-        time = System.nanoTime();
-        for (int i = 10; i < 20; i++) {
-            value = (Long) executorScriptingExecutor.execute(new StaticScript("testSimpleCachingWithJRuby-cached", "ruby", "$number").parameter("number", 1).cache(true));
-            assertEquals(1, value.intValue());
-        }
-        cacheTime += System.nanoTime() - time;
-        
-        time = System.nanoTime();
-        for (int i = 10; i < 20; i++) {
-            value = (Long) executorScriptingExecutor.execute(new StaticScript("testSimpleCachingWithJRuby-not-cached", "ruby", "$number").parameter("number", 1).cache(false));
-            assertEquals(1, value.intValue());
-        }
-        nonCacheTime += System.nanoTime() - time;
-        
-        System.out.println("jruby: cacheTime [" + cacheTime + "], non cache time [" + nonCacheTime + "]");
-        assertTrue(cacheTime < nonCacheTime);
-    }
-
      @Test
      public void testLazyLoadingGroovyScript() {
         gigaSpace.clear(null);
