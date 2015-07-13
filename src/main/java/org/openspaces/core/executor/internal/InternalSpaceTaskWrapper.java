@@ -26,7 +26,7 @@ import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.SpaceContext;
 import com.j_spaces.kernel.*;
 import net.jini.core.transaction.Transaction;
-import org.openspaces.core.executor.OneTimeTask;
+import org.openspaces.core.executor.SupportCodeChange;
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.transaction.manager.ExistingJiniTransactionManager;
 
@@ -36,7 +36,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.net.URL;
-import java.net.URLClassLoader;
 
 /**
  * An internal implemenation of {@link SpaceTask} that wraps the actual {@link org.openspaces.core.executor.Task}
@@ -62,7 +61,7 @@ public class InternalSpaceTaskWrapper<T extends Serializable> implements SpaceTa
         this();
         this.task = task;
         this.routing = routing;
-        if(this instanceof InternalDistributedSpaceTaskWrapper && task.getClass().isAnnotationPresent(OneTimeTask.class)){
+        if(this instanceof InternalDistributedSpaceTaskWrapper && task.getClass().isAnnotationPresent(SupportCodeChange.class)){
             oneTime = true;
         }
     }
