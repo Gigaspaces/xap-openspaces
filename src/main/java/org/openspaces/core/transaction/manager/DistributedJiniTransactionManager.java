@@ -16,7 +16,7 @@
 
 package org.openspaces.core.transaction.manager;
 
-import com.j_spaces.kernel.ResourceLoader;
+import com.j_spaces.kernel.*;
 import com.sun.jini.admin.DestroyAdmin;
 import com.sun.jini.mahalo.TxnManager;
 import com.sun.jini.start.LifeCycle;
@@ -50,7 +50,7 @@ public class DistributedJiniTransactionManager extends AbstractJiniTransactionMa
     protected TransactionManager doCreateTransactionManager() throws Exception {
         URL mahaloConfig = ResourceLoader.getServicesConfigUrl();
 
-        Class mahaloClass = ClassUtils.forName("com.sun.jini.mahalo.TransientMahaloImpl", Thread.currentThread().getContextClassLoader());
+        Class mahaloClass = ClassUtils.forName("com.sun.jini.mahalo.TransientMahaloImpl", ClassLoaderHelper.getContextClassLoader());
         Constructor constructor = mahaloClass.getDeclaredConstructor(String[].class, LifeCycle.class, boolean.class);
         constructor.setAccessible(true);
         impl = (TxnManager) constructor.newInstance(new String[] {mahaloConfig.toExternalForm()}, null, false);

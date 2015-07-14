@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.j_spaces.kernel.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.Admin;
@@ -260,7 +261,7 @@ public class DefaultBeanServer<T extends Bean> implements BeanServer<T> {
     private boolean isClassNameAssignableFrom(String implementationClassName, Class<?>[] interfaceClassNames) throws ClassNotFoundException {
         boolean classNameInstanceof = false;
         for (Class<?> interfaceClass : interfaceClassNames) {
-            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(implementationClassName);
+            Class<?> clazz = ClassLoaderHelper.getContextClassLoader().loadClass(implementationClassName);
             if (interfaceClass.isAssignableFrom(clazz)) {
                 classNameInstanceof = true;
                 break;

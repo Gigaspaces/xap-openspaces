@@ -210,7 +210,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             backupId = Integer.valueOf(sBackupId);
         }
 
-        ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
             if (logger.isDebugEnabled()) {
@@ -220,14 +220,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             startPU(springXML);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                ClassLoader classLoader = ClassLoaderHelper.getContextClassLoader();
                 StringBuilder classpath = new StringBuilder();
                 if (ClassLoaderUtils.isClassLoaderProblem(e)) {
                     classpath.append(ClassLoaderUtils.getClassPathString(classLoader));
                 }
                 logger.debug(logMessage(
                      "Failed to start PU with xml [" + springXML + "] " + 
-                     "Thread.currentThread().getContextClassLoader()="+classLoader + " " + classpath), e);
+                     "ClassLoaderHelper.getContextClassLoader()="+classLoader + " " + classpath), e);
             }
             try {
                 stopPU();
@@ -296,7 +296,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             SharedServiceData.removeDumpProcessors(clusterInfo.getUniqueName());
         }
 
-        ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
         stopping = true;
         try {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
@@ -1613,7 +1613,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     public void process(InternalDump dump) throws InternalDumpProcessorFailedException {
-        ClassLoader prevClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader prevClassLoader = ClassLoaderHelper.getContextClassLoader();
         ClassLoaderHelper.setContextClassLoader(contextClassLoader, true);
         try {
             String prefix = "processing-units/" + clusterInfo.getName() + "/" + clusterInfo.getInstanceId();

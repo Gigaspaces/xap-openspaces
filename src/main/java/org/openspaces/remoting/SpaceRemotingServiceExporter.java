@@ -28,6 +28,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.j_spaces.kernel.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jini.rio.boot.ServiceClassLoader;
@@ -238,7 +239,7 @@ public class SpaceRemotingServiceExporter implements SpaceDataEventListener<Spac
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
             Assert.notNull(services, "services property is required");
-            ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
             if (origClassLoader instanceof ServiceClassLoader && origClassLoader.getParent() instanceof ServiceClassLoader) {
                 // Since the refreshable context causes the ContextRefreshEvent as well, under its own new class loader
                 Thread.currentThread().setContextClassLoader(origClassLoader.getParent());

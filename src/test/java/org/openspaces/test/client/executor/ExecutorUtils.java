@@ -5,6 +5,7 @@
  */
 package org.openspaces.test.client.executor;
 
+import com.j_spaces.kernel.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,7 +56,7 @@ public class ExecutorUtils
             name = name.substring(1);
         }
         Thread currentThread = Thread.currentThread();
-        ClassLoader classLoader = currentThread.getContextClassLoader();
+        ClassLoader classLoader = ClassLoaderHelper.getContextClassLoader();
         result = classLoader.getResource(name);
 
         return result;

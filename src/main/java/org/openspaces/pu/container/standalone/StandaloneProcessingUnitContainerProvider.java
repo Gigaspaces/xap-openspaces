@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container.standalone;
 
+import com.j_spaces.kernel.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfo;
@@ -338,7 +339,7 @@ public class StandaloneProcessingUnitContainerProvider extends ApplicationContex
         if (addedSharedLibToClassLoader) {
             return;
         }
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = ClassLoaderHelper.getContextClassLoader();
         Class clazz = classLoader.getClass();
         while (clazz != Object.class && !URLClassLoader.class.equals(clazz)) {
             clazz = clazz.getSuperclass();

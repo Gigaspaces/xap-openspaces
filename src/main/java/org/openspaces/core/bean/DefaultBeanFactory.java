@@ -19,6 +19,7 @@ package org.openspaces.core.bean;
 
 import java.util.Map;
 
+import com.j_spaces.kernel.*;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.bean.BeanConfigNotFoundException;
 import org.openspaces.admin.bean.BeanConfigurationException;
@@ -58,7 +59,7 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
         T instance = null;
         try {
             Class<T> clazz = 
-                (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(beanClassName);
+                (Class<T>) ClassLoaderHelper.getContextClassLoader().loadClass(beanClassName);
 
             instance = clazz.newInstance();
         } catch (Exception e) {
