@@ -17,6 +17,7 @@
 package org.openspaces.remoting.scripting;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 
 import javax.script.Bindings;
 import javax.script.Compilable;
@@ -36,7 +37,7 @@ public class Jsr223LocalScriptExecutor extends AbstractLocalScriptExecutor<Objec
     private ScriptEngineManager scriptEngineManager;
 
     public Jsr223LocalScriptExecutor() {
-        scriptEngineManager = new ScriptEngineManager(ClassLoaderHelper.getContextClassLoader());
+        scriptEngineManager = new ScriptEngineManager(ContextClassLoaderHelper.getContextClassLoader());
     }
 
     public Object doCompile(Script script) throws ScriptCompilationException {

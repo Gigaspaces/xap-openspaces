@@ -17,6 +17,7 @@
 package org.openspaces.events.adapter;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -39,7 +40,7 @@ public class AnnotationEventListenerAdapter extends AbstractReflectionEventListe
     protected Method[] doGetListenerMethods() {
         final List<Method> methods = new ArrayList<Method>();
         if (logger.isDebugEnabled()) {
-            logger.debug("ClassLoaderHelper.getContextClassLoader()="+ ClassLoaderHelper.getContextClassLoader());
+            logger.debug("ContextClassLoaderHelper.getContextClassLoader()="+ ContextClassLoaderHelper.getContextClassLoader());
         }
         ReflectionUtils.doWithMethods(AopUtils.getTargetClass(getDelegate()), new ReflectionUtils.MethodCallback() {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {

@@ -19,6 +19,7 @@ package org.openspaces.pu.container.jee.context;
 import com.gigaspaces.start.SystemBoot;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jini.rio.boot.SharedServiceData;
@@ -218,7 +219,7 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
             String className = "org.openspaces.pu.container.jee." + jeeContainer + "." + StringUtils.capitalize(jeeContainer) + "WebApplicationContextListener";
             Class clazz = null;
             try {
-                clazz = ClassLoaderHelper.getContextClassLoader().loadClass(className);
+                clazz = ContextClassLoaderHelper.getContextClassLoader().loadClass(className);
             } catch (ClassNotFoundException e) {
                 // no class, ignore
             }
@@ -234,7 +235,7 @@ public class BootstrapWebApplicationContextListener implements ServletContextLis
 
         // set the class loader used so the service bean can use it
         if (clusterInfo != null && SystemBoot.isRunningWithinGSC()) {
-            SharedServiceData.putWebAppClassLoader(clusterInfo.getUniqueName(), ClassLoaderHelper.getContextClassLoader());
+            SharedServiceData.putWebAppClassLoader(clusterInfo.getUniqueName(), ContextClassLoaderHelper.getContextClassLoader());
         }
     }
 

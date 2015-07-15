@@ -20,6 +20,7 @@ package org.openspaces.core.bean;
 import java.util.Map;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.bean.BeanConfigNotFoundException;
 import org.openspaces.admin.bean.BeanConfigurationException;
@@ -59,7 +60,7 @@ public class DefaultBeanFactory<T extends Bean> implements BeanFactory<T> {
         T instance = null;
         try {
             Class<T> clazz = 
-                (Class<T>) ClassLoaderHelper.getContextClassLoader().loadClass(beanClassName);
+                (Class<T>) ContextClassLoaderHelper.getContextClassLoader().loadClass(beanClassName);
 
             instance = clazz.newInstance();
         } catch (Exception e) {

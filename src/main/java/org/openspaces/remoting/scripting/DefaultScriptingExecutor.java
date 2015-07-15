@@ -17,6 +17,7 @@
 package org.openspaces.remoting.scripting;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
@@ -150,7 +151,7 @@ public class DefaultScriptingExecutor implements ScriptingExecutor, ApplicationC
         if (!executors.containsKey(GROOVY_LOCAL_EXECUTOR_TYPE)) {
             // try and create the groovy executor if it exists in the class path
             try {
-                LocalScriptExecutor groovyExecutor = (LocalScriptExecutor) ClassUtils.forName("org.openspaces.remoting.scripting.GroovyLocalScriptExecutor", ClassLoaderHelper.getContextClassLoader()).newInstance();
+                LocalScriptExecutor groovyExecutor = (LocalScriptExecutor) ClassUtils.forName("org.openspaces.remoting.scripting.GroovyLocalScriptExecutor", ContextClassLoaderHelper.getContextClassLoader()).newInstance();
                 executors.put(GROOVY_LOCAL_EXECUTOR_TYPE, groovyExecutor);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Groovy detected in the classpath, adding it as a local executor under the [" + GROOVY_LOCAL_EXECUTOR_TYPE + "] type");
@@ -162,7 +163,7 @@ public class DefaultScriptingExecutor implements ScriptingExecutor, ApplicationC
         if (!executors.containsKey(JRUBY_LOCAL_EXECUTOR_TYPE)) {
             // try and create the groovy executor if it exists in the class path
             try {
-                LocalScriptExecutor jrubyExecutor = (LocalScriptExecutor) ClassUtils.forName("org.openspaces.remoting.scripting.JRubyLocalScriptExecutor", ClassLoaderHelper.getContextClassLoader()).newInstance();
+                LocalScriptExecutor jrubyExecutor = (LocalScriptExecutor) ClassUtils.forName("org.openspaces.remoting.scripting.JRubyLocalScriptExecutor", ContextClassLoaderHelper.getContextClassLoader()).newInstance();
                 executors.put(JRUBY_LOCAL_EXECUTOR_TYPE, jrubyExecutor);
                 if (logger.isDebugEnabled()) {
                     logger.debug("JRuby detected in the classpath, adding it as a local executor under the [" + JRUBY_LOCAL_EXECUTOR_TYPE + "] type");
@@ -172,7 +173,7 @@ public class DefaultScriptingExecutor implements ScriptingExecutor, ApplicationC
             }
         }
         try {
-            jsr223Executor = (LocalScriptExecutor) ClassUtils.forName("org.openspaces.remoting.scripting.Jsr223LocalScriptExecutor", ClassLoaderHelper.getContextClassLoader()).newInstance();
+            jsr223Executor = (LocalScriptExecutor) ClassUtils.forName("org.openspaces.remoting.scripting.Jsr223LocalScriptExecutor", ContextClassLoaderHelper.getContextClassLoader()).newInstance();
             if (logger.isDebugEnabled()) {
                 logger.debug("Java 6 (JSR 223) detected in the classpath, adding it as a default executor");
             }

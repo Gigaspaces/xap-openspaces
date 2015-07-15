@@ -18,6 +18,7 @@ package org.openspaces.remoting.scripting;
 
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
@@ -33,7 +34,7 @@ public class GroovyLocalScriptExecutor extends AbstractLocalScriptExecutor<groov
     private GroovyShell groovyShell;
 
     public GroovyLocalScriptExecutor() {
-        groovyShell = new GroovyShell(ClassLoaderHelper.getContextClassLoader());
+        groovyShell = new GroovyShell(ContextClassLoaderHelper.getContextClassLoader());
     }
 
 

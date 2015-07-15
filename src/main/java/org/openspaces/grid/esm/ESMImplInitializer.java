@@ -23,6 +23,7 @@ import com.gigaspaces.internal.utils.concurrent.GSThreadFactory;
 import com.gigaspaces.security.SecurityFactory;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.GridComponent;
@@ -83,7 +84,7 @@ public class ESMImplInitializer {
     
     public ESMImplInitializer(ESMImplInitializer.AdminCreatedEventListener adminCreatedEventListener) {
         this.esmInitializer = adminCreatedEventListener;
-        final ClassLoader correctClassLoader = ClassLoaderHelper.getContextClassLoader();
+        final ClassLoader correctClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         final boolean useDaemonThreads = true;
         executor = Executors.newSingleThreadExecutor(
                 new GSThreadFactory("GS-EsmImplInitializer",useDaemonThreads) {

@@ -17,6 +17,7 @@
 package org.openspaces.pu.container.support;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.openspaces.core.properties.BeanLevelProperties;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
@@ -61,7 +62,7 @@ public abstract class BeanLevelPropertiesParser {
 
     public static BeanLevelProperties parse(BeanLevelProperties beanLevelProperties, CommandLineParser.Parameter[] params) throws IllegalArgumentException {
         // try and load pu.properties
-        InputStream is = ClassLoaderHelper.getContextClassLoader().getResourceAsStream(DEFAULT_CONTEXT_PROPERTIES_LOCATION);
+        InputStream is = ContextClassLoaderHelper.getContextClassLoader().getResourceAsStream(DEFAULT_CONTEXT_PROPERTIES_LOCATION);
         if (is != null) {
             try {
                 beanLevelProperties.getContextProperties().load(is);

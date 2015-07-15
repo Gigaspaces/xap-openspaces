@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.admin.alert.config.AlertConfiguration;
@@ -92,14 +93,14 @@ public class XmlAlertConfigurationParser implements AlertConfigurationParser {
             logger.debug("Trying to locate " + resourceName + " in classpath");
         }
         
-        InputStream resourceAsStream = ClassLoaderHelper.getContextClassLoader().getResourceAsStream(resourceName);
+        InputStream resourceAsStream = ContextClassLoaderHelper.getContextClassLoader().getResourceAsStream(resourceName);
         if (resourceAsStream == null) {
             //look for config/alerts/alerts.xml
         	String altResourceName = DEFAULT_ALERT_CONFIG_DIRECTORY+DEFAULT_ALERT_RESOURCE_NAME;
         	if (logger.isDebugEnabled()) {
                 logger.debug("Failed to locate " + resourceName +". Trying to locate " + altResourceName + " in classpath");
             }
-            resourceAsStream = ClassLoaderHelper.getContextClassLoader().getResourceAsStream(altResourceName);
+            resourceAsStream = ContextClassLoaderHelper.getContextClassLoader().getResourceAsStream(altResourceName);
         }
         
         if (resourceAsStream == null) {
@@ -127,14 +128,14 @@ public class XmlAlertConfigurationParser implements AlertConfigurationParser {
             if (logger.isDebugEnabled()) {
                 logger.debug("Trying to locate " + resourceName + " in classpath");
             }
-            resourceAsStream = ClassLoaderHelper.getContextClassLoader().getResourceAsStream(resourceName);
+            resourceAsStream = ContextClassLoaderHelper.getContextClassLoader().getResourceAsStream(resourceName);
             if (resourceAsStream == null) {
                 //look for config/alerts/<resourceName>
                 resourceName = DEFAULT_ALERT_CONFIG_DIRECTORY+resourceName;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Trying to locate " + resourceName + " in classpath");
                 }
-                resourceAsStream = ClassLoaderHelper.getContextClassLoader().getResourceAsStream(resourceName);
+                resourceAsStream = ContextClassLoaderHelper.getContextClassLoader().getResourceAsStream(resourceName);
             }
         }
         
@@ -175,7 +176,7 @@ public class XmlAlertConfigurationParser implements AlertConfigurationParser {
                     }
                 }
                 
-                Class<? extends AlertConfiguration> clazz = ClassLoaderHelper.getContextClassLoader().loadClass(classAttr).asSubclass(AlertConfiguration.class);
+                Class<? extends AlertConfiguration> clazz = ContextClassLoaderHelper.getContextClassLoader().loadClass(classAttr).asSubclass(AlertConfiguration.class);
                 AlertConfiguration alertConfiguration = clazz.newInstance();
                 alertConfiguration.setEnabled(Boolean.parseBoolean(enabledAttr));
                 alertConfiguration.setProperties(properties);

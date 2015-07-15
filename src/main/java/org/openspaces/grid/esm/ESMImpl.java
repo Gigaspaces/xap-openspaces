@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 
 import com.gigaspaces.metrics.MetricManager;
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import net.jini.export.Exporter;
 
 import org.jini.rio.boot.BootUtil;
@@ -1042,7 +1043,7 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
 
 	private ScheduledThreadPoolExecutor createScheduledThreadPoolExecutor(
 			String threadName, int numberOfThreads, boolean useDaemonThreads) {
-		final ClassLoader correctClassLoader = ClassLoaderHelper.getContextClassLoader();
+		final ClassLoader correctClassLoader = ContextClassLoaderHelper.getContextClassLoader();
 		ScheduledThreadPoolExecutor executorService = (ScheduledThreadPoolExecutor) Executors
 				.newScheduledThreadPool(numberOfThreads, new GSThreadFactory(
 						threadName, useDaemonThreads) {

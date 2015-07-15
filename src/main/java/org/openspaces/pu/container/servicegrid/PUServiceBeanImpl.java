@@ -48,6 +48,7 @@ import com.j_spaces.core.filters.StatisticsHolder;
 import com.j_spaces.jmx.util.JMXUtilities;
 import com.j_spaces.kernel.ClassLoaderHelper;
 import com.j_spaces.kernel.Environment;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import org.apache.commons.logging.Log;
@@ -210,7 +211,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             backupId = Integer.valueOf(sBackupId);
         }
 
-        ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
+        ClassLoader origClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
             if (logger.isDebugEnabled()) {
@@ -220,14 +221,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             startPU(springXML);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
-                ClassLoader classLoader = ClassLoaderHelper.getContextClassLoader();
+                ClassLoader classLoader = ContextClassLoaderHelper.getContextClassLoader();
                 StringBuilder classpath = new StringBuilder();
                 if (ClassLoaderUtils.isClassLoaderProblem(e)) {
                     classpath.append(ClassLoaderUtils.getClassPathString(classLoader));
                 }
                 logger.debug(logMessage(
                      "Failed to start PU with xml [" + springXML + "] " + 
-                     "ClassLoaderHelper.getContextClassLoader()="+classLoader + " " + classpath), e);
+                     "ContextClassLoaderHelper.getContextClassLoader()="+classLoader + " " + classpath), e);
             }
             try {
                 stopPU();
@@ -296,7 +297,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             SharedServiceData.removeDumpProcessors(clusterInfo.getUniqueName());
         }
 
-        ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
+        ClassLoader origClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         stopping = true;
         try {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
@@ -1613,7 +1614,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     }
 
     public void process(InternalDump dump) throws InternalDumpProcessorFailedException {
-        ClassLoader prevClassLoader = ClassLoaderHelper.getContextClassLoader();
+        ClassLoader prevClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         ClassLoaderHelper.setContextClassLoader(contextClassLoader, true);
         try {
             String prefix = "processing-units/" + clusterInfo.getName() + "/" + clusterInfo.getInstanceId();

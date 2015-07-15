@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.openspaces.events.DynamicEventTemplate;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.util.ReflectionUtils;
@@ -41,7 +42,7 @@ public class AnnotationDynamicEventTemplateProviderAdapter extends AbstractRefle
     protected Method doGetListenerMethod() {
         final List<Method> methods = new ArrayList<Method>();
         if (logger.isDebugEnabled()) {
-            logger.debug("ClassLoaderHelper.getContextClassLoader()="+ ClassLoaderHelper.getContextClassLoader());
+            logger.debug("ContextClassLoaderHelper.getContextClassLoader()="+ ContextClassLoaderHelper.getContextClassLoader());
         }
         ReflectionUtils.doWithMethods(AopUtils.getTargetClass(getDelegate()), new ReflectionUtils.MethodCallback() {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {

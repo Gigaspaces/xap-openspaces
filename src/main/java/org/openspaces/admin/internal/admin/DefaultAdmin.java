@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceID;
 
@@ -426,7 +427,7 @@ public class DefaultAdmin implements InternalAdmin {
     }
 
     private ScheduledThreadPoolExecutor createScheduledThreadPoolExecutor(String threadName, int numberOfThreads) {
-        final ClassLoader correctClassLoader = ClassLoaderHelper.getContextClassLoader();
+        final ClassLoader correctClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         ScheduledThreadPoolExecutor executorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(numberOfThreads, 
                    new GSThreadFactory(threadName,useDaemonThreads) {
                         @Override
@@ -443,7 +444,7 @@ public class DefaultAdmin implements InternalAdmin {
     }
     
     private ThreadPoolExecutor createThreadPoolExecutor(String threadName, int numberOfThreads, final boolean updateSingleThreadId) {
-        final ClassLoader correctClassLoader = ClassLoaderHelper.getContextClassLoader();
+        final ClassLoader correctClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         ThreadPoolExecutor executorService = 
             (ThreadPoolExecutor) Executors.newFixedThreadPool(numberOfThreads, 
                     new GSThreadFactory(threadName,useDaemonThreads) {

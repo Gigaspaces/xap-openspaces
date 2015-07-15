@@ -17,6 +17,7 @@
 package org.openspaces.core.space.mode;
 
 import com.j_spaces.kernel.*;
+import com.j_spaces.kernel.cl.ContextClassLoaderHelper;
 import org.jini.rio.boot.ServiceClassLoader;
 
 import java.net.URL;
@@ -39,7 +40,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        classLoader = ClassLoaderHelper.getContextClassLoader();
+        classLoader = ContextClassLoaderHelper.getContextClassLoader();
         super.afterPropertiesSet();
     }
 
@@ -66,7 +67,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
             logger.warn("Can't handle class loader [" + classLoader + "], context refreshing requires the service grid class loader or the url class loader. Context refreshing is disabled.");
             childAppContextClassLoader = classLoader;
         }
-        ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
+        ClassLoader origClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         Thread.currentThread().setContextClassLoader(childAppContextClassLoader);
         try {
             super.loadApplicationContext();
@@ -77,7 +78,7 @@ public class RefreshSpaceModeContextLoader extends SpaceModeContextLoader implem
 
     @Override
     protected void closeApplicationContext() {
-        ClassLoader origClassLoader = ClassLoaderHelper.getContextClassLoader();
+        ClassLoader origClassLoader = ContextClassLoaderHelper.getContextClassLoader();
         Thread.currentThread().setContextClassLoader(childAppContextClassLoader);
         try {
             super.closeApplicationContext();
