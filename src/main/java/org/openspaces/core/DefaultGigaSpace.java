@@ -27,6 +27,7 @@ import com.gigaspaces.events.DataEventSessionFactory;
 import com.gigaspaces.events.EventSessionConfig;
 import com.gigaspaces.query.aggregators.AggregationResult;
 import com.gigaspaces.query.aggregators.AggregationSet;
+import com.j_spaces.core.cache.plugableindexes.foreignQueryInfo;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -759,11 +760,25 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getDefaultReadModifiers().getCode());
     }
+ //POC
+    public <T> T[] readMultiple(T template, int maxEntries, foreignQueryInfo fi) throws DataAccessException
+    {
+        return readMultiple(template, maxEntries,  0,  fi);
+    }
 
     @SuppressWarnings("unchecked")
     public <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException {
         try {
             return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
+        } catch (Exception e) {
+            throw exTranslator.translate(e);
+        }
+    }
+//POC
+    @SuppressWarnings("unchecked")
+    public <T> T[] readMultiple(T template, int maxEntries, int modifiers, foreignQueryInfo fi) throws DataAccessException {
+        try {
+            return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers, fi);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
