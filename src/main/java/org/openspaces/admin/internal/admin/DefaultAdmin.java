@@ -250,7 +250,7 @@ public class DefaultAdmin implements InternalAdmin {
 
     private volatile long scheduledProcessingUnitMonitorInterval = 1000; // default to one second
 
-    private volatile long scheduledAgentProcessessMonitorInterval = 5000; // defaults to 5 seconds
+    private volatile long scheduledAgentProcessesMonitorInterval = 5000; // defaults to 5 seconds
 
     private volatile long scheduledSpaceMonitorInterval = 1000; // default to one second
 
@@ -419,7 +419,7 @@ public class DefaultAdmin implements InternalAdmin {
         scheduledProcessingUnitMonitorFuture = scheduleWithFixedDelay(
                 new ScheduledProcessingUnitMonitor(), scheduledProcessingUnitMonitorInterval, scheduledProcessingUnitMonitorInterval, TimeUnit.MILLISECONDS);
         scheduledAgentProcessessMonitorFuture = scheduleWithFixedDelay(new ScheduledAgentProcessessMonitor(),
-                scheduledAgentProcessessMonitorInterval, scheduledAgentProcessessMonitorInterval, TimeUnit.MILLISECONDS);
+                scheduledAgentProcessesMonitorInterval, scheduledAgentProcessesMonitorInterval, TimeUnit.MILLISECONDS);
         
         if (lifecycleLogger.isDebugEnabled()) {
             lifecycleLogger.debug("Admin started " + this.hashCode() +
@@ -482,7 +482,7 @@ public class DefaultAdmin implements InternalAdmin {
         if (closeStarted.get()) {
             throw new AdminClosedException();
         }
-        this.scheduledAgentProcessessMonitorInterval = timeUnit.toMillis(interval);
+        this.scheduledAgentProcessesMonitorInterval = timeUnit.toMillis(interval);
         if (scheduledAgentProcessessMonitorFuture != null) { // during initialization
             scheduledAgentProcessessMonitorFuture.cancel(false);
             scheduledAgentProcessessMonitorFuture = scheduleWithFixedDelay(new ScheduledAgentProcessessMonitor(), interval, interval, timeUnit);
