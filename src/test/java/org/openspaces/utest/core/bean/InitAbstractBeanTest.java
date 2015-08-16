@@ -194,10 +194,14 @@ public class InitAbstractBeanTest extends TestCase {
 
         }
 
+        @Override
+        public String getVirtualServerName() {
+            return null;
+        }
 
         /* (non-Javadoc)
-         * @see javax.servlet.ServletContext#addFilter(java.lang.String, java.lang.String)
-         */
+                 * @see javax.servlet.ServletContext#addFilter(java.lang.String, java.lang.String)
+                 */
         @Override
         public Dynamic addFilter(String arg0, String arg1) {
             // TODO Auto-generated method stub

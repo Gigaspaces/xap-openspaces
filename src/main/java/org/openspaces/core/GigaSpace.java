@@ -25,7 +25,7 @@ import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.EventSessionConfig;
 import com.gigaspaces.query.aggregators.AggregationResult;
 import com.gigaspaces.query.aggregators.AggregationSet;
-import com.j_spaces.core.cache.plugableindexes.foreignQueryInfo;
+import com.j_spaces.core.cache.plugableindexes.ForeignQueryInfo;
 import net.jini.core.transaction.Transaction;
 
 import org.openspaces.core.exception.ExceptionTranslator;
@@ -1106,7 +1106,7 @@ public interface GigaSpace {
     <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException;
 
 //POC
-    <T> T[] readMultiple(T template, int maxEntries, foreignQueryInfo fi) throws DataAccessException;
+    <T> T[] readMultiple(T template, int maxEntries, ForeignQueryInfo fi) throws DataAccessException;
 
     /**
      * @deprecated since 9.0.1 - use {@link #readMultiple(Object, int, ReadModifiers)} instead.
