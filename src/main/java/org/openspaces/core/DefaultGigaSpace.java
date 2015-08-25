@@ -16,20 +16,26 @@
 
 package org.openspaces.core;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.concurrent.Future;
-
 import com.gigaspaces.admin.quiesce.QuiesceToken;
+import com.gigaspaces.async.*;
+import com.gigaspaces.client.*;
 import com.gigaspaces.client.iterator.SpaceIterator;
 import com.gigaspaces.events.DataEventSession;
 import com.gigaspaces.events.DataEventSessionFactory;
 import com.gigaspaces.events.EventSessionConfig;
+import com.gigaspaces.internal.client.QueryResultTypeInternal;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.gigaspaces.internal.utils.ObjectUtils;
+import com.gigaspaces.internal.utils.StringUtils;
+import com.gigaspaces.query.ISpaceQuery;
+import com.gigaspaces.query.IdQuery;
+import com.gigaspaces.query.IdsQuery;
+import com.gigaspaces.query.QueryResultType;
 import com.gigaspaces.query.aggregators.AggregationResult;
 import com.gigaspaces.query.aggregators.AggregationSet;
-import com.j_spaces.core.cache.plugableindexes.ForeignQueryInfo;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.LeaseContext;
 import net.jini.core.transaction.Transaction;
-
 import org.openspaces.core.exception.ExceptionTranslator;
 import org.openspaces.core.executor.DistributedTask;
 import org.openspaces.core.executor.Task;
@@ -45,44 +51,19 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.TransactionDefinition;
 
-import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.async.AsyncFutureListener;
-import com.gigaspaces.async.AsyncResultFilter;
-import com.gigaspaces.async.AsyncResultsReducer;
-import com.gigaspaces.async.FutureFactory;
-import com.gigaspaces.client.ChangeModifiers;
-import com.gigaspaces.client.ChangeResult;
-import com.gigaspaces.client.ChangeSet;
-import com.gigaspaces.client.ClearModifiers;
-import com.gigaspaces.client.CountModifiers;
-import com.gigaspaces.client.IsolationLevelModifiers;
-import com.gigaspaces.client.ReadByIdsResult;
-import com.gigaspaces.client.ReadByIdsResultImpl;
-import com.gigaspaces.client.ReadModifiers;
-import com.gigaspaces.client.TakeByIdsResult;
-import com.gigaspaces.client.TakeByIdsResultImpl;
-import com.gigaspaces.client.TakeModifiers;
-import com.gigaspaces.client.WriteModifiers;
-import com.gigaspaces.internal.client.QueryResultTypeInternal;
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.gigaspaces.internal.utils.ObjectUtils;
-import com.gigaspaces.internal.utils.StringUtils;
-import com.gigaspaces.query.ISpaceQuery;
-import com.gigaspaces.query.IdQuery;
-import com.gigaspaces.query.IdsQuery;
-import com.gigaspaces.query.QueryResultType;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.LeaseContext;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.concurrent.Future;
 
 /**
  * Default implementation of {@link GigaSpace}. Constructed with {@link com.j_spaces.core.IJSpace},
  * {@link org.openspaces.core.transaction.TransactionProvider} and
  * {@link org.openspaces.core.exception.ExceptionTranslator}.
- *
+ * <p/>
  * <p>Operations are delegated to {@link com.j_spaces.core.IJSpace} with transactions acquired using
  * {@link org.openspaces.core.transaction.TransactionProvider}. Any exceptions thrown during the
  * operations are translated using {@link org.openspaces.core.exception.ExceptionTranslator}.
- *
+ * <p/>
  * <p>Allows to set default timeouts for read and take operations and default lease for write
  * operation.
  *
@@ -107,21 +88,21 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     private long defaultWriteLease = Long.MAX_VALUE;
 
     private final int springIsolationLevel;
-    
+
     private final int defaultIsolationLevel;
-    
+
     private WriteModifiers defaultWriteModifiers = WriteModifiers.NONE;
-    
+
     private ReadModifiers defaultReadModifiers = ReadModifiers.NONE;
-    
+
     private TakeModifiers defaultTakeModifiers = TakeModifiers.NONE;
-    
+
     private CountModifiers defaultCountModifiers = CountModifiers.NONE;
-    
+
     private ClearModifiers defaultClearModifiers = ClearModifiers.NONE;
-    
+
     private ChangeModifiers defaultChangeModifiers = ChangeModifiers.NONE;
-    
+
     final private ExecutorMetaDataProvider executorMetaDataProvider = new ExecutorMetaDataProvider();
 
     private DefaultGigaSpace clusteredGigaSpace;
@@ -138,27 +119,27 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
      *                              levels values.
      */
     public DefaultGigaSpace(IJSpace space, TransactionProvider txProvider, ExceptionTranslator exTranslator,
-            int defaultIsolationLevel) {
+                            int defaultIsolationLevel) {
         this.space = (ISpaceProxy) space;
         this.txProvider = txProvider;
         this.exTranslator = exTranslator;
         this.typeManager = new DefaultGigaSpaceTypeManager(this.space, this.exTranslator);
-        
+
         // set the default read take modifiers according to the default isolation level
         this.springIsolationLevel = defaultIsolationLevel;
-        this.defaultIsolationLevel = 
+        this.defaultIsolationLevel =
                 IsolationLevelHelpers.convertSpringToSpaceIsolationLevel(defaultIsolationLevel, space.getReadModifiers());
         this.defaultCountModifiers = IsolationLevelHelpers.toCountModifiers(this.defaultIsolationLevel);
         this.defaultReadModifiers = IsolationLevelHelpers.toReadModifiers(this.defaultIsolationLevel);
-        
+
     }
 
     private DefaultGigaSpace(IJSpace space, DefaultGigaSpace other) {
-        this.space = (ISpaceProxy) space;        
+        this.space = (ISpaceProxy) space;
         this.txProvider = other.txProvider;
         this.exTranslator = other.exTranslator;
         this.typeManager = new DefaultGigaSpaceTypeManager(this.space, this.exTranslator);
-        
+
         this.defaultIsolationLevel = other.defaultIsolationLevel;
         this.springIsolationLevel = other.springIsolationLevel;
         this.name = other.name;
@@ -172,7 +153,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         this.defaultWriteModifiers = other.defaultWriteModifiers;
         this.defaultTakeModifiers = other.defaultTakeModifiers;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -242,14 +223,14 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public void setDefaultWriteModifiers(WriteModifiers defaultWriteModifiers) {
         this.defaultWriteModifiers = defaultWriteModifiers;
     }
-    
+
     /**
      * Sets the default {@link ClearModifiers} when excecution {@link #write(Object)}
      */
     public void setDefaultClearModifiers(ClearModifiers defaultClearModifiers) {
         this.defaultClearModifiers = defaultClearModifiers;
     }
-    
+
     /**
      * Sets the default {@link CountModifiers} when excecution {@link #count(Object)}
      */
@@ -277,7 +258,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public void setDefaultChangeModifiers(ChangeModifiers defaultChangeModifiers) {
         this.defaultChangeModifiers = defaultChangeModifiers;
     }
-    
+
     private ReadModifiers validateWithDefaultIsolationLevelAndMerge(ReadModifiers readModifiers) {
         if (readModifiers.getCode() == 0) {
             return IsolationLevelHelpers.toReadModifiers(defaultIsolationLevel);
@@ -285,7 +266,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         validateWithDefaultIsolationLevel(readModifiers, "read");
         return readModifiers;
     }
-    
+
     private CountModifiers validateWithDefaultIsolationLevelAndMerge(CountModifiers countModifiers) {
         if (countModifiers.getCode() == 0) {
             return IsolationLevelHelpers.toCountModifiers(defaultIsolationLevel);
@@ -297,20 +278,20 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     private void validateWithDefaultIsolationLevel(IsolationLevelModifiers modifiers, String name) {
         if ((springIsolationLevel == TransactionDefinition.ISOLATION_REPEATABLE_READ && !modifiers.isRepeatableRead()) ||
                 (springIsolationLevel == TransactionDefinition.ISOLATION_READ_COMMITTED && !modifiers.isReadCommitted()) ||
-                (springIsolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED && !modifiers.isDirtyRead())) { 
-                throw new IllegalArgumentException("Cannot configure conflicting isolation level and " +
-                        "default " + name + " modifiers." + StringUtils.NEW_LINE +
-                        "defaultIsolationLevel [" + defaultIsolationLevel + "]" + StringUtils.NEW_LINE + 
-                        "default " + name + " modifiers [" + modifiers.getCode() + "]");
-            }
+                (springIsolationLevel == TransactionDefinition.ISOLATION_READ_UNCOMMITTED && !modifiers.isDirtyRead())) {
+            throw new IllegalArgumentException("Cannot configure conflicting isolation level and " +
+                    "default " + name + " modifiers." + StringUtils.NEW_LINE +
+                    "defaultIsolationLevel [" + defaultIsolationLevel + "]" + StringUtils.NEW_LINE +
+                    "default " + name + " modifiers [" + modifiers.getCode() + "]");
+        }
     }
-    
+
     // GigaSpace interface Methods
 
     public WriteModifiers getDefaultWriteModifiers() {
         return defaultWriteModifiers;
     }
-    
+
     public ClearModifiers getDefaultClearModifiers() {
         return defaultClearModifiers;
     }
@@ -330,7 +311,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public ChangeModifiers getDefaultChangeModifiers() {
         return defaultChangeModifiers;
     }
-    
+
     public IJSpace getSpace() {
         return this.space;
     }
@@ -462,6 +443,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
+
     @SuppressWarnings("unchecked")
     public <T> T readById(IdQuery<T> query, long timeout) throws DataAccessException {
         try {
@@ -560,7 +542,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> AsyncFuture<T> asyncRead(T template, long timeout, int modifiers) throws DataAccessException {
         return asyncRead(template, timeout, modifiers, null);
     }
-    
+
     public <T> AsyncFuture<T> asyncRead(T template, long timeout, ReadModifiers modifiers) throws DataAccessException {
         return asyncRead(template, timeout, modifiers.getCode(), null);
     }
@@ -585,7 +567,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template) throws DataAccessException {
-        return asyncRead(template, defaultReadTimeout, getDefaultReadModifiers().getCode(), (AsyncFutureListener<T>)null);
+        return asyncRead(template, defaultReadTimeout, getDefaultReadModifiers().getCode(), (AsyncFutureListener<T>) null);
     }
 
     @Override
@@ -595,7 +577,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout) throws DataAccessException {
-        return asyncRead(template, timeout, getDefaultReadModifiers().getCode(), (AsyncFutureListener<T>)null);
+        return asyncRead(template, timeout, getDefaultReadModifiers().getCode(), (AsyncFutureListener<T>) null);
     }
 
     @Override
@@ -605,12 +587,12 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
-        return asyncRead(template, timeout, modifiers, (AsyncFutureListener<T>)null);
+        return asyncRead(template, timeout, modifiers, (AsyncFutureListener<T>) null);
     }
 
     @Override
     public <T> AsyncFuture<T> asyncRead(ISpaceQuery<T> template, long timeout, ReadModifiers modifiers) throws DataAccessException {
-        return asyncRead(template, timeout, modifiers.getCode(), (AsyncFutureListener<T>)null);
+        return asyncRead(template, timeout, modifiers.getCode(), (AsyncFutureListener<T>) null);
     }
 
     @Override
@@ -649,7 +631,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T readIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
             return (T) space.readById(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.NOT_SET, null);
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), id, routing, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.NOT_SET, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -756,29 +738,15 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T[] readMultiple(T template) throws DataAccessException {
         return readMultiple(template, Integer.MAX_VALUE);
     }
-    
+
     public <T> T[] readMultiple(T template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getDefaultReadModifiers().getCode());
-    }
- //POC
-    public <T> T[] readMultiple(T template, int maxEntries, ForeignQueryInfo fi) throws DataAccessException
-    {
-        return readMultiple(template, maxEntries,  0,  fi);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T[] readMultiple(T template, int maxEntries, int modifiers) throws DataAccessException {
         try {
             return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers);
-        } catch (Exception e) {
-            throw exTranslator.translate(e);
-        }
-    }
-//POC
-    @SuppressWarnings("unchecked")
-    public <T> T[] readMultiple(T template, int maxEntries, int modifiers, ForeignQueryInfo fi) throws DataAccessException {
-        try {
-            return (T[]) space.readMultiple(template, getCurrentTransaction(), maxEntries, modifiers, fi);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -796,7 +764,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T[] readMultiple(ISpaceQuery<T> template) throws DataAccessException {
         return readMultiple(template, Integer.MAX_VALUE);
     }
-    
+
     public <T> T[] readMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException {
         return readMultiple(template, maxEntries, getDefaultReadModifiers().getCode());
     }
@@ -835,7 +803,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
             return (T) space.takeById(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), id, routing, 0, getCurrentTransaction(), timeout, modifiers, false, QueryResultTypeInternal.NOT_SET, null);
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), id, routing, 0, getCurrentTransaction(), timeout, modifiers, false, QueryResultTypeInternal.NOT_SET, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -855,8 +823,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeById(IdQuery<T> query) throws DataAccessException {
         try {
             return (T) space.takeById(query.getTypeName(), query.getId(), query.getRouting(), query.getVersion(),
-                                      getCurrentTransaction(), defaultTakeTimeout, defaultTakeModifiers.getCode(),
-                                      false, toInternal(query.getQueryResultType()), query.getProjections());
+                    getCurrentTransaction(), defaultTakeTimeout, defaultTakeModifiers.getCode(),
+                    false, toInternal(query.getQueryResultType()), query.getProjections());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -866,8 +834,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeById(IdQuery<T> query, long timeout) throws DataAccessException {
         try {
             return (T) space.takeById(query.getTypeName(), query.getId(), query.getRouting(), query.getVersion(),
-                                      getCurrentTransaction(), timeout, defaultTakeModifiers.getCode(), false,
-                                      toInternal(query.getQueryResultType()), query.getProjections());
+                    getCurrentTransaction(), timeout, defaultTakeModifiers.getCode(), false,
+                    toInternal(query.getQueryResultType()), query.getProjections());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -877,8 +845,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeById(IdQuery<T> query, long timeout, int modifiers) throws DataAccessException {
         try {
             return (T) space.takeById(query.getTypeName(), query.getId(), query.getRouting(), query.getVersion(),
-                                      getCurrentTransaction(), timeout, modifiers, false,
-                                      toInternal(query.getQueryResultType()), query.getProjections());
+                    getCurrentTransaction(), timeout, modifiers, false,
+                    toInternal(query.getQueryResultType()), query.getProjections());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -888,8 +856,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeById(IdQuery<T> query, long timeout, TakeModifiers modifiers) throws DataAccessException {
         try {
             return (T) space.takeById(query.getTypeName(), query.getId(), query.getRouting(), query.getVersion(),
-                                      getCurrentTransaction(), timeout, modifiers.getCode(), false,
-                                      toInternal(query.getQueryResultType()), query.getProjections());
+                    getCurrentTransaction(), timeout, modifiers.getCode(), false,
+                    toInternal(query.getQueryResultType()), query.getProjections());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -947,7 +915,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         }
     }
 
-    
+
     public <T> AsyncFuture<T> asyncTake(T template) throws DataAccessException {
         return asyncTake(template, defaultTakeTimeout, defaultTakeModifiers.getCode(), null);
     }
@@ -991,7 +959,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template) throws DataAccessException {
-        return asyncTake(template, defaultTakeTimeout, defaultTakeModifiers.getCode(), (AsyncFutureListener<T>)null);
+        return asyncTake(template, defaultTakeTimeout, defaultTakeModifiers.getCode(), (AsyncFutureListener<T>) null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, AsyncFutureListener<T> listener) throws DataAccessException {
@@ -999,7 +967,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout) throws DataAccessException {
-        return asyncTake(template, timeout, defaultTakeModifiers.getCode(), (AsyncFutureListener<T>)null);
+        return asyncTake(template, timeout, defaultTakeModifiers.getCode(), (AsyncFutureListener<T>) null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, AsyncFutureListener<T> listener) throws DataAccessException {
@@ -1007,11 +975,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers) throws DataAccessException {
-        return asyncTake(template, timeout, modifiers, (AsyncFutureListener<T>)null);
+        return asyncTake(template, timeout, modifiers, (AsyncFutureListener<T>) null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, TakeModifiers modifiers) throws DataAccessException {
-        return asyncTake(template, timeout, modifiers.getCode(), (AsyncFutureListener<T>)null);
+        return asyncTake(template, timeout, modifiers.getCode(), (AsyncFutureListener<T>) null);
     }
 
     public <T> AsyncFuture<T> asyncTake(ISpaceQuery<T> template, long timeout, int modifiers, AsyncFutureListener<T> listener) throws DataAccessException {
@@ -1048,7 +1016,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> T takeIfExistsById(Class<T> clazz, Object id, Object routing, long timeout, int modifiers) {
         try {
             return (T) space.takeById(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), id, routing, 0, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.NOT_SET, null);
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), id, routing, 0, getCurrentTransaction(), timeout, modifiers, true, QueryResultTypeInternal.NOT_SET, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1166,9 +1134,9 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     }
 
     public <T> T[] takeMultiple(ISpaceQuery<T> template) throws DataAccessException {
-            return takeMultiple(template, Integer.MAX_VALUE);
+        return takeMultiple(template, Integer.MAX_VALUE);
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T> T[] takeMultiple(ISpaceQuery<T> template, int maxEntries) throws DataAccessException {
         try {
@@ -1226,13 +1194,13 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     public <T> LeaseContext<T> write(T entry, WriteModifiers modifiers) throws DataAccessException {
         try {
             return space.write(entry, getCurrentTransaction(), defaultWriteLease, 0, modifiers.getCode());
         } catch (Exception e) {
             throw exTranslator.translate(e);
-        }        
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -1243,13 +1211,13 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     public <T> LeaseContext<T> write(T entry, long lease, long timeout, WriteModifiers modifiers) throws DataAccessException {
         try {
             return space.write(entry, getCurrentTransaction(), lease, timeout, modifiers.getCode());
         } catch (Exception e) {
             throw exTranslator.translate(e);
-        }        
+        }
     }
 
     @Override
@@ -1269,7 +1237,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers) {
         try {
@@ -1277,8 +1245,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
-    };
-    
+    }
+
+    ;
+
     @Override
     public <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, long timeout) {
         try {
@@ -1287,7 +1257,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> ChangeResult<T> change(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers, long timeout) {
         try {
@@ -1295,8 +1265,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
-    };
-    
+    }
+
+    ;
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet) {
         try {
@@ -1305,17 +1277,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet,
-            AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(query, changeSet, getCurrentTransaction(), 0, defaultChangeModifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, long timeout) {
         try {
@@ -1324,17 +1296,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, long timeout,
-            AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, defaultChangeModifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers) {
         try {
@@ -1343,30 +1315,30 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers,
-            AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(query, changeSet, getCurrentTransaction(), 0, modifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers,
-            long timeout) {
+                                                   long timeout) {
         try {
             return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, modifiers, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(ISpaceQuery<T> query, ChangeSet changeSet, ChangeModifiers modifiers,
-            long timeout, AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   long timeout, AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(query, changeSet, getCurrentTransaction(), timeout, modifiers, listener);
         } catch (Exception e) {
@@ -1382,7 +1354,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> ChangeResult<T> change(T template, ChangeSet changeSet, ChangeModifiers modifiers) {
         try {
@@ -1390,8 +1362,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
-    };
-    
+    }
+
+    ;
+
     @Override
     public <T> ChangeResult<T> change(T template, ChangeSet changeSet, long timeout) {
         try {
@@ -1400,7 +1374,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> ChangeResult<T> change(T template, ChangeSet changeSet, ChangeModifiers modifiers, long timeout) {
         try {
@@ -1408,8 +1382,10 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
-    };
-    
+    }
+
+    ;
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet) {
         try {
@@ -1418,17 +1394,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet,
-            AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(template, changeSet, getCurrentTransaction(), 0, defaultChangeModifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, long timeout) {
         try {
@@ -1437,17 +1413,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, long timeout,
-            AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(template, changeSet, getCurrentTransaction(), timeout, defaultChangeModifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, ChangeModifiers modifiers) {
         try {
@@ -1456,38 +1432,38 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, ChangeModifiers modifiers,
-            AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(template, changeSet, getCurrentTransaction(), 0, modifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, ChangeModifiers modifiers,
-            long timeout) {
+                                                   long timeout) {
         try {
             return space.asyncChange(template, changeSet, getCurrentTransaction(), timeout, modifiers, null);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @Override
     public <T> Future<ChangeResult<T>> asyncChange(T template, ChangeSet changeSet, ChangeModifiers modifiers,
-            long timeout, AsyncFutureListener<ChangeResult<T>> listener) {
+                                                   long timeout, AsyncFutureListener<ChangeResult<T>> listener) {
         try {
             return space.asyncChange(template, changeSet, getCurrentTransaction(), timeout, modifiers, listener);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
-    
+
+
     public <T> LeaseContext<T>[] writeMultiple(T[] entries) throws DataAccessException {
         return writeMultiple(entries, defaultWriteLease);
     }
@@ -1504,11 +1480,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, int updateModifiers) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), lease, null, 0,  updateModifiers);
+            return space.writeMultiple(entries, getCurrentTransaction(), lease, null, 0, updateModifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1517,7 +1493,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, WriteModifiers modifiers) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), lease, null, 0,  modifiers.getCode());
+            return space.writeMultiple(entries, getCurrentTransaction(), lease, null, 0, modifiers.getCode());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1526,16 +1502,16 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long lease, long timeout, WriteModifiers modifiers) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), lease, null,timeout,  modifiers.getCode());
+            return space.writeMultiple(entries, getCurrentTransaction(), lease, null, timeout, modifiers.getCode());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, int updateModifiers) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), Long.MIN_VALUE, leases, 0,  updateModifiers);
+            return space.writeMultiple(entries, getCurrentTransaction(), Long.MIN_VALUE, leases, 0, updateModifiers);
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1544,7 +1520,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, WriteModifiers modifiers) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), Long.MIN_VALUE, leases,  0,  modifiers.getCode());
+            return space.writeMultiple(entries, getCurrentTransaction(), Long.MIN_VALUE, leases, 0, modifiers.getCode());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1553,13 +1529,13 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     @SuppressWarnings("unchecked")
     public <T> LeaseContext<T>[] writeMultiple(T[] entries, long[] leases, long timeout, WriteModifiers modifiers) throws DataAccessException {
         try {
-            return space.writeMultiple(entries, getCurrentTransaction(), Long.MIN_VALUE, leases,timeout, modifiers.getCode());
+            return space.writeMultiple(entries, getCurrentTransaction(), Long.MIN_VALUE, leases, timeout, modifiers.getCode());
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
     }
-    
-    
+
+
     public IteratorBuilder iterator() {
         return new IteratorBuilder(this);
     }
@@ -1720,7 +1696,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         int currentSpringIsolationLevel = txProvider.getCurrentTransactionIsolationLevel(this);
         return IsolationLevelHelpers.convertSpringToSpaceIsolationLevel(currentSpringIsolationLevel, defaultIsolationLevel);
     }
-    
+
     @Override
     public String toString() {
         return space.toString();
@@ -1744,17 +1720,17 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids) {
         try {
             return new ReadByIdsResultImpl<T>((T[]) space.readByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), getDefaultReadModifiers().getCode(), QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), getDefaultReadModifiers().getCode(), QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
-    }    
-    
+    }
+
     @SuppressWarnings("unchecked")
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, int modifiers) {
         try {
             return new ReadByIdsResultImpl<T>((T[]) space.readByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1764,7 +1740,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
         try {
             return new ReadByIdsResultImpl<T>((T[]) space.readByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1784,7 +1760,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
         try {
             return new ReadByIdsResultImpl<T>((T[]) space.readByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1804,7 +1780,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object routing) {
         try {
             return new ReadByIdsResultImpl<T>((T[]) space.readByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), getDefaultReadModifiers().getCode(), QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), getDefaultReadModifiers().getCode(), QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1814,7 +1790,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> ReadByIdsResult<T> readByIds(Class<T> clazz, Object[] ids, Object[] routings) {
         try {
             return new ReadByIdsResultImpl<T>((T[]) space.readByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), getDefaultReadModifiers().getCode(), QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), getDefaultReadModifiers().getCode(), QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1860,7 +1836,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, int modifiers) {
         try {
             return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1870,7 +1846,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing, int modifiers) {
         try {
             return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1890,7 +1866,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings, int modifiers) {
         try {
             return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), modifiers, QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1910,7 +1886,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids) {
         try {
             return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), defaultTakeModifiers.getCode(), QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, null, getCurrentTransaction(), defaultTakeModifiers.getCode(), QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1920,7 +1896,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object routing) {
         try {
             return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), defaultTakeModifiers.getCode(), QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routing, getCurrentTransaction(), defaultTakeModifiers.getCode(), QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1930,7 +1906,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public <T> TakeByIdsResult<T> takeByIds(Class<T> clazz, Object[] ids, Object[] routings) {
         try {
             return new TakeByIdsResultImpl<T>((T[]) space.takeByIds(
-            		ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), defaultTakeModifiers.getCode(), QueryResultTypeInternal.NOT_SET, false, null));
+                    ObjectUtils.assertArgumentNotNull(clazz, "class").getName(), ids, routings, getCurrentTransaction(), defaultTakeModifiers.getCode(), QueryResultTypeInternal.NOT_SET, false, null));
         } catch (Exception e) {
             throw exTranslator.translate(e);
         }
@@ -1976,6 +1952,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public DataEventSession newDataEventSession() {
         return newDataEventSession(new EventSessionConfig());
     }
+
     @Override
     public DataEventSession newDataEventSession(EventSessionConfig config) {
         try {
@@ -1988,8 +1965,8 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
     public GigaSpaceTypeManager getTypeManager() {
         return typeManager;
     }
-    
-    
+
+
     private static QueryResultTypeInternal toInternal(QueryResultType queryResultType) {
         if (queryResultType == null)
             return null;
@@ -1999,7 +1976,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
             return QueryResultTypeInternal.OBJECT_JAVA;
         if (queryResultType == QueryResultType.DOCUMENT)
             return QueryResultTypeInternal.DOCUMENT_ENTRY;
-        
+
         throw new IllegalArgumentException("Unsupported query result type: " + queryResultType);
     }
 
@@ -2010,7 +1987,7 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> ISpaceQuery<T> prepareTemplate(Object template){
-        return (ISpaceQuery<T>)space.getDirectProxy().prepareTemplate(template);
+    public <T> ISpaceQuery<T> prepareTemplate(Object template) {
+        return (ISpaceQuery<T>) space.getDirectProxy().prepareTemplate(template);
     }
 }
