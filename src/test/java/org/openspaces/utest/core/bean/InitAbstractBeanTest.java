@@ -194,11 +194,6 @@ public class InitAbstractBeanTest extends TestCase {
 
         }
 
-        @Override
-        public String getVirtualServerName() {
-            return null;
-        }
-
         /* (non-Javadoc)
                  * @see javax.servlet.ServletContext#addFilter(java.lang.String, java.lang.String)
                  */
