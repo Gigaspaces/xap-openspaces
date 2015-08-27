@@ -3,10 +3,10 @@ package org.openspaces.foreignindexes.geospatial;
 import com.gigaspaces.metadata.index.SpaceIndex;
 import com.gigaspaces.metadata.index.SpaceIndexType;
 import com.j_spaces.core.cache.foreignIndexes.*;
-import com.j_spaces.core.geospatial.shapes.*;
+import com.j_spaces.core.geospatial.shapes.Polygon;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
-import com.spatial4j.core.shape.*;
+import com.spatial4j.core.shape.SpatialRelation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -25,7 +25,9 @@ import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
+import org.openspaces.core.util.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -38,20 +40,22 @@ import java.util.logging.Logger;
 
 /**
  * Created by yechielf
+ *
  * @since 11.0
  */
 public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
     private static final Logger logger = Logger.getLogger(LuceneGeoIndexHandler.class.getName());
 
     public final static Map<String, SpatialOperation> spatialOperationMap = new HashMap<String, SpatialOperation>();
-    static{
+
+    static {
         spatialOperationMap.put("WITHIN", SpatialOperation.IsWithin);
         spatialOperationMap.put("CONTAINS", SpatialOperation.Contains);
         spatialOperationMap.put("DISJOINT", SpatialOperation.IsDisjointTo);
         spatialOperationMap.put("INTERSECTS", SpatialOperation.Intersects);
     }
 
-    private final String mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home") + "/lucenework/");
+    private String mainDirectory;
     static final String GSUID = "GSUID";
     static final String GSVERSION = "GSVERSION";
 
@@ -97,10 +101,15 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
         return new LuceneHolder(directory, iwriter);
     }
 
-    @Override
-    public void initialize(String className) throws Exception {
-        super.initialize(className);
 
+    @Override
+    public void initialize(String className, String spaceName) throws Exception {
+        super.initialize(className,spaceName);
+        mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home") + "/" + spaceName);
+        File mainFolder= new File(mainDirectory);
+        if (mainFolder.exists()){
+            FileUtils.deleteFileOrDirectory(mainFolder);
+        }
         luceneEntryHolder = createLuceneHolder(mainDirectory + "/" + className + "/entries");
         ForeignIndexesHandler.addHandler("geospatial", className, this);
 
@@ -149,7 +158,7 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
     public void removeEntry(IIndexableServerEntry entry) throws Exception {
         luceneEntryHolder.getIndexWriter().deleteDocuments(new Term(GSUID, (String) entry.getUid()));
         luceneEntryHolder.getIndexWriter().commit();
-        _uidToEntry.remove( entry.getUid());
+        _uidToEntry.remove(entry.getUid());
     }
 
     @Override
@@ -179,8 +188,9 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
     @Override
     public void close() throws Exception {
         luceneEntryHolder.getIndexWriter().close();
+        File mainFolder = new File(mainDirectory);
+        FileUtils.deleteFileOrDirectory(mainFolder);
     }
-
 
     public com.spatial4j.core.shape.Shape toSpatial4j(com.j_spaces.core.geospatial.shapes.Shape gigaShape) {
         if (gigaShape instanceof com.j_spaces.core.geospatial.shapes.Rectangle) {
@@ -212,11 +222,11 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
     private com.spatial4j.core.shape.Shape convertPolygon(Polygon polygon) {
         try {
             String coordinates = "";
-            for (int i=0; i<polygon.getCoordinates().size(); i++) {
-                coordinates += (int)polygon.getCoordinates().get(i).getX() + " " + (int)polygon.getCoordinates().get(i).getY() +",";
+            for (int i = 0; i < polygon.getCoordinates().size(); i++) {
+                coordinates += (int) polygon.getCoordinates().get(i).getX() + " " + (int) polygon.getCoordinates().get(i).getY() + ",";
             }
-            coordinates += (int)polygon.getCoordinates().get(0).getX() + " " + (int)polygon.getCoordinates().get(0).getY();
-            return spatialContext.readShapeFromWkt("POLYGON (("+coordinates+"))");
+            coordinates += (int) polygon.getCoordinates().get(0).getX() + " " + (int) polygon.getCoordinates().get(0).getY();
+            return spatialContext.readShapeFromWkt("POLYGON ((" + coordinates + "))");
             //return poly;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -236,7 +246,7 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
             return false;
         } else {
             SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
-            if(spatialRelation == null){
+            if (spatialRelation == null) {
                 logger.warning("Relation " + relation + " not found, known relations are: " + Arrays.asList(SpatialRelation.values()));
                 return false;
             }
@@ -250,7 +260,7 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
     @Override
     public ForeignQueryEntriesResultIterator scanIndex(String typeName, String path, String namespace, String relation, Object subject) throws Exception {
         SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
-        if(spatialRelation == null){
+        if (spatialRelation == null) {
             logger.warning("Relation " + relation + " not found, known relations for " + namespace + " are: " + Arrays.asList(SpatialRelation.values()));
             return null;
         }
