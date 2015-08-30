@@ -33,7 +33,7 @@ public class LuceneTemplatesIterator extends ForeignQueryTemplatesResultIterator
 
     public IIndexableServerTemplate next() throws Exception {
         Document d = _is.doc(_scores[_pos++].doc);
-        return _uidToEntry.get(d.get(LuceneGeoIndexHandler.GSUID));
+        return _uidToEntry.get(d.get(LuceneGeospatialCustomRelationHandler.GSUID));
     }
 
     public void close() throws Exception {

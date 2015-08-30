@@ -1,5 +1,6 @@
 package org.openspaces.foreignindexes.geospatial;
 
+import com.gigaspaces.metadata.SpaceTypeDescriptor;
 import com.gigaspaces.metadata.index.SpaceIndex;
 import com.gigaspaces.metadata.index.SpaceIndexType;
 import com.j_spaces.core.cache.foreignIndexes.*;
@@ -29,22 +30,23 @@ import org.openspaces.core.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 
 /**
  * Created by yechielf
- *
  * @since 11.0
  */
-public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
-    private static final Logger logger = Logger.getLogger(LuceneGeoIndexHandler.class.getName());
+public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler {
+    private static final Logger logger = Logger.getLogger(LuceneGeospatialCustomRelationHandler.class.getName());
 
     public final static Map<String, SpatialOperation> spatialOperationMap = new HashMap<String, SpatialOperation>();
 
@@ -88,7 +90,7 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
     }
 
 
-    public LuceneGeoIndexHandler() {
+    public LuceneGeospatialCustomRelationHandler() {
         _uidToEntry = new ConcurrentHashMap<Object, IIndexableServerEntry>();
     }
 
@@ -103,29 +105,34 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
 
 
     @Override
-    public void initialize(String className, String spaceName) throws Exception {
-        super.initialize(className,spaceName);
+    public void initialize(String className, String namespace, String spaceName) throws Exception {
+        super.initialize(className, namespace, spaceName);
         mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home") + "/" + spaceName);
         File mainFolder= new File(mainDirectory);
         if (mainFolder.exists()){
             FileUtils.deleteFileOrDirectory(mainFolder);
         }
         luceneEntryHolder = createLuceneHolder(mainDirectory + "/" + className + "/entries");
-        ForeignIndexesHandler.addHandler("geospatial", className, this);
+        CustomRelationHandler.addHandler("geospatial", className, this);
 
     }
 
 
     @Override
-    public void insertEntry(IIndexableServerEntry entry) throws Exception {
+    public void insertEntry(IIndexableServerEntry entry, Map<String, Set<Annotation>> customRelationAnnotations) throws Exception {
         _uidToEntry.put(entry.getUid(), entry);
         //construct a document and add all fixed  properties
         Document doc = new Document();
-        Map<String, SpaceIndex> indexes = entry.getSpaceTypeDescriptor().getIndexes();
+        SpaceTypeDescriptor spaceTypeDescriptor = entry.getSpaceTypeDescriptor();
+        Map<String, SpaceIndex> indexes = spaceTypeDescriptor.getIndexes();
         for (String index : indexes.keySet()) {
-            if (indexes.get(index).getIndexType().equals(SpaceIndexType.GEOSPATIAL)) {
+            if (indexes.get(index).getIndexType().equals(SpaceIndexType.CUSTOM_RELATION)) {
                 Object val = entry.getPropertyValue(index);
                 if (val != null) {//???????????  does lucene handle nulls ?????????
+                    String fieldName = indexes.get(index).getName();
+                    //noinspection unused
+                    GeoSpatial geoSpatial = extractFieldAnnotation(customRelationAnnotations.get(fieldName));
+                    // extract args e.g geoSpatial.indexed()
                     if (val instanceof com.j_spaces.core.geospatial.shapes.Shape) {
                         com.j_spaces.core.geospatial.shapes.Shape gigaShape = (com.j_spaces.core.geospatial.shapes.Shape) val;
                         com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
@@ -152,6 +159,15 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
         luceneEntryHolder.getIndexWriter().addDocument(doc);
         luceneEntryHolder.getIndexWriter().commit();
 
+    }
+
+    private GeoSpatial extractFieldAnnotation(Set<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            if(annotation instanceof GeoSpatial){
+                return GeoSpatial.class.cast(annotation);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -239,7 +255,6 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
         return new RecursivePrefixTreeStrategy(grid, fieldName);
     }
 
-    //@todo create param object
     public boolean applyOperationFilter(String relation, Object actual, Object matchedAgainst) {
         if (!(actual instanceof com.j_spaces.core.geospatial.shapes.Shape) || !(matchedAgainst instanceof com.j_spaces.core.geospatial.shapes.Shape)) {
             logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + actual + " and " + matchedAgainst);
@@ -256,7 +271,6 @@ public class LuceneGeoIndexHandler extends ForeignIndexesHandler {
         }
     }
 
-    //@todo create param object
     @Override
     public ForeignQueryEntriesResultIterator scanIndex(String typeName, String path, String namespace, String relation, Object subject) throws Exception {
         SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
