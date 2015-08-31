@@ -1,8 +1,6 @@
 package org.openspaces.foreignindexes.geospatial;
 
-import com.gigaspaces.metadata.SpaceTypeDescriptor;
-import com.gigaspaces.metadata.index.SpaceIndex;
-import com.gigaspaces.metadata.index.SpaceIndexType;
+import com.gigaspaces.internal.metadata.ITypeDesc;
 import com.j_spaces.core.cache.foreignIndexes.*;
 import com.j_spaces.core.geospatial.shapes.Polygon;
 import com.spatial4j.core.context.SpatialContext;
@@ -116,8 +114,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     @Override
-    public void initialize(String className, String namespace, String spaceName) throws Exception {
-        super.initialize(className, namespace, spaceName);
+    public void initialize(String className, String namespace, String spaceName, Class annotationType) throws Exception {
+        super.initialize(className, namespace, spaceName, annotationType);
         mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home"));
         File luceneIndexdDirectory = new File(mainDirectory, spaceName);
         if (luceneIndexdDirectory.exists()) {
@@ -135,24 +133,22 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         _uidToEntry.put(entry.getUid(), entry);
         //construct a document and add all fixed  properties
         Document doc = new Document();
-        SpaceTypeDescriptor spaceTypeDescriptor = entry.getSpaceTypeDescriptor();
-        Map<String, SpaceIndex> indexes = spaceTypeDescriptor.getIndexes();
-        for (String index : indexes.keySet()) {
-            if (indexes.get(index).getIndexType().equals(SpaceIndexType.CUSTOM_RELATION)) {
-                Object val = entry.getPropertyValue(index);
-                if (val != null) {//???????????  does lucene handle nulls ?????????
-                    String fieldName = indexes.get(index).getName();
-                    //noinspection unused
-                    GeoSpatial geoSpatial = extractFieldAnnotation(customRelationAnnotations.get(fieldName));
-                    // extract args e.g geoSpatial.indexed()
-                    if (val instanceof com.j_spaces.core.geospatial.shapes.Shape) {
-                        com.j_spaces.core.geospatial.shapes.Shape gigaShape = (com.j_spaces.core.geospatial.shapes.Shape) val;
-                        com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
-                        Field[] fields = createStrategyByFieldName(indexes.get(index).getName()).createIndexableFields(shape);
-                        for (Field field : fields) {
-                            doc.add(field);
+        for (String fieldName : customRelationAnnotations.keySet()) {
+            Set<Annotation> fieldAnnotations = customRelationAnnotations.get(fieldName);
+            for (Annotation fieldAnnotation : fieldAnnotations) {
+                if (fieldAnnotation.annotationType().equals(getAnnotationType())) {
+                    Geospatial geospatial = (Geospatial) fieldAnnotation;
+                    if (geospatial.indexed()) {
+                        Object val = entry.getPropertyValue(fieldName);
+                        if (val instanceof com.j_spaces.core.geospatial.shapes.Shape) {
+                            com.j_spaces.core.geospatial.shapes.Shape gigaShape = (com.j_spaces.core.geospatial.shapes.Shape) val;
+                            com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
+                            Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
+                            for (Field field : fields) {
+                                doc.add(field);
+                            }
+                            docHasShape = true;
                         }
-                        docHasShape = true;
                     }
                 }
             }
@@ -177,13 +173,17 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
     }
 
-    private GeoSpatial extractFieldAnnotation(Set<Annotation> annotations) {
+    @Override
+    public boolean isIndexed(ITypeDesc typeDesc, Set<Annotation> annotations) {
         for (Annotation annotation : annotations) {
-            if (annotation instanceof GeoSpatial) {
-                return GeoSpatial.class.cast(annotation);
+            if (annotation.annotationType().equals(Geospatial.class)) {
+                Geospatial geospatial = (Geospatial) annotation;
+                if(geospatial.indexed()){
+                    return true; //todo cache by type field path.
+                }
             }
         }
-        return null;
+        return false;
     }
 
     @Override

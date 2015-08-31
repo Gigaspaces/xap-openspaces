@@ -18,7 +18,7 @@ import static java.lang.annotation.ElementType.METHOD;
 @CustomRelation(namespace = "geospatial", handler = LuceneGeospatialCustomRelationHandler.class)
 @Target({METHOD, FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GeoSpatial {
+public @interface Geospatial {
     boolean indexed() default true;
 
 }
