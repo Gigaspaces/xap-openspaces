@@ -20,5 +20,4 @@ import static java.lang.annotation.ElementType.METHOD;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Geospatial {
     boolean indexed() default true;
-
 }
