@@ -128,27 +128,25 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     @Override
-    public void insertEntry(IIndexableServerEntry entry, Map<String, Set<Annotation>> customRelationAnnotations) throws Exception {
+    public void insertEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders) throws Exception {
         boolean docHasShape = false;
         _uidToEntry.put(entry.getUid(), entry);
         //construct a document and add all fixed  properties
         Document doc = new Document();
-        for (String fieldName : customRelationAnnotations.keySet()) {
-            Set<Annotation> fieldAnnotations = customRelationAnnotations.get(fieldName);
-            for (Annotation fieldAnnotation : fieldAnnotations) {
-                if (fieldAnnotation.annotationType().equals(getAnnotationType())) {
-                    Geospatial geospatial = (Geospatial) fieldAnnotation;
-                    if (geospatial.indexed()) {
-                        Object val = entry.getPropertyValue(fieldName);
-                        if (val instanceof com.j_spaces.core.geospatial.shapes.Shape) {
-                            com.j_spaces.core.geospatial.shapes.Shape gigaShape = (com.j_spaces.core.geospatial.shapes.Shape) val;
-                            com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
-                            Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
-                            for (Field field : fields) {
-                                doc.add(field);
-                            }
-                            docHasShape = true;
+        for (String fieldName : customRelationAnnotationsHolders.keySet()) {
+            CustomRelationAnnotationHolder holder = customRelationAnnotationsHolders.get(fieldName + ":" + getNamespace());
+            if(holder != null && holder.getAnnotation().annotationType().equals(Geospatial.class)){
+                Geospatial geospatial = (Geospatial) holder.getAnnotation();
+                if (geospatial.indexed()) {
+                    Object val = entry.getPropertyValue(fieldName);
+                    if (val instanceof com.j_spaces.core.geospatial.shapes.Shape) {
+                        com.j_spaces.core.geospatial.shapes.Shape gigaShape = (com.j_spaces.core.geospatial.shapes.Shape) val;
+                        com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
+                        Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
+                        for (Field field : fields) {
+                            doc.add(field);
                         }
+                        docHasShape = true;
                     }
                 }
             }
@@ -174,13 +172,11 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     @Override
-    public boolean isIndexed(ITypeDesc typeDesc, Set<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            if (annotation.annotationType().equals(Geospatial.class)) {
-                Geospatial geospatial = (Geospatial) annotation;
-                if(geospatial.indexed()){
-                    return true; //todo cache by type field path.
-                }
+    public boolean isIndexed(ITypeDesc typeDesc, Annotation annotation) {
+        if (annotation.annotationType().equals(Geospatial.class)) {
+            Geospatial geospatial = (Geospatial) annotation;
+            if (geospatial.indexed()) {
+                return true;
             }
         }
         return false;
