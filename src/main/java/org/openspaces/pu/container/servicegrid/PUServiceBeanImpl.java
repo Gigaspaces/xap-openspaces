@@ -716,6 +716,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
         }
 
+        //apply the following only if the pu has the rocksdb-blob-store element
+        if (springXml.contains("<blob-store:rocksdb-blob-store")) {
+            String rocksdbJar = System.getProperty("com.gigaspaces.blobstore.rocksdb", Environment.getHomeDirectory() + "/lib/optional/blobstore/rocksdb-blobstore.jar");
+
+            Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
+            ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{rocksdbJar}));
+        }
+
         final Map<String, String> puTags = buildPuTags(clusterInfo);
         MetricRegistrator puMetricRegistrator = metricManager.createRegistrator("pu", puTags);
         this.metricRegistrators = metricManager.registerProcessMetrics(puTags);
