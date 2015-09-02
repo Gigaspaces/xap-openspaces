@@ -1,8 +1,8 @@
 package org.openspaces.foreignindexes.geospatial;
 
+import com.gigaspaces.core.geospatial.shapes.*;
 import com.gigaspaces.internal.metadata.ITypeDesc;
 import com.j_spaces.core.cache.foreignIndexes.*;
-import com.j_spaces.core.geospatial.shapes.Polygon;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
 import com.spatial4j.core.shape.SpatialRelation;
@@ -34,7 +34,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
@@ -139,8 +138,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 Geospatial geospatial = (Geospatial) holder.getAnnotation();
                 if (geospatial.indexed()) {
                     Object val = entry.getPropertyValue(fieldName);
-                    if (val instanceof com.j_spaces.core.geospatial.shapes.Shape) {
-                        com.j_spaces.core.geospatial.shapes.Shape gigaShape = (com.j_spaces.core.geospatial.shapes.Shape) val;
+                    if (val instanceof Shape) {
+                        Shape gigaShape = (Shape) val;
                         com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
                         Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
                         for (Field field : fields) {
@@ -220,13 +219,13 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         FileUtils.deleteFileOrDirectory(mainFolder);
     }
 
-    public com.spatial4j.core.shape.Shape toSpatial4j(com.j_spaces.core.geospatial.shapes.Shape gigaShape) {
-        if (gigaShape instanceof com.j_spaces.core.geospatial.shapes.Rectangle) {
-            return convertRectangle((com.j_spaces.core.geospatial.shapes.Rectangle) gigaShape);
-        } else if (gigaShape instanceof com.j_spaces.core.geospatial.shapes.Circle) {
-            return convertCircle((com.j_spaces.core.geospatial.shapes.Circle) gigaShape);
-        } else if (gigaShape instanceof com.j_spaces.core.geospatial.shapes.Point) {
-            return convertPoint((com.j_spaces.core.geospatial.shapes.Point) gigaShape);
+    public com.spatial4j.core.shape.Shape toSpatial4j(Shape gigaShape) {
+        if (gigaShape instanceof Rectangle) {
+            return convertRectangle((Rectangle) gigaShape);
+        } else if (gigaShape instanceof Circle) {
+            return convertCircle((Circle) gigaShape);
+        } else if (gigaShape instanceof Point) {
+            return convertPoint((Point) gigaShape);
         } else if (gigaShape instanceof Polygon) {
             return convertPolygon((Polygon) gigaShape);
         } else {
@@ -234,16 +233,16 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
     }
 
-    private com.spatial4j.core.shape.Shape convertCircle(com.j_spaces.core.geospatial.shapes.Circle circle) {
+    private com.spatial4j.core.shape.Shape convertCircle(Circle circle) {
         return spatialContext.makeCircle(circle.getPoint().getX(), circle.getPoint().getY(), circle.getRadius());
     }
 
-    private com.spatial4j.core.shape.Shape convertRectangle(com.j_spaces.core.geospatial.shapes.Rectangle rectangle) {
+    private com.spatial4j.core.shape.Shape convertRectangle(Rectangle rectangle) {
         return spatialContext.makeRectangle(rectangle.getMinX(), rectangle.getMaxX(),
                 rectangle.getMinY(), rectangle.getMaxY());
     }
 
-    private com.spatial4j.core.shape.Shape convertPoint(com.j_spaces.core.geospatial.shapes.Point point) {
+    private com.spatial4j.core.shape.Shape convertPoint(Point point) {
         return spatialContext.makePoint(point.getX(), point.getY());
     }
 
@@ -268,7 +267,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     public boolean applyOperationFilter(String relation, Object actual, Object matchedAgainst) {
-        if (!(actual instanceof com.j_spaces.core.geospatial.shapes.Shape) || !(matchedAgainst instanceof com.j_spaces.core.geospatial.shapes.Shape)) {
+        if (!(actual instanceof Shape) || !(matchedAgainst instanceof Shape)) {
             logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + actual + " and " + matchedAgainst);
             return false;
         } else {
@@ -277,8 +276,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 logger.warning("Relation " + relation + " not found, known relations are: " + Arrays.asList(SpatialRelation.values()));
                 return false;
             }
-            com.spatial4j.core.shape.Shape actualShape = toSpatial4j((com.j_spaces.core.geospatial.shapes.Shape) actual);
-            com.spatial4j.core.shape.Shape matchedAgainstShape = toSpatial4j((com.j_spaces.core.geospatial.shapes.Shape) matchedAgainst);
+            com.spatial4j.core.shape.Shape actualShape = toSpatial4j((Shape) actual);
+            com.spatial4j.core.shape.Shape matchedAgainstShape = toSpatial4j((Shape) matchedAgainst);
             return actualShape.relate(matchedAgainstShape) == spatialRelation;
         }
     }
@@ -290,11 +289,11 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             logger.warning("Relation " + relation + " not found, known relations for " + namespace + " are: " + Arrays.asList(SpatialRelation.values()));
             return null;
         }
-        if (!(subject instanceof com.j_spaces.core.geospatial.shapes.Shape)) {
+        if (!(subject instanceof Shape)) {
             logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + subject);
             return null;
         }
-        com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((com.j_spaces.core.geospatial.shapes.Shape) subject);
+        com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
         SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
         DirectoryReader dr = DirectoryReader.open(luceneEntryHolder.getDirectory());
         IndexSearcher is = new IndexSearcher(dr);
