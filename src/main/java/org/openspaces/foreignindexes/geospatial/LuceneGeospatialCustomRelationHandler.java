@@ -65,7 +65,6 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     }
 
-    private String mainDirectory;
     static final String GSUID = "GSUID";
     static final String GSVERSION = "GSVERSION";
 
@@ -78,6 +77,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private SpatialContext spatialContext = JtsSpatialContext.GEO;
     private int maxLevels = 11;//results in sub-meter precision for geohash
     private SpatialPrefixTree grid = new GeohashPrefixTree(spatialContext, maxLevels);
+    private File luceneIndexdDirectory;
 
     public class LuceneHolder {
         private Directory _directory;
@@ -115,12 +115,12 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void initialize(String className, String namespace, String spaceName, Class annotationType) throws Exception {
         super.initialize(className, namespace, spaceName, annotationType);
-        mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home"));
-        File luceneIndexdDirectory = new File(mainDirectory, spaceName);
+        String mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home"));
+        luceneIndexdDirectory = new File(mainDirectory, spaceName);
         if (luceneIndexdDirectory.exists()) {
             FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
         }
-        luceneEntryHolder = createLuceneHolder(mainDirectory + "/" + className + "/entries");
+        luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
         CustomRelationHandler.addHandler("geospatial", className, this);
 
     }
@@ -215,8 +215,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void close() throws Exception {
         luceneEntryHolder.getIndexWriter().close();
-        File mainFolder = new File(mainDirectory);
-        FileUtils.deleteFileOrDirectory(mainFolder);
+        FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
     }
 
     public com.spatial4j.core.shape.Shape toSpatial4j(Shape gigaShape) {
