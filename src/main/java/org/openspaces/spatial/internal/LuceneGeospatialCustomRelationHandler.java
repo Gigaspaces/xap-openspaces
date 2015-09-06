@@ -42,7 +42,7 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.openspaces.core.util.FileUtils;
-import org.openspaces.spatial.Geospatial;
+import org.openspaces.spatial.SpaceSpatialIndex;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,19 +151,16 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         Document doc = new Document();
         for (String fieldName : customRelationAnnotationsHolders.keySet()) {
             CustomRelationAnnotationHolder holder = customRelationAnnotationsHolders.get(fieldName + ":" + getNamespace());
-            if(holder != null && holder.getAnnotation().annotationType().equals(Geospatial.class)){
-                Geospatial geospatial = (Geospatial) holder.getAnnotation();
-                if (geospatial.indexed()) {
-                    Object val = entry.getPropertyValue(fieldName);
-                    if (val instanceof Shape) {
-                        Shape gigaShape = (Shape) val;
-                        com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
-                        Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
-                        for (Field field : fields) {
-                            doc.add(field);
-                        }
-                        docHasShape = true;
+            if(holder != null && holder.getAnnotation().annotationType().equals(SpaceSpatialIndex.class)){
+                Object val = entry.getPropertyValue(fieldName);
+                if (val instanceof Shape) {
+                    Shape gigaShape = (Shape) val;
+                    com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
+                    Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
+                    for (Field field : fields) {
+                        doc.add(field);
                     }
+                    docHasShape = true;
                 }
             }
         }
@@ -189,12 +186,9 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     @Override
     public boolean isIndexed(ITypeDesc typeDesc, Annotation annotation) {
-        if (annotation.annotationType().equals(Geospatial.class)) {
-            Geospatial geospatial = (Geospatial) annotation;
-            if (geospatial.indexed()) {
-                return true;
-            }
-        }
+        if (annotation.annotationType().equals(SpaceSpatialIndex.class))
+            return true;
+
         return false;
     }
 
