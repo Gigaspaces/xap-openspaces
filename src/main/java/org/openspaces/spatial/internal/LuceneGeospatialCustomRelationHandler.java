@@ -1,7 +1,24 @@
-package org.openspaces.foreignindexes.geospatial;
+/*******************************************************************************
+ *
+ * Copyright (c) 2015 GigaSpaces Technologies Ltd. All rights reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************/
+package org.openspaces.spatial.internal;
 
-import com.gigaspaces.core.geospatial.shapes.*;
 import com.gigaspaces.internal.metadata.ITypeDesc;
+import com.gigaspaces.spatial.shapes.*;
 import com.j_spaces.core.cache.foreignIndexes.*;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
@@ -25,6 +42,7 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.openspaces.core.util.FileUtils;
+import org.openspaces.spatial.Geospatial;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +58,6 @@ import java.util.logging.Logger;
 
 /**
  * Created by yechielf
- *
  * @since 11.0
  */
 public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler {
@@ -248,10 +265,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private com.spatial4j.core.shape.Shape convertPolygon(Polygon polygon) {
         try {
             String coordinates = "";
-            for (int i = 0; i < polygon.getCoordinates().size(); i++) {
-                coordinates += (int) polygon.getCoordinates().get(i).getX() + " " + (int) polygon.getCoordinates().get(i).getY() + ",";
+            for (int i = 0; i < polygon.getNumOfPoints(); i++) {
+                coordinates += (int) polygon.getPoint(i).getX() + " " + (int) polygon.getPoint(i).getY() + ",";
             }
-            coordinates += (int) polygon.getCoordinates().get(0).getX() + " " + (int) polygon.getCoordinates().get(0).getY();
+            coordinates += (int) polygon.getPoint(0).getX() + " " + (int) polygon.getPoint(0).getY();
             return spatialContext.readShapeFromWkt("POLYGON ((" + coordinates + "))");
             //return poly;
         } catch (ParseException e) {
