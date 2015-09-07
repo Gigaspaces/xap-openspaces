@@ -714,6 +714,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
             Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
         //apply the following only if the pu has the rocksdb-blob-store element
@@ -722,6 +723,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
             Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{rocksdbJar}));
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
         final Map<String, String> puTags = buildPuTags(clusterInfo);
