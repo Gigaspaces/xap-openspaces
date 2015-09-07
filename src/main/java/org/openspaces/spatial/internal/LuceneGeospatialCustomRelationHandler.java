@@ -149,14 +149,13 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         _uidToEntry.put(entry.getUid(), entry);
         //construct a document and add all fixed  properties
         Document doc = new Document();
-        for (String fieldName : customRelationAnnotationsHolders.keySet()) {
-            CustomRelationAnnotationHolder holder = customRelationAnnotationsHolders.get(fieldName + ":" + getNamespace());
-            if(holder != null && holder.getAnnotation().annotationType().equals(SpaceSpatialIndex.class)){
-                Object val = entry.getPropertyValue(fieldName);
+        for (CustomRelationAnnotationHolder customRelationAnnotationHolder : customRelationAnnotationsHolders.values()) {
+            if(customRelationAnnotationHolder != null && customRelationAnnotationHolder.getAnnotation().annotationType().equals(SpaceSpatialIndex.class)){
+                Object val = entry.getPropertyValue(customRelationAnnotationHolder.getFieldName());
                 if (val instanceof Shape) {
                     Shape gigaShape = (Shape) val;
                     com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
-                    Field[] fields = createStrategyByFieldName(fieldName).createIndexableFields(shape);
+                    Field[] fields = createStrategyByFieldName(customRelationAnnotationHolder.getFieldName()).createIndexableFields(shape);
                     for (Field field : fields) {
                         doc.add(field);
                     }
