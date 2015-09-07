@@ -179,16 +179,13 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             doc.add(new IntField(GSVERSION, entry.getVersion(), gsVersionFieldType));
 
             luceneEntryHolder.getIndexWriter().addDocument(doc);
-            luceneEntryHolder.getIndexWriter().commit();
         }
     }
 
     @Override
     public boolean isIndexed(ITypeDesc typeDesc, Annotation annotation) {
-        if (annotation.annotationType().equals(SpaceSpatialIndex.class))
-            return true;
+        return annotation.annotationType().equals(SpaceSpatialIndex.class);
 
-        return false;
     }
 
     @Override
@@ -304,6 +301,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
         SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
+        luceneEntryHolder.getIndexWriter().commit();
         DirectoryReader dr = DirectoryReader.open(luceneEntryHolder.getDirectory());
         IndexSearcher is = new IndexSearcher(dr);
 
