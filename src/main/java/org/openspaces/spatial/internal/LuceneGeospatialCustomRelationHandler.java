@@ -175,7 +175,6 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
             luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
                     new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()))));
-            luceneEntryHolder.getIndexWriter().commit();
             _uidToEntry.remove(entry.getUid());
         } else {
             throw new RuntimeException("Entry with id ["+String.valueOf(entry.getUid())+"] does not exist");
@@ -219,12 +218,11 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
                         new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion() - 1))));
 
-                luceneEntryHolder.getIndexWriter().commit();
 
                 _uidToEntry.put(entry.getUid(), entry);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to update entry with id ["+String.valueOf(entry.getUid())+"]");
         }
     }
 
