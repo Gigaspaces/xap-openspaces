@@ -16,15 +16,12 @@
 
 package org.openspaces.core.transaction;
 
-import java.rmi.RemoteException;
-import java.util.List;
-
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-
+import com.gigaspaces.client.transaction.DistributedTransactionManagerProvider;
+import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
+import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.client.XAResourceImpl;
 import net.jini.core.transaction.Transaction;
 import net.jini.core.transaction.TransactionException;
-
 import org.openspaces.core.TransactionDataAccessException;
 import org.openspaces.core.transaction.manager.ExistingJiniTransactionManager;
 import org.openspaces.core.transaction.manager.JiniTransactionHolder;
@@ -34,10 +31,10 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.gigaspaces.client.transaction.DistributedTransactionManagerProvider;
-import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.XAResourceImpl;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Default transaction provider works in conjunction with
@@ -66,9 +63,9 @@ public class DefaultTransactionProvider implements TransactionProvider {
     private PlatformTransactionManager transactionManager;
 
     private boolean isJta = false;
-    
+
     private DistributedTransactionManagerProvider distributedTransactionManagerProvider;
-    
+
     private final Object distributedTransactionManagerProviderLock = new Object();
 
     /**
@@ -152,7 +149,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
                     }
                 }
             }
-            XAResource xaResourceSpace = new XAResourceImpl(distributedTransactionManagerProvider.getTransactionManager(), space, true);
+            XAResource xaResourceSpace = new XAResourceImpl(distributedTransactionManagerProvider.getTransactionManager(), space, true/*delegatedXa*/,true/*resourcePerSingleTxn*/);
             // set the default timeout to be the one specified on the JTA transaction manager
             if (jtaTransactionManager.getDefaultTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
                 try {
@@ -170,7 +167,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
                 throw new TransactionDataAccessException("Failed to enlist xa resource [" + xaResourceSpace + "] with space [" + space + "]", e);
             }
 
-            // get the context transaction from the Space, dont nullify it since the proxy thread local contains the XAResoureceImpl instance 
+            // get the context transaction from the Space, dont nullify it since the proxy thread local contains the XAResoureceImpl instance
             //   Transaction.Created transaction = ((ISpaceProxy) space).replaceContextTransaction(null);
             Transaction.Created transaction = ((ISpaceProxy) space).getContextTransaction();
 
@@ -240,7 +237,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
         }
         return false;
     }
-    
+
     public void destroy() throws RemoteException {
         synchronized(distributedTransactionManagerProviderLock)
         {
