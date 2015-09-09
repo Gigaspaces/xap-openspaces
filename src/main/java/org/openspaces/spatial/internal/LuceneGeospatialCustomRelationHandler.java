@@ -27,12 +27,8 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.document.IntField;
 import org.apache.lucene.index.*;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.*;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
@@ -64,26 +60,17 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private static final Logger logger = Logger.getLogger(LuceneGeospatialCustomRelationHandler.class.getName());
 
     public final static Map<String, SpatialOperation> spatialOperationMap = new HashMap<String, SpatialOperation>();
-    private final static FieldType fieldType = new FieldType();
-
     static {
         spatialOperationMap.put("WITHIN", SpatialOperation.IsWithin);
         spatialOperationMap.put("CONTAINS", SpatialOperation.Contains);
         spatialOperationMap.put("DISJOINT", SpatialOperation.IsDisjointTo);
         spatialOperationMap.put("INTERSECTS", SpatialOperation.Intersects);
 
-        fieldType.setStored(false);
-        fieldType.setStoreTermVectorOffsets(false);
-        fieldType.setStoreTermVectorPayloads(false);
-        fieldType.setStoreTermVectorPositions(false);
-        fieldType.setStoreTermVectors(false);
-        fieldType.setTokenized(false);
-        fieldType.setIndexOptions(IndexOptions.DOCS);
-
     }
 
     static final String GSUID = "GSUID";
     static final String GSVERSION = "GSVERSION";
+    private static final String GSUIDANDVERSION = GSUID + "_" + GSVERSION;
 
     static final int MAX_RESULTS = 10000;
     private final ConcurrentMap<Object, IIndexableServerEntry> _uidToEntry;
@@ -146,11 +133,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void insertEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders) throws Exception {
         boolean docHasShape = false;
-        _uidToEntry.put(entry.getUid(), entry);
         //construct a document and add all fixed  properties
         Document doc = new Document();
         for (CustomRelationAnnotationHolder customRelationAnnotationHolder : customRelationAnnotationsHolders.values()) {
-            if(customRelationAnnotationHolder != null && customRelationAnnotationHolder.getAnnotation().annotationType().equals(SpaceSpatialIndex.class)){
+            if (customRelationAnnotationHolder != null && customRelationAnnotationHolder.getAnnotation().annotationType().equals(SpaceSpatialIndex.class)) {
                 Object val = entry.getPropertyValue(customRelationAnnotationHolder.getFieldName());
                 if (val instanceof Shape) {
                     Shape gigaShape = (Shape) val;
@@ -162,23 +148,18 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                     docHasShape = true;
                 }
             }
-        }
-        if (docHasShape) {
-//            Field classField = new Field("class", getClassName(), fieldType);
-//            doc.add(classField);
+            if (docHasShape) {
+                //cater for uid & version
+                //noinspection deprecation
+                doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
+                        Field.Index.NO));
 
-            //cater for uid & version
-            //noinspection deprecation
-            doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
-                    Field.Index.NOT_ANALYZED));
+                doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
+                        Field.Index.NOT_ANALYZED));
 
-            FieldType gsVersionFieldType = new FieldType();
-            gsVersionFieldType.setStored(true);
-            gsVersionFieldType.setIndexOptions(IndexOptions.NONE);
-            gsVersionFieldType.setNumericType(FieldType.NumericType.INT);
-            doc.add(new IntField(GSVERSION, entry.getVersion(), gsVersionFieldType));
-
-            luceneEntryHolder.getIndexWriter().addDocument(doc);
+                luceneEntryHolder.getIndexWriter().addDocument(doc);
+                _uidToEntry.put(entry.getUid(), entry);
+            }
         }
     }
 
@@ -190,14 +171,61 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     @Override
     public void removeEntry(IIndexableServerEntry entry) throws Exception {
-        luceneEntryHolder.getIndexWriter().deleteDocuments(new Term(GSUID, (String) entry.getUid()));
-        luceneEntryHolder.getIndexWriter().commit();
-        _uidToEntry.remove(entry.getUid());
+        if (_uidToEntry.containsKey(entry.getUid())) {
+
+            luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
+                    new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()))));
+            luceneEntryHolder.getIndexWriter().commit();
+            _uidToEntry.remove(entry.getUid());
+        } else {
+            throw new RuntimeException("Entry with id ["+String.valueOf(entry.getUid())+"] does not exist");
+        }
     }
 
     @Override
-    public void replaceEntry(IIndexableServerEntry newEentry, IIndexableServerEntry originalEentry) {
-        //TBD
+    public void replaceEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders) {
+        try {
+            boolean docHasShape = false;
+            //construct a document and add all fixed  properties
+            Document doc = new Document();
+            for (CustomRelationAnnotationHolder holder : customRelationAnnotationsHolders.values()) {
+                if (holder != null && holder.getAnnotation().annotationType().equals(SpaceSpatialIndex.class)) {
+                    Object val = entry.getPropertyValue(holder.getFieldName());
+                    if (val instanceof Shape) {
+                        Shape gigaShape = (Shape) val;
+                        com.spatial4j.core.shape.Shape shape = toSpatial4j(gigaShape);
+                        Field[] fields = createStrategyByFieldName(holder.getFieldName()).createIndexableFields(shape);
+                        for (Field field : fields) {
+                            doc.add(field);
+                        }
+                        docHasShape = true;
+                    }
+                }
+            }
+            if (docHasShape) {
+                //cater for uid & version
+                //noinspection deprecation
+                doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
+                        Field.Index.NO));
+
+                doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
+                        Field.Index.NOT_ANALYZED));
+
+                //Add new
+                luceneEntryHolder.getIndexWriter().addDocument(doc);
+
+
+                //Delete old
+                luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
+                        new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion() - 1))));
+
+                luceneEntryHolder.getIndexWriter().commit();
+
+                _uidToEntry.put(entry.getUid(), entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -277,6 +305,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + actual + " and " + matchedAgainst);
             return false;
         } else {
+
             SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
             if (spatialRelation == null) {
                 logger.warning("Relation " + relation + " not found, known relations are: " + Arrays.asList(SpatialRelation.values()));
@@ -299,9 +328,12 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + subject);
             return null;
         }
+
+        luceneEntryHolder.getIndexWriter().commit();
+
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
         SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
-        luceneEntryHolder.getIndexWriter().commit();
+
         DirectoryReader dr = DirectoryReader.open(luceneEntryHolder.getDirectory());
         IndexSearcher is = new IndexSearcher(dr);
 
