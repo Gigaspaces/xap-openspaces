@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 /**
@@ -82,6 +83,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private int maxLevels = 11;//results in sub-meter precision for geohash
     private SpatialPrefixTree grid = new GeohashPrefixTree(spatialContext, maxLevels);
     private File luceneIndexdDirectory;
+
+    private AtomicInteger uncommittedChanges = new AtomicInteger(0);
 
     public class LuceneHolder {
         private Directory _directory;
@@ -129,6 +132,13 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     }
 
+    private void commit() throws IOException {
+        if (uncommittedChanges.incrementAndGet() == 1000) {
+            uncommittedChanges.set(0);
+            luceneEntryHolder.getIndexWriter().commit();
+        }
+    }
+
 
     @Override
     public void insertEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders) throws Exception {
@@ -158,6 +168,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                         Field.Index.NOT_ANALYZED));
 
                 luceneEntryHolder.getIndexWriter().addDocument(doc);
+                commit();
                 _uidToEntry.put(entry.getUid(), entry);
             }
         }
@@ -218,6 +229,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
                         new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion() - 1))));
 
+                commit();
 
                 _uidToEntry.put(entry.getUid(), entry);
             }
@@ -328,6 +340,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
 
         luceneEntryHolder.getIndexWriter().commit();
+        uncommittedChanges.set(0);
 
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
         SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
