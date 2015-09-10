@@ -73,7 +73,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     static final String GSVERSION = "GSVERSION";
     private static final String GSUIDANDVERSION = GSUID + "_" + GSVERSION;
 
-    static final int MAX_RESULTS = 10000;
+    static final int MAX_RESULTS = 1000000;
     private final ConcurrentMap<Object, IIndexableServerEntry> _uidToEntry;
 
     private LuceneHolder luceneEntryHolder;
