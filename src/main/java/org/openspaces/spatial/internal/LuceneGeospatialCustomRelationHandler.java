@@ -73,7 +73,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     static final String GSVERSION = "GSVERSION";
     private static final String GSUIDANDVERSION = GSUID + "_" + GSVERSION;
 
-    static final int MAX_RESULTS = 1000000;
+    static final int MAX_RESULTS = Integer.MAX_VALUE;
     private final ConcurrentMap<Object, IIndexableServerEntry> _uidToEntry;
 
     private LuceneHolder luceneEntryHolder;
@@ -186,10 +186,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
             luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
                     new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()))));
+            commit();
             _uidToEntry.remove(entry.getUid());
-        } else {
-            throw new RuntimeException("Entry with id ["+String.valueOf(entry.getUid())+"] does not exist");
         }
+        //Else is when its field is annotated but the value is null
     }
 
     @Override
@@ -300,7 +300,6 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             return spatialContext.readShapeFromWkt("POLYGON ((" + coordinates + "))");
             //return poly;
         } catch (ParseException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
