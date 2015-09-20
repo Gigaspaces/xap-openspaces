@@ -37,8 +37,9 @@ public class LuceneIterator extends ForeignQueryEntriesResultIterator {
     private final ConcurrentMap<Object,IIndexableServerEntry> _uidToEntry;
     private final DirectoryReader directoryReader;
 
-    public LuceneIterator(ScoreDoc[] scores, IndexSearcher is, ConcurrentMap<Object, IIndexableServerEntry> uidToEntry, DirectoryReader directoryReader)
+    public LuceneIterator(ScoreDoc[] scores, IndexSearcher is, ConcurrentMap<Object, IIndexableServerEntry> uidToEntry, DirectoryReader directoryReader, String alreadyMatchedIndexPath)
     {
+        super(alreadyMatchedIndexPath);
         _scores = scores;
         _is =is;
         _uidToEntry=uidToEntry;

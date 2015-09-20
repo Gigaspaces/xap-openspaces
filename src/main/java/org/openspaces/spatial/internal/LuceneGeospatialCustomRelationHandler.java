@@ -325,6 +325,11 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
     }
 
+    private boolean skipAlreadyMatchedPath(String path) {
+        //TODO change per field/path
+        return true;
+    }
+
     @Override
     public ForeignQueryEntriesResultIterator scanIndex(String typeName, String path, String namespace, String relation, Object subject) throws Exception {
         SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
@@ -353,7 +358,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 //        ScoreDoc[] scores = is.search(booleanQuery, MAX_RESULTS).scoreDocs;
 
         ScoreDoc[] scores = is.search(q, MAX_RESULTS).scoreDocs;
-        return new LuceneIterator(scores, is, _uidToEntry, dr);
+        return new LuceneIterator(scores, is, _uidToEntry, dr, (skipAlreadyMatchedPath(path) ? path : null));
     }
 
 }
