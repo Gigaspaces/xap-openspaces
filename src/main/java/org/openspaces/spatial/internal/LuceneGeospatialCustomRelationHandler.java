@@ -78,6 +78,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     private LuceneHolder luceneEntryHolder;
 
+    private double _distErrPct = 0.025;
 
     private SpatialContext spatialContext = JtsSpatialContext.GEO;
     private int maxLevels = 11;//results in sub-meter precision for geohash
@@ -325,9 +326,9 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
     }
 
-    private boolean skipAlreadyMatchedPath(String path) {
+    private boolean rematchAlreadyMatchedIndexPath(String path) {
         //TODO change per field/path
-        return true;
+        return _distErrPct != 0;
     }
 
     @Override
@@ -358,7 +359,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 //        ScoreDoc[] scores = is.search(booleanQuery, MAX_RESULTS).scoreDocs;
 
         ScoreDoc[] scores = is.search(q, MAX_RESULTS).scoreDocs;
-        return new LuceneIterator(scores, is, _uidToEntry, dr, (skipAlreadyMatchedPath(path) ? path : null));
+        return new LuceneIterator(scores, is, _uidToEntry, dr, (rematchAlreadyMatchedIndexPath(path) ? null : path));
     }
 
 }
