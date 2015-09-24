@@ -4,11 +4,11 @@
 	<groupId>AlertLoggingGateway</groupId>
 	<artifactId>AlertLoggingGateway</artifactId>
 	<packaging>jar</packaging>
-	<version>10.2.0-13810-RELEASE</version>
+	<version>10.2.0-13811-RELEASE</version>
 	<name>SNMP-Alert-Logging</name>
 	<properties>
 		<gsType>PU</gsType>
-		<gsVersion>10.2.0-13810-RELEASE</gsVersion>
+		<gsVersion>10.2.0-13811-RELEASE</gsVersion>
 	</properties>
 	<repositories>
 		<repository>
