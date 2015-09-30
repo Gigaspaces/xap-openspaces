@@ -34,7 +34,7 @@ BUILDING, PACKAGING, RUNNING, DEPLOYING
 
   In order to use Mule with GigaSpaces, mule jar files must be copied to the GigaSpaces
 installation under GSHOME/lib/platform/mule (if the mule directory does not exists, create it).
-In order to obtain the mule jar files, please download mule 3.5 from http://www.mulesoft.org
+In order to obtain the mule jar files, please download mule 3.7 from http://www.mulesoft.org
 
 The following needs to be copied:
 - From <Mule Root>\lib\mule to <XAP Root>\lib\platform\mule: mule-commons, mule-core, mule-core-tests, mule-module-annotations, mule-module-client, mule-module-jbossts, mule-module-spring-config, mule-module-spring-extras, mule-mvel2-2.1.9-MULE-003, mule-transport-http, mule-transport-quartz, mule-transport-stdio, mule-transport-vm.
@@ -54,20 +54,20 @@ guava-16.0.1.jar
 jaxen-1.1.1.jar
 jgrapht-jdk1.5-0.7.3.jar
 log4j-1.2.16.jar
-mule-common-3.5.0.jar
-mule-core-3.5.0.jar
-mule-core-3.5.0-tests.jar
-mule-module-annotations-3.5.0.jar
-mule-module-client-3.5.0.jar
-mule-module-jbossts-3.5.0.jar
-mule-module-logging-3.5.0.jar
-mule-module-spring-config-3.5.0.jar
-mule-module-spring-extras-3.5.0.jar
+mule-common-3.7.0.jar
+mule-core-3.7.0.jar
+mule-core-3.7.0-tests.jar
+mule-module-annotations-3.7.0.jar
+mule-module-client-3.7.0.jar
+mule-module-jbossts-3.7.0.jar
+mule-module-logging-3.7.0.jar
+mule-module-spring-config-3.7.0.jar
+mule-module-spring-extras-3.7.0.jar
 mule-mvel2-2.1.9-MULE-003.jar
-mule-transport-http-3.5.0.jar
-mule-transport-quartz-3.5.0.jar
-mule-transport-stdio-3.5.0.jar
-mule-transport-vm-3.5.0.jar
+mule-transport-http-3.7.0.jar
+mule-transport-quartz-3.7.0.jar
+mule-transport-stdio-3.7.0.jar
+mule-transport-vm-3.7.0.jar
 quartz-1.8.5.jar
 uuid-3.4.0.jar
 wrapper-3.2.3.jar
