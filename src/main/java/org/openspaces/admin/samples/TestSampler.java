@@ -31,12 +31,7 @@ import org.openspaces.admin.space.Space;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpacePartition;
 import org.openspaces.admin.vm.VirtualMachine;
-import org.openspaces.core.space.SpaceServiceDetails;
-import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author kimchy
@@ -44,14 +39,8 @@ import java.util.concurrent.TimeUnit;
 public class TestSampler {
 
     public static void main(String[] args) throws InterruptedException {
-        Admin admin = new AdminFactory().addGroup("kobi").addLocator("pc-lab132").createAdmin();
-        Map<String, ServiceMonitors> monitors = admin.getProcessingUnits().getProcessingUnit("rocksdb-pu").getInstances()[0].getStatistics().getMonitors();
-        ServiceDetails details = admin.getProcessingUnits().getProcessingUnit("rocksdb-pu").getInstances()[0].getServiceDetailsByServiceId("RocksDB");
-
-//        Admin admin = new AdminFactory().addGroup("kobi").addLocator("pc-lab132").createAdmin();
-//        Map<String, ServiceMonitors> monitors = admin.getProcessingUnits().getProcessingUnit("blobstore-pu").getInstances()[0].getStatistics().getMonitors();
-//        ServiceDetails details = admin.getProcessingUnits().getProcessingUnit("blobstore-pu").getInstances()[0].getServiceDetailsByServiceId("ZetaScale");
-
+        Admin admin = new AdminFactory().addGroup("kimchy").createAdmin();
+        ProcessingUnit myPU = admin.getProcessingUnits().getProcessingUnit("myPU");
 
 //        admin.getGridServiceManagers().waitFor(2);
 //        Space space1 = admin.getSpaces().waitFor("test");
@@ -125,8 +114,8 @@ public class TestSampler {
                     }
                     for (ProcessingUnitInstance processingUnitInstance : processingUnit) {
                         System.out.println("   [" + processingUnitInstance.getClusterInfo() + "] on GSC [" + processingUnitInstance.getGridServiceContainer().getUid() + "]");
-                        for (ServiceMonitors monitors1 : processingUnitInstance.getStatistics()) {
-                            System.out.println("      -> Service [" + monitors1.getDetails().getId() + "] " + monitors1.getMonitors());
+                        for (ServiceMonitors monitors : processingUnitInstance.getStatistics()) {
+                            System.out.println("      -> Service [" + monitors.getDetails().getId() + "] " + monitors.getMonitors());
                         }
                     }
                 }
