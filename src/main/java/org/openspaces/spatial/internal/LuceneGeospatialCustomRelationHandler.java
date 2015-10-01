@@ -1,17 +1,19 @@
 /*******************************************************************************
+ *
  * Copyright (c) 2015 GigaSpaces Technologies Ltd. All rights reserved
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  ******************************************************************************/
 package org.openspaces.spatial.internal;
 
@@ -59,7 +61,6 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private static final Logger logger = Logger.getLogger(LuceneGeospatialCustomRelationHandler.class.getName());
 
     public final static Map<String, SpatialOperation> spatialOperationMap = new HashMap<String, SpatialOperation>();
-
     static {
         spatialOperationMap.put("WITHIN", SpatialOperation.IsWithin);
         spatialOperationMap.put("CONTAINS", SpatialOperation.Contains);
@@ -76,8 +77,6 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private final ConcurrentMap<Object, IIndexableServerEntry> _uidToEntry;
 
     private LuceneHolder luceneEntryHolder;
-
-    private static boolean alreadyInitialized = false;
 
     private double _distErrPct = 0.025;
 
@@ -126,9 +125,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         super.initialize(className, namespace, spaceName, annotationType);
         String mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home"));
         luceneIndexdDirectory = new File(mainDirectory, spaceName);
-        if (!alreadyInitialized && luceneIndexdDirectory.exists()) {
+        if (luceneIndexdDirectory.exists()) {
             FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
-            alreadyInitialized = true;
         }
         luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
         CustomRelationHandler.addHandler("geospatial", className, this);
@@ -236,7 +234,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 _uidToEntry.put(entry.getUid(), entry);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to update entry with id [" + String.valueOf(entry.getUid()) + "]");
+            throw new RuntimeException("Failed to update entry with id ["+String.valueOf(entry.getUid())+"]");
         }
     }
 
@@ -308,9 +306,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     private SpatialStrategy createStrategyByFieldName(String fieldName) {
-        RecursivePrefixTreeStrategy bla = new RecursivePrefixTreeStrategy(grid, fieldName);
-        bla.setDistErrPct(_distErrPct);
-        return bla;
+        return new RecursivePrefixTreeStrategy(grid, fieldName);
     }
 
     public boolean applyOperationFilter(String relation, Object actual, Object matchedAgainst) {
@@ -347,10 +343,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             return null;
         }
 
-        if (luceneEntryHolder.getIndexWriter().hasUncommittedChanges()) {
-            luceneEntryHolder.getIndexWriter().commit();
-            uncommittedChanges.set(0);
-        }
+        luceneEntryHolder.getIndexWriter().commit();
+        uncommittedChanges.set(0);
 
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
         SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
