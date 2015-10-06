@@ -76,9 +76,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     static final int MAX_RESULTS = Integer.MAX_VALUE;
     private final ConcurrentMap<Object, IIndexableServerEntry> _uidToEntry;
 
-    private LuceneHolder luceneEntryHolder;
-
-    private double _distErrPct = 0.025;
+    @SuppressWarnings("FieldCanBeLocal")
+    private double _distErrPct = 0.025;//SpatialArgs.DEFAULT_DISTERRPCT;
 
     private SpatialContext spatialContext = JtsSpatialContext.GEO;
     private int maxLevels = 11;//results in sub-meter precision for geohash
@@ -86,6 +85,11 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private File luceneIndexdDirectory;
 
     private AtomicInteger uncommittedChanges = new AtomicInteger(0);
+
+
+    private static Map<String, LuceneHolder> _luceneHolderMap = new ConcurrentHashMap<String, LuceneHolder>();
+
+
 
     public class LuceneHolder {
         private Directory _directory;
@@ -121,22 +125,21 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     @Override
-    public void initialize(String className, String namespace, String spaceName, Class annotationType) throws Exception {
-        super.initialize(className, namespace, spaceName, annotationType);
+    public void initialize(String namespace, String spaceName) throws Exception {
+        super.initialize(namespace, spaceName);
         String mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home"));
         luceneIndexdDirectory = new File(mainDirectory, spaceName);
         if (luceneIndexdDirectory.exists()) {
             FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
         }
-        luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
-        CustomRelationHandler.addHandler("geospatial", className, this);
+        CustomRelationHandler.addHandler("geospatial", this);
 
     }
 
-    private void commit() throws IOException {
+    private void commit(String className) throws IOException {
         if (uncommittedChanges.incrementAndGet() == 1000) {
             uncommittedChanges.set(0);
-            luceneEntryHolder.getIndexWriter().commit();
+            getLuceneHolder(className).getIndexWriter().commit();
         }
     }
 
@@ -165,14 +168,27 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
                         Field.Index.NO));
 
+                //noinspection deprecation
                 doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
                         Field.Index.NOT_ANALYZED));
 
-                luceneEntryHolder.getIndexWriter().addDocument(doc);
-                commit();
+                String className = entry.getEntryCacheInfo().getClassName();
+                getLuceneHolder(className).getIndexWriter().addDocument(doc);
+
+                commit(className);
                 _uidToEntry.put(entry.getUid(), entry);
             }
         }
+    }
+
+    @Override
+    public void introduceType(String className) throws IOException {
+        LuceneHolder luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
+        _luceneHolderMap.put(className, luceneEntryHolder);
+    }
+
+    private LuceneHolder getLuceneHolder(String className) throws IOException {
+        return _luceneHolderMap.get(className);
     }
 
     @Override
@@ -184,10 +200,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void removeEntry(IIndexableServerEntry entry) throws Exception {
         if (_uidToEntry.containsKey(entry.getUid())) {
-
-            luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
+            String className = entry.getEntryCacheInfo().getClassName();
+            getLuceneHolder(className).getIndexWriter().deleteDocuments(new TermQuery(
                     new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()))));
-            commit();
+            commit(className);
             _uidToEntry.remove(entry.getUid());
         }
     }
@@ -218,10 +234,15 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
                         Field.Index.NO));
 
+                //noinspection deprecation
                 doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
                         Field.Index.NOT_ANALYZED));
 
                 //Add new
+
+                String className = entry.getEntryCacheInfo().getClassName();
+                LuceneHolder luceneEntryHolder = getLuceneHolder(className);
+
                 luceneEntryHolder.getIndexWriter().addDocument(doc);
 
 
@@ -229,7 +250,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
                         new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion() - 1))));
 
-                commit();
+                commit(className);
 
                 _uidToEntry.put(entry.getUid(), entry);
             }
@@ -259,7 +280,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     @Override
     public void close() throws Exception {
-        luceneEntryHolder.getIndexWriter().close();
+        for (LuceneHolder luceneHolder : _luceneHolderMap.values()) {
+            luceneHolder.getIndexWriter().close();
+        }
+        _luceneHolderMap.clear();
         FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
     }
 
@@ -306,7 +330,9 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     private SpatialStrategy createStrategyByFieldName(String fieldName) {
-        return new RecursivePrefixTreeStrategy(grid, fieldName);
+        RecursivePrefixTreeStrategy recursivePrefixTreeStrategy = new RecursivePrefixTreeStrategy(grid, fieldName);
+        recursivePrefixTreeStrategy.setDistErrPct(_distErrPct);
+        return recursivePrefixTreeStrategy;
     }
 
     public boolean applyOperationFilter(String relation, Object actual, Object matchedAgainst) {
@@ -326,7 +352,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         }
     }
 
-    private boolean rematchAlreadyMatchedIndexPath(String path) {
+    private boolean rematchAlreadyMatchedIndexPath(@SuppressWarnings("UnusedParameters") String path) {
         //TODO change per field/path
         return _distErrPct != 0;
     }
@@ -343,13 +369,14 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             return null;
         }
 
-        luceneEntryHolder.getIndexWriter().commit();
+        LuceneHolder luceneHolder = getLuceneHolder(typeName);
+        luceneHolder.getIndexWriter().commit();
         uncommittedChanges.set(0);
 
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
         SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
 
-        DirectoryReader dr = DirectoryReader.open(luceneEntryHolder.getDirectory());
+        DirectoryReader dr = DirectoryReader.open(luceneHolder.getDirectory());
         IndexSearcher is = new IndexSearcher(dr);
 
         Query q = createStrategyByFieldName(path).makeQuery(args);
