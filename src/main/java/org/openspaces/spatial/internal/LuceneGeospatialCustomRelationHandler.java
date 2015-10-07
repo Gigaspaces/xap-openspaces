@@ -132,8 +132,6 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         if (luceneIndexdDirectory.exists()) {
             FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
         }
-        CustomRelationHandler.addHandler("geospatial", this);
-
     }
 
     private void commit(String className) throws IOException {

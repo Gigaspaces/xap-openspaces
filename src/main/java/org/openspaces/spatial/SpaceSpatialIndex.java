@@ -18,7 +18,6 @@
 package org.openspaces.spatial;
 
 import com.j_spaces.core.cache.foreignIndexes.CustomRelation;
-import org.openspaces.spatial.internal.LuceneGeospatialCustomRelationHandler;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,7 +30,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * Created by Barak Bar Orion
  * @since 11.0
  */
-@CustomRelation(namespace = "geospatial", handler = LuceneGeospatialCustomRelationHandler.class)
+@CustomRelation(namespace = "geospatial", handlerClassName = "org.openspaces.spatial.internal.LuceneGeospatialCustomRelationHandler")
 @Target({METHOD, FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SpaceSpatialIndex {
