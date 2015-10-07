@@ -154,6 +154,7 @@
 				<include>lucene-queryparser-*</include>
 				<include>lucene-spatial-*</include>
 				<include>jts-*</include>
+				<include>spatial4j-*</include>
 			</includes>
 		</fileSet>
 	</fileSets>
