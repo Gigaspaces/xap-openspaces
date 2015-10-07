@@ -117,6 +117,22 @@
             <artifactId>lucene-spatial</artifactId>
             <version>${luceneVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${luceneVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-sandbox</artifactId>
+            <version>${luceneVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-misc</artifactId>
+            <version>${luceneVersion}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.vividsolutions</groupId>
