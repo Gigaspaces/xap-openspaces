@@ -710,7 +710,8 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
 
         //apply the following only if the pu has the mapdb-blob-store element
         if (springXml.contains("<blob-store:mapdb-blob-store")) {
-            String mapdbJar = System.getProperty("com.gigaspaces.blobstore.mapdb", Environment.getHomeDirectory() + "/lib/optional/blobstore/mapdb-blobstore.jar");
+            String mapdbJar = System.getProperty("com.gigaspaces.blobstore.mapdb"
+                    , Environment.getHomeDirectory() + "/lib/optional/blobstore/mapdb-blobstore.jar");
 
             Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
@@ -718,8 +719,10 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         }
 
         //apply the following only if the pu has the rocksdb-blob-store element
-        if (springXml.contains("<blob-store:rocksdb-blob-store")) {
-            String rocksdbJar = System.getProperty("com.gigaspaces.blobstore.rocksdb", Environment.getHomeDirectory() + "/lib/optional/blobstore/rocksdb-blobstore.jar");
+        if (springXml.contains("<blob-store:rocksdb-blob-store")
+                || springXml.contains("class=\"com.gigaspaces.blobstore.rocksdb.RocksDBBlobStoreHandler\"")) {
+            String rocksdbJar = System.getProperty("com.gigaspaces.blobstore.rocksdb"
+                    , Environment.getHomeDirectory() + "/lib/optional/blobstore/rocksdb-blobstore.jar");
 
             Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{rocksdbJar}));
