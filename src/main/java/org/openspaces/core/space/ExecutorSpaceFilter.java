@@ -37,6 +37,8 @@ import org.openspaces.core.executor.TaskGigaSpaceAware;
 import org.openspaces.core.executor.internal.InternalSpaceTaskWrapper;
 import org.openspaces.core.executor.support.DelegatingTask;
 import org.openspaces.core.executor.support.ProcessObjectsProvider;
+import org.openspaces.remoting.ExecutorRemotingTask;
+import org.openspaces.remoting.SpaceRemotingServiceExporter;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,6 +57,8 @@ public class ExecutorSpaceFilter implements ISpaceFilter {
     private final ClusterInfo clusterInfo;
     private IJSpace space;
     private GigaSpace gigaSpace;
+    private final Object lock = new Object();
+    private volatile SpaceRemotingServiceExporter serviceExporter;
 
     public ExecutorSpaceFilter(AbstractSpaceFactoryBean spaceFactoryBean, ClusterInfo clusterInfo) {
         this.spaceFactoryBean = spaceFactoryBean;
@@ -80,6 +84,9 @@ public class ExecutorSpaceFilter implements ISpaceFilter {
             if (task instanceof InternalSpaceTaskWrapper) {
                 task = ((InternalSpaceTaskWrapper) task).getTask();
             }
+
+            if (task instanceof ExecutorRemotingTask)
+                ((ExecutorRemotingTask)task).setServiceExporter(getServiceExporter(applicationContext));
             // go over the task and inject what can be injected
             // break when there is no more DelegatingTasks
             while (true) {
@@ -169,5 +176,15 @@ public class ExecutorSpaceFilter implements ISpaceFilter {
             return true;
         }
         return obj.getClass().isAnnotationPresent(AutowireTask.class);
+    }
+
+    private SpaceRemotingServiceExporter getServiceExporter(ApplicationContext applicationContext) {
+        if (serviceExporter != null)
+            return serviceExporter;
+        synchronized (lock) {
+            if (serviceExporter == null)
+                serviceExporter = ExecutorRemotingTask.getServiceExporter(applicationContext);
+            return serviceExporter;
+        }
     }
 }
