@@ -74,7 +74,7 @@ public class InstallLicenseMojo extends AbstractOpenSpacesMojo {
         }
 
         try {
-            File target = new File(targetDir, "gslicense.xml");
+            File target = new File(targetDir, "xap-license.txt");
             PluginLog.getLog().info("Copying license file to: " + target.getAbsolutePath());
             FileCopyUtils.copy(file, target);
         } catch (IOException e) {

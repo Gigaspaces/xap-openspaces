@@ -290,12 +290,12 @@ public class Utils {
         while (cause.getCause() != null) {
             cause = cause.getCause();
             if (cause instanceof SecurityException) {
-                if (cause.getMessage() != null && cause.getMessage().indexOf("gslicense.xml") > 0) {
+                if (cause.getMessage() != null && cause.getMessage().indexOf("xap-license.txt") > 0) {
                     String msg =
-                            "\nThe GigaSpaces license file - gslicense.xml - was not found in Maven repository.\n" +
+                            "\nThe GigaSpaces license file - xap-license.txt - was not found in Maven repository.\n" +
                                     "This file should be placed in the directory where gs-boot.jar resides.\n" +
                                     "Please try to reinstall OpenSpaces Plugin for Maven by running the installmavenrep' script again." +
-                                    "Alternatively, copy gslicense.xml manually to " + localRepository.getBasedir() + "/com/gigaspaces/core/gs-boot/[version].";
+                                    "Alternatively, copy xap-license.txt manually to " + localRepository.getBasedir() + "/com/gigaspaces/core/gs-boot/[version].";
                     throw new MojoExecutionException(msg);
                 }
             }
