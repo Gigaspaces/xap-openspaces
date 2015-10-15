@@ -339,14 +339,14 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             return false;
         } else {
 
-            SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
-            if (spatialRelation == null) {
-                logger.warning("Relation " + relation + " not found, known relations are: " + Arrays.asList(SpatialRelation.values()));
+            SpatialOperation spatialOperation = spatialOperationMap.get(relation.toUpperCase());
+            if (spatialOperation == null) {
+                logger.warning("Relation " + relation + " not found, known relations are: " + Arrays.asList(spatialOperationMap.values()));
                 return false;
             }
             com.spatial4j.core.shape.Shape actualShape = toSpatial4j((Shape) actual);
             com.spatial4j.core.shape.Shape matchedAgainstShape = toSpatial4j((Shape) matchedAgainst);
-            return actualShape.relate(matchedAgainstShape) == spatialRelation;
+            return spatialOperation.evaluate(actualShape, matchedAgainstShape);
         }
     }
 
@@ -357,8 +357,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     @Override
     public ForeignQueryEntriesResultIterator scanIndex(String typeName, String path, String namespace, String relation, Object subject) throws Exception {
-        SpatialRelation spatialRelation = SpatialRelation.valueOf(relation.toUpperCase());
-        if (spatialRelation == null) {
+        SpatialOperation spatialOperation = spatialOperationMap.get(relation.toUpperCase());
+        if (spatialOperation == null) {
             logger.warning("Relation " + relation + " not found, known relations for " + namespace + " are: " + Arrays.asList(SpatialRelation.values()));
             return null;
         }
@@ -372,7 +372,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         uncommittedChanges.set(0);
 
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
-        SpatialArgs args = new SpatialArgs(spatialOperationMap.get(spatialRelation.name()), subjectShape);
+        SpatialArgs args = new SpatialArgs(spatialOperation, subjectShape);
 
         DirectoryReader dr = DirectoryReader.open(luceneHolder.getDirectory());
         IndexSearcher is = new IndexSearcher(dr);
