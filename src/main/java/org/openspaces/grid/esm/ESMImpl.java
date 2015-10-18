@@ -42,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.gigaspaces.metrics.MetricManager;
+import com.j_spaces.kernel.SystemProperties;
 import net.jini.export.Exporter;
 
 import org.jini.rio.boot.BootUtil;
@@ -318,7 +319,10 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
             hostName +
             "_" +
             port;
-            addAttribute(new JMXConnection(jmxServiceURL, name, false));
+
+            boolean isRemoteJmxPortDefined = System.getProperty(SystemProperties.JMX_REMOTE_PROP_ENABLED_PROP) != null &&
+                            Boolean.parseBoolean( System.getProperty(SystemProperties.JMX_REMOTE_PROP_ENABLED_PROP) );
+            addAttribute( new JMXConnection( jmxServiceURL, name, isRemoteJmxPortDefined ) );
         }
     }
 
