@@ -318,7 +318,7 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
             hostName +
             "_" +
             port;
-            addAttribute(new JMXConnection(jmxServiceURL, name));
+            addAttribute(new JMXConnection(jmxServiceURL, name, false));
         }
     }
 
