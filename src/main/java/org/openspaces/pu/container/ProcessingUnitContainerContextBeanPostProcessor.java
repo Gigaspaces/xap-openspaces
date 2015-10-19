@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openspaces.core.metrics;
+package org.openspaces.pu.container;
 
+import com.gigaspaces.metrics.BeanMetricManager;
 import com.gigaspaces.metrics.Gauge;
 import com.gigaspaces.metrics.Metric;
-import com.gigaspaces.metrics.MetricRegistrator;
 import com.gigaspaces.metrics.ServiceMetric;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openspaces.pu.service.ServiceMetricProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.util.ReflectionUtils;
@@ -29,26 +28,39 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Niv Ingberg
  * @since 10.1.1
  */
-public class ServiceMetricBeanPostProcessor implements BeanPostProcessor {
-    private static final Log logger = LogFactory.getLog(ServiceMetricBeanPostProcessor.class);
-    private final MetricRegistrator metricRegistrator;
+public class ProcessingUnitContainerContextBeanPostProcessor implements BeanPostProcessor {
+    private static final Log logger = LogFactory.getLog(ProcessingUnitContainerContextBeanPostProcessor.class);
+    private final ProcessingUnitContainerContext processingUnitContainerContext;
 
-    public ServiceMetricBeanPostProcessor(MetricRegistrator metricRegistrator) {
-        this.metricRegistrator = metricRegistrator;
+    public ProcessingUnitContainerContextBeanPostProcessor(ProcessingUnitContainerContext processingUnitContainerContext) {
+        this.processingUnitContainerContext = processingUnitContainerContext;
     }
 
     @Override
     public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
-        if (bean instanceof ServiceMetricProvider) {
-            ServiceMetricProvider metricProvider = (ServiceMetricProvider) bean;
-            metricProvider.setMetricRegistrator(metricRegistrator.extend(metricProvider.getMetricPrefix()));
-        }
+        processProcessingUnitContainerContextAware(bean);
+        processMetrics(bean, beanName);
+        return bean;
+    }
 
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+
+    private void processProcessingUnitContainerContextAware(final Object bean) {
+        if (bean instanceof ProcessingUnitContainerContextAware)
+            ((ProcessingUnitContainerContextAware) bean).setProcessingUnitContainerContext(processingUnitContainerContext);
+    }
+
+    private void processMetrics(final Object bean, final String beanName) {
+        final AtomicReference<BeanMetricManager> metricManagerHolder = new AtomicReference<BeanMetricManager>();
         ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
             @Override
             public void doWith(Method method) {
@@ -58,17 +70,13 @@ public class ServiceMetricBeanPostProcessor implements BeanPostProcessor {
                     if (metric != null) {
                         if (logger.isDebugEnabled())
                             logger.debug("Registering custom metric " + annotation.name());
-                        metricRegistrator.register(annotation.name(), metric);
+                        if (metricManagerHolder.get() == null)
+                            metricManagerHolder.set(processingUnitContainerContext.createBeanMetricManager(beanName));
+                        metricManagerHolder.get().register(annotation.name(), metric);
                     }
                 }
             }
         });
-        return bean;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
     }
 
     private static Metric getMetricFromMethod(final Method method, final Object bean) {

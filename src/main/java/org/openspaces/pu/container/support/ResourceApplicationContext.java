@@ -20,7 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.cluster.ClusterInfoBeanPostProcessor;
 import org.openspaces.core.cluster.ClusterInfoPropertyPlaceholderConfigurer;
-import org.openspaces.core.metrics.ServiceMetricBeanPostProcessor;
+import org.openspaces.pu.container.ProcessingUnitContainerContext;
+import org.openspaces.pu.container.ProcessingUnitContainerContextBeanPostProcessor;
 import org.openspaces.core.properties.BeanLevelPropertyBeanPostProcessor;
 import org.openspaces.core.properties.BeanLevelPropertyPlaceholderConfigurer;
 import org.openspaces.pu.container.ProcessingUnitContainerConfig;
@@ -74,9 +75,7 @@ public class ResourceApplicationContext extends AbstractXmlApplicationContext {
             addBeanPostProcessor(new ClusterInfoBeanPostProcessor(config.getClusterInfo()));
         }
         addBeanFactoryPostProcessor(new ClusterInfoPropertyPlaceholderConfigurer(config.getClusterInfo()));
-        if (config.getMetricRegistrator() != null) {
-            addBeanPostProcessor(new ServiceMetricBeanPostProcessor(config.getMetricRegistrator()));
-        }
+        addBeanPostProcessor(new ProcessingUnitContainerContextBeanPostProcessor(new ProcessingUnitContainerContext(config)));
     }
 
     /**
