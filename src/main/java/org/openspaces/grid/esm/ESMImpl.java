@@ -320,9 +320,9 @@ public class ESMImpl extends ServiceBeanAdapter implements ESM, RemoteSecuredSer
             "_" +
             port;
 
-            boolean isRemoteJmxPortDefined = System.getProperty(SystemProperties.JMX_REMOTE_PROP_ENABLED_PROP) != null &&
-                            Boolean.parseBoolean( System.getProperty(SystemProperties.JMX_REMOTE_PROP_ENABLED_PROP) );
-            addAttribute( new JMXConnection( jmxServiceURL, name, isRemoteJmxPortDefined ) );
+            boolean isJmxRemoteAuthenticationRequired = System.getProperty(SystemProperties.JMX_REMOTE_AUTHENTICATION_ENABLED_PROP) != null &&
+                            Boolean.parseBoolean( System.getProperty(SystemProperties.JMX_REMOTE_AUTHENTICATION_ENABLED_PROP) );
+            addAttribute( new JMXConnection( jmxServiceURL, name, isJmxRemoteAuthenticationRequired ) );
         }
     }
 
