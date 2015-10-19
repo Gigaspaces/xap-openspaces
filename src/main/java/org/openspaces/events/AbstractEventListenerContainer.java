@@ -24,9 +24,8 @@ import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
-import com.gigaspaces.metrics.DummyMetricRegistrator;
+import com.gigaspaces.metrics.BeanMetricManager;
 import com.gigaspaces.metrics.LongCounter;
-import com.gigaspaces.metrics.MetricRegistrator;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import org.apache.commons.logging.Log;
@@ -39,8 +38,9 @@ import org.openspaces.core.transaction.manager.JiniPlatformTransactionManager;
 import org.openspaces.core.util.SpaceUtils;
 import org.openspaces.events.adapter.EventListenerAdapter;
 import org.openspaces.events.support.AnnotationProcessorUtils;
+import org.openspaces.pu.container.ProcessingUnitContainerContext;
+import org.openspaces.pu.container.ProcessingUnitContainerContextAware;
 import org.openspaces.pu.service.ServiceDetailsProvider;
-import org.openspaces.pu.service.ServiceMetricProvider;
 import org.openspaces.pu.service.ServiceMonitorsProvider;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanNameAware;
@@ -59,7 +59,6 @@ import org.springframework.util.ReflectionUtils;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,7 +74,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class AbstractEventListenerContainer implements ApplicationContextAware, Lifecycle, BeanNameAware,
         InitializingBean, DisposableBean, ApplicationListener<ApplicationEvent>, QuiesceStateChangedListener,
-        ServiceDetailsProvider, ServiceMonitorsProvider, ServiceMetricProvider, InternalDumpProcessor{
+        ServiceDetailsProvider, ServiceMonitorsProvider, ProcessingUnitContainerContextAware, InternalDumpProcessor{
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -92,7 +91,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
     private volatile boolean autoStart = true;
     private volatile boolean quiesced = false;
     private volatile boolean resumeAfterUnquiesce = false;
-    private MetricRegistrator metricRegistrator = DummyMetricRegistrator.get();
+    private BeanMetricManager beanMetricManager;
 
     private SpaceDataEventListener eventListener;
     private String eventListenerRef;
@@ -241,6 +240,12 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
         this.applicationContext = applicationContext;
     }
 
+    @Override
+    public void setProcessingUnitContainerContext(ProcessingUnitContainerContext processingUnitContainerContext) {
+        this.beanMetricManager = processingUnitContainerContext.createBeanMetricManager(getBeanName());
+        if (running)
+            registerMetrics();
+    }
 
     protected ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -419,7 +424,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
             this.active = false;
             this.running = false;
             this.lifecycleMonitor.notifyAll();
-            metricRegistrator.clear();
+            this.beanMetricManager.clear();
         }
 
         if (registerSpaceModeListener) {
@@ -517,7 +522,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
             this.running = false;
             this.resumeAfterUnquiesce = false;
             this.lifecycleMonitor.notifyAll();
-            metricRegistrator.clear();
+            this.beanMetricManager.clear();
         }
     }
 
@@ -904,25 +909,10 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
 
     protected abstract String getEventListenerContainerType();
 
-
-    @Override
-    public String getMetricPrefix() {
-        return getBeanName();
-    }
-
-    @Override
-    public void setMetricRegistrator(MetricRegistrator metricRegistrator) {
-        this.metricRegistrator = metricRegistrator;
-        if (running)
-            registerMetrics();
-    }
-
     protected void registerMetrics() {
-        if (applicationContext != null) {
-            String[] beans = applicationContext.getBeanDefinitionNames();
-            System.out.println(Arrays.toString(beans));
+        if (beanMetricManager != null) {
+            beanMetricManager.register("processed-events", processedEvents);
+            beanMetricManager.register("failed-events", failedEvents);
         }
-        metricRegistrator.register("processed-events", processedEvents);
-        metricRegistrator.register("failed-events", failedEvents);
     }
 }

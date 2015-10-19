@@ -8,11 +8,18 @@
     <os-core:annotation-support/>
 
     <bean id="metricRegistrator" class="org.openspaces.utest.core.metrics.MockMetricRegistrator"/>
+    <bean id="puConfig" class="org.openspaces.pu.container.ProcessingUnitContainerConfig">
+        <property name="metricRegistrator" ref="metricRegistrator"/>
+    </bean>
+    <bean id="puContext" class="org.openspaces.pu.container.ProcessingUnitContainerContext">
+        <constructor-arg ref="puConfig"/>
+    </bean>
 
-    <bean id="metricsPostProcessor" class="org.openspaces.core.metrics.ServiceMetricBeanPostProcessor">
-        <constructor-arg ref="metricRegistrator"/>
+    <bean id="metricsPostProcessor" class="org.openspaces.pu.container.ProcessingUnitContainerContextBeanPostProcessor">
+        <constructor-arg ref="puContext"/>
     </bean>
 
     <bean id="myBean" class="org.openspaces.utest.core.metrics.MetricsBean"/>
+    <bean id="myBean2" class="org.openspaces.utest.core.metrics.MetricsBean2"/>
 
 </beans>
