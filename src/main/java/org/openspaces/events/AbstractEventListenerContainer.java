@@ -424,7 +424,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
             this.active = false;
             this.running = false;
             this.lifecycleMonitor.notifyAll();
-            this.beanMetricManager.clear();
+            unregisterMetrics();
         }
 
         if (registerSpaceModeListener) {
@@ -522,7 +522,7 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
             this.running = false;
             this.resumeAfterUnquiesce = false;
             this.lifecycleMonitor.notifyAll();
-            this.beanMetricManager.clear();
+            unregisterMetrics();
         }
     }
 
@@ -914,5 +914,10 @@ public abstract class AbstractEventListenerContainer implements ApplicationConte
             beanMetricManager.register("processed-events", processedEvents);
             beanMetricManager.register("failed-events", failedEvents);
         }
+    }
+
+    protected void unregisterMetrics() {
+        if (beanMetricManager!= null)
+            beanMetricManager.clear();
     }
 }
