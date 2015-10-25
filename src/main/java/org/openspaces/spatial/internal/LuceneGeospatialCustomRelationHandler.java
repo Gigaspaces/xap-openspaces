@@ -22,12 +22,14 @@ import com.gigaspaces.spatial.shapes.*;
 import com.j_spaces.core.cache.foreignIndexes.*;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
-import com.spatial4j.core.shape.SpatialRelation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.*;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
@@ -46,28 +48,16 @@ import java.lang.annotation.Annotation;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 /**
  * Created by yechielf
  * @since 11.0
  */
 public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler {
-    private static final Logger logger = Logger.getLogger(LuceneGeospatialCustomRelationHandler.class.getName());
-
-    public final static Map<String, SpatialOperation> spatialOperationMap = new HashMap<String, SpatialOperation>();
-    static {
-        spatialOperationMap.put("WITHIN", SpatialOperation.IsWithin);
-        spatialOperationMap.put("CONTAINS", SpatialOperation.Contains);
-        spatialOperationMap.put("DISJOINT", SpatialOperation.IsDisjointTo);
-        spatialOperationMap.put("INTERSECTS", SpatialOperation.Intersects);
-
-    }
 
     static final String GSUID = "GSUID";
     static final String GSVERSION = "GSVERSION";
@@ -335,14 +325,14 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     public boolean applyOperationFilter(String relation, Object actual, Object matchedAgainst) {
         if (!(actual instanceof Shape) || !(matchedAgainst instanceof Shape)) {
-            logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + actual + " and " + matchedAgainst);
-            return false;
+            throw new IllegalArgumentException("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + actual + " and " + matchedAgainst);
         } else {
+            SpatialOp spatialOperation;
+            try {
+                spatialOperation = SpatialOp.valueOf(relation.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Relation " + relation + " not found, known relations are: " + Arrays.asList(SpatialOp.values()));
 
-            SpatialOperation spatialOperation = spatialOperationMap.get(relation.toUpperCase());
-            if (spatialOperation == null) {
-                logger.warning("Relation " + relation + " not found, known relations are: " + Arrays.asList(spatialOperationMap.values()));
-                return false;
             }
             com.spatial4j.core.shape.Shape actualShape = toSpatial4j((Shape) actual);
             com.spatial4j.core.shape.Shape matchedAgainstShape = toSpatial4j((Shape) matchedAgainst);
@@ -357,14 +347,14 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     @Override
     public ForeignQueryEntriesResultIterator scanIndex(String typeName, String path, String namespace, String relation, Object subject) throws Exception {
-        SpatialOperation spatialOperation = spatialOperationMap.get(relation.toUpperCase());
-        if (spatialOperation == null) {
-            logger.warning("Relation " + relation + " not found, known relations for " + namespace + " are: " + Arrays.asList(SpatialRelation.values()));
-            return null;
+        SpatialOp spatialOp;
+        try {
+            spatialOp = SpatialOp.valueOf(relation.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Relation " + relation + " not found, known relations for " + namespace + " are: " + Arrays.asList(SpatialOp.values()));
         }
         if (!(subject instanceof Shape)) {
-            logger.warning("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + subject);
-            return null;
+            throw new IllegalArgumentException("Relation " + relation + " can be applied only for geometrical shapes, instead given: " + subject);
         }
 
         LuceneHolder luceneHolder = getLuceneHolder(typeName);
@@ -372,19 +362,56 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         uncommittedChanges.set(0);
 
         com.spatial4j.core.shape.Shape subjectShape = toSpatial4j((Shape) subject);
-        SpatialArgs args = new SpatialArgs(spatialOperation, subjectShape);
-
         DirectoryReader dr = DirectoryReader.open(luceneHolder.getDirectory());
         IndexSearcher is = new IndexSearcher(dr);
 
-        Query q = createStrategyByFieldName(path).makeQuery(args);
+        Query query = createQuery(path, subjectShape, spatialOp);
 //        BooleanQuery booleanQuery = new BooleanQuery();
 //        booleanQuery.add(q, BooleanClause.Occur.MUST);
 //        booleanQuery.add(new TermQuery(new Term("class", getClassName())), BooleanClause.Occur.MUST);
 //        ScoreDoc[] scores = is.search(booleanQuery, MAX_RESULTS).scoreDocs;
 
-        ScoreDoc[] scores = is.search(q, MAX_RESULTS).scoreDocs;
+        //Filter instead of query
+        //query = new BooleanQuery.Builder().add(query, BooleanClause.Occur.FILTER).build();
+        ScoreDoc[] scores = is.search(query, MAX_RESULTS).scoreDocs;
         return new LuceneIterator(scores, is, _uidToEntry, dr, (rematchAlreadyMatchedIndexPath(path) ? null : path));
+    }
+
+    private enum SpatialOp {
+        WITHIN(SpatialOperation.IsWithin),
+        CONTAINS(SpatialOperation.Contains),
+        INTERSECTS(SpatialOperation.Intersects),
+        DISJOINT(SpatialOperation.IsDisjointTo) {
+            @Override
+            public Query makeQuery(SpatialStrategy spatialStrategy, com.spatial4j.core.shape.Shape subjectShape) {
+                SpatialArgs intersectsArgs = new SpatialArgs(SpatialOperation.Intersects, subjectShape);
+                Query intersectsQuery = spatialStrategy.makeQuery(intersectsArgs);
+
+                return new BooleanQuery.Builder()
+                        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD)
+                        .add(intersectsQuery, BooleanClause.Occur.MUST_NOT)
+                        .build();
+            }
+        };
+
+        private final SpatialOperation _spatialOperation;
+
+        SpatialOp(SpatialOperation spatialOperation) {
+            this._spatialOperation = spatialOperation;
+        }
+
+        public Query makeQuery(SpatialStrategy spatialStrategy, com.spatial4j.core.shape.Shape subjectShape) {
+            SpatialArgs args = new SpatialArgs(_spatialOperation, subjectShape);
+            return spatialStrategy.makeQuery(args);
+        }
+
+        public boolean evaluate(com.spatial4j.core.shape.Shape indexedShape, com.spatial4j.core.shape.Shape queryShape) {
+            return _spatialOperation.evaluate(indexedShape, queryShape);
+        }
+    }
+
+    private Query createQuery(String path, com.spatial4j.core.shape.Shape subjectShape, SpatialOp op) {
+        return op.makeQuery(createStrategyByFieldName(path), subjectShape);
     }
 
 }
