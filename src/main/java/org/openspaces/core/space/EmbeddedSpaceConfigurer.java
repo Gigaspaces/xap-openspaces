@@ -232,7 +232,7 @@ public class EmbeddedSpaceConfigurer extends AbstractSpaceConfigurer {
      */
     public EmbeddedSpaceConfigurer attributeStore(AttributeStore attributeStore) {
         validate();
-        factoryBean.setAttributeStore(attributeStore);
+        factoryBean.attributeStore(attributeStore);
         return this;
     }
 }
