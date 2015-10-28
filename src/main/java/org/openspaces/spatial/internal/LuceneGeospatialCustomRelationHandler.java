@@ -302,13 +302,15 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         return spatialContext.makePoint(point.getX(), point.getY());
     }
 
-    private com.spatial4j.core.shape.Shape convertPolygon(Polygon polygon) {
+    com.spatial4j.core.shape.Shape convertPolygon(Polygon polygon) {
         try {
             String coordinates = "";
             for (int i = 0; i < polygon.getNumOfPoints(); i++) {
-                coordinates += (int) polygon.getPoint(i).getX() + " " + (int) polygon.getPoint(i).getY() + ",";
+                coordinates += (i == 0 ? "" : ",") + polygon.getPoint(i).getX() + " " + polygon.getPoint(i).getY();
             }
-            coordinates += (int) polygon.getPoint(0).getX() + " " + (int) polygon.getPoint(0).getY();
+            if (!polygon.getPoint(polygon.getNumOfPoints()-1).equals(polygon.getPoint(0))) {
+                coordinates += "," + polygon.getPoint(0).getX() + " " + polygon.getPoint(0).getY();
+            }
             return spatialContext.readShapeFromWkt("POLYGON ((" + coordinates + "))");
             //return poly;
         } catch (ParseException e) {
