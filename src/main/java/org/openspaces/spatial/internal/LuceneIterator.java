@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.spatial.internal;
 
+import com.j_spaces.core.cache.foreignIndexes.ForeignIndexableServerEntry;
 import com.j_spaces.core.cache.foreignIndexes.ForeignQueryEntriesResultIterator;
 import com.j_spaces.core.cache.foreignIndexes.IIndexableServerEntry;
 import org.apache.lucene.document.Document;
@@ -34,10 +35,10 @@ public class LuceneIterator extends ForeignQueryEntriesResultIterator {
     private final ScoreDoc[] _scores;
     private final IndexSearcher _is;
     private int _pos;
-    private final ConcurrentMap<Object,IIndexableServerEntry> _uidToEntry;
+    private final ConcurrentMap<Object, ForeignIndexableServerEntry> _uidToEntry;
     private final DirectoryReader directoryReader;
 
-    public LuceneIterator(ScoreDoc[] scores, IndexSearcher is, ConcurrentMap<Object, IIndexableServerEntry> uidToEntry, DirectoryReader directoryReader, String alreadyMatchedIndexPath)
+    public LuceneIterator(ScoreDoc[] scores, IndexSearcher is, ConcurrentMap<Object, ForeignIndexableServerEntry> uidToEntry, DirectoryReader directoryReader, String alreadyMatchedIndexPath)
     {
         super(alreadyMatchedIndexPath);
         _scores = scores;

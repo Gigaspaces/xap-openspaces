@@ -64,7 +64,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private static final String GSUIDANDVERSION = GSUID + "_" + GSVERSION;
 
     static final int MAX_RESULTS = Integer.MAX_VALUE;
-    private final ConcurrentMap<Object, IIndexableServerEntry> _uidToEntry;
+    private final ConcurrentMap<Object, ForeignIndexableServerEntry> _uidToEntry;
 
     @SuppressWarnings("FieldCanBeLocal")
     private double _distErrPct = 0.025;//SpatialArgs.DEFAULT_DISTERRPCT;
@@ -101,7 +101,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     public LuceneGeospatialCustomRelationHandler() {
-        _uidToEntry = new ConcurrentHashMap<Object, IIndexableServerEntry>();
+        _uidToEntry = new ConcurrentHashMap<Object, ForeignIndexableServerEntry>();
     }
 
     private LuceneHolder createLuceneHolder(String path) throws IOException {
@@ -164,7 +164,13 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 getLuceneHolder(className).getIndexWriter().addDocument(doc);
 
                 commit(className);
-                _uidToEntry.put(entry.getUid(), entry);
+                ForeignIndexableServerEntry exist; // one existing in the map
+                ForeignIndexableServerEntry mine = (ForeignIndexableServerEntry) entry; // current entry casted.
+                if ((exist =_uidToEntry.putIfAbsent(entry.getUid(), mine)) != null)
+                {//a lingering remove- wait for it
+                    exist.waitForRemovalFromForeignIndex();
+                }
+                _uidToEntry.put(entry.getUid(), mine);
             }
         }
     }
@@ -187,12 +193,16 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     @Override
     public void removeEntry(IIndexableServerEntry entry) throws Exception {
-        if (_uidToEntry.containsKey(entry.getUid())) {
+        ForeignIndexableServerEntry exist = _uidToEntry.get(entry.getUid());
+        if (exist != null) {
+            if (!exist.equals(entry))
+                throw new RuntimeException("invalid ForeignIndexableServerEntry in remove uid=" + entry.getUid());
             String className = entry.getEntryCacheInfo().getClassName();
             getLuceneHolder(className).getIndexWriter().deleteDocuments(new TermQuery(
                     new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()))));
             commit(className);
-            _uidToEntry.remove(entry.getUid());
+            _uidToEntry.remove(entry.getUid(), entry);
+            exist.setRemovedFromForeignIndex();
         }
     }
 
@@ -240,7 +250,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
                 commit(className);
 
-                _uidToEntry.put(entry.getUid(), entry);
+                _uidToEntry.put(entry.getUid(), (ForeignIndexableServerEntry)entry);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to update entry with id ["+String.valueOf(entry.getUid())+"]");
