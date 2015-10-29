@@ -133,7 +133,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     @Override
-    public void insertEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders) throws Exception {
+    public void insertEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders, boolean fromTransactionalUpdate) throws Exception {
         boolean docHasShape = false;
         //construct a document and add all fixed  properties
         Document doc = new Document();
@@ -164,13 +164,15 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                 getLuceneHolder(className).getIndexWriter().addDocument(doc);
 
                 commit(className);
-                ForeignIndexableServerEntry exist; // one existing in the map
-                ForeignIndexableServerEntry mine = (ForeignIndexableServerEntry) entry; // current entry casted.
-                if ((exist =_uidToEntry.putIfAbsent(entry.getUid(), mine)) != null)
-                {//a lingering remove- wait for it
-                    exist.waitForRemovalFromForeignIndex();
+                if (!fromTransactionalUpdate) {
+                    ForeignIndexableServerEntry exist; // one existing in the map
+                    ForeignIndexableServerEntry mine = (ForeignIndexableServerEntry) entry; // current entry casted.
+
+                    if ((exist = _uidToEntry.putIfAbsent(entry.getUid(), mine)) != null) {//a lingering remove- wait for it
+                        exist.waitForRemovalFromForeignIndex();
+                    }
+                    _uidToEntry.put(entry.getUid(), mine);
                 }
-                _uidToEntry.put(entry.getUid(), mine);
             }
         }
     }
@@ -192,17 +194,31 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     @Override
-    public void removeEntry(IIndexableServerEntry entry) throws Exception {
+    public void removeEntry(IIndexableServerEntry entry, ForeignIndexRemoveMode foreignIndexRemoveMode) throws Exception {
         ForeignIndexableServerEntry exist = _uidToEntry.get(entry.getUid());
         if (exist != null) {
-            if (!exist.equals(entry))
+            if (foreignIndexRemoveMode == ForeignIndexRemoveMode.NO_XTN && !exist.equals(entry))
                 throw new RuntimeException("invalid ForeignIndexableServerEntry in remove uid=" + entry.getUid());
             String className = entry.getEntryCacheInfo().getClassName();
+            int version = entry.getVersion();
+            if (foreignIndexRemoveMode == ForeignIndexRemoveMode.ON_XTN_UPDATED_COMMIT)
+                version--;
+            if (foreignIndexRemoveMode == ForeignIndexRemoveMode.ON_XTN_UPDATED_ROLLBACK)
+                version++;
+
             getLuceneHolder(className).getIndexWriter().deleteDocuments(new TermQuery(
-                    new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()))));
+                    new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(version))));
             commit(className);
-            _uidToEntry.remove(entry.getUid(), entry);
-            exist.setRemovedFromForeignIndex();
+
+            if (foreignIndexRemoveMode == ForeignIndexRemoveMode.NO_XTN) {
+                _uidToEntry.remove(entry.getUid(), entry);
+                exist.setRemovedFromForeignIndex();
+            }
+            else
+            {
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//TBD replate entry data in record !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            }
         }
     }
 
