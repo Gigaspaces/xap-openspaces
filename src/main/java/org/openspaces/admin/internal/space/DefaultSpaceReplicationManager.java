@@ -27,8 +27,6 @@ import org.openspaces.core.gateway.GatewayTarget;
 import com.gigaspaces.internal.client.spaceproxy.ISpaceProxy;
 import com.gigaspaces.internal.cluster.node.impl.gateway.GatewayPolicy;
 import com.gigaspaces.internal.cluster.node.impl.gateway.GatewaysPolicy;
-import com.j_spaces.core.cluster.ClusterPolicy;
-import com.j_spaces.core.cluster.ReplicationPolicy;
 
 /**
  * 
@@ -47,13 +45,7 @@ public class DefaultSpaceReplicationManager implements SpaceReplicationManager {
     public void addGatewayTarget(GatewayTarget gatewayTarget) {
         GigaSpace gigaSpace = _defaultSpace.getGigaSpace();
         ISpaceProxy spaceProxy = (ISpaceProxy) gigaSpace.getSpace();
-        ClusterPolicy clusterPolicy = spaceProxy.getDirectProxy().getClusterPolicy();
-        if (clusterPolicy == null)
-            throw new UnsupportedOperationException("Cannot add replication gateway target to a non clustered space");
-        ReplicationPolicy replicationPolicy = clusterPolicy.getReplicationPolicy();
-        if (replicationPolicy == null)
-            throw new UnsupportedOperationException("Cannot add replication gateway target to a non replicated space");
-        GatewaysPolicy gatewaysPolicy = replicationPolicy.getGatewaysPolicy();
+        GatewaysPolicy gatewaysPolicy = spaceProxy.getDirectProxy().getSpaceClusterInfo().getGatewaysPolicy();
         if (gatewaysPolicy == null)
             throw new UnsupportedOperationException("Cannot add replication gateway target to a space with no gateways");
         GatewayPolicy defaultGatewayPolicy = gatewaysPolicy.getDefaultGatewayPolicy();        
