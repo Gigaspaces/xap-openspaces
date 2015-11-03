@@ -18,10 +18,9 @@
 package org.openspaces.spatial.internal;
 
 import com.gigaspaces.internal.metadata.ITypeDesc;
+import com.gigaspaces.internal.server.space.SpaceConfigReader;
 import com.gigaspaces.spatial.shapes.*;
 import com.j_spaces.core.cache.foreignIndexes.*;
-import com.spatial4j.core.context.SpatialContext;
-import com.spatial4j.core.context.jts.JtsSpatialContext;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -32,20 +31,15 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.spatial.SpatialStrategy;
-import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
-import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
-import org.apache.lucene.spatial.prefix.tree.SpatialPrefixTree;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
 import org.openspaces.core.util.FileUtils;
 import org.openspaces.spatial.SpaceSpatialIndex;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Map;
@@ -69,19 +63,12 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     static final int MAX_RESULTS = Integer.MAX_VALUE;
     private final ConcurrentMap<Object, ForeignIndexableServerEntry> _uidToEntry;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private double _distErrPct = 0.025;//SpatialArgs.DEFAULT_DISTERRPCT;
-
-    private SpatialContext spatialContext = JtsSpatialContext.GEO;
-    private int maxLevels = 11;//results in sub-meter precision for geohash
-    private SpatialPrefixTree grid = new GeohashPrefixTree(spatialContext, maxLevels);
-    private File luceneIndexdDirectory;
-
     private AtomicInteger uncommittedChanges = new AtomicInteger(0);
 
 
     private Map<String, LuceneHolder> _luceneHolderMap = new ConcurrentHashMap<String, LuceneHolder>();
-
+    private LuceneConfiguration _luceneConfiguration;
+    private File _luceneIndexdDirectory;
 
 
     public class LuceneHolder {
@@ -108,7 +95,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     private LuceneHolder createLuceneHolder(String path) throws IOException {
-        MMapDirectory directory = new MMapDirectory(Paths.get(path));
+        Directory directory = _luceneConfiguration.getDirectory(path);
         Analyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig wc = new IndexWriterConfig(analyzer);
         wc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -118,12 +105,14 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     @Override
-    public void initialize(String namespace, String spaceName) throws Exception {
-        super.initialize(namespace, spaceName);
-        String mainDirectory = System.getProperty("com.gs.foreignindex.lucene.work", System.getProperty("user.home"));
-        luceneIndexdDirectory = new File(mainDirectory, spaceName);
-        if (luceneIndexdDirectory.exists()) {
-            FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
+    public void initialize(String namespace, String spaceName, SpaceConfigReader reader) throws Exception {
+        super.initialize(namespace, spaceName, reader);
+        _luceneConfiguration = new LuceneConfiguration();
+        _luceneConfiguration.initialize(reader);
+
+        _luceneIndexdDirectory = new File(_luceneConfiguration.getLocation(), spaceName);
+        if (_luceneIndexdDirectory.exists()) {
+            FileUtils.deleteFileOrDirectory(_luceneIndexdDirectory);
         }
     }
 
@@ -183,7 +172,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void introduceType(String className) throws IOException {
         if (!_luceneHolderMap.containsKey(className)) {
-            LuceneHolder luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
+            LuceneHolder luceneEntryHolder = createLuceneHolder(_luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
             _luceneHolderMap.put(className, luceneEntryHolder);
         } else {
             _logger.log(Level.WARNING, "Type [" + className + "] is already introduced to geospatial handler");
@@ -305,7 +294,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             luceneHolder.getIndexWriter().close();
         }
         _luceneHolderMap.clear();
-        FileUtils.deleteFileOrDirectory(luceneIndexdDirectory);
+        FileUtils.deleteFileOrDirectory(_luceneIndexdDirectory);
     }
 
     public com.spatial4j.core.shape.Shape toSpatial4j(Shape gigaShape) {
@@ -323,16 +312,16 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     private com.spatial4j.core.shape.Shape convertCircle(Circle circle) {
-        return spatialContext.makeCircle(circle.getPoint().getX(), circle.getPoint().getY(), circle.getRadius());
+        return _luceneConfiguration.getSpatialContext().makeCircle(circle.getPoint().getX(), circle.getPoint().getY(), circle.getRadius());
     }
 
     private com.spatial4j.core.shape.Shape convertRectangle(Rectangle rectangle) {
-        return spatialContext.makeRectangle(rectangle.getMinX(), rectangle.getMaxX(),
+        return _luceneConfiguration.getSpatialContext().makeRectangle(rectangle.getMinX(), rectangle.getMaxX(),
                 rectangle.getMinY(), rectangle.getMaxY());
     }
 
     private com.spatial4j.core.shape.Shape convertPoint(Point point) {
-        return spatialContext.makePoint(point.getX(), point.getY());
+        return _luceneConfiguration.getSpatialContext().makePoint(point.getX(), point.getY());
     }
 
     com.spatial4j.core.shape.Shape convertPolygon(Polygon polygon) {
@@ -344,7 +333,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
             if (!polygon.getPoint(polygon.getNumOfPoints()-1).equals(polygon.getPoint(0))) {
                 coordinates += "," + polygon.getPoint(0).getX() + " " + polygon.getPoint(0).getY();
             }
-            return spatialContext.readShapeFromWkt("POLYGON ((" + coordinates + "))");
+            return _luceneConfiguration.getSpatialContext().readShapeFromWkt("POLYGON ((" + coordinates + "))");
             //return poly;
         } catch (ParseException e) {
             throw new RuntimeException(e);
@@ -353,9 +342,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     private SpatialStrategy createStrategyByFieldName(String fieldName) {
-        RecursivePrefixTreeStrategy recursivePrefixTreeStrategy = new RecursivePrefixTreeStrategy(grid, fieldName);
-        recursivePrefixTreeStrategy.setDistErrPct(_distErrPct);
-        return recursivePrefixTreeStrategy;
+        return _luceneConfiguration.getStrategy(fieldName);
     }
 
     public boolean applyOperationFilter(String relation, Object actual, Object matchedAgainst) {
@@ -377,7 +364,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     private boolean rematchAlreadyMatchedIndexPath(@SuppressWarnings("UnusedParameters") String path) {
         //TODO change per field/path
-        return _distErrPct != 0;
+        return _luceneConfiguration.getDistErrPct() != 0;
     }
 
     @Override
