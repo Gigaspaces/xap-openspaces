@@ -52,12 +52,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by yechielf
  * @since 11.0
  */
 public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler {
+    private static final Logger _logger = Logger.getLogger(LuceneGeospatialCustomRelationHandler.class.getName());
 
     static final String GSUID = "GSUID";
     static final String GSVERSION = "GSVERSION";
@@ -77,7 +80,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private AtomicInteger uncommittedChanges = new AtomicInteger(0);
 
 
-    private static Map<String, LuceneHolder> _luceneHolderMap = new ConcurrentHashMap<String, LuceneHolder>();
+    private Map<String, LuceneHolder> _luceneHolderMap = new ConcurrentHashMap<String, LuceneHolder>();
 
 
 
@@ -150,37 +153,41 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                     docHasShape = true;
                 }
             }
-            if (docHasShape) {
-                //cater for uid & version
-                //noinspection deprecation
-                doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
-                        Field.Index.NO));
+        }
+        if (docHasShape) {
+            //cater for uid & version
+            //noinspection deprecation
+            doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
+                    Field.Index.NO));
 
-                //noinspection deprecation
-                doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
-                        Field.Index.NOT_ANALYZED));
+            //noinspection deprecation
+            doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
+                    Field.Index.NOT_ANALYZED));
 
-                String className = entry.getEntryCacheInfo().getClassName();
-                getLuceneHolder(className).getIndexWriter().addDocument(doc);
+            String className = entry.getEntryCacheInfo().getClassName();
+            getLuceneHolder(className).getIndexWriter().addDocument(doc);
 
-                commit(className);
-                if (!fromTransactionalUpdate) {
-                    ForeignIndexableServerEntry exist; // one existing in the map
-                    ForeignIndexableServerEntry mine = (ForeignIndexableServerEntry) entry; // current entry casted.
+            commit(className);
+            if (!fromTransactionalUpdate) {
+                ForeignIndexableServerEntry exist; // one existing in the map
+                ForeignIndexableServerEntry mine = (ForeignIndexableServerEntry) entry; // current entry casted.
 
-                    if ((exist = _uidToEntry.putIfAbsent(entry.getUid(), mine)) != null) {//a lingering remove- wait for it
-                        exist.waitForRemovalFromForeignIndex();
-                    }
-                    _uidToEntry.put(entry.getUid(), mine);
+                if ((exist = _uidToEntry.putIfAbsent(entry.getUid(), mine)) != null) {//a lingering remove- wait for it
+                    exist.waitForRemovalFromForeignIndex();
                 }
+                _uidToEntry.put(entry.getUid(), mine);
             }
         }
     }
 
     @Override
     public void introduceType(String className) throws IOException {
-        LuceneHolder luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
-        _luceneHolderMap.put(className, luceneEntryHolder);
+        if (!_luceneHolderMap.containsKey(className)) {
+            LuceneHolder luceneEntryHolder = createLuceneHolder(luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
+            _luceneHolderMap.put(className, luceneEntryHolder);
+        } else {
+            _logger.log(Level.WARNING, "Type [" + className + "] is already introduced to geospatial handler");
+        }
     }
 
     private LuceneHolder getLuceneHolder(String className) throws IOException {
