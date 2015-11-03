@@ -16,6 +16,7 @@
 
 package org.openspaces.pu.container;
 
+import com.gigaspaces.metrics.DummyMetricRegistrator;
 import com.gigaspaces.metrics.MetricRegistrator;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.properties.BeanLevelProperties;
@@ -27,7 +28,7 @@ import org.openspaces.core.properties.BeanLevelProperties;
 public class ProcessingUnitContainerConfig {
     private ClusterInfo clusterInfo;
     private BeanLevelProperties beanLevelProperties;
-    private MetricRegistrator metricRegistrator;
+    private MetricRegistrator metricRegistrator = DummyMetricRegistrator.get();
 
     public ClusterInfo getClusterInfo() {
         return clusterInfo;
