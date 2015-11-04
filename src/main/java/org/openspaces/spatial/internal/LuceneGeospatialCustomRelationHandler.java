@@ -221,7 +221,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void replaceEntry(IIndexableServerEntry entry, Map<String, CustomRelationAnnotationHolder> customRelationAnnotationsHolders) {
         try {
-            boolean docHasShape = false;
+            boolean shouldWriteToIndex = false;
             //construct a document and add all fixed  properties
             Document doc = new Document();
             for (CustomRelationAnnotationHolder holder : customRelationAnnotationsHolders.values()) {
@@ -234,35 +234,40 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                         for (Field field : fields) {
                             doc.add(field);
                         }
-                        docHasShape = true;
+                        shouldWriteToIndex = true;
                     }
                 }
             }
-            if (docHasShape) {
-                //cater for uid & version
-                //noinspection deprecation
-                doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
-                        Field.Index.NO));
 
-                //noinspection deprecation
-                doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
-                        Field.Index.NOT_ANALYZED));
-
-                //Add new
-
+            boolean hasPreviousEntry = _uidToEntry.containsKey(entry.getUid());
+            if (shouldWriteToIndex || hasPreviousEntry) {
                 String className = entry.getEntryCacheInfo().getClassName();
                 LuceneHolder luceneEntryHolder = getLuceneHolder(className);
+                if (shouldWriteToIndex) {
+                    //cater for uid & version
+                    //noinspection deprecation
+                    doc.add(new Field(GSUID, (String) entry.getUid(), Field.Store.YES,
+                            Field.Index.NO));
 
-                luceneEntryHolder.getIndexWriter().addDocument(doc);
+                    //noinspection deprecation
+                    doc.add(new Field(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion()), Field.Store.YES,
+                            Field.Index.NOT_ANALYZED));
 
-
-                //Delete old
-                luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
-                        new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion() - 1))));
-
+                    //Add new
+                    luceneEntryHolder.getIndexWriter().addDocument(doc);
+                }
+                if (hasPreviousEntry) {
+                    //Delete old
+                    luceneEntryHolder.getIndexWriter().deleteDocuments(new TermQuery(
+                            new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(entry.getVersion() - 1))));
+                }
                 commit(className);
-
-                _uidToEntry.put(entry.getUid(), (ForeignIndexableServerEntry)entry);
+                //old is not null and new is null -> delete from map
+                if (hasPreviousEntry && !shouldWriteToIndex) {
+                    _uidToEntry.remove(entry.getUid());
+                } else {
+                    _uidToEntry.put(entry.getUid(), (ForeignIndexableServerEntry) entry);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to update entry with id ["+String.valueOf(entry.getUid())+"]");
