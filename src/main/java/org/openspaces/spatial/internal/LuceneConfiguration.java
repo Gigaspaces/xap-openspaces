@@ -52,10 +52,10 @@ public class LuceneConfiguration {
     public static final String SPATIAL_CONTEXT = GEOSPATIAL_PREFIX + ".spatial-context";
     public static final String SPATIAL_CONTEXT_DEFAULT = SupportedSpatialContext.JTS_GEO.name();
 
-    protected SpatialContext _spatialContext;
-    protected StrategyFactory _strategyFactory;
-    protected DirectoryFactory _directoryFactory;
-    protected String _location;
+    private SpatialContext _spatialContext;
+    private StrategyFactory _strategyFactory;
+    private DirectoryFactory _directoryFactory;
+    private String _location;
 
     private enum SupportedSpatialStrategy {
         RecursivePrefixTree, BBox;
@@ -209,8 +209,8 @@ public class LuceneConfiguration {
                 _location = reader.getSpaceProperty(STORAGE_LOCATION, STORAGE_LOCATION_DEFAULT);
                 return new DirectoryFactory() {
                     @Override
-                    public Directory getDirectory(String path) throws IOException {
-                        return new MMapDirectory(Paths.get(path));
+                    public Directory getDirectory(String relativePath) throws IOException {
+                        return new MMapDirectory(Paths.get(_location+"/"+relativePath));
                     }
                 };
             }
@@ -232,12 +232,8 @@ public class LuceneConfiguration {
         return this._strategyFactory.createStrategy(fieldName);
     }
 
-    public double getDistErrPct() {
-        return this._strategyFactory.getDistErrPct();
-    }
-
-    public Directory getDirectory(String path) throws IOException {
-        return _directoryFactory.getDirectory(path);
+    public Directory getDirectory(String relativePath) throws IOException {
+        return _directoryFactory.getDirectory(relativePath);
     }
 
     public SpatialContext getSpatialContext() {
@@ -249,6 +245,13 @@ public class LuceneConfiguration {
         return _location;
     }
 
+    public boolean rematchAlreadyMatchedIndexPath(String path) {
+        try {
+            return _strategyFactory.getDistErrPct() != 0;
+        } catch (UnsupportedOperationException e) {
+            return true;
+        }
+    }
 
     public abstract class StrategyFactory {
         private String _strategyName;
@@ -264,7 +267,7 @@ public class LuceneConfiguration {
     }
 
     public abstract class DirectoryFactory {
-        public abstract Directory getDirectory(String path) throws IOException;
+        public abstract Directory getDirectory(String relativePath) throws IOException;
     }
 
 }

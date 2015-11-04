@@ -94,8 +94,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
         _uidToEntry = new ConcurrentHashMap<Object, ForeignIndexableServerEntry>();
     }
 
-    private LuceneHolder createLuceneHolder(String path) throws IOException {
-        Directory directory = _luceneConfiguration.getDirectory(path);
+    private LuceneHolder createLuceneHolder(String relativePath) throws IOException {
+        Directory directory = _luceneConfiguration.getDirectory(relativePath);
         Analyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig wc = new IndexWriterConfig(analyzer);
         wc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -172,7 +172,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     @Override
     public void introduceType(String className) throws IOException {
         if (!_luceneHolderMap.containsKey(className)) {
-            LuceneHolder luceneEntryHolder = createLuceneHolder(_luceneIndexdDirectory.getAbsolutePath() + "/" + className + "/entries");
+            LuceneHolder luceneEntryHolder = createLuceneHolder(getSpaceName() + "/" + className + "/entries");
             _luceneHolderMap.put(className, luceneEntryHolder);
         } else {
             _logger.log(Level.WARNING, "Type [" + className + "] is already introduced to geospatial handler");
@@ -364,7 +364,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
     private boolean rematchAlreadyMatchedIndexPath(@SuppressWarnings("UnusedParameters") String path) {
         //TODO change per field/path
-        return _luceneConfiguration.getDistErrPct() != 0;
+        return _luceneConfiguration.rematchAlreadyMatchedIndexPath(path);
     }
 
     @Override
