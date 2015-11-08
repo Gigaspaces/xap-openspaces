@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gigaspaces</groupId>
     <artifactId>gs-openspaces</artifactId>
-    <version>10.2.1-14000-RELEASE</version>
+    <version>10.2.1-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
