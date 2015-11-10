@@ -126,16 +126,16 @@ public class LuceneConfiguration {
             case JTS_GEO:
                 return JtsSpatialContext.GEO;
             case JTS_NON_GEO: {
-                SpatialContextFactory factory = new SpatialContextFactory();
+                JtsSpatialContextFactory factory = new JtsSpatialContextFactory();
                 factory.geo = false;
-                return new SpatialContext(factory);
+                return new JtsSpatialContext(factory);
             }
             case GEO:
                 return SpatialContext.GEO;
             case NON_GEO: {
-                JtsSpatialContextFactory factory = new JtsSpatialContextFactory();
+                SpatialContextFactory factory = new SpatialContextFactory();
                 factory.geo = false;
-                return new JtsSpatialContext(factory);
+                return new SpatialContext(factory);
             }
             default:
                 throw new RuntimeException("Unhandled spatial context type " + spatialContext);
