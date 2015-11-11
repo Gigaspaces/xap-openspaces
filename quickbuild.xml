@@ -20,8 +20,8 @@
 	<target name="replace_version">
 		<property name="openspaces.version" value="openspaces-version" />
 		<replaceregexp file="${project.properties.file}"
-                         match="${openspaces.version}=(.*)"
-                         replace='${openspaces.version}=${new.version}'/>
+                               match="${openspaces.version}=(.*)"
+                               replace='${openspaces.version}=${new.version}'/>
 	</target>
 	
 	<target name="full-dist" depends="dist"/>
