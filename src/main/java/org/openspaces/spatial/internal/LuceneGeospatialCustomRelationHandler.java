@@ -190,20 +190,15 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     @Override
-    public void removeEntry(IIndexableServerEntry entry, ForeignIndexRemoveMode foreignIndexRemoveMode) throws Exception {
+    public void removeEntry(IIndexableServerEntry entry, ForeignIndexRemoveMode foreignIndexRemoveMode, int removedVersion) throws Exception {
         ForeignIndexableServerEntry exist = _uidToEntry.get(entry.getUid());
         if (exist != null) {
             if (foreignIndexRemoveMode == ForeignIndexRemoveMode.NO_XTN && !exist.equals(entry))
                 throw new RuntimeException("invalid ForeignIndexableServerEntry in remove uid=" + entry.getUid());
             String className = entry.getEntryCacheInfo().getClassName();
-            int version = entry.getVersion();
-            if (foreignIndexRemoveMode == ForeignIndexRemoveMode.ON_XTN_UPDATED_COMMIT)
-                version--;
-            if (foreignIndexRemoveMode == ForeignIndexRemoveMode.ON_XTN_UPDATED_ROLLBACK)
-                version++;
 
             getLuceneHolder(className).getIndexWriter().deleteDocuments(new TermQuery(
-                    new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(version))));
+                    new Term(GSUIDANDVERSION, entry.getUid() + String.valueOf(removedVersion))));
             commit(className);
 
             if (foreignIndexRemoveMode == ForeignIndexRemoveMode.NO_XTN) {
