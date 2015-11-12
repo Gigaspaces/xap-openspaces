@@ -3,9 +3,7 @@
 <project name="openspaces-quickbuild" default="usage" basedir=".">
 
     <import file="build.xml" />
-	
 	<!--taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" /-->
-	
 	<property name="backup_srv_folder" value="//backup-srv/openspaces" />
 	<property name="project.properties.file" value="project.properties" />
 	<property name="svnant.repository.user" value="opencm" />
