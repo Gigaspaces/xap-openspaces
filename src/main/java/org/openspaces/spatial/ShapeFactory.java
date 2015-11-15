@@ -23,6 +23,7 @@ import com.gigaspaces.spatial.shapes.Polygon;
 import com.gigaspaces.spatial.shapes.Rectangle;
 import com.gigaspaces.spatial.shapes.internal.CircleSerializable;
 import com.gigaspaces.spatial.shapes.internal.PointSerializable;
+import com.gigaspaces.spatial.shapes.internal.PolygonSerializable;
 import com.gigaspaces.spatial.shapes.internal.RectangleSerializable;
 
 /**
@@ -79,6 +80,6 @@ public class ShapeFactory {
      * @return A new Polygon instance
      */
     public static Polygon polygon(Point first, Point second, Point third, Point... morePoints) {
-        return new Polygon(first, second, third, morePoints);
+        return new PolygonSerializable(first, second, third, morePoints);
     }
 }
