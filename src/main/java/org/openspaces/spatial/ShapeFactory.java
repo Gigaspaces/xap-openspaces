@@ -88,12 +88,18 @@ public class ShapeFactory {
         return new PolygonImpl(first, second, third, morePoints);
     }
 
-    /**
-     * Under construction
-     */
+    private static SpatialContext getDefaultSpatialContext() {
+        return SpatialContext.GEO;
+    }
+
+    /** Under construction */
     private static Shape fromWkt(String wkt) throws ParseException, IOException {
-        com.spatial4j.core.shape.Shape shape = SpatialContext.GEO.getFormats().getWktReader().read(wkt);
-        return fromSpatial4JShape(shape);
+        return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getWktReader().read(wkt));
+    }
+
+    /** Under construction */
+    private static Shape fromGeoJson(String geoJson) throws ParseException, IOException {
+        return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getGeoJsonReader().read(geoJson));
     }
 
     private static Shape fromSpatial4JShape(com.spatial4j.core.shape.Shape shape) {
@@ -109,6 +115,7 @@ public class ShapeFactory {
             com.spatial4j.core.shape.Rectangle rectangle = (com.spatial4j.core.shape.Rectangle) shape;
             return rectangle(rectangle.getMinX(), rectangle.getMaxX(), rectangle.getMinY(), rectangle.getMaxY());
         }
+        // TODO: Polygon
         throw new IllegalArgumentException("Unsupported shape type: " + shape.getClass().getName());
     }
 }
