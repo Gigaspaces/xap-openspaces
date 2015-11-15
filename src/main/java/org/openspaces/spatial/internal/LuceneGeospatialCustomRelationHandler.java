@@ -312,7 +312,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     private com.spatial4j.core.shape.Shape convertCircle(Circle circle) {
-        return _luceneConfiguration.getSpatialContext().makeCircle(circle.getPoint().getX(), circle.getPoint().getY(), circle.getRadius());
+        return _luceneConfiguration.getSpatialContext().makeCircle(circle.getCenter().getX(), circle.getCenter().getY(), circle.getRadius());
     }
 
     private com.spatial4j.core.shape.Shape convertRectangle(Rectangle rectangle) {

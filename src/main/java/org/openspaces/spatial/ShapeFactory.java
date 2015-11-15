@@ -21,6 +21,9 @@ import com.gigaspaces.spatial.shapes.Circle;
 import com.gigaspaces.spatial.shapes.Point;
 import com.gigaspaces.spatial.shapes.Polygon;
 import com.gigaspaces.spatial.shapes.Rectangle;
+import com.gigaspaces.spatial.shapes.internal.CircleSerializable;
+import com.gigaspaces.spatial.shapes.internal.PointSerializable;
+import com.gigaspaces.spatial.shapes.internal.RectangleSerializable;
 
 /**
  * Factory class for creating spatial shapes.
@@ -42,7 +45,7 @@ public class ShapeFactory {
      * @return A new Point instance
      */
     public static Point point(double x, double y) {
-        return new Point(x, y);
+        return new PointSerializable(x, y);
     }
 
     /**
@@ -52,7 +55,7 @@ public class ShapeFactory {
      * @return A new Circle instance
      */
     public static Circle circle(Point center, double radius) {
-        return new Circle(center, radius);
+        return new CircleSerializable(center, radius);
     }
 
     /**
@@ -64,7 +67,7 @@ public class ShapeFactory {
      * @return A new Rectangle instance
      */
     public static Rectangle rectangle(double minX, double maxX, double minY, double maxY) {
-        return new Rectangle(minX, maxX, minY, maxY);
+        return new RectangleSerializable(minX, maxX, minY, maxY);
     }
 
     /**
