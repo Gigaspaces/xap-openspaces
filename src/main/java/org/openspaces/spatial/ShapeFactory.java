@@ -17,14 +17,19 @@
  ******************************************************************************/
 package org.openspaces.spatial;
 
+import com.gigaspaces.spatial.shapes.*;
 import com.gigaspaces.spatial.shapes.Circle;
 import com.gigaspaces.spatial.shapes.Point;
-import com.gigaspaces.spatial.shapes.Polygon;
 import com.gigaspaces.spatial.shapes.Rectangle;
-import com.gigaspaces.spatial.shapes.internal.CircleSerializable;
-import com.gigaspaces.spatial.shapes.internal.PointSerializable;
-import com.gigaspaces.spatial.shapes.internal.PolygonSerializable;
-import com.gigaspaces.spatial.shapes.internal.RectangleSerializable;
+import com.gigaspaces.spatial.shapes.Shape;
+import com.gigaspaces.spatial.shapes.internal.CircleImpl;
+import com.gigaspaces.spatial.shapes.internal.PointImpl;
+import com.gigaspaces.spatial.shapes.internal.PolygonImpl;
+import com.gigaspaces.spatial.shapes.internal.RectangleImpl;
+import com.spatial4j.core.context.SpatialContext;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * Factory class for creating spatial shapes.
@@ -46,7 +51,7 @@ public class ShapeFactory {
      * @return A new Point instance
      */
     public static Point point(double x, double y) {
-        return new PointSerializable(x, y);
+        return new PointImpl(x, y);
     }
 
     /**
@@ -56,7 +61,7 @@ public class ShapeFactory {
      * @return A new Circle instance
      */
     public static Circle circle(Point center, double radius) {
-        return new CircleSerializable(center, radius);
+        return new CircleImpl(center, radius);
     }
 
     /**
@@ -68,7 +73,7 @@ public class ShapeFactory {
      * @return A new Rectangle instance
      */
     public static Rectangle rectangle(double minX, double maxX, double minY, double maxY) {
-        return new RectangleSerializable(minX, maxX, minY, maxY);
+        return new RectangleImpl(minX, maxX, minY, maxY);
     }
 
     /**
@@ -80,6 +85,30 @@ public class ShapeFactory {
      * @return A new Polygon instance
      */
     public static Polygon polygon(Point first, Point second, Point third, Point... morePoints) {
-        return new PolygonSerializable(first, second, third, morePoints);
+        return new PolygonImpl(first, second, third, morePoints);
+    }
+
+    /**
+     * Under construction
+     */
+    private static Shape fromWkt(String wkt) throws ParseException, IOException {
+        com.spatial4j.core.shape.Shape shape = SpatialContext.GEO.getFormats().getWktReader().read(wkt);
+        return fromSpatial4JShape(shape);
+    }
+
+    private static Shape fromSpatial4JShape(com.spatial4j.core.shape.Shape shape) {
+        if (shape instanceof com.spatial4j.core.shape.Point) {
+            com.spatial4j.core.shape.Point point = (com.spatial4j.core.shape.Point) shape;
+            return point(point.getX(), point.getY());
+        }
+        if (shape instanceof com.spatial4j.core.shape.Circle) {
+            com.spatial4j.core.shape.Circle circle = (com.spatial4j.core.shape.Circle) shape;
+            return circle(point(circle.getCenter().getX(), circle.getCenter().getY()), circle.getRadius());
+        }
+        if (shape instanceof com.spatial4j.core.shape.Rectangle) {
+            com.spatial4j.core.shape.Rectangle rectangle = (com.spatial4j.core.shape.Rectangle) shape;
+            return rectangle(rectangle.getMinX(), rectangle.getMaxX(), rectangle.getMinY(), rectangle.getMaxY());
+        }
+        throw new IllegalArgumentException("Unsupported shape type: " + shape.getClass().getName());
     }
 }
