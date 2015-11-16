@@ -8,6 +8,9 @@
 package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.spatial.shapes.Point;
+import com.spatial4j.core.context.SpatialContext;
+import com.spatial4j.core.shape.Shape;
+import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -18,7 +21,7 @@ import java.io.ObjectOutput;
  * @author Barak Bar Orion
  * @since 11.0
  */
-public class PointImpl implements Point, Externalizable {
+public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable {
     private static final long serialVersionUID = 1L;
 
     private double x;
@@ -40,6 +43,11 @@ public class PointImpl implements Point, Externalizable {
     @Override
     public double getY() {
         return y;
+    }
+
+    @Override
+    public Shape getSpatial4jShape(SpatialContext spatialContext) {
+        return spatialContext.makePoint(x, y);
     }
 
     @Override

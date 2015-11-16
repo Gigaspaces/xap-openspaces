@@ -8,6 +8,9 @@
 package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.spatial.shapes.Rectangle;
+import com.spatial4j.core.context.SpatialContext;
+import com.spatial4j.core.shape.Shape;
+import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -18,7 +21,7 @@ import java.io.ObjectOutput;
  * @author Yohana Khoury
  * @since 11.0
  */
-public class RectangleImpl implements Rectangle, Externalizable {
+public class RectangleImpl implements Rectangle, Spatial4jShapeProvider, Externalizable {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,6 +58,11 @@ public class RectangleImpl implements Rectangle, Externalizable {
     @Override
     public double getMaxY() {
         return maxY;
+    }
+
+    @Override
+    public Shape getSpatial4jShape(SpatialContext spatialContext) {
+        return spatialContext.makeRectangle(minX, maxX, minY, maxY);
     }
 
     @Override

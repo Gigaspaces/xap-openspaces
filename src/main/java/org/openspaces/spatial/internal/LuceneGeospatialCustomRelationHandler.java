@@ -36,11 +36,11 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.Directory;
 import org.openspaces.core.util.FileUtils;
 import org.openspaces.spatial.SpaceSpatialIndex;
+import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -298,48 +298,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     }
 
     public com.spatial4j.core.shape.Shape toSpatial4j(Shape gigaShape) {
-        if (gigaShape instanceof Rectangle) {
-            return convertRectangle((Rectangle) gigaShape);
-        } else if (gigaShape instanceof Circle) {
-            return convertCircle((Circle) gigaShape);
-        } else if (gigaShape instanceof Point) {
-            return convertPoint((Point) gigaShape);
-        } else if (gigaShape instanceof Polygon) {
-            return convertPolygon((Polygon) gigaShape);
-        } else {
-            throw new RuntimeException("Unknown shape [" + gigaShape.getClass().getName() + "]");
-        }
+        if (gigaShape instanceof Spatial4jShapeProvider)
+            return ((Spatial4jShapeProvider)gigaShape).getSpatial4jShape(_luceneConfiguration.getSpatialContext());
+        throw new IllegalArgumentException("Unsupported shape [" + gigaShape.getClass().getName() + "]");
     }
-
-    private com.spatial4j.core.shape.Shape convertCircle(Circle circle) {
-        return _luceneConfiguration.getSpatialContext().makeCircle(circle.getCenter().getX(), circle.getCenter().getY(), circle.getRadius());
-    }
-
-    private com.spatial4j.core.shape.Shape convertRectangle(Rectangle rectangle) {
-        return _luceneConfiguration.getSpatialContext().makeRectangle(rectangle.getMinX(), rectangle.getMaxX(),
-                rectangle.getMinY(), rectangle.getMaxY());
-    }
-
-    private com.spatial4j.core.shape.Shape convertPoint(Point point) {
-        return _luceneConfiguration.getSpatialContext().makePoint(point.getX(), point.getY());
-    }
-
-    com.spatial4j.core.shape.Shape convertPolygon(Polygon polygon) {
-        try {
-            String coordinates = "";
-            for (int i = 0; i < polygon.getNumOfPoints(); i++) {
-                coordinates += (i == 0 ? "" : ",") + polygon.getPoint(i).getX() + " " + polygon.getPoint(i).getY();
-            }
-            if (!polygon.getPoint(polygon.getNumOfPoints()-1).equals(polygon.getPoint(0))) {
-                coordinates += "," + polygon.getPoint(0).getX() + " " + polygon.getPoint(0).getY();
-            }
-            return _luceneConfiguration.getSpatialContext().readShapeFromWkt("POLYGON ((" + coordinates + "))");
-            //return poly;
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     private SpatialStrategy createStrategyByFieldName(String fieldName) {
         return _luceneConfiguration.getStrategy(fieldName);

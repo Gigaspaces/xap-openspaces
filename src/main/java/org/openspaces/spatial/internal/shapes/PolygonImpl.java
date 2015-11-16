@@ -11,11 +11,15 @@ import com.gigaspaces.internal.io.IOUtils;
 import com.gigaspaces.internal.utils.Assert;
 import com.gigaspaces.spatial.shapes.Point;
 import com.gigaspaces.spatial.shapes.Polygon;
+import com.spatial4j.core.context.SpatialContext;
+import com.spatial4j.core.shape.Shape;
+import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -23,7 +27,7 @@ import java.util.Collection;
  * @author Yohana Khoury
  * @since 11.0
  */
-public class PolygonImpl implements Polygon, Externalizable {
+public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externalizable {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,6 +78,24 @@ public class PolygonImpl implements Polygon, Externalizable {
     @Override
     public int getNumOfPoints() {
         return points.length;
+    }
+
+    @Override
+    public Shape getSpatial4jShape(SpatialContext spatialContext) {
+        try {
+            return spatialContext.readShapeFromWkt(toWkt());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String toWkt() {
+        String coordinates = "";
+        for (int i = 0; i < points.length; i++)
+            coordinates += (i == 0 ? "" : ",") + points[i].getX() + " " + points[i].getY();
+        if (!points[points.length-1].equals(points[0]))
+            coordinates += "," + points[0].getX() + " " + points[0].getY();
+        return "POLYGON ((" + coordinates + "))";
     }
 
     @Override

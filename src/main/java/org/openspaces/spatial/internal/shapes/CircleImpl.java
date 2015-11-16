@@ -11,6 +11,9 @@ import com.gigaspaces.internal.io.IOUtils;
 import com.gigaspaces.internal.utils.Assert;
 import com.gigaspaces.spatial.shapes.Circle;
 import com.gigaspaces.spatial.shapes.Point;
+import com.spatial4j.core.context.SpatialContext;
+import com.spatial4j.core.shape.Shape;
+import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -21,7 +24,7 @@ import java.io.ObjectOutput;
  * @author Barak Bar Orion
  * @since 11.0
  */
-public class CircleImpl implements Circle, Externalizable {
+public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizable {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +47,11 @@ public class CircleImpl implements Circle, Externalizable {
     @Override
     public double getRadius() {
         return radius;
+    }
+
+    @Override
+    public Shape getSpatial4jShape(SpatialContext spatialContext) {
+        return spatialContext.makeCircle(center.getX(), center.getY(), radius);
     }
 
     @Override
