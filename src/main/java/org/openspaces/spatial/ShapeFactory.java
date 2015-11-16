@@ -22,10 +22,10 @@ import com.gigaspaces.spatial.shapes.Circle;
 import com.gigaspaces.spatial.shapes.Point;
 import com.gigaspaces.spatial.shapes.Rectangle;
 import com.gigaspaces.spatial.shapes.Shape;
-import com.gigaspaces.spatial.shapes.internal.CircleImpl;
-import com.gigaspaces.spatial.shapes.internal.PointImpl;
-import com.gigaspaces.spatial.shapes.internal.PolygonImpl;
-import com.gigaspaces.spatial.shapes.internal.RectangleImpl;
+import org.openspaces.spatial.internal.shapes.CircleImpl;
+import org.openspaces.spatial.internal.shapes.PointImpl;
+import org.openspaces.spatial.internal.shapes.PolygonImpl;
+import org.openspaces.spatial.internal.shapes.RectangleImpl;
 import com.spatial4j.core.context.SpatialContext;
 
 import java.io.IOException;
