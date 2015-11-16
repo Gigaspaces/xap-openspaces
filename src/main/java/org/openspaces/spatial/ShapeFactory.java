@@ -17,6 +17,7 @@
  ******************************************************************************/
 package org.openspaces.spatial;
 
+import com.gigaspaces.internal.utils.Assert;
 import com.gigaspaces.spatial.shapes.*;
 import com.gigaspaces.spatial.shapes.Circle;
 import com.gigaspaces.spatial.shapes.Point;
@@ -30,6 +31,7 @@ import com.spatial4j.core.context.SpatialContext;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collection;
 
 /**
  * Factory class for creating spatial shapes.
@@ -85,7 +87,23 @@ public class ShapeFactory {
      * @return A new Polygon instance
      */
     public static Polygon polygon(Point first, Point second, Point third, Point... morePoints) {
-        return new PolygonImpl(first, second, third, morePoints);
+        Point[] points = new Point[3 + morePoints.length];
+        points[0] = Assert.argumentNotNull(first, "first");
+        points[1] = Assert.argumentNotNull(second, "second");
+        points[2] = Assert.argumentNotNull(third, "third");
+        for (int i=0 ; i < morePoints.length ; i++)
+            points[i+3] = morePoints[i];
+
+        return polygon(points);
+    }
+
+    public static Polygon polygon(Collection<Point> points) {
+        return polygon(points.toArray(new Point[points.size()]));
+    }
+
+
+    private static Polygon polygon(Point[] points) {
+        return new PolygonImpl(points);
     }
 
     private static SpatialContext getDefaultSpatialContext() {
@@ -93,13 +111,21 @@ public class ShapeFactory {
     }
 
     /** Under construction */
-    private static Shape fromWkt(String wkt) throws ParseException, IOException {
-        return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getWktReader().read(wkt));
+    private static Shape fromWkt(String wkt) throws ParseException {
+        try {
+            return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getWktReader().read(wkt));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to parse WKT shape", e);
+        }
     }
 
     /** Under construction */
-    private static Shape fromGeoJson(String geoJson) throws ParseException, IOException {
-        return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getGeoJsonReader().read(geoJson));
+    private static Shape fromGeoJson(String geoJson) throws ParseException {
+        try {
+            return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getGeoJsonReader().read(geoJson));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to parse GeoJson shape", e);
+        }
     }
 
     private static Shape fromSpatial4JShape(com.spatial4j.core.shape.Shape shape) {
@@ -115,7 +141,14 @@ public class ShapeFactory {
             com.spatial4j.core.shape.Rectangle rectangle = (com.spatial4j.core.shape.Rectangle) shape;
             return rectangle(rectangle.getMinX(), rectangle.getMaxX(), rectangle.getMinY(), rectangle.getMaxY());
         }
-        // TODO: Polygon
+        if (shape instanceof com.spatial4j.core.shape.jts.JtsGeometry) {
+            com.vividsolutions.jts.geom.Coordinate[] coordinates = ((com.spatial4j.core.shape.jts.JtsGeometry) shape).getGeom().getCoordinates();
+            Point[] points = new Point[coordinates.length];
+            for (int i=0 ; i < coordinates.length ; i++)
+                points[i] = point(coordinates[i].getOrdinate(0), coordinates[i].getOrdinate(1));
+            return polygon(points);
+
+        }
         throw new IllegalArgumentException("Unsupported shape type: " + shape.getClass().getName());
     }
 }

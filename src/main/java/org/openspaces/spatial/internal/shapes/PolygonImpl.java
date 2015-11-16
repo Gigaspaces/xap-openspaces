@@ -8,7 +8,6 @@
 package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.internal.io.IOUtils;
-import com.gigaspaces.internal.utils.Assert;
 import com.gigaspaces.spatial.shapes.Point;
 import com.gigaspaces.spatial.shapes.Polygon;
 import com.spatial4j.core.context.SpatialContext;
@@ -21,7 +20,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * @author Yohana Khoury
@@ -37,36 +35,16 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
     public PolygonImpl() {
     }
 
-    public PolygonImpl(Point first, Point second, Point third, Point... morePoints) {
-        this.points = new Point[3 + morePoints.length];
-        this.points[0] = Assert.argumentNotNull(first, "first");
-        this.points[1] = Assert.argumentNotNull(second, "second");
-        this.points[2] = Assert.argumentNotNull(third, "third");
-        for (int i=0 ; i < morePoints.length ; i++)
-            this.points[i+3] = morePoints[i];
-        initialize();
-    }
-
     public PolygonImpl(Point[] points) {
         if (points.length < 3)
             throw new IllegalArgumentException("Polygon requires at least three points");
-        this.points = new Point[points.length];
-        for (int i=0 ; i < points.length ; i++)
-            this.points[i] = points[i];
-        initialize();
-    }
-
-    public PolygonImpl(Collection<Point> points) {
-        if (points.size() < 3)
-            throw new IllegalArgumentException("Polygon requires at least three points");
-        this.points = points.toArray(new Point[points.size()]);
+        if (points.length == 3 && points[0].equals(points[2]))
+            throw new IllegalArgumentException("Polygon requires at least three distinct points " + Arrays.asList(points));
+        this.points = points;
         initialize();
     }
 
     private void initialize() {
-        if (points.length == 3) {
-            Assert.isTrue((!points[0].equals(points[2])), "Polygon requires at least three distinct points " + Arrays.asList(points));
-        }
         this.hashcode = Arrays.hashCode(points);
     }
 
@@ -83,9 +61,11 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
     @Override
     public Shape getSpatial4jShape(SpatialContext spatialContext) {
         try {
-            return spatialContext.readShapeFromWkt(toWkt());
+            return spatialContext.getFormats().getWktReader().read(toWkt());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Failed to convert polygon to Spatial4J", e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to convert polygon to Spatial4J", e);
         }
     }
 
