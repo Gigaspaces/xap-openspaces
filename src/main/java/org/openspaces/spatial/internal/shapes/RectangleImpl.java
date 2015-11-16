@@ -29,6 +29,7 @@ public class RectangleImpl implements Rectangle, Spatial4jShapeProvider, Externa
     private double maxX;
     private double minY;
     private double maxY;
+    private volatile transient com.spatial4j.core.shape.Shape spatial4jShape;
 
     public RectangleImpl() {
     }
@@ -62,7 +63,12 @@ public class RectangleImpl implements Rectangle, Spatial4jShapeProvider, Externa
 
     @Override
     public Shape getSpatial4jShape(SpatialContext spatialContext) {
-        return spatialContext.makeRectangle(minX, maxX, minY, maxY);
+        com.spatial4j.core.shape.Shape result = this.spatial4jShape;
+        if (result == null) {
+            result = spatialContext.makeRectangle(minX, maxX, minY, maxY);
+            this.spatial4jShape = result;
+        }
+        return result;
     }
 
     @Override
@@ -71,10 +77,10 @@ public class RectangleImpl implements Rectangle, Spatial4jShapeProvider, Externa
         if (o == null || getClass() != o.getClass()) return false;
 
         Rectangle other = (Rectangle) o;
-        if (Double.compare(this.minX, other.getMinX()) != 0) return false;
-        if (Double.compare(this.maxX, other.getMaxX()) != 0) return false;
-        if (Double.compare(this.minY, other.getMinY()) != 0) return false;
-        if (Double.compare(this.maxY, other.getMaxY()) != 0) return false;
+        if (this.minX != other.getMinX()) return false;
+        if (this.maxX != other.getMaxX()) return false;
+        if (this.minY != other.getMinY()) return false;
+        if (this.maxY != other.getMaxY()) return false;
 
         return true;
     }

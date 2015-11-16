@@ -7,10 +7,7 @@
  *******************************************************************************/
 package org.openspaces.spatial.internal.shapes;
 
-import com.gigaspaces.internal.io.IOUtils;
-import com.gigaspaces.internal.utils.Assert;
 import com.gigaspaces.spatial.shapes.Circle;
-import com.gigaspaces.spatial.shapes.Point;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
@@ -28,20 +25,28 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
 
     private static final long serialVersionUID = 1L;
 
-    private Point center;
+    private double centerX;
+    private double centerY;
     private double radius;
+    private volatile transient com.spatial4j.core.shape.Shape spatial4jShape;
 
     public CircleImpl() {
     }
 
-    public CircleImpl(Point center, double radius) {
-        this.center = Assert.argumentNotNull(center, "center");
+    public CircleImpl(double centerX, double centerY, double radius) {
+        this.centerX = centerX;
+        this.centerY = centerY;
         this.radius = radius;
     }
 
     @Override
-    public Point getCenter() {
-        return center;
+    public double getCenterX() {
+        return centerX;
+    }
+
+    @Override
+    public double getCenterY() {
+        return centerY;
     }
 
     @Override
@@ -51,7 +56,12 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
 
     @Override
     public Shape getSpatial4jShape(SpatialContext spatialContext) {
-        return spatialContext.makeCircle(center.getX(), center.getY(), radius);
+        com.spatial4j.core.shape.Shape result = this.spatial4jShape;
+        if (result == null) {
+            result = spatialContext.makeCircle(centerX, centerY, radius);
+            this.spatial4jShape = result;
+        }
+        return result;
     }
 
     @Override
@@ -60,8 +70,9 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
         if (o == null || getClass() != o.getClass()) return false;
 
         Circle other = (Circle) o;
-        if (!this.center.equals(other.getCenter())) return false;
-        if (Double.compare(other.getRadius(), this.radius) != 0) return false;
+        if (this.centerX != other.getCenterX()) return false;
+        if (this.centerY != other.getCenterY()) return false;
+        if (this.radius != other.getRadius()) return false;
 
         return true;
     }
@@ -70,7 +81,10 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
     public int hashCode() {
         int result;
         long temp;
-        result = center != null ? center.hashCode() : 0;
+        temp = Double.doubleToLongBits(centerX);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(centerY);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(radius);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
@@ -78,13 +92,15 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        IOUtils.writeObject(out, center);
+        out.writeDouble(centerX);
+        out.writeDouble(centerY);
         out.writeDouble(radius);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        center = IOUtils.readObject(in);
+        centerX = in.readDouble();
+        centerY = in.readDouble();
         radius = in.readDouble();
     }
 }

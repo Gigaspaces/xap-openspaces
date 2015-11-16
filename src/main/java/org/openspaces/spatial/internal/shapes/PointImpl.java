@@ -26,6 +26,7 @@ public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable 
 
     private double x;
     private double y;
+    private volatile transient com.spatial4j.core.shape.Shape spatial4jShape;
 
     public PointImpl() {
     }
@@ -47,7 +48,12 @@ public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable 
 
     @Override
     public Shape getSpatial4jShape(SpatialContext spatialContext) {
-        return spatialContext.makePoint(x, y);
+        com.spatial4j.core.shape.Shape result = this.spatial4jShape;
+        if (result == null) {
+            result = spatialContext.makePoint(x, y);
+            this.spatial4jShape = result;
+        }
+        return result;
     }
 
     @Override

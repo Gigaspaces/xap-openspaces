@@ -63,7 +63,7 @@ public class ShapeFactory {
      * @return A new Circle instance
      */
     public static Circle circle(Point center, double radius) {
-        return new CircleImpl(center, radius);
+        return new CircleImpl(center.getX(), center.getY(), radius);
     }
 
     /**
