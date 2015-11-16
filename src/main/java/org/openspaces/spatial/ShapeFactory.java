@@ -79,7 +79,7 @@ public class ShapeFactory {
     }
 
     /**
-     * Creates a Polygon instance
+     * Creates a Polygon instance from the specified points
      * @param first The first point
      * @param second The second point
      * @param third The third point
@@ -97,10 +97,44 @@ public class ShapeFactory {
         return polygon(points);
     }
 
+    /**
+     * Creates a Polygon instance from the specified points
+     * @param points The polygon points
+     * @return A new Polygon instance
+     */
     public static Polygon polygon(Collection<Point> points) {
         return polygon(points.toArray(new Point[points.size()]));
     }
 
+    /**
+     * Creates a shape from a WKT (well-known-text) string
+     * @param wkt The WKT string to parse
+     * @return The created shape instance
+     */
+    public static Shape fromWkt(String wkt) {
+        try {
+            return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getWktReader().read(wkt));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to parse WKT shape", e);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Failed to parse WKT shape", e);
+        }
+    }
+
+    /**
+     * Creates a shape from a GeoJson string
+     * @param geoJson The GeoJson string to parse
+     * @return The created shape instance
+     */
+    public static Shape fromGeoJson(String geoJson) {
+        try {
+            return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getGeoJsonReader().read(geoJson));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to parse GeoJson shape", e);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Failed to parse GeoJson shape", e);
+        }
+    }
 
     private static Polygon polygon(Point[] points) {
         return new PolygonImpl(points);
@@ -108,24 +142,6 @@ public class ShapeFactory {
 
     private static SpatialContext getDefaultSpatialContext() {
         return SpatialContext.GEO;
-    }
-
-    /** Under construction */
-    private static Shape fromWkt(String wkt) throws ParseException {
-        try {
-            return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getWktReader().read(wkt));
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to parse WKT shape", e);
-        }
-    }
-
-    /** Under construction */
-    private static Shape fromGeoJson(String geoJson) throws ParseException {
-        try {
-            return fromSpatial4JShape(getDefaultSpatialContext().getFormats().getGeoJsonReader().read(geoJson));
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to parse GeoJson shape", e);
-        }
     }
 
     private static Shape fromSpatial4JShape(com.spatial4j.core.shape.Shape shape) {
