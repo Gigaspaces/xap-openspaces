@@ -78,6 +78,12 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
     }
 
     @Override
+    public String toString() {
+        return toString(ShapeFormat.WKT);
+    }
+
+
+    @Override
     public String toString(ShapeFormat shapeFormat) {
         return append(new StringBuilder(), shapeFormat).toString();
     }
@@ -165,10 +171,6 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         }
     }
 
-    private static com.spatial4j.core.shape.Rectangle asRectangle(com.spatial4j.core.shape.Shape shape) {
-        return (Rectangle) shape;
-    }
-
     private static com.vividsolutions.jts.geom.Coordinate[] getCoordinates(com.spatial4j.core.shape.Shape shape) {
         return ((com.spatial4j.core.shape.jts.JtsGeometry) shape).getGeom().getCoordinates();
     }
@@ -194,14 +196,4 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         }
         initialize();
     }
-
-    public static void main(String[] args) {
-        PolygonImpl p = new PolygonImpl(new Point[] {new PointImpl(1, 2), new PointImpl(10, 20), new PointImpl(100, 200)});
-        String s1 = SpatialContext.GEO.getFormats().getWktWriter().toString(p.getSpatial4jShape(SpatialContext.GEO));
-        System.out.println(s1);
-        String s2 = p.toString(ShapeFormat.WKT);
-        System.out.println(s2);
-        System.out.println(s1.equals(s2));
-    }
-
 }

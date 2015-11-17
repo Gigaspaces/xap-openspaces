@@ -81,7 +81,7 @@ public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable 
 
     @Override
     public String toString() {
-        return "Point{" + "x=" + x + ", y=" + y + '}';
+        return toString(ShapeFormat.WKT);
     }
 
     @Override

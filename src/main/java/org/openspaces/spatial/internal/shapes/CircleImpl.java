@@ -56,6 +56,11 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
     }
 
     @Override
+    public String toString() {
+        return toString(ShapeFormat.WKT);
+    }
+
+    @Override
     public String toString(ShapeFormat shapeFormat) {
         return append(new StringBuilder(), shapeFormat).toString();
     }
