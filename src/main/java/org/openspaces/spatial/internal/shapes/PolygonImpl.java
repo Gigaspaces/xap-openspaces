@@ -9,7 +9,9 @@ package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.spatial.shapes.Point;
 import com.gigaspaces.spatial.shapes.Polygon;
+import com.gigaspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
+import com.spatial4j.core.shape.Rectangle;
 import com.spatial4j.core.shape.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
@@ -50,17 +52,63 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
 
     @Override
     public int getNumOfPoints() {
-        return points != null ? points.length : getCoordinates(spatial4jShape).length;
+        if (points != null)
+            return points.length;
+        if (isRectangle(spatial4jShape))
+            return 4;
+        return getCoordinates(spatial4jShape).length;
     }
 
     @Override
     public double getX(int index) {
-        return points != null ? points[index].getX() : getCoordinates(spatial4jShape)[index].getOrdinate(0);
+        if (points != null)
+            return points[index].getX();
+        if (isRectangle(spatial4jShape))
+            return getRectangleCoordinate(spatial4jShape, index, 0);
+        return getCoordinates(spatial4jShape)[index].getOrdinate(0);
     }
 
     @Override
     public double getY(int index) {
-        return points != null ? points[index].getY() : getCoordinates(spatial4jShape)[index].getOrdinate(1);
+        if (points != null)
+            return points[index].getY();
+        if (isRectangle(spatial4jShape))
+            return getRectangleCoordinate(spatial4jShape, index, 1);
+        return getCoordinates(spatial4jShape)[index].getOrdinate(1);
+    }
+
+    @Override
+    public String toString(ShapeFormat shapeFormat) {
+        return append(new StringBuilder(), shapeFormat).toString();
+    }
+
+    @Override
+    public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
+        switch (shapeFormat) {
+            case WKT:   return appendWkt(stringBuilder);
+            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+        }
+    }
+
+    private StringBuilder appendWkt(StringBuilder stringBuilder) {
+        final int length = getNumOfPoints();
+        stringBuilder.append("POLYGON ((");
+
+        for (int i = 0; i < length; i++) {
+            if (i != 0)
+                stringBuilder.append(", ");
+            stringBuilder.append(getX(i));
+            stringBuilder.append(' ');
+            stringBuilder.append(getY(i));
+        }
+        if (getX(0) != getX(length-1) || getY(0) != getY(length-1)) {
+            stringBuilder.append(',');
+            stringBuilder.append(getX(0));
+            stringBuilder.append(' ');
+            stringBuilder.append(getY(0));
+        }
+        stringBuilder.append("))");
+        return stringBuilder;
     }
 
     @Override
@@ -68,7 +116,7 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         com.spatial4j.core.shape.Shape result = this.spatial4jShape;
         if (result == null) {
             try {
-                result = spatialContext.getFormats().getWktReader().read(toWkt(this.points));
+                result = spatialContext.getFormats().getWktReader().read(toString(ShapeFormat.WKT));
             } catch (ParseException e) {
                 throw new IllegalStateException("Failed to convert polygon to Spatial4J", e);
             } catch (IOException e) {
@@ -102,13 +150,23 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         return hashcode;
     }
 
-    private static String toWkt(Point[] points) {
-        String coordinates = "";
-        for (int i = 0; i < points.length; i++)
-            coordinates += (i == 0 ? "" : ",") + points[i].getX() + " " + points[i].getY();
-        if (!points[points.length-1].equals(points[0]))
-            coordinates += "," + points[0].getX() + " " + points[0].getY();
-        return "POLYGON ((" + coordinates + "))";
+    private static boolean isRectangle(com.spatial4j.core.shape.Shape shape) {
+        return shape instanceof com.spatial4j.core.shape.Rectangle;
+    }
+
+    private static double getRectangleCoordinate(com.spatial4j.core.shape.Shape shape, int index, int ordinate) {
+        com.spatial4j.core.shape.Rectangle rectangle = (Rectangle) shape;
+        switch (index) {
+            case 0: return ordinate == 0 ? rectangle.getMinX() : rectangle.getMinY();
+            case 1: return ordinate == 0 ? rectangle.getMaxX() : rectangle.getMinY();
+            case 2: return ordinate == 0 ? rectangle.getMaxX() : rectangle.getMaxY();
+            case 3: return ordinate == 0 ? rectangle.getMinX() : rectangle.getMaxY();
+            default:throw new IllegalArgumentException("Illegal index " + index + " - a rectangle polygon has 4 points");
+        }
+    }
+
+    private static com.spatial4j.core.shape.Rectangle asRectangle(com.spatial4j.core.shape.Shape shape) {
+        return (Rectangle) shape;
     }
 
     private static com.vividsolutions.jts.geom.Coordinate[] getCoordinates(com.spatial4j.core.shape.Shape shape) {
@@ -136,4 +194,14 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         }
         initialize();
     }
+
+    public static void main(String[] args) {
+        PolygonImpl p = new PolygonImpl(new Point[] {new PointImpl(1, 2), new PointImpl(10, 20), new PointImpl(100, 200)});
+        String s1 = SpatialContext.GEO.getFormats().getWktWriter().toString(p.getSpatial4jShape(SpatialContext.GEO));
+        System.out.println(s1);
+        String s2 = p.toString(ShapeFormat.WKT);
+        System.out.println(s2);
+        System.out.println(s1.equals(s2));
+    }
+
 }

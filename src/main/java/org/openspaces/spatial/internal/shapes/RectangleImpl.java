@@ -8,6 +8,7 @@
 package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.spatial.shapes.Rectangle;
+import com.gigaspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
@@ -59,6 +60,32 @@ public class RectangleImpl implements Rectangle, Spatial4jShapeProvider, Externa
     @Override
     public double getMaxY() {
         return maxY;
+    }
+
+    @Override
+    public String toString(ShapeFormat shapeFormat) {
+        return append(new StringBuilder(), shapeFormat).toString();
+    }
+
+    @Override
+    public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
+        switch (shapeFormat) {
+            case WKT:   return appendWkt(stringBuilder);
+            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+        }
+    }
+
+    private StringBuilder appendWkt(StringBuilder stringBuilder) {
+        stringBuilder.append("ENVELOPE (");
+        stringBuilder.append(minX);
+        stringBuilder.append(", ");
+        stringBuilder.append(maxX);
+        stringBuilder.append(", ");
+        stringBuilder.append(maxY);
+        stringBuilder.append(", ");
+        stringBuilder.append(minY);
+        stringBuilder.append(')');
+        return stringBuilder;
     }
 
     @Override

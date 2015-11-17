@@ -8,6 +8,7 @@
 package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.spatial.shapes.Point;
+import com.gigaspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
@@ -44,6 +45,28 @@ public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable 
     @Override
     public double getY() {
         return y;
+    }
+
+    @Override
+    public String toString(ShapeFormat shapeFormat) {
+        return append(new StringBuilder(), shapeFormat).toString();
+    }
+
+    @Override
+    public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
+        switch (shapeFormat) {
+            case WKT:   return appendWkt(stringBuilder);
+            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+        }
+    }
+
+    private StringBuilder appendWkt(StringBuilder stringBuilder) {
+        stringBuilder.append("POINT (");
+        stringBuilder.append(x);
+        stringBuilder.append(' ');
+        stringBuilder.append(y);
+        stringBuilder.append(')');
+        return stringBuilder;
     }
 
     @Override

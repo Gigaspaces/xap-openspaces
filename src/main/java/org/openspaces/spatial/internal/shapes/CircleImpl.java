@@ -8,6 +8,7 @@
 package org.openspaces.spatial.internal.shapes;
 
 import com.gigaspaces.spatial.shapes.Circle;
+import com.gigaspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
@@ -52,6 +53,30 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
     @Override
     public double getRadius() {
         return radius;
+    }
+
+    @Override
+    public String toString(ShapeFormat shapeFormat) {
+        return append(new StringBuilder(), shapeFormat).toString();
+    }
+
+    @Override
+    public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
+        switch (shapeFormat) {
+            case WKT:   return appendWkt(stringBuilder);
+            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+        }
+    }
+
+    private StringBuilder appendWkt(StringBuilder stringBuilder) {
+        stringBuilder.append("BUFFER (POINT (");
+        stringBuilder.append(centerX);
+        stringBuilder.append(' ');
+        stringBuilder.append(centerY);
+        stringBuilder.append("), ");
+        stringBuilder.append(radius);
+        stringBuilder.append(')');
+        return stringBuilder;
     }
 
     @Override
