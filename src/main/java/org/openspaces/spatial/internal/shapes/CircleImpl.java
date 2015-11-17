@@ -68,9 +68,21 @@ public class CircleImpl implements Circle, Spatial4jShapeProvider, Externalizabl
     @Override
     public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
         switch (shapeFormat) {
-            case WKT:   return appendWkt(stringBuilder);
-            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+            case WKT:       return appendWkt(stringBuilder);
+            case GEOJSON:   return appendGeoJson(stringBuilder);
+            default:        throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
         }
+    }
+
+    private StringBuilder appendGeoJson(StringBuilder stringBuilder) {
+        stringBuilder.append("{\"type\":\"Circle\",\"coordinates\":[");
+        stringBuilder.append(centerX);
+        stringBuilder.append(',');
+        stringBuilder.append(centerY);
+        stringBuilder.append("],\"radius\":");
+        stringBuilder.append(radius);
+        stringBuilder.append('}');
+        return stringBuilder;
     }
 
     private StringBuilder appendWkt(StringBuilder stringBuilder) {

@@ -55,8 +55,9 @@ public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable 
     @Override
     public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
         switch (shapeFormat) {
-            case WKT:   return appendWkt(stringBuilder);
-            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+            case WKT:       return appendWkt(stringBuilder);
+            case GEOJSON:   return appendGeoJson(stringBuilder);
+            default:        throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
         }
     }
 
@@ -66,6 +67,15 @@ public class PointImpl implements Point, Spatial4jShapeProvider, Externalizable 
         stringBuilder.append(' ');
         stringBuilder.append(y);
         stringBuilder.append(')');
+        return stringBuilder;
+    }
+
+    private StringBuilder appendGeoJson(StringBuilder stringBuilder) {
+        stringBuilder.append("{\"type\":\"Point\",\"coordinates\":[");
+        stringBuilder.append(x);
+        stringBuilder.append(',');
+        stringBuilder.append(y);
+        stringBuilder.append("]}");
         return stringBuilder;
     }
 

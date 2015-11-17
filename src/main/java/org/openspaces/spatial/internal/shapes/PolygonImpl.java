@@ -91,9 +91,33 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
     @Override
     public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
         switch (shapeFormat) {
-            case WKT:   return appendWkt(stringBuilder);
-            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+            case WKT:       return appendWkt(stringBuilder);
+            case GEOJSON:   return appendGeoJson(stringBuilder);
+            default:        throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
         }
+    }
+
+    private StringBuilder appendGeoJson(StringBuilder stringBuilder) {
+        stringBuilder.append("{\"type\":\"Polygon\",\"coordinates\":[[");
+        appendTuple(stringBuilder, getX(0), getY(0));
+        int length = getNumOfPoints();
+        for (int i=1 ; i < length ; i++) {
+            stringBuilder.append(',');
+            appendTuple(stringBuilder, getX(i), getY(i));}
+        if (!isFirstEqualsLast()) {
+            stringBuilder.append(',');
+            appendTuple(stringBuilder, getX(0), getY(0));
+        }
+        stringBuilder.append("]]}");
+        return stringBuilder;
+    }
+
+    private static void appendTuple(StringBuilder stringBuilder, double x, double y) {
+        stringBuilder.append('[');
+        stringBuilder.append(x);
+        stringBuilder.append(',');
+        stringBuilder.append(y);
+        stringBuilder.append(']');
     }
 
     private StringBuilder appendWkt(StringBuilder stringBuilder) {
@@ -107,7 +131,7 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
             stringBuilder.append(' ');
             stringBuilder.append(getY(i));
         }
-        if (getX(0) != getX(length-1) || getY(0) != getY(length-1)) {
+        if (!isFirstEqualsLast()) {
             stringBuilder.append(',');
             stringBuilder.append(getX(0));
             stringBuilder.append(' ');
@@ -115,6 +139,11 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         }
         stringBuilder.append("))");
         return stringBuilder;
+    }
+
+    private boolean isFirstEqualsLast() {
+        final int length = getNumOfPoints();
+        return getX(0) == getX(length-1) && getY(0) == getY(length-1);
     }
 
     @Override

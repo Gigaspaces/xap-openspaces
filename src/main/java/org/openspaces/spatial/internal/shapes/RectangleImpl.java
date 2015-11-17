@@ -75,9 +75,33 @@ public class RectangleImpl implements Rectangle, Spatial4jShapeProvider, Externa
     @Override
     public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
         switch (shapeFormat) {
-            case WKT:   return appendWkt(stringBuilder);
-            default:    throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
+            case WKT:       return appendWkt(stringBuilder);
+            case GEOJSON:   return appendGeoJson(stringBuilder);
+            default:        throw new IllegalArgumentException("Unsupported shape type: " + shapeFormat);
         }
+    }
+
+    private StringBuilder appendGeoJson(StringBuilder stringBuilder) {
+        stringBuilder.append("{\"type\":\"Polygon\",\"coordinates\": [[");
+        appendTuple(stringBuilder, minX, minY);
+        stringBuilder.append(',');
+        appendTuple(stringBuilder, minX, maxY);
+        stringBuilder.append(',');
+        appendTuple(stringBuilder, maxX, maxY);
+        stringBuilder.append(',');
+        appendTuple(stringBuilder, maxX, minY);
+        stringBuilder.append(',');
+        appendTuple(stringBuilder, minX, minY);
+        stringBuilder.append("]]}");
+        return stringBuilder;
+    }
+
+    private static void appendTuple(StringBuilder stringBuilder, double x, double y) {
+        stringBuilder.append('[');
+        stringBuilder.append(x);
+        stringBuilder.append(',');
+        stringBuilder.append(y);
+        stringBuilder.append(']');
     }
 
     private StringBuilder appendWkt(StringBuilder stringBuilder) {
