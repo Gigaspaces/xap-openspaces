@@ -85,11 +85,11 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
 
     @Override
     public String toString(ShapeFormat shapeFormat) {
-        return append(new StringBuilder(), shapeFormat).toString();
+        return appendTo(new StringBuilder(), shapeFormat).toString();
     }
 
     @Override
-    public StringBuilder append(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
+    public StringBuilder appendTo(StringBuilder stringBuilder, ShapeFormat shapeFormat) {
         switch (shapeFormat) {
             case WKT:       return appendWkt(stringBuilder);
             case GEOJSON:   return appendGeoJson(stringBuilder);
