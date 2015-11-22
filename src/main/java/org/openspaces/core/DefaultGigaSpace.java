@@ -162,6 +162,11 @@ public class DefaultGigaSpace implements GigaSpace, InternalGigaSpace {
         return this.name;
     }
 
+    @Override
+    public boolean isSecured() {
+        return this.space.isSecured();
+    }
+
     /**
      * Sets the default read timeout when executing {@link #read(Object)} or
      * {@link #readIfExists(Object)} operations.
