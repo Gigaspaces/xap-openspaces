@@ -1,13 +1,11 @@
-[![Build Status](https://secure.travis-ci.org/OpenSpaces/OpenSpaces.png)](http://travis-ci.org/OpenSpaces/OpenSpaces)
+# What is OpenSpaces?
 
-
-<h1>What is OpenSpaces?</h1>
 OpenSpaces is designed to enable scaling-out of stateful applications in a simple way using the Spring Framework. 
 It is shipped as an open source initiative from GigaSpaces, and supports the GigaSpaces Space-Based Architecture model out-of-the-box.
 
 OpenSpaces is useful for Spring users, Service-Oriented Architecture (SOA) and Event-Driven Architecture (EDA) developers, transactional applications, real-time analytics, and Web 2.0 applications.
 
-<h1>Who should use OpenSpaces?</h1>
+# Who should use OpenSpaces?
 * Spring Users – Spring users can use this framework for high-availability and scalability of their application – without being dependent on a J2EE container – by using a lightweight SLA-driven container. 
 They can thus benefit from the simplicity of Spring throughout the entire application and deployment environment.
 
