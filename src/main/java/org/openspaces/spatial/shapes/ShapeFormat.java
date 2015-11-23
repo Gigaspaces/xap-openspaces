@@ -6,30 +6,23 @@
  * The license agreement granted to you by GigaSpaces.
  *******************************************************************************/
 //JAVA-DOC-STAMP
-
 package org.openspaces.spatial.shapes;
 
 /**
- * A polygon, denoted by 3 or more points
+ * Encapsulates Shape formats supported by XAP GeoSpatial API
  *
- * @author Yohana Khoury
+ * @author Niv Ingberg
  * @since 11.0
  */
-public interface Polygon extends Shape {
-
+public enum ShapeFormat {
     /**
-     * Returns the number of points within the polygon
-     * @return The number of points within the polygon
+     * Well-Known text.
+     * @see <a href="https://en.wikipedia.org/wiki/Well-known_text">WKT</a>
      */
-    int getNumOfPoints();
-
+    WKT,
     /**
-     * Gets the X coordinate of the point in the specified index.
+     * GeoJson.
+     * @see <a href="http://geojson.org/">GeoJson</a>
      */
-    double getX(int index);
-
-    /**
-     * Gets the Y coordinate of the point in the specified index.
-     */
-    double getY(int index);
+    GEOJSON
 }

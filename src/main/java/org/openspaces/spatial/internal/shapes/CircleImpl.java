@@ -8,7 +8,7 @@
 package org.openspaces.spatial.internal.shapes;
 
 import org.openspaces.spatial.shapes.Circle;
-import com.gigaspaces.spatial.shapes.ShapeFormat;
+import org.openspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;

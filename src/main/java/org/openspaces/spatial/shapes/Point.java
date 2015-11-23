@@ -9,8 +9,6 @@
 
 package org.openspaces.spatial.shapes;
 
-import com.gigaspaces.spatial.shapes.Shape;
-
 /**
  * A Point with X and Y coordinates.
  *

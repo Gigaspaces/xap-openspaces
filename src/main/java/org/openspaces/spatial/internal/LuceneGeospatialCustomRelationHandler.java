@@ -19,7 +19,6 @@ package org.openspaces.spatial.internal;
 
 import com.gigaspaces.internal.metadata.ITypeDesc;
 import com.gigaspaces.internal.server.space.SpaceConfigReader;
-import com.gigaspaces.spatial.shapes.*;
 import com.j_spaces.core.cache.foreignIndexes.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -36,6 +35,7 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.Directory;
 import org.openspaces.core.util.FileUtils;
 import org.openspaces.spatial.SpaceSpatialIndex;
+import org.openspaces.spatial.shapes.Shape;
 import org.openspaces.spatial.spatial4j.Spatial4jShapeProvider;
 
 import java.io.File;
