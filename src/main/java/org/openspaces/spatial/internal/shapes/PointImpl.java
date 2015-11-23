@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.openspaces.spatial.internal.shapes;
 
-import com.gigaspaces.spatial.shapes.Point;
+import org.openspaces.spatial.shapes.Point;
 import com.gigaspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;

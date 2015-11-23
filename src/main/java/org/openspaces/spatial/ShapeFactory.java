@@ -19,9 +19,10 @@ package org.openspaces.spatial;
 
 import com.gigaspaces.internal.utils.Assert;
 import com.gigaspaces.spatial.shapes.*;
-import com.gigaspaces.spatial.shapes.Circle;
-import com.gigaspaces.spatial.shapes.Point;
-import com.gigaspaces.spatial.shapes.Rectangle;
+import org.openspaces.spatial.shapes.Circle;
+import org.openspaces.spatial.shapes.Point;
+import org.openspaces.spatial.shapes.Polygon;
+import org.openspaces.spatial.shapes.Rectangle;
 import com.gigaspaces.spatial.shapes.Shape;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
 import org.openspaces.spatial.internal.shapes.CircleImpl;

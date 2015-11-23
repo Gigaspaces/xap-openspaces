@@ -1,7 +1,7 @@
 package org.openspaces.spatial.internal;
 
 import com.gigaspaces.internal.server.space.SpaceConfigReader;
-import com.gigaspaces.spatial.shapes.Polygon;
+import org.openspaces.spatial.shapes.Polygon;
 import com.spatial4j.core.shape.Shape;
 import org.junit.Assert;
 import org.junit.Before;

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.openspaces.spatial.internal.shapes;
 
-import com.gigaspaces.spatial.shapes.Rectangle;
+import org.openspaces.spatial.shapes.Rectangle;
 import com.gigaspaces.spatial.shapes.ShapeFormat;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.shape.Shape;
