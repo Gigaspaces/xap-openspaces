@@ -155,6 +155,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     
     public PUServiceBeanImpl() {
         super();
+        TLSUtils.enableHttpsClient();
     }
 
     /*

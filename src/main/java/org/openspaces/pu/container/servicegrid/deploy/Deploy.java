@@ -37,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jini.rio.boot.BootUtil;
 import org.jini.rio.boot.PUZipUtils;
+import org.jini.rio.boot.TLSUtils;
 import org.jini.rio.config.ExporterConfig;
 import org.jini.rio.core.OperationalString;
 import org.jini.rio.core.RequiredDependencies;
@@ -159,6 +160,10 @@ public class Deploy {
 
     public static void setDisableInfoLogging(boolean disableInfoLogging) {
         Deploy.disableInfoLogging = disableInfoLogging;
+    }
+
+    static{
+        TLSUtils.enableHttpsClient();
     }
 
     private void initGSM() {
