@@ -364,7 +364,8 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
     private enum SpatialOp {
         WITHIN(SpatialOperation.IsWithin),
         CONTAINS(SpatialOperation.Contains),
-        INTERSECTS(SpatialOperation.Intersects),
+        INTERSECTS(SpatialOperation.Intersects);
+        /*,
         DISJOINT(SpatialOperation.IsDisjointTo) {
             @Override
             public Query makeQuery(SpatialStrategy spatialStrategy, com.spatial4j.core.shape.Shape subjectShape) {
@@ -376,7 +377,7 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
                         .add(intersectsQuery, BooleanClause.Occur.MUST_NOT)
                         .build();
             }
-        };
+        };*/
 
         private final SpatialOperation _spatialOperation;
 
