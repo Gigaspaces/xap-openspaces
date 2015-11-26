@@ -6,6 +6,7 @@ import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.SpatialContextFactory;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContextFactory;
+import com.spatial4j.core.shape.impl.RectangleImpl;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.bbox.BBoxStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
@@ -51,6 +52,9 @@ public class LuceneConfiguration {
     //space-config.geospatial.lucene.spatial-context
     public static final String SPATIAL_CONTEXT = GEOSPATIAL_PREFIX + ".spatial-context";
     public static final String SPATIAL_CONTEXT_DEFAULT = SupportedSpatialContext.JTS_GEO.name();
+
+    //space-config.geospatial.lucene.spatial-context.world-bounds, default is set by lucene
+    public static final String SPATIAL_CONTEXT_WORLD_BOUNDS = GEOSPATIAL_PREFIX + ".spatial-context.world-bounds";
 
     private SpatialContext _spatialContext;
     private StrategyFactory _strategyFactory;
@@ -116,25 +120,73 @@ public class LuceneConfiguration {
 
     }
 
+    private RectangleImpl createSpatialContextWorldBounds(SpaceConfigReader reader) throws ConfigurationException {
+        String spatialContextWorldBounds = reader.getSpaceProperty(SPATIAL_CONTEXT_WORLD_BOUNDS, null);
+        String[] worldBounds = spatialContextWorldBounds != null ? spatialContextWorldBounds.split(",") : null;
+
+        if (worldBounds == null)
+            return null;
+
+        if (worldBounds.length != 4) {
+            throw new ConfigurationException("World bounds ["+spatialContextWorldBounds+"] must be of format: minX, maxX, minY, maxY");
+        }
+
+        try {
+            double minX=Double.valueOf(worldBounds[0].trim());
+            double maxX=Double.valueOf(worldBounds[1].trim());
+            double minY=Double.valueOf(worldBounds[2].trim());
+            double maxY=Double.valueOf(worldBounds[3].trim());
+
+            if (!((minX <= maxX) && (minY <= maxY))) {
+                throw new ConfigurationException("Values of world bounds [minX, maxX, minY, maxY]=["+spatialContextWorldBounds+"] must meet: minX<=maxX, minY<=maxY");
+            }
+
+            return new RectangleImpl(minX, maxX, minY, maxY, null);
+        } catch (NumberFormatException e) {
+            throw new ConfigurationException("World bounds parameters must numbers", e);
+        }
+
+
+    }
+
     private SpatialContext createSpatialContext(SpaceConfigReader reader) throws Exception {
         String spatialContextString = reader.getSpaceProperty(SPATIAL_CONTEXT, SPATIAL_CONTEXT_DEFAULT);
         SupportedSpatialContext spatialContext = SupportedSpatialContext.byName(spatialContextString);
+        RectangleImpl worldBounds = createSpatialContextWorldBounds(reader);
+
         if (spatialContext == null)
             throw new ConfigurationException("Unsupported spatial context type " + spatialContextString+". Options are: " + Arrays.asList(SupportedSpatialContext.values()));
 
         switch (spatialContext) {
-            case JTS_GEO:
-                return JtsSpatialContext.GEO;
+            case JTS_GEO: {
+                if (worldBounds == null)
+                    return JtsSpatialContext.GEO;
+
+                JtsSpatialContextFactory factory = new JtsSpatialContextFactory();
+                factory.geo = true;
+                factory.worldBounds = worldBounds;
+                return new JtsSpatialContext(factory);
+            }
             case JTS_NON_GEO: {
                 JtsSpatialContextFactory factory = new JtsSpatialContextFactory();
                 factory.geo = false;
+                if (worldBounds != null)
+                    factory.worldBounds = worldBounds;
                 return new JtsSpatialContext(factory);
             }
-            case GEO:
-                return SpatialContext.GEO;
+            case GEO: {
+                if (worldBounds == null)
+                    return SpatialContext.GEO;
+                SpatialContextFactory factory = new SpatialContextFactory();
+                factory.geo = true;
+                factory.worldBounds = worldBounds;
+                return new SpatialContext(factory);
+            }
             case NON_GEO: {
                 SpatialContextFactory factory = new SpatialContextFactory();
                 factory.geo = false;
+                if (worldBounds != null)
+                    factory.worldBounds = worldBounds;
                 return new SpatialContext(factory);
             }
             default:

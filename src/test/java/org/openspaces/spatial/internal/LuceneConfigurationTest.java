@@ -5,6 +5,7 @@ import com.gigaspaces.internal.server.space.SpaceConfigReader;
 import com.j_spaces.kernel.log.JProperties;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
+import com.spatial4j.core.shape.impl.RectangleImpl;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.bbox.BBoxStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
@@ -214,7 +215,6 @@ public class LuceneConfigurationTest {
         try {
             luceneConfiguration.initialize(spaceConfigReader);
         } catch (Exception e) {
-            e.printStackTrace();
             Assert.fail("Should not throw exception: " + e.toString());
         }
 
@@ -238,6 +238,82 @@ public class LuceneConfigurationTest {
 
         Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.GEO.getClass(), luceneConfiguration.getSpatialContext().getClass());
         Assert.assertEquals("Expecting geo spatial context", false, luceneConfiguration.getSpatialContext().isGeo());
+    }
+
+    @Test
+    public void testSpatialContextGEOInvalidWorldBoundsPropertyValue() {
+        LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
+        SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "GEO");
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "invalidvaluehere");
+
+        try {
+            luceneConfiguration.initialize(spaceConfigReader);
+            Assert.fail("A ConfigurationException should be thrown");
+        } catch (ConfigurationException e) {
+            //OK
+            Assert.assertEquals("World bounds [invalidvaluehere] must be of format: minX, maxX, minY, maxY", e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("Expecting ConfigurationException but got " + e.getClass().getTypeName());
+        }
+    }
+
+
+    @Test
+    public void testSpatialContextNONGEOInvalidWorldBoundsValues() {
+        LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
+        SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "NON_GEO");
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "1,7,9,1");
+
+        try {
+            luceneConfiguration.initialize(spaceConfigReader);
+            Assert.fail("A ConfigurationException should be thrown");
+        } catch (ConfigurationException e) {
+            //OK
+            Assert.assertEquals("Values of world bounds [minX, maxX, minY, maxY]=[1,7,9,1] must meet: minX<=maxX, minY<=maxY", e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("Expecting ConfigurationException but got " + e.getClass().getTypeName());
+        }
+    }
+
+
+    @Test
+    public void testSpatialContextJTSGEOInvalidWorldBoundsStringValue() {
+        LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
+        SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "JTS_GEO");
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "1,7,1,4a");
+
+        try {
+            luceneConfiguration.initialize(spaceConfigReader);
+            Assert.fail("A ConfigurationException should be thrown");
+        } catch (ConfigurationException e) {
+            //OK
+            Assert.assertEquals("World bounds parameters must numbers", e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("Expecting ConfigurationException but got " + e.getClass().getTypeName());
+        }
+    }
+
+    @Test
+    public void testSpatialContextJTSNONGEO() {
+        LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
+        SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "JTS_NON_GEO");
+        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "1,10,-100,100");
+
+        try {
+            luceneConfiguration.initialize(spaceConfigReader);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail("Should not throw exception: " + e.toString());
+        }
+
+        Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.GEO.getClass(), luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Expecting geo spatial context", false, luceneConfiguration.getSpatialContext().isGeo());
+        Assert.assertEquals("Unexpected spatial context world bound", new RectangleImpl(1, 10, -100, 100, null), luceneConfiguration.getSpatialContext().getWorldBounds());
     }
 
     @Test
