@@ -155,6 +155,12 @@ public abstract class AbstractSpaceBeanDefinitionParser extends AbstractSimpleBe
             builder.addPropertyValue("attributeStore", AttributeStoreFactoryBean);
         }
 
+        Element leaderSelectorStoreEle = DomUtils.getChildElementByTagName(element, "leader-selector");
+        if (leaderSelectorStoreEle != null) {
+            Object LeaderSelectorFactoryBean = parserContext.getDelegate().parsePropertySubElement(leaderSelectorStoreEle, builder.getRawBeanDefinition());
+            builder.addPropertyValue("leaderSelectorConfig", LeaderSelectorFactoryBean);
+        }
+
         if (cachePolicy != null) {
             builder.addPropertyValue("cachePolicy", cachePolicy);
         }

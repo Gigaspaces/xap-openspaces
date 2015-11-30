@@ -260,6 +260,23 @@
                                 </xsd:attribute>
                             </xsd:complexType>
                         </xsd:element>
+                        <xsd:element name="leader-selector">
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation
+                                                source="java:org.openspaces.core.space.LeaderSelectorFactoryBean">
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type
+                                                        type="org.openspaces.core.space.LeaderSelectorFactoryBean"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
                         <xsd:element name="url-properties" minOccurs="0" maxOccurs="1">
                             <xsd:annotation>
                                 <xsd:documentation>
@@ -712,6 +729,23 @@
                                             <tool:annotation kind="ref">
                                                 <tool:expected-type
                                                         type="com.gigaspaces.attribute_store.AttributeStore"/>
+                                            </tool:annotation>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="leader-selector">
+                            <xsd:complexType>
+                                <xsd:attribute name="ref" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation
+                                                source="java:org.openspaces.core.space.LeaderSelectorFactoryBean">
+                                        </xsd:documentation>
+                                        <xsd:appinfo>
+                                            <tool:annotation kind="ref">
+                                                <tool:expected-type
+                                                        type="org.openspaces.core.space.LeaderSelectorFactoryBean"/>
                                             </tool:annotation>
                                         </xsd:appinfo>
                                     </xsd:annotation>

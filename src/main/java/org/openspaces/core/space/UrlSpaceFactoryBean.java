@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.gigaspaces.attribute_store.AttributeStore;
+import com.gigaspaces.cluster.activeelection.LeaderSelectorConfig;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
 import org.openspaces.core.config.AttributeStoreFactoryBean;
@@ -294,6 +295,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void attributeStore(AttributeStore attributeStore) {
         factory.setAttributeStore(attributeStore);
     }
+
+    public void leaderSelector(LeaderSelectorConfig leaderSelectorConfig) {
+        factory.setLeaderSelectorConfig(leaderSelectorConfig);
+    }
     /**
      * Injected thanks to this bean implementing {@link ClusterInfoAware}. If set will use the
      * cluster information in order to configure the url based on it.
@@ -332,5 +337,10 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
     public void setAttributeStore(AttributeStoreFactoryBean attributeStore) {
         if (attributeStore != null)
             factory.setAttributeStore(attributeStore.getStoreHandler());
+    }
+
+    public void setLeaderSelector(LeaderSelectorFactoryBean leaderSelectorFactoryBean) {
+        if (leaderSelectorFactoryBean != null)
+            factory.setLeaderSelectorConfig(leaderSelectorFactoryBean.getConfig());
     }
 }

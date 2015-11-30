@@ -730,6 +730,24 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
+        //apply the following only if the pu has the rocksdb-blob-store element
+        if (springXml.contains("<leader-selector:zookeeper")){
+            String rocksdbJar = System.getProperty("com.gigaspaces.zk"
+                    , Environment.getHomeDirectory() + "/lib/platform/zk/zookeeper-3.4.6.jar");
+
+            Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
+            ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{
+                    Environment.getHomeDirectory() + "/lib/platform/zk/zookeeper-3.4.6.jar",
+                    Environment.getHomeDirectory() + "/lib/platform/zk/xap-zookeeper.jar",
+                    Environment.getHomeDirectory() + "/lib/platform/zk/netty-3.7.0.Final.jar",
+                    Environment.getHomeDirectory() + "/lib/platform/zk/guava-16.0.1.jar",
+                    Environment.getHomeDirectory() + "/lib/platform/zk/curator-framework-2.7.1.jar",
+                    Environment.getHomeDirectory() + "/lib/platform/zk/curator-client-2.7.1.jar",
+                    Environment.getHomeDirectory() + "/lib/platform/zk/curator-recipes-2.7.1.jar"
+            }));
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+
         final Map<String, String> puTags = buildPuTags(clusterInfo);
         MetricRegistrator puMetricRegistrator = metricManager.createRegistrator("pu", puTags);
         this.metricRegistrators = metricManager.registerProcessMetrics(puTags);
