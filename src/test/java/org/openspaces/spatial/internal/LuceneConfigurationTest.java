@@ -169,7 +169,7 @@ public class LuceneConfigurationTest {
 
         SpatialStrategy strategy = luceneConfiguration.getStrategy("myField");
         Assert.assertEquals("Unexpected spatial prefix tree", QuadPrefixTree.class, ((RecursivePrefixTreeStrategy) strategy).getGrid().getClass());
-        Assert.assertEquals("MaxLevels should be 20 as default", 20, ((RecursivePrefixTreeStrategy) strategy).getGrid().getMaxLevels());
+        Assert.assertEquals("MaxLevels should be 20", 20, ((RecursivePrefixTreeStrategy) strategy).getGrid().getMaxLevels());
     }
 
     @Test
@@ -351,7 +351,7 @@ public class LuceneConfigurationTest {
         Assert.assertEquals("Unexpected strategy type", RecursivePrefixTreeStrategy.class, luceneConfiguration.getStrategy("myField").getClass());
         RecursivePrefixTreeStrategy strategy = (RecursivePrefixTreeStrategy) luceneConfiguration.getStrategy("myField");
         Assert.assertEquals("Unexpected spatial prefix tree", GeohashPrefixTree.class, strategy.getGrid().getClass());
-        Assert.assertEquals("MaxLevels should be 10 as default", 10, strategy.getGrid().getMaxLevels());
+        Assert.assertEquals("MaxLevels should be 10", 10, strategy.getGrid().getMaxLevels());
         Assert.assertTrue("Expecting distance-error-pct to be 0.5", 0.5 == strategy.getDistErrPct());
     }
 
