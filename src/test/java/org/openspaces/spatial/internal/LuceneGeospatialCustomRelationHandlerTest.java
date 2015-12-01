@@ -1,6 +1,8 @@
 package org.openspaces.spatial.internal;
 
 import com.gigaspaces.internal.server.space.SpaceConfigReader;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import org.openspaces.spatial.shapes.Polygon;
 import com.spatial4j.core.shape.Shape;
 import org.junit.Assert;
@@ -17,10 +19,14 @@ import static org.openspaces.spatial.ShapeFactory.*;
 public class LuceneGeospatialCustomRelationHandlerTest {
 
     private LuceneGeospatialCustomRelationHandler _handler;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Before
     public void setup() throws Exception {
         _handler = new LuceneGeospatialCustomRelationHandler();
-        _handler.initialize("geospatial", "dummy", new SpaceConfigReader("dummy"));
+        _handler.initialize("geospatial", "dummy", new SpaceConfigReader("dummy"), temporaryFolder.getRoot().getAbsolutePath());
     }
 
     @Test

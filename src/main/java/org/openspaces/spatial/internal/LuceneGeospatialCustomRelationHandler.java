@@ -105,10 +105,10 @@ public class LuceneGeospatialCustomRelationHandler extends CustomRelationHandler
 
 
     @Override
-    public void initialize(String namespace, String spaceName, SpaceConfigReader reader) throws Exception {
-        super.initialize(namespace, spaceName, reader);
+    public void initialize(String namespace, String spaceName, SpaceConfigReader reader, String workingDir) throws Exception {
+        super.initialize(namespace, spaceName, reader, workingDir);
         _luceneConfiguration = new LuceneConfiguration();
-        _luceneConfiguration.initialize(reader);
+        _luceneConfiguration.initialize(reader, workingDir);
 
         _luceneIndexdDirectory = new File(_luceneConfiguration.getLocation(), spaceName);
         if (_luceneIndexdDirectory.exists()) {

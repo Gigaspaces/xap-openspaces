@@ -8,6 +8,7 @@ import com.spatial4j.core.context.jts.JtsSpatialContext;
 import com.spatial4j.core.shape.impl.RectangleImpl;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.bbox.BBoxStrategy;
+import org.apache.lucene.spatial.composite.CompositeSpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
 import org.apache.lucene.spatial.prefix.tree.QuadPrefixTree;
@@ -36,13 +37,8 @@ public class LuceneConfigurationTest {
         JProperties.setSpaceProperties(SPACENAME, new Properties());
     }
 
-    @After
-    public void afterTest() {
-        //clear directories
-        File directoryA = new File(System.getProperty("user.home")+"/A");
-        if (directoryA.exists()) {
-            directoryA.delete();
-        }
+    private String getWorkingDir() {
+        return temporaryFolder.getRoot().getAbsolutePath();
     }
 
     @Test
@@ -50,7 +46,7 @@ public class LuceneConfigurationTest {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
@@ -63,9 +59,10 @@ public class LuceneConfigurationTest {
             Assert.fail("Should not throw exception: " + e.toString());
         }
         Assert.assertEquals("MMapDirectory should be the default directory", MMapDirectory.class, directory.getClass());
-        Assert.assertEquals("user.home should be the default location", System.getProperty("user.home"), luceneConfiguration.getLocation());
+        String expectedLocation = getWorkingDir()+File.separator+"luceneIndex";
+        Assert.assertEquals("WorkingDir/luceneIndex ("+expectedLocation+") should be the default location", expectedLocation, luceneConfiguration.getLocation());
         try {
-            Assert.assertEquals("MMapDirectory location should be user.home/A", new MMapDirectory(Paths.get(System.getProperty("user.home") + "/A")).getDirectory(), ((MMapDirectory) directory).getDirectory());
+            Assert.assertEquals("MMapDirectory location should be workingDir/luceneIndex/A "+expectedLocation+"/A", new MMapDirectory(Paths.get(expectedLocation + "/A")).getDirectory(), ((MMapDirectory) directory).getDirectory());
         } catch (IOException e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
@@ -73,7 +70,7 @@ public class LuceneConfigurationTest {
         //test strategy
         SpatialStrategy strategy = luceneConfiguration.getStrategy("myfield");
         Assert.assertEquals("Default strategy should be RecursivePrefixTree", RecursivePrefixTreeStrategy.class, strategy.getClass());
-        Assert.assertEquals("Strategy's spatial context should be GEO", JtsSpatialContext.GEO, strategy.getSpatialContext());
+        Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
         Assert.assertTrue("DistErrPct default for strategy should be 0.025", 0.025 == ((RecursivePrefixTreeStrategy) strategy).getDistErrPct());
 
         //test spatialprefixtree
@@ -81,16 +78,18 @@ public class LuceneConfigurationTest {
         Assert.assertEquals("MaxLevels should be 11 as default", 11, ((RecursivePrefixTreeStrategy) strategy).getGrid().getMaxLevels());
 
         //test spatialcontext
-        Assert.assertEquals("Default spatialcontext should be JTS_GEO", JtsSpatialContext.GEO, luceneConfiguration.getSpatialContext());
+        Assert.assertEquals("Default spatialcontext should be JTS", JtsSpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Default spatialcontext.geo should be true", true, luceneConfiguration.getSpatialContext().isGeo());
+
     }
 
     @Test
     public void testInvalidDirectoryType() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.storage.directory-type", "A");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.storage.directory-type", "A");
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
@@ -104,9 +103,9 @@ public class LuceneConfigurationTest {
     public void testRAMDirectoryTypeCaseInsensitive() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.storage.directory-type", "Ramdirectory");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.storage.directory-type", "Ramdirectory");
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
@@ -124,10 +123,10 @@ public class LuceneConfigurationTest {
     public void testMMapDirectoryTypeAndLocation() throws IOException {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.storage.directory-type", "MMapDirectory");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.storage.location", temporaryFolder.getRoot().getAbsolutePath()+"/tempdir");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.storage.directory-type", "MMapDirectory");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.storage.location", temporaryFolder.getRoot().getAbsolutePath()+"/tempdir");
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
@@ -139,12 +138,30 @@ public class LuceneConfigurationTest {
     }
 
     @Test
+    public void testLocationNoWorkingDir() throws IOException {
+        LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
+        SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
+        spaceConfigReader.setSpaceProperty("spatial.lucene.storage.directory-type", "MMapDirectory");
+        try {
+            //null as second parameter simulates there is no working dir (not pu)
+            luceneConfiguration.initialize(spaceConfigReader, null);
+        } catch (Exception e) {
+            Assert.fail("Should not throw exception: " + e.toString());
+        }
+
+        Directory directory = luceneConfiguration.getDirectory("subfolder");
+
+        Assert.assertEquals("Unexpected Directory type", MMapDirectory.class, directory.getClass());
+        Assert.assertEquals(System.getProperty("user.dir")+"/luceneIndex/subfolder", ((MMapDirectory) directory).getDirectory().toFile().getAbsolutePath());
+    }
+
+    @Test
     public void testInvalidSpatialContextTree() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "invalidValue");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree", "invalidValue");
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
@@ -158,11 +175,11 @@ public class LuceneConfigurationTest {
     public void testSpatialContextTreeQuadPrefixTreeAndMaxLevels() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree.max-levels", "20");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree.max-levels", "20");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
@@ -176,14 +193,14 @@ public class LuceneConfigurationTest {
     public void testInvalidSpatialContext() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "dummy");
+        spaceConfigReader.setSpaceProperty("spatial.context", "dummy");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
-            Assert.assertEquals("Unsupported spatial context type dummy. Options are: [GEO, NON_GEO, JTS_GEO, JTS_NON_GEO]", e.getMessage());
+            Assert.assertEquals("Unsupported spatial context type dummy. Options are: [Spatial4J, JTS]", e.getMessage());
         } catch (Exception e) {
             Assert.fail("Expecting ConfigurationException but got " + e.getClass().getTypeName());
         }
@@ -193,15 +210,16 @@ public class LuceneConfigurationTest {
     public void testSpatialContextGEO() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "GEO");
+        spaceConfigReader.setSpaceProperty("spatial.context", "spatial4j");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "true");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
 
-        Assert.assertEquals("Unexpected spatial context", SpatialContext.GEO, luceneConfiguration.getSpatialContext());
+        Assert.assertEquals("Unexpected spatial context", SpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
         Assert.assertEquals("Expecting geo spatial context", true, luceneConfiguration.getSpatialContext().isGeo());
     }
 
@@ -209,16 +227,18 @@ public class LuceneConfigurationTest {
     public void testSpatialContextNonGEO() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "NON_GEO");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
+        spaceConfigReader.setSpaceProperty("spatial.context", "spatial4j");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "false");
+
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
 
-        Assert.assertEquals("Unexpected spatial context", SpatialContext.GEO.getClass(), luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Unexpected spatial context", SpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
         Assert.assertEquals("Expecting geo spatial context", false, luceneConfiguration.getSpatialContext().isGeo());
     }
 
@@ -226,17 +246,19 @@ public class LuceneConfigurationTest {
     public void testSpatialContextJTSNonGEO() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "JTS_NON_GEO");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
+        spaceConfigReader.setSpaceProperty("spatial.context", "jts");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "false");
+
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Should not throw exception: " + e.toString());
         }
 
-        Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.GEO.getClass(), luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
         Assert.assertEquals("Expecting geo spatial context", false, luceneConfiguration.getSpatialContext().isGeo());
     }
 
@@ -244,11 +266,12 @@ public class LuceneConfigurationTest {
     public void testSpatialContextGEOInvalidWorldBoundsPropertyValue() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "GEO");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "invalidvaluehere");
+        spaceConfigReader.setSpaceProperty("spatial.context", "jts");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "true");
+        spaceConfigReader.setSpaceProperty("spatial.context.world-bounds", "invalidvaluehere");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
@@ -263,11 +286,12 @@ public class LuceneConfigurationTest {
     public void testSpatialContextNONGEOInvalidWorldBoundsValues() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "NON_GEO");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "1,7,9,1");
+        spaceConfigReader.setSpaceProperty("spatial.context", "spatial4J");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "false");
+        spaceConfigReader.setSpaceProperty("spatial.context.world-bounds", "1,7,9,1");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
@@ -282,11 +306,12 @@ public class LuceneConfigurationTest {
     public void testSpatialContextJTSGEOInvalidWorldBoundsStringValue() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "JTS_GEO");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "1,7,1,4a");
+        spaceConfigReader.setSpaceProperty("spatial.context", "jts");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "true");
+        spaceConfigReader.setSpaceProperty("spatial.context.world-bounds", "1,7,1,4a");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
@@ -300,18 +325,19 @@ public class LuceneConfigurationTest {
     public void testSpatialContextJTSNONGEO() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "JTS_NON_GEO");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context.world-bounds", "1,10,-100,100");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree", "QuadPrefixTree");
+        spaceConfigReader.setSpaceProperty("spatial.context", "jts");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "false");
+        spaceConfigReader.setSpaceProperty("spatial.context.world-bounds", "1,10,-100,100");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Should not throw exception: " + e.toString());
         }
 
-        Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.GEO.getClass(), luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Unexpected spatial context", JtsSpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
         Assert.assertEquals("Expecting geo spatial context", false, luceneConfiguration.getSpatialContext().isGeo());
         Assert.assertEquals("Unexpected spatial context world bound", new RectangleImpl(1, 10, -100, 100, null), luceneConfiguration.getSpatialContext().getWorldBounds());
     }
@@ -320,14 +346,14 @@ public class LuceneConfigurationTest {
     public void testInvalidStrategy() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy", "mystrategy");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy", "mystrategy");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
             Assert.fail("A ConfigurationException should be thrown");
         } catch (ConfigurationException e) {
             //OK
-            Assert.assertEquals("Unsupported strategy mystrategy. Options are: [RecursivePrefixTree, BBox]", e.getMessage());
+            Assert.assertEquals("Unsupported strategy mystrategy. Options are: [RecursivePrefixTree, BBox, Composite]", e.getMessage());
         } catch (Exception e) {
             Assert.fail("Expecting ConfigurationException but got " + e.getClass().getTypeName());
         }
@@ -337,13 +363,13 @@ public class LuceneConfigurationTest {
     public void testStrategyRecursivePrefixTreeAndDistErrPct() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy", "RecursivePrefixTree");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree", "GeohashPrefixTree");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.spatial-prefix-tree.max-levels", "10");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy.distance-error-pct", "0.5");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy", "RecursivePrefixTree");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree", "GeohashPrefixTree");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.spatial-prefix-tree.max-levels", "10");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy.distance-error-pct", "0.5");
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
@@ -359,19 +385,40 @@ public class LuceneConfigurationTest {
     public void testStrategyBBox() {
         LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
         SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.strategy", "BBox");
-        spaceConfigReader.setSpaceProperty("geospatial.lucene.spatial-context", "NON_GEO");
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy", "BBox");
+        spaceConfigReader.setSpaceProperty("spatial.context", "spatial4J");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "false");
 
 
         try {
-            luceneConfiguration.initialize(spaceConfigReader);
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
         } catch (Exception e) {
             Assert.fail("Should not throw exception: " + e.toString());
         }
 
         Assert.assertEquals("Unexpected strategy type", BBoxStrategy.class, luceneConfiguration.getStrategy("myField").getClass());
-        Assert.assertEquals("Unexpected spatial context", SpatialContext.GEO.getClass(), luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Unexpected spatial context", SpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
         Assert.assertEquals("Expecting geo spatial context", false, luceneConfiguration.getSpatialContext().isGeo());
+    }
+
+    @Test
+    public void testStrategyComposite() {
+        LuceneConfiguration luceneConfiguration = new LuceneConfiguration();
+        SpaceConfigReader spaceConfigReader = new SpaceConfigReader(SPACENAME);
+        spaceConfigReader.setSpaceProperty("spatial.lucene.strategy", "composite");
+        spaceConfigReader.setSpaceProperty("spatial.context", "spatial4J");
+        spaceConfigReader.setSpaceProperty("spatial.context.geo", "true");
+
+
+        try {
+            luceneConfiguration.initialize(spaceConfigReader, getWorkingDir());
+        } catch (Exception e) {
+            Assert.fail("Should not throw exception: " + e.toString());
+        }
+
+        Assert.assertEquals("Unexpected strategy type", CompositeSpatialStrategy.class, luceneConfiguration.getStrategy("myField").getClass());
+        Assert.assertEquals("Unexpected spatial context", SpatialContext.class, luceneConfiguration.getSpatialContext().getClass());
+        Assert.assertEquals("Expecting geo spatial context", true, luceneConfiguration.getSpatialContext().isGeo());
     }
 
 }
