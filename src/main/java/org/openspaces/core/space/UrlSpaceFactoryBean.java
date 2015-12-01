@@ -339,7 +339,7 @@ public class UrlSpaceFactoryBean extends AbstractSpaceFactoryBean implements Bea
             factory.setAttributeStore(attributeStore.getStoreHandler());
     }
 
-    public void setLeaderSelector(LeaderSelectorFactoryBean leaderSelectorFactoryBean) {
+    public void setLeaderSelectorConfig(LeaderSelectorFactoryBean leaderSelectorFactoryBean) {
         if (leaderSelectorFactoryBean != null)
             factory.setLeaderSelectorConfig(leaderSelectorFactoryBean.getConfig());
     }
