@@ -17,7 +17,6 @@
 package org.openspaces.maven.support;
 
 import com.j_spaces.kernel.PlatformVersion;
-import com.j_spaces.kernel.XapVersion;
 
 /**
  * Outputs the version to use with Maven. Following the following rules:
@@ -51,18 +50,16 @@ public class OutputVersion {
     
     public static String computeXapVersion() {
         
-        XapVersion xapVersion = XapVersion.getInstance();
-        
-        if (xapVersion.getBuildNumber().indexOf("-") != -1) {
-            return xapVersion.getVersion() + "-SNAPSHOT";
+        if (PlatformVersion.getBuildNumber().indexOf("-") != -1) {
+            return PlatformVersion.getVersion() + "-SNAPSHOT";
         }
         
-        if (xapVersion.getMilestone().equalsIgnoreCase("GA")) {
-            return xapVersion.getVersion() + "-" + xapVersion.getBuildTimestamp() + "-RELEASE";
+        if (PlatformVersion.getMilestone().equalsIgnoreCase("GA")) {
+            return PlatformVersion.getVersion() + "-" + PlatformVersion.getBuildTimestamp() + "-RELEASE";
         }
         
-        if (xapVersion.getBuildNumber().indexOf("-") == -1) {
-            return xapVersion.getVersion() + "-" + xapVersion.getBuildTimestamp() + "-" + xapVersion.getMilestone().toUpperCase();
+        if (PlatformVersion.getBuildNumber().indexOf("-") == -1) {
+            return PlatformVersion.getVersion() + "-" + PlatformVersion.getBuildTimestamp() + "-" + PlatformVersion.getMilestone().toUpperCase();
         }
         
         return "";
