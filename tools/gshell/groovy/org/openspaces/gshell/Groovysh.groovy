@@ -16,6 +16,7 @@
 
 package org.openspaces.gshell
 
+import com.j_spaces.kernel.PlatformVersion
 import jline.Terminal
 import jline.History
 
@@ -476,7 +477,7 @@ class Groovysh
                         width = 80
                     }
 
-                    io.out.println(messages.format('startup_banner.0', com.j_spaces.kernel.PlatformVersion.getVersionAndBuild(), System.properties['java.version']))
+                    io.out.println(messages.format('startup_banner.0', PlatformVersion.getVersion + '.' + PlatformVersion.getBuildNumber(), System.properties['java.version']))
                     io.out.println("@|bold Groups:| ${admin.groups} @|bold Locators:| ${admin.locators}")
                     io.out.println(messages['startup_banner.1'])
                     io.out.println('-' * (width - 1))
