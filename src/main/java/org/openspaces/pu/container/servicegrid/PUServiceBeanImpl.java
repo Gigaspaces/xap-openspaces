@@ -580,14 +580,14 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                 libUrls.addAll(sharedlibUrls);
 
                 // add pu-common jar files
-                String gsLibOpt = System.getProperty(Locator.GS_LIB_OPTIONAL);
+                String gsLibOpt = Locator.getLibOptional();
                 String gsPuCommon = System.getProperty("com.gs.pu-common", gsLibOpt + "pu-common");
 
-                final String gsLibOptSecurity = System.getProperty(Locator.GS_LIB_OPTIONAL_SECURITY, gsLibOpt + "security");
+                final String gsLibOptSecurity = Locator.getLibOptionalSecurity();
                 libUrls.addAll(Arrays.asList(BootUtil.toURLs(new String[] {gsPuCommon, gsLibOptSecurity})));
 
                 if (ScalaIdentifier.isScalaLibInClassPath()) {
-                    String gsLibPlatform = System.getProperty(Locator.GS_LIB_PLATFORM);
+                    String gsLibPlatform = Locator.getLibPlatform();
                     // note that we assume BootUtil.toURLs does not work recursively here
                     // i.e, only gs-openspaces-scala.jar will be added and not all the files under /lib
                     String gsLibPlatformScala = gsLibPlatform + "scala";
@@ -1450,9 +1450,9 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         File webInfLib = new File(deployPath, "WEB-INF/lib");
         webInfLib.mkdirs();
         if (webInfLib.exists()) {
-            String gsRequired = System.getProperty(Locator.GS_LIB_REQUIRED);
-            String gsOptional = System.getProperty(Locator.GS_LIB_OPTIONAL);
-            String gsPlatform = System.getProperty(Locator.GS_LIB_PLATFORM);
+            String gsRequired = Locator.getLibRequired();
+            String gsOptional = Locator.getLibOptional();
+            String gsPlatform = Locator.getLibPlatform();
             try {
                 FileSystemUtils.copyRecursively(new File(gsRequired), new File(deployPath, "WEB-INF/lib"));
                 FileSystemUtils.copyRecursively(new File(gsOptional + "/spring"), new File(deployPath, "WEB-INF/lib"));

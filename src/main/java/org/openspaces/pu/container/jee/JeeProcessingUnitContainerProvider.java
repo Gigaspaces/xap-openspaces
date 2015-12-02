@@ -133,7 +133,7 @@ public abstract class JeeProcessingUnitContainerProvider extends ApplicationCont
 
     protected Iterable<String> getWebAppClassLoaderJars() {
         List<String> result = new ArrayList<String>();
-        String gsLibOpt = System.getProperty(Locator.GS_LIB_OPTIONAL);
+        String gsLibOpt = Locator.getLibOptional();
         result.add(System.getProperty("com.gs.pu-common", gsLibOpt + "pu-common"));
         result.add(System.getProperty("com.gs.web-pu-common", gsLibOpt + "web-pu-common"));
         return result;
@@ -160,7 +160,7 @@ public abstract class JeeProcessingUnitContainerProvider extends ApplicationCont
     }
 
     public static String getJeeContainerJarPath(String jeeContainer) {
-        return System.getProperty(Locator.GS_LIB_PLATFORM) + "openspaces/gs-openspaces-" + jeeContainer + ".jar";
+        return Locator.getLibPlatform() + "openspaces/gs-openspaces-" + jeeContainer + ".jar";
     }
 
     public static String getJeeContainer(BeanLevelProperties properties) {
