@@ -30,24 +30,6 @@ import com.j_spaces.kernel.PlatformVersion;
  */
 public class OutputVersion {
 
-    public static String computeVersion() {
-        
-        if (PlatformVersion.getBuildNumber().indexOf("-") != -1) {
-            return PlatformVersion.getVersion() + "-SNAPSHOT";
-        }
-  
-        if (PlatformVersion.getMilestone().equalsIgnoreCase("GA")) {
-            return PlatformVersion.getVersion() + "-" + PlatformVersion.getBuildTimestamp() + "-RELEASE";
-        }
-        
-        if (PlatformVersion.getBuildNumber().indexOf("-") == -1) {
-            return PlatformVersion.getVersion() + "-" + PlatformVersion.getBuildTimestamp() + "-" + PlatformVersion.getMilestone().toUpperCase();
-        }
-        
-        return "";
-        
-    }
-    
     public static String computeXapVersion() {
         
         if (PlatformVersion.getBuildNumber().indexOf("-") != -1) {
@@ -64,13 +46,6 @@ public class OutputVersion {
         
         return "";
     }
-    
-    public static String computeCloudifyVersion() {
-
-        //CloudifyVersion class is resolved by PlatformVersion.
-        //class is not in the default classpath - only in cloudify build.
-        return computeVersion();
-    }
 
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
@@ -81,13 +56,9 @@ public class OutputVersion {
             String edition = PlatformVersion.getEdition();
             if (edition.startsWith(PlatformVersion.EDITION_XAP)) {
                 System.out.println(PlatformVersion.EDITION_XAP);
-            } else {
-                System.out.println(PlatformVersion.EDITION_CLOUDIFY);
             }
         } else if (args[0].equals(PlatformVersion.EDITION_XAP)) {
             System.out.println(computeXapVersion());
-        } else if (args[0].equals(PlatformVersion.EDITION_CLOUDIFY)) {
-            System.out.println(computeCloudifyVersion());
         }
     }
 }
