@@ -715,6 +715,30 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
             </plugin>
+            <!--copy gs-openspace to sg tests dir -->
+            <!--<plugin>-->
+                <!--<artifactId>maven-dependency-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>install-jar</id>-->
+                        <!--<phase>install</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<artifactItems>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>com.gigaspaces</groupId>-->
+                                    <!--<artifactId>gs-openspaces</artifactId>-->
+                                    <!--<version>${pom.version}</version>-->
+                                <!--</artifactItem>-->
+                            <!--</artifactItems>-->
+                            <!--<outputDirectory>/home/barakbo/tmp/jobsetup/build/lib/required/</outputDirectory>-->
+                            <!--<stripVersion>true</stripVersion>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
         <pluginManagement>
             <plugins>
