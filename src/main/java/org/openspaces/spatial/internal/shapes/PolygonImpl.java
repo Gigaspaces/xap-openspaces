@@ -88,6 +88,28 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PolygonImpl other = (PolygonImpl) o;
+        final int length = this.getNumOfPoints();
+        if (length != other.getNumOfPoints())
+            return false;
+        for (int i=0 ; i < length ; i++) {
+            if (this.getX(i) != other.getX(i) || this.getY(i) != other.getY(i))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashcode;
+    }
+
+
+    @Override
     public String toString() {
         return toString(ShapeFormat.WKT);
     }
