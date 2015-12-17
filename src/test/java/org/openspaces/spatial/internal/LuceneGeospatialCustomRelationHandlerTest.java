@@ -9,7 +9,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.openspaces.spatial.ShapeFactory.*;
+import static org.openspaces.spatial.ShapeFactory.point;
+import static org.openspaces.spatial.ShapeFactory.polygon;
 
 
 /**
@@ -61,6 +62,22 @@ public class LuceneGeospatialCustomRelationHandlerTest {
                 point(73.64822387695311, 40.447992135544304));
 
         Shape spatial4jPolygon = _handler.toSpatial4j(polygonWithCloseRing);
+        Assert.assertNotNull(spatial4jPolygon);
+    }
+    @Test
+    public void testConcavePolygon() throws Exception {
+
+        Polygon concavePolygon = polygon(point(5, 5), point(5, 0), point(2.5, 2.5), point(0, 0), point(0, 5));
+
+        Shape spatial4jPolygon = _handler.toSpatial4j(concavePolygon);
+        Assert.assertNotNull(spatial4jPolygon);
+    }
+    @Test(expected=com.spatial4j.core.exception.InvalidShapeException.class)
+    public void testSelfIntersectionPolygon() throws Exception {
+
+        Polygon concavePolygon = polygon(point(5, 5), point(5, 0),point(2.5, 7.5), point(0, 0),point(0, 5));
+
+        Shape spatial4jPolygon = _handler.toSpatial4j(concavePolygon);
         Assert.assertNotNull(spatial4jPolygon);
     }
 }
