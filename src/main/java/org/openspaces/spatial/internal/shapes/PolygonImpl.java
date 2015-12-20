@@ -52,6 +52,13 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
             throw new IllegalArgumentException("Polygon requires at least three points");
         if (points.length == 3 && points[0].equals(points[2]))
             throw new IllegalArgumentException("Polygon requires at least three distinct points " + Arrays.asList(points));
+        if (!points[0].equals(points[points.length-1])) {
+            // Create a copy of points and append the first point at the end:
+            Point[] temp = new Point[points.length + 1];
+            System.arraycopy(points,0, temp, 0, points.length);
+            temp[points.length] = temp[0];
+            points = temp;
+        }
         this.points = points;
         initialize();
     }
@@ -136,10 +143,6 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
         for (int i=1 ; i < length ; i++) {
             stringBuilder.append(',');
             appendTuple(stringBuilder, getX(i), getY(i));}
-        if (!isFirstEqualsLast()) {
-            stringBuilder.append(',');
-            appendTuple(stringBuilder, getX(0), getY(0));
-        }
         stringBuilder.append("]]}");
         return stringBuilder;
     }
@@ -163,19 +166,8 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
             stringBuilder.append(' ');
             stringBuilder.append(getY(i));
         }
-        if (!isFirstEqualsLast()) {
-            stringBuilder.append(',');
-            stringBuilder.append(getX(0));
-            stringBuilder.append(' ');
-            stringBuilder.append(getY(0));
-        }
         stringBuilder.append("))");
         return stringBuilder;
-    }
-
-    private boolean isFirstEqualsLast() {
-        final int length = getNumOfPoints();
-        return getX(0) == getX(length-1) && getY(0) == getY(length-1);
     }
 
     @Override
