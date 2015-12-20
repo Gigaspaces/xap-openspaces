@@ -30,7 +30,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * Created by Barak Bar Orion
  * @since 11.0
  */
-@CustomRelation(namespace = "geospatial", handlerClassName = "org.openspaces.spatial.internal.LuceneGeospatialCustomRelationHandler")
+@CustomRelation(namespace = "spatial", handlerClassName = "org.openspaces.spatial.internal.LuceneGeospatialCustomRelationHandler")
 @Target({METHOD, FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SpaceSpatialIndex {
