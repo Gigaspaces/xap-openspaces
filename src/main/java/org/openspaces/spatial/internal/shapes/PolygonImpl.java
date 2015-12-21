@@ -52,6 +52,11 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
             throw new IllegalArgumentException("Polygon requires at least three points");
         if (points.length == 3 && points[0].equals(points[2]))
             throw new IllegalArgumentException("Polygon requires at least three distinct points " + Arrays.asList(points));
+        this.points = points;
+        initialize();
+    }
+
+    private void initialize() {
         if (!points[0].equals(points[points.length-1])) {
             // Create a copy of points and append the first point at the end:
             Point[] temp = new Point[points.length + 1];
@@ -59,11 +64,6 @@ public class PolygonImpl implements Polygon, Spatial4jShapeProvider, Externaliza
             temp[points.length] = temp[0];
             points = temp;
         }
-        this.points = points;
-        initialize();
-    }
-
-    private void initialize() {
         this.hashcode = Arrays.hashCode(points);
     }
 
