@@ -179,8 +179,6 @@ public class RunPUMojo extends AbstractOpenSpacesMojo {
             throw new MojoExecutionException("Failed to configure logging", e);
         }
 
-        System.setProperty("com.gs.printRuntimeInfo", "false");
-
         // get a list of project to execute in the order set by the reactor
         List projects = Utils.getProjectsToExecute(reactorProjects, module);
         

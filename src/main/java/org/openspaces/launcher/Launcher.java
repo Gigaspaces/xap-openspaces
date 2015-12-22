@@ -72,10 +72,9 @@ public class Launcher {
         }
 
         final Logger logger = Logger.getLogger(loggerName);
-        logger.info(RuntimeInfo.getEnvironmentInfo());
         WebLauncher webLauncher = ClassLoaderHelper.newInstance(webLauncherClass);
         webLauncher.launch(config);
-        logger.info( "Starting the " + name + " server, bind address: " + config.getHostAddress() + ", port: " + config.getPort() );
+        logger.info("Starting the " + name + " server, bind address: " + config.getHostAddress() + ", port: " + config.getPort() + RuntimeInfo.getEnvironmentInfoIfFirstTime());
     }
 
     private static void printHelpMessage() {

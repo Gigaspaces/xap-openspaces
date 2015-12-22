@@ -108,10 +108,8 @@ public class StandaloneProcessingUnitContainer extends ApplicationContextProcess
             printUsage();
             System.exit(1);
         }
-        System.setProperty("com.gs.printRuntimeInfo", "false");
-        if (logger.isInfoEnabled()) {
-            logger.info(RuntimeInfo.getEnvironmentInfo());
-        }
+        if (logger.isInfoEnabled())
+            logger.info("Starting Standalone Processing unit" + RuntimeInfo.getEnvironmentInfoIfFirstTime());
         try {
             final ProcessingUnitContainer container = createContainer(args);
 

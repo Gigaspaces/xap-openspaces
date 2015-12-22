@@ -125,11 +125,7 @@ public class IntegratedProcessingUnitContainer extends ApplicationContextProcess
      */
     public static void main(String[] args) throws Exception {
         GSLogConfigLoader.getLoader();
-        System.setProperty("com.gs.printRuntimeInfo", "false");
-        logger.info("Starting processing unit(s) with " + Arrays.toString(args));
-        if (logger.isInfoEnabled()) {
-            logger.info(RuntimeInfo.getEnvironmentInfo());
-        }
+        logger.info("Starting processing unit(s) with " + Arrays.toString(args) + RuntimeInfo.getEnvironmentInfoIfFirstTime());
         try {
             final ProcessingUnitContainer container = createContainer(args);
             logger.info("Processing unit(s) started successfully");
