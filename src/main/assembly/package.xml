@@ -145,20 +145,5 @@
 				<include>xap-javadoc*</include>
 			</includes>
 		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/dependency</directory>
-			<outputDirectory>/lib/optional/lucene</outputDirectory>
-			<includes>
-				<include>lucene-core-*</include>
-				<include>lucene-analyzers-common-*</include>
-				<include>lucene-queryparser-*</include>
-				<include>lucene-queries-*</include>
-				<include>lucene-sandbox-*</include>
-				<include>lucene-misc-*</include>
-				<include>lucene-spatial-*</include>
-				<include>jts-*</include>
-				<include>spatial4j-*</include>
-			</includes>
-		</fileSet>
 	</fileSets>
 </assembly>
