@@ -17,12 +17,9 @@
  ******************************************************************************/
 package org.openspaces.admin.internal.vm;
 
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
+import com.gigaspaces.internal.jvm.JVMDetails;
+import com.j_spaces.kernel.SizeConcurrentHashMap;
+import com.j_spaces.kernel.time.SystemTime;
 import org.openspaces.admin.StatisticsMonitor;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
@@ -65,10 +62,13 @@ import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 import org.openspaces.admin.vm.events.VirtualMachineStatisticsChangedEvent;
 import org.openspaces.admin.vm.events.VirtualMachineStatisticsChangedEventManager;
-import org.openspaces.core.util.ConcurrentHashSet;
 
-import com.gigaspaces.internal.jvm.JVMDetails;
-import com.j_spaces.kernel.time.SystemTime;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author kimchy
@@ -83,7 +83,8 @@ public class DefaultVirtualMachine implements InternalVirtualMachine {
 
     private final VirtualMachineDetails details;
 
-    private final Set<InternalVirtualMachineInfoProvider> virtualMachineInfoProviders = new ConcurrentHashSet<InternalVirtualMachineInfoProvider>();
+    private final Map<String, InternalVirtualMachineInfoProvider> virtualMachineInfoProvidersByUID =
+                                new SizeConcurrentHashMap<String, InternalVirtualMachineInfoProvider>();
 
     private volatile Machine machine;
     
@@ -136,16 +137,16 @@ public class DefaultVirtualMachine implements InternalVirtualMachine {
 
     public void addVirtualMachineInfoProvider(InternalVirtualMachineInfoProvider virtualMachineInfoProvider) {
         assertStateChangesPermitted();
-        virtualMachineInfoProviders.add(virtualMachineInfoProvider);
+        virtualMachineInfoProvidersByUID.put( virtualMachineInfoProvider.getUid(), virtualMachineInfoProvider);
     }
 
     public void removeVirtualMachineInfoProvider(InternalVirtualMachineInfoProvider virtualMachineInfoProvider) {
         assertStateChangesPermitted();
-        virtualMachineInfoProviders.remove(virtualMachineInfoProvider);
+        virtualMachineInfoProvidersByUID.remove(virtualMachineInfoProvider.getUid());
     }
 
     public boolean hasVirtualMachineInfoProviders() {
-        return !virtualMachineInfoProviders.isEmpty();
+        return !virtualMachineInfoProvidersByUID.isEmpty();
     }
 
     public VirtualMachineStatisticsChangedEventManager getVirtualMachineStatisticsChanged() {
@@ -282,6 +283,7 @@ public class DefaultVirtualMachine implements InternalVirtualMachine {
     }
 
     public void runGc() {
+        Collection<InternalVirtualMachineInfoProvider> virtualMachineInfoProviders = virtualMachineInfoProvidersByUID.values();
         for (InternalVirtualMachineInfoProvider provider : virtualMachineInfoProviders) {
             try {
                 provider.runGc();
@@ -302,6 +304,7 @@ public class DefaultVirtualMachine implements InternalVirtualMachine {
         VirtualMachineStatistics previousStatistics = lastStatistics;
         lastStatistics = NA_STATS;
         lastStatisticsTimestamp = currentTime;
+        Collection<InternalVirtualMachineInfoProvider> virtualMachineInfoProviders = virtualMachineInfoProvidersByUID.values();
         for (InternalVirtualMachineInfoProvider provider : virtualMachineInfoProviders) {
             try {
                 if (getMachine() == null) continue; //machine has not yet been set

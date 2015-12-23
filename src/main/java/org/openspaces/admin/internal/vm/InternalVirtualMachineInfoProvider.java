@@ -32,4 +32,6 @@ public interface InternalVirtualMachineInfoProvider extends InternalVirtualMachi
     JVMStatistics getJVMStatistics() throws RemoteException;
 
     void runGc() throws RemoteException;
+
+    String getUid();
 }
