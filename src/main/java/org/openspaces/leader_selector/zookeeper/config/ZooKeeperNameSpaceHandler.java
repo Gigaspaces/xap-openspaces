@@ -1,4 +1,4 @@
-package org.openspaces.leader_selector.zk.config;
+package org.openspaces.leader_selector.zookeeper.config;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 

@@ -1,4 +1,4 @@
-package org.openspaces.leader_selector.zk.config;
+package org.openspaces.leader_selector.zookeeper.config;
 
 import com.gigaspaces.cluster.activeelection.LeaderSelectorConfig;
 import org.springframework.beans.factory.FactoryBean;
@@ -13,6 +13,8 @@ public class ZooKeeperLeaderSelectorFactoryBean implements InitializingBean, Fac
     protected LeaderSelectorConfig config;
     private long sessionTimeout;
     private long connectionTimeout;
+    private int retries;
+    private int sleepMsBetweenRetries;
 
     public void setSessionTimeout(long sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
@@ -22,12 +24,22 @@ public class ZooKeeperLeaderSelectorFactoryBean implements InitializingBean, Fac
         this.connectionTimeout = connectionTimeout;
     }
 
+    public void setRetries(int retries) {
+        this.retries = retries;
+    }
+
+    public void setSleepMsBetweenRetries(int sleepMsBetweenRetries) {
+        this.sleepMsBetweenRetries = sleepMsBetweenRetries;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         config = new LeaderSelectorConfig();
-        config.getProperties().setProperty("leaderSelectorHandler", "org.openspaces.zk.leader_selector.ZooKeeperBasedLeaderSelectorHandler");
+        config.getProperties().setProperty("leaderSelectorHandler", "org.openspaces.zookeeper.leader_selector.ZooKeeperBasedLeaderSelectorHandler");
         config.getProperties().setProperty("sessionTimeout", String.valueOf(sessionTimeout));
         config.getProperties().setProperty("connectionTimeout", String.valueOf(connectionTimeout));
+        config.getProperties().setProperty("retries", String.valueOf(retries));
+        config.getProperties().setProperty("sleepMsBetweenRetries", String.valueOf(sleepMsBetweenRetries));
     }
 
     @Override

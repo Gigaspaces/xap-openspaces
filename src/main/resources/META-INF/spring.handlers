@@ -7,6 +7,6 @@ http\://www.openspaces.org/schema/jms=org.openspaces.jms.config.JmsNamespaceHand
 http\://www.openspaces.org/schema/sla=org.openspaces.pu.sla.config.SLANamespaceHandler
 http\://www.openspaces.org/schema/core/gateway=org.openspaces.core.gateway.config.GatewayNamespaceHandler
 http\://www.openspaces.org/schema/admin=org.openspaces.admin.config.AdminNamespaceHandler
-http\://www.openspaces.org/schema/zookeeper=org.openspaces.leader_selector.zk.config.ZooKeeperNameSpaceHandler
+http\://www.openspaces.org/schema/zookeeper=org.openspaces.leader_selector.zookeeper.config.ZooKeeperNameSpaceHandler
 
 

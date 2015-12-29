@@ -12,7 +12,7 @@
 
     <xsd:element name="zookeeper">
         <xsd:annotation>
-            <xsd:documentation source="java:org.openspaces.zk.leader_selector.config.ZooKeeperLeaderSelectorFactoryBean">
+            <xsd:documentation source="java:org.openspaces.zookeeper.leader_selector.config.ZooKeeperLeaderSelectorFactoryBean">
                 add doc
             </xsd:documentation>
             <xsd:appinfo>
@@ -28,7 +28,7 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 curator client session timeout in millis
-                                default: 60000
+                                default: 15000
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
@@ -36,7 +36,23 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 curator client connection timeout in millis
-                                default: 15000
+                                default: 10000
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="retries" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                curator client retries
+                                default: 10
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="sleep-between-retries" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                curator client sleep between retries
+                                default: 1000
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>

@@ -18,6 +18,7 @@ package org.openspaces.core.space;
 
 import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.cluster.activeelection.ISpaceModeListener;
+import com.gigaspaces.cluster.activeelection.LeaderSelectorConfig;
 import com.gigaspaces.datasource.ManagedDataSource;
 import com.gigaspaces.datasource.SpaceDataSource;
 import com.gigaspaces.attribute_store.AttributeStore;
@@ -343,6 +344,15 @@ public class UrlSpaceConfigurer implements SpaceConfigurer {
     public UrlSpaceConfigurer attributeStore(AttributeStore attributeStore) {
         validate();
         urlSpaceFactoryBean.attributeStore(attributeStore);
+        return this;
+    }
+
+    /**
+     * Sets an attribute store
+     */
+    public UrlSpaceConfigurer leaderSelector(LeaderSelectorConfig leaderSelectorConfig) {
+        validate();
+        urlSpaceFactoryBean.leaderSelector(leaderSelectorConfig);
         return this;
     }
     
