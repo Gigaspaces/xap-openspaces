@@ -20,6 +20,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import com.gigaspaces.client.DirectSpaceProxyFactory;
 import com.gigaspaces.internal.quiesce.QuiesceAware;
 import net.jini.core.lookup.ServiceID;
 
@@ -74,6 +75,8 @@ public interface PUServiceBean extends NIOInfoProvider, OSInfoProvider, JVMInfoP
     PUMonitors getPUMonitors() throws RemoteException;
 
     IJSpace getSpaceDirect(ServiceID serviceID) throws RemoteException;
+
+    DirectSpaceProxyFactory getSpaceDirectFactory(ServiceID serviceID) throws RemoteException;
 
     @MonitoringPriority
     RuntimeHolder getSpaceRuntimeHolder(ServiceID serviceID) throws RemoteException;

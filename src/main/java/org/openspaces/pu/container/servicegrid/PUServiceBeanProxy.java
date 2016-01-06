@@ -18,6 +18,7 @@
 package org.openspaces.pu.container.servicegrid;
 
 import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
+import com.gigaspaces.client.DirectSpaceProxyFactory;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.lrmi.nio.async.FutureContext;
 import com.j_spaces.core.IJSpace;
@@ -98,7 +99,13 @@ public class PUServiceBeanProxy extends AbstractProxy implements PUServiceBean {
     }
 
     public IJSpace getSpaceDirect(ServiceID serviceID) throws RemoteException {
-        return ((PUServiceBean) server).getSpaceDirect(serviceID);
+        final DirectSpaceProxyFactory factory = getSpaceDirectFactory(serviceID);
+        return factory != null ? factory.createSpaceProxy() : null;
+    }
+
+    @Override
+    public DirectSpaceProxyFactory getSpaceDirectFactory(ServiceID serviceID) throws RemoteException {
+        return ((PUServiceBean) server).getSpaceDirectFactory(serviceID);
     }
 
     public RuntimeHolder getSpaceRuntimeHolder(ServiceID serviceID) throws RemoteException {

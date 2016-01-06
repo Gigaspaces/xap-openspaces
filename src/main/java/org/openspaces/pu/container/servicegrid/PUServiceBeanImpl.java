@@ -18,6 +18,7 @@ package org.openspaces.pu.container.servicegrid;
 
 import com.gigaspaces.admin.quiesce.QuiesceState;
 import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
+import com.gigaspaces.client.DirectSpaceProxyFactory;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.grid.zone.ZoneHelper;
 import com.gigaspaces.internal.dump.InternalDump;
@@ -1215,6 +1216,12 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             }
         }
         return null;
+    }
+
+    @Override
+    public DirectSpaceProxyFactory getSpaceDirectFactory(ServiceID serviceID) throws RemoteException {
+        final IJSpace space = getSpaceDirect(serviceID);
+        return space != null ? space.getDirectProxy().getFactory() : null;
     }
 
     public RuntimeHolder getSpaceRuntimeHolder(ServiceID serviceID) throws RemoteException {
