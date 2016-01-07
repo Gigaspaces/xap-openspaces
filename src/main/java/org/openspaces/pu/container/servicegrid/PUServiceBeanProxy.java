@@ -100,7 +100,8 @@ public class PUServiceBeanProxy extends AbstractProxy implements PUServiceBean {
 
     public IJSpace getSpaceDirect(ServiceID serviceID) throws RemoteException {
         final DirectSpaceProxyFactory factory = getSpaceDirectFactory(serviceID);
-        return factory != null ? factory.createSpaceProxy() : null;
+        IJSpace space = factory != null ? factory.createSpaceProxy() : null;
+        return space.getDirectProxy().getNonClusteredProxy();
     }
 
     @Override
