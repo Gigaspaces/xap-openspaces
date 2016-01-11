@@ -14,11 +14,11 @@ public class ZooKeeperLeaderSelectorConfigurer {
 
     public ZooKeeperLeaderSelectorConfigurer() {
         leaderSelectorConfig = new LeaderSelectorConfig();
-        leaderSelectorConfig.getProperties().setProperty("leaderSelectorHandler", "org.openspaces.zookeeper.leader_selector.ZooKeeperBasedLeaderSelectorHandler");
-        leaderSelectorConfig.getProperties().setProperty("sessionTimeout", Constants.LeaderSelector.ZOOKEEPER.CURATOR_SESSION_TIMEOUT_DEFAULT);
-        leaderSelectorConfig.getProperties().setProperty("connectionTimeout", Constants.LeaderSelector.ZOOKEEPER.CURATOR_CONNECTION_TIMEOUT_DEFAULT);
-        leaderSelectorConfig.getProperties().setProperty("retries", Constants.LeaderSelector.ZOOKEEPER.CURATOR_RETRIES_DEFAULT);
-        leaderSelectorConfig.getProperties().setProperty("sleepMsBetweenRetries", Constants.LeaderSelector.ZOOKEEPER.CURATOR_SLEEP_MS_BETWEEN_RETRIES_DEFAULT);
+        leaderSelectorConfig.getProperties().setProperty("leaderSelectorHandler", Constants.LeaderSelector.ZOOKEEPER.LEADER_SELECTOR_HANDLER_CLASS_NAME);
+        leaderSelectorConfig.getProperties().setProperty("sessionTimeout", String.valueOf(Constants.LeaderSelector.ZOOKEEPER.CURATOR_SESSION_TIMEOUT_DEFAULT));
+        leaderSelectorConfig.getProperties().setProperty("connectionTimeout", String.valueOf(Constants.LeaderSelector.ZOOKEEPER.CURATOR_CONNECTION_TIMEOUT_DEFAULT));
+        leaderSelectorConfig.getProperties().setProperty("retries", String.valueOf(Constants.LeaderSelector.ZOOKEEPER.CURATOR_RETRIES_DEFAULT));
+        leaderSelectorConfig.getProperties().setProperty("sleepMsBetweenRetries", String.valueOf(Constants.LeaderSelector.ZOOKEEPER.CURATOR_SLEEP_MS_BETWEEN_RETRIES_DEFAULT));
     }
 
     /**
