@@ -17,13 +17,6 @@
  ******************************************************************************/
 package org.openspaces.admin.internal.alert.bean;
 
-import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jini.rio.resources.util.TimeUtil;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.StatisticsMonitor;
@@ -41,6 +34,12 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.MachineRemovedEventListener;
 import org.openspaces.admin.os.events.OperatingSystemStatisticsChangedEvent;
 import org.openspaces.admin.os.events.OperatingSystemStatisticsChangedEventListener;
+
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CpuUtilizationAlertBean implements AlertBean,
         OperatingSystemStatisticsChangedEventListener, MachineRemovedEventListener {
@@ -64,6 +63,12 @@ public class CpuUtilizationAlertBean implements AlertBean,
 
     @Override
     public void afterPropertiesSet() throws Exception {
+
+        if( logger.isLoggable( Level.FINE ) ) {
+            logger.fine( "Within afterPropertiesSet, config properties:" +
+                    Arrays.toString( config.getProperties().entrySet().toArray() ) );
+        }
+
         validateProperties();
 
         long measurementPeriod = config.getMeasurementPeriod();
