@@ -57,6 +57,11 @@ public class CpuUtilizationAlertBean implements AlertBean,
     private MovingAverageStatistics movingAverageStatistics;
 
     public CpuUtilizationAlertBean() {
+
+        logger.info("--- constructor CpuUtilizationAlertBean ---");
+        if( logger.isLoggable( Level.FINE ) ) {
+            logger.fine( "--- constructor CpuUtilizationAlertBean 2 ---" );
+        }
         NUMBER_FORMAT.setMinimumFractionDigits(1);
         NUMBER_FORMAT.setMaximumFractionDigits(2);
     }
@@ -64,6 +69,8 @@ public class CpuUtilizationAlertBean implements AlertBean,
     @Override
     public void afterPropertiesSet() throws Exception {
 
+        logger.info( "Within afterPropertiesSet, config properties:" +
+                Arrays.toString( config.getProperties().entrySet().toArray() ) );
         if( logger.isLoggable( Level.FINE ) ) {
             logger.fine( "Within afterPropertiesSet, config properties:" +
                     Arrays.toString( config.getProperties().entrySet().toArray() ) );
