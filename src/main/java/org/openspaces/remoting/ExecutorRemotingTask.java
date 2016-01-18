@@ -175,9 +175,7 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
             }
         }
 
-        if (LRMIInvocationContext.getEndpointLogicalVersion().greaterOrEquals(PlatformLogicalVersion.v7_1_2)) {
-            methodHash.writeExternal(out);
-        }
+        methodHash.writeExternal(out);
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -198,10 +196,8 @@ public class ExecutorRemotingTask<T extends Serializable> implements Distributed
             }
         }
 
-        if (LRMIInvocationContext.getEndpointLogicalVersion().greaterOrEquals(PlatformLogicalVersion.v7_1_2)) {
-            methodHash = new RemotingUtils.MethodHash();
-            methodHash.readExternal(in);
-        }
+        methodHash = new RemotingUtils.MethodHash();
+        methodHash.readExternal(in);
     }
 
     /**
