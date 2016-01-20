@@ -73,7 +73,7 @@ public class Undeploy {
                     groups[i] = tokenizer.nextToken();
                 }
             } else {
-                groups = new String[]{"gigaspaces-" + PlatformVersion.getVersionNumber()};
+                groups = new String[]{SystemInfo.singleton().lookup().defaultGroups()};
             }
         }
         return groups;

@@ -100,7 +100,7 @@ public class ApacheLoadBalancerAgent implements DiscoveryListener, ServiceDiscov
                     groups[i] = tokenizer.nextToken();
                 }
             } else {
-                groups = new String[]{"gigaspaces-" + PlatformVersion.getVersionNumber()};
+                groups = new String[]{SystemInfo.singleton().lookup().defaultGroups()};
             }
         }
         return groups;

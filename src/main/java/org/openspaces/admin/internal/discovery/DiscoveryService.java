@@ -66,7 +66,6 @@ import org.openspaces.admin.internal.pu.InternalProcessingUnitInstance;
 import org.openspaces.admin.internal.space.DefaultSpaceInstance;
 import org.openspaces.admin.internal.space.InternalSpaceInstance;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.space.Space;
 import org.openspaces.core.space.SpaceServiceDetails;
 import org.openspaces.grid.esm.ESM;
@@ -614,7 +613,7 @@ public class DiscoveryService implements DiscoveryListener, ServiceDiscoveryList
             if (groupsProperty != null) {
             	groups = StringUtils.commaDelimitedListToStringArray( groupsProperty );
             } else {
-                groups = new String[] { "gigaspaces-" + PlatformVersion.getVersionNumber() };
+                groups = new String[] { SystemInfo.singleton().lookup().defaultGroups() };
             }
         } else {
             groups = this.groups.toArray(new String[this.groups.size()]);
