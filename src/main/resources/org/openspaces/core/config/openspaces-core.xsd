@@ -206,6 +206,7 @@
                                             Cache percentage form JVM max memory(-Xmx).In case of missing -Xmx
                                             configuration
                                             the cache size is 10000.
+                                            Default is 20%.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
