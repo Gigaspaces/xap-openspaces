@@ -40,6 +40,7 @@ import com.gigaspaces.lrmi.nio.info.NIOStatistics;
 import com.gigaspaces.metrics.*;
 import com.gigaspaces.security.service.SecurityResolver;
 import com.gigaspaces.start.Locator;
+import com.gigaspaces.start.SystemInfo;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.RuntimeHolder;
@@ -48,7 +49,6 @@ import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.filters.StatisticsHolder;
 import com.j_spaces.jmx.util.JMXUtilities;
 import com.j_spaces.kernel.ClassLoaderHelper;
-import com.j_spaces.kernel.Environment;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
 import org.apache.commons.logging.Log;
@@ -388,7 +388,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         beanLevelProperties.getContextProperties().putAll(ClusterInfoPropertyPlaceholderConfigurer.createProperties(clusterInfo));
 
         // set a generic work location that can be used by container providers
-        File workLocation = new File(System.getProperty("com.gs.work", Environment.getHomeDirectory() + "/work"));
+        File workLocation = new File(SystemInfo.singleton().locations().work());
         workLocation.mkdirs();
 
         beanLevelProperties.getContextProperties().setProperty("com.gs.work", workLocation.getAbsolutePath());
@@ -676,7 +676,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             contextClassLoader.loadClass("org.mule.api.MuleContext");
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]
                     {
-                            Environment.getHomeDirectory() + "/lib/optional/openspaces/mule-os.jar"
+                            SystemInfo.singleton().locations().lib() + "/optional/openspaces/mule-os.jar"
                     }));
         } catch (Throwable e) {
             // no mule
@@ -693,13 +693,13 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
             try {
                 Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
                 ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{jettyJars,
-                        Environment.getHomeDirectory() + "/lib/platform/jetty/org.apache.jasper.glassfish-2.2.2.v201112011158.jar",
-                        Environment.getHomeDirectory() + "/lib/optional/spring/spring-web-4.1.1.RELEASE.jar",
-                        Environment.getHomeDirectory() + "/lib/optional/spring/spring-webmvc-4.1.1.RELEASE.jar",
-                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-core-2.3.0.jar",
-                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-databind-2.3.0.jar",
-                        Environment.getHomeDirectory() + "/lib/optional/jackson/jackson-annotations-2.3.0.jar",
-                        Environment.getHomeDirectory() + "/lib/platform/rest/xap-rest.jar"
+                        SystemInfo.singleton().locations().lib() + "/platform/jetty/org.apache.jasper.glassfish-2.2.2.v201112011158.jar",
+                        SystemInfo.singleton().locations().lib() + "/optional/spring/spring-web-4.1.1.RELEASE.jar",
+                        SystemInfo.singleton().locations().lib() + "/optional/spring/spring-webmvc-4.1.1.RELEASE.jar",
+                        SystemInfo.singleton().locations().lib() + "/optional/jackson/jackson-core-2.3.0.jar",
+                        SystemInfo.singleton().locations().lib() + "/optional/jackson/jackson-databind-2.3.0.jar",
+                        SystemInfo.singleton().locations().lib() + "/optional/jackson/jackson-annotations-2.3.0.jar",
+                        SystemInfo.singleton().locations().lib() + "/platform/rest/xap-rest.jar"
                 }));
                 ((ServiceClassLoader) contextClassLoader).setParentClassLoader(SharedServiceData.getJeeClassLoader(jeeContainer, classesToLoad));
             } catch (Exception e) {
@@ -713,7 +713,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         //apply the following only if the pu has the mapdb-blob-store element
         if (springXml.contains("<blob-store:mapdb-blob-store")) {
             String mapdbJar = System.getProperty("com.gigaspaces.blobstore.mapdb"
-                    , Environment.getHomeDirectory() + "/lib/optional/blobstore/mapdb-blobstore.jar");
+                    , SystemInfo.singleton().locations().lib() + "/optional/blobstore/mapdb-blobstore.jar");
 
             Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{mapdbJar}));
@@ -724,7 +724,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
         if (springXml.contains("<blob-store:rocksdb-blob-store")
                 || springXml.contains("class=\"com.gigaspaces.blobstore.rocksdb.RocksDBBlobStoreHandler\"")) {
             String rocksdbJar = System.getProperty("com.gigaspaces.blobstore.rocksdb"
-                    , Environment.getHomeDirectory() + "/lib/optional/blobstore/rocksdb-blobstore.jar");
+                    , SystemInfo.singleton().locations().lib() + "/optional/blobstore/rocksdb-blobstore.jar");
 
             Thread.currentThread().setContextClassLoader(CommonClassLoader.getInstance());
             ((ServiceClassLoader) contextClassLoader).addURLs(BootUtil.toURLs(new String[]{rocksdbJar}));
@@ -912,7 +912,7 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
                     }
                     
                     if (!file.isAbsolute()) {
-                        file = new File(Environment.getHomeDirectory(), fileName);
+                        file = new File(SystemInfo.singleton().getXapHome(), fileName);
                     }
                     
                     if (!file.isFile()) {
