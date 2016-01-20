@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.gigaspaces.internal.lookup.LookupUtils;
-
+import com.gigaspaces.start.SystemInfo;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceID;
@@ -611,7 +610,7 @@ public class DiscoveryService implements DiscoveryListener, ServiceDiscoveryList
     public String[] getGroups() {
         String[] groups;
         if (this.groups == null) {
-            String groupsProperty = LookupUtils.getGroups(true);
+            String groupsProperty = SystemInfo.singleton().lookup().groups(true);
             if (groupsProperty != null) {
             	groups = StringUtils.commaDelimitedListToStringArray( groupsProperty );
             } else {
@@ -662,7 +661,7 @@ public class DiscoveryService implements DiscoveryListener, ServiceDiscoveryList
     
     private LookupLocator[] getInitialLocators() {
         if (locators == null) {
-            String locatorsProperty = LookupUtils.getLocators(true);
+            String locatorsProperty = SystemInfo.singleton().lookup().locators(true);
             if (locatorsProperty != null) {
                 locators = locatorsProperty;
             }

@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.gigaspaces.internal.lookup.LookupUtils;
-
 /**
  * Goal that runs a processing unit.
  *
@@ -240,12 +238,12 @@ public class RunPUMojo extends AbstractOpenSpacesMojo {
         
         // set groups
         if (groups != null && !groups.trim().equals("")) {
-            LookupUtils.setGroups(groups);
+            SystemInfo.singleton().lookup().setGroups(groups);
         }
         
         // set locators
         if (locators != null && !locators.trim().equals("")) {
-            LookupUtils.setLocators(locators);
+            SystemInfo.singleton().lookup().setLocators(locators);
         }
         
         // execute the processing unit in the new class loader 

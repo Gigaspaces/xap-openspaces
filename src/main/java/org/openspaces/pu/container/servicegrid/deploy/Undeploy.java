@@ -21,6 +21,7 @@ import java.rmi.ConnectException;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
+import com.gigaspaces.start.SystemInfo;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceItem;
 
@@ -31,7 +32,6 @@ import org.jini.rio.core.OperationalStringManager;
 import org.openspaces.pu.container.support.CommandLineParser;
 
 import com.gigaspaces.grid.gsm.GSM;
-import com.gigaspaces.internal.lookup.LookupUtils;
 import com.j_spaces.kernel.PlatformVersion;
 
 /**
@@ -64,7 +64,7 @@ public class Undeploy {
 
     public String[] getGroups() {
         if (groups == null) {
-            String groupsProperty = LookupUtils.getGroups();
+            String groupsProperty = SystemInfo.singleton().lookup().groups();
             if (groupsProperty != null) {
                 StringTokenizer tokenizer = new StringTokenizer(groupsProperty);
                 int count = tokenizer.countTokens();
@@ -85,7 +85,7 @@ public class Undeploy {
 
     public LookupLocator[] getLocators() {
         if (locators == null) {
-            String locatorsProperty = LookupUtils.getLocators();
+            String locatorsProperty = SystemInfo.singleton().lookup().locators();
             if (locatorsProperty != null) {
                 locators = BootUtil.toLookupLocators(locatorsProperty);
             }

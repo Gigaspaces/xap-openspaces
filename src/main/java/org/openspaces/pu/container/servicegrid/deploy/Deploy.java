@@ -18,13 +18,13 @@ package org.openspaces.pu.container.servicegrid.deploy;
 
 import com.gigaspaces.grid.gsm.GSM;
 import com.gigaspaces.grid.zone.ZoneHelper;
-import com.gigaspaces.internal.lookup.LookupUtils;
 import com.gigaspaces.logger.GSLogConfigLoader;
 import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.CredentialsProviderHelper;
 import com.gigaspaces.security.directory.DefaultCredentialsProvider;
 import com.gigaspaces.security.directory.User;
 import com.gigaspaces.security.directory.UserDetails;
+import com.gigaspaces.start.SystemInfo;
 import com.j_spaces.core.Constants;
 import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.service.ServiceConfigLoader;
@@ -205,7 +205,7 @@ public class Deploy {
 
     public String[] getGroups() {
         if (groups == null) {
-            String groupsProperty = LookupUtils.getGroups();
+            String groupsProperty = SystemInfo.singleton().lookup().groups();
             if (groupsProperty != null) {
                 StringTokenizer tokenizer = new StringTokenizer(groupsProperty);
                 int count = tokenizer.countTokens();
@@ -222,7 +222,7 @@ public class Deploy {
 
     public LookupLocator[] getLocators() {
         if (locators == null) {
-            String locatorsProperty = LookupUtils.getLocators();
+            String locatorsProperty = SystemInfo.singleton().lookup().locators();
             if (locatorsProperty != null) {
                 locators = BootUtil.toLookupLocators(locatorsProperty);
             }
