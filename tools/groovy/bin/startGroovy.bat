@@ -252,8 +252,8 @@ set JAVA_OPTS=%JAVA_OPTS% -Duser.home="%GS_GROOVY_HOME%"
 if exist "%USERPROFILE%/.groovy/postinit.bat" call "%USERPROFILE%/.groovy/postinit.bat"
 
 @rem GigaSpaces - Call setenv
-SET JSHOMEDIR=%GS_GROOVY_HOME%\..\..\
-call "%JSHOMEDIR%\bin\setenv.bat"
+SET XAP_HOME=%GS_GROOVY_HOME%\..\..\
+call "%XAP_HOME%\bin\setenv.bat"
 set JAVA_OPTS=%JAVA_OPTS% %LOOKUP_GROUPS_PROP% %LOOKUP_LOCATORS_PROP%
 
 @rem Remove redundant apostrophes from the classpath
