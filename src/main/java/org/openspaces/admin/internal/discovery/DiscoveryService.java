@@ -610,7 +610,7 @@ public class DiscoveryService implements DiscoveryListener, ServiceDiscoveryList
     public String[] getGroups() {
         String[] groups;
         if (this.groups == null) {
-            String groupsProperty = SystemInfo.singleton().lookup().groups(true);
+            String groupsProperty = SystemInfo.singleton().lookup().groups();
             if (groupsProperty != null) {
             	groups = StringUtils.commaDelimitedListToStringArray( groupsProperty );
             } else {
@@ -661,7 +661,7 @@ public class DiscoveryService implements DiscoveryListener, ServiceDiscoveryList
     
     private LookupLocator[] getInitialLocators() {
         if (locators == null) {
-            String locatorsProperty = SystemInfo.singleton().lookup().locators(true);
+            String locatorsProperty = SystemInfo.singleton().lookup().locators();
             if (locatorsProperty != null) {
                 locators = locatorsProperty;
             }
