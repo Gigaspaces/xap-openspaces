@@ -16,7 +16,7 @@
 
 package org.openspaces.maven.plugin;
 
-import com.j_spaces.kernel.SystemProperties;
+import com.gigaspaces.start.SystemInfo;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
