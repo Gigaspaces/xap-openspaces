@@ -45,7 +45,6 @@ import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpaceInstanceRuntimeDetails;
 import org.openspaces.admin.space.SpaceInstanceStatistics;
 import org.openspaces.admin.space.SpacePartition;
-import org.openspaces.admin.space.config.SpaceConfig;
 import org.openspaces.admin.space.events.ReplicationStatusChangedEvent;
 import org.openspaces.admin.space.events.ReplicationStatusChangedEventManager;
 import org.openspaces.admin.space.events.SpaceInstanceStatisticsChangedEvent;
@@ -610,16 +609,8 @@ public class DefaultSpaceInstance extends AbstractGridComponent implements Inter
     @Override
     public com.j_spaces.core.admin.SpaceConfig getSpaceConfig() {
 
-        if( spaceConfig == null ) {
-            IInternalRemoteJSpaceAdmin spaceAdmin = getSpaceAdmin();
-            if( spaceAdmin != null ) {
-                try {
-                    spaceConfig = spaceAdmin.getConfig();
-                } catch (RemoteException e) {
-                    throw new AdminException("Failed to fetch SpaceConfig", e);
-                }
-            }
-        }
+        if( spaceConfig == null )
+            spaceConfig = getIJSpace().getDirectProxy().getProxySettings().getSpaceAttributes();
 
         return spaceConfig;
     }
