@@ -22,6 +22,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 
+import com.gigaspaces.internal.cluster.node.impl.gateway.GatewaysPolicy;
 import net.jini.core.lookup.ServiceID;
 
 import org.openspaces.core.util.SpaceUtils;
@@ -35,8 +36,6 @@ import com.j_spaces.core.admin.IInternalRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.IRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.SpaceConfig;
 import com.j_spaces.core.client.SpaceURL;
-import com.j_spaces.core.cluster.ClusterPolicy;
-import com.j_spaces.core.cluster.ReplicationPolicy;
 
 /**
  * A Space service defined within a processing unit.
@@ -97,10 +96,9 @@ public class SpaceServiceDetails extends PlainServiceDetails {
 				if (spaceConfig.isMirrorServiceEnabled()) {
                     getAttributes().put(Attributes.MIRROR, true);
                 }
-				ClusterPolicy clusterPolicy = spaceConfig.getClusterPolicy();
-				ReplicationPolicy replicationPolicy = clusterPolicy != null? clusterPolicy.getReplicationPolicy() : null;
-				if (clusterPolicy != null && replicationPolicy != null && replicationPolicy.getGatewaysPolicy() != null)
-					getAttributes().put(Attributes.LOCALGATEWAYNAME, replicationPolicy.getGatewaysPolicy().getLocalSiteName());
+                GatewaysPolicy gatewayPolicy = spaceConfig.getClusterInfo().getGatewaysPolicy();
+				if (gatewayPolicy != null)
+					getAttributes().put(Attributes.LOCALGATEWAYNAME, gatewayPolicy.getLocalSiteName());
             } catch (RemoteException e) {
                 getAttributes().put(Attributes.MIRROR, false);
             }
