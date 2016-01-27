@@ -21,6 +21,7 @@ import com.gigaspaces.admin.quiesce.QuiesceStateChangedEvent;
 import com.gigaspaces.client.DirectSpaceProxyFactory;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.grid.zone.ZoneHelper;
+import com.gigaspaces.internal.client.spaceproxy.DirectSpaceProxyFactoryImpl;
 import com.gigaspaces.internal.dump.InternalDump;
 import com.gigaspaces.internal.dump.InternalDumpProcessor;
 import com.gigaspaces.internal.dump.InternalDumpProcessorFailedException;
@@ -1221,7 +1222,11 @@ public class PUServiceBeanImpl extends ServiceBeanAdapter implements PUServiceBe
     @Override
     public DirectSpaceProxyFactory getSpaceDirectFactory(ServiceID serviceID) throws RemoteException {
         final IJSpace space = getSpaceDirect(serviceID);
-        return space != null ? space.getDirectProxy().getFactory() : null;
+        if (space == null)
+            return null;
+        DirectSpaceProxyFactoryImpl result = (DirectSpaceProxyFactoryImpl) space.getDirectProxy().getFactory();
+        result = result.createCopyWithoutClusterPolicyIfNeeded();
+        return result;
     }
 
     public RuntimeHolder getSpaceRuntimeHolder(ServiceID serviceID) throws RemoteException {
