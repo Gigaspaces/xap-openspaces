@@ -513,15 +513,6 @@ class DefaultRebalancingSlaEnforcementEndpoint implements RebalancingSlaEnforcem
                     break;
                 }
 
-                if (instancesInTarget - instancesInSource < 2) {
-                    logger.debug("No need to relocate instances from " + RebalancingUtils.gscToString(source) + " to " + RebalancingUtils.gscToString(target)
-                            + " since they are both balanced.");
-                    // both source and target are balanced.
-                    // since array is sorted there is no point in continuing the search
-                    // as this condition will hold true.
-                    break;
-                }
-
                   // we have a target and a source container. 
                 // now let's decide which pu instance to relocate from source to target
                 for (ProcessingUnitInstance candidateInstance : source.getProcessingUnitInstances(pu.getName())) {
