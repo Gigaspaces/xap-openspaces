@@ -24,7 +24,9 @@ import com.gigaspaces.logger.GSLogConfigLoader;
 import com.j_spaces.kernel.ClassLoaderHelper;
 import org.openspaces.pu.container.support.CommandLineParser;
 
+import java.awt.*;
 import java.io.File;
+import java.net.URI;
 import java.util.logging.Logger;
 
 /**
@@ -75,7 +77,18 @@ public class Launcher {
         logger.info(RuntimeInfo.getEnvironmentInfoIfFirstTime());
         WebLauncher webLauncher = ClassLoaderHelper.newInstance(webLauncherClass);
         webLauncher.launch(config);
-        logger.info( "Starting the " + name + " server, bind address: " + config.getHostAddress() + ", port: " + config.getPort() );
+        logger.info("Starting the " + name + " server, bind address: " + config.getHostAddress() + ", port: " + config.getPort());
+        launchBrowser(logger, config);
+    }
+
+    private static void launchBrowser(Logger logger, WebLauncherConfig config) {
+        final String url = "http://localhost:" + config.getPort();
+        logger.info("Browsing to " + url);
+        try {
+            Desktop.getDesktop().browse(URI.create(url));
+        } catch (Exception e) {
+            logger.warning("Failed to browse to XAP web-ui: " + e.getMessage());
+        }
     }
 
     private static void printHelpMessage() {
