@@ -15,7 +15,7 @@ export VELOCITY_JARS
 COMMONS_JARS="${XAP_HOME}"/lib/platform/commons/*
 export COMMONS_JARS
 
-COMMAND_LINE="${JAVACMD} ${JAVA_OPTIONS} -Dlb.vmDir="${XAP_HOME}/tools/apache" ${RMI_OPTIONS} ${XAP_OPTIONS} -Djava.security.policy=${POLICY} -Dcom.gs.home=${XAP_HOME} -classpath "${PRE_CLASSPATH}${CPS}${GS_JARS}${CPS}${SPRING_JARS}${CPS}${JDBC_JARS}${CPS}${VELOCITY_JARS}${CPS}${COMMONS_JARS}${CPS}${POST_CLASSPATH}" org.openspaces.pu.container.jee.lb.apache.ApacheLoadBalancerAgent $*"
+COMMAND_LINE="${JAVACMD} ${JAVA_OPTIONS} -Dlb.vmDir="${XAP_HOME}/tools/apache" ${RMI_OPTIONS} ${XAP_OPTIONS} -Djava.security.policy=${POLICY} -Dcom.gs.home=${XAP_HOME} -classpath "${PRE_CLASSPATH}:${GS_JARS}:${SPRING_JARS}:${JDBC_JARS}:${VELOCITY_JARS}:${COMMONS_JARS}:${POST_CLASSPATH}" org.openspaces.pu.container.jee.lb.apache.ApacheLoadBalancerAgent $*"
 
 echo
 echo
