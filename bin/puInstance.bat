@@ -3,11 +3,8 @@
 @rem The call to setenv.bat can be commented out if necessary.
 @call "%~dp0\setenv.bat"
 
-rem set booclasspath
-set bootclasspath=-Xbootclasspath/p:%XML_JARS%
-
 @echo Starting a Processing Unit Instance
-set COMMAND_LINE=%JAVACMD% %JAVA_OPTIONS% %bootclasspath% %LOOKUP_LOCATORS_PROP% %LOOKUP_GROUPS_PROP% %GS_LOGGING_CONFIG_FILE_PROP% %RMI_OPTIONS% "-Dcom.gs.home=%XAP_HOME%" -Djava.security.policy=%POLICY% -classpath %PRE_CLASSPATH%;%GS_JARS%;%SPRING_JARS%;%EXT_JARS%;%JDBC_JARS%;%POST_CLASSPATH% org.openspaces.pu.container.standalone.StandaloneProcessingUnitContainer %*
+set COMMAND_LINE=%JAVACMD% %JAVA_OPTIONS% %LOOKUP_LOCATORS_PROP% %LOOKUP_GROUPS_PROP% %GS_LOGGING_CONFIG_FILE_PROP% %RMI_OPTIONS% "-Dcom.gs.home=%XAP_HOME%" -Djava.security.policy=%POLICY% -classpath %PRE_CLASSPATH%;%GS_JARS%;%SPRING_JARS%;%EXT_JARS%;%JDBC_JARS%;%POST_CLASSPATH% org.openspaces.pu.container.standalone.StandaloneProcessingUnitContainer %*
 
 set TITLE="Processing Unit Instance ["%*"] started on [%computername%]"
 @title %TITLE%
