@@ -254,7 +254,7 @@ if exist "%USERPROFILE%/.groovy/postinit.bat" call "%USERPROFILE%/.groovy/postin
 @rem GigaSpaces - Call setenv
 SET XAP_HOME=%GS_GROOVY_HOME%\..\..\
 call "%XAP_HOME%\bin\setenv.bat"
-set JAVA_OPTS=%JAVA_OPTS% %LOOKUP_GROUPS_PROP% %LOOKUP_LOCATORS_PROP%
+set JAVA_OPTS=%JAVA_OPTS% %XAP_OPTIONS%
 
 @rem Remove redundant apostrophes from the classpath
 set tmpPath=%STARTER_CLASSPATH%;%GS_JARS:"=%

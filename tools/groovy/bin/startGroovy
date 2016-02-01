@@ -259,7 +259,7 @@ XAP_HOME=$GS_GROOVY_HOME/../../
 . $XAP_HOME/bin/setenv.sh
 ## Make groovy use the provided .groovy folder located in $GS_GROOVY_HOME
 JAVA_OPTS="$JAVA_OPTS -Duser.home=$GS_GROOVY_HOME"
-JAVA_OPTS="-Xmx512m $JAVA_OPTS ${LOOKUP_GROUPS_PROP} ${LOOKUP_LOCATORS_PROP}"
+JAVA_OPTS="-Xmx512m $JAVA_OPTS ${XAP_OPTIONS}"
 
 
 startGroovy ( ) {
