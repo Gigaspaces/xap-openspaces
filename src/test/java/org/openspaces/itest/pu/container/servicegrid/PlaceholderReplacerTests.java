@@ -38,6 +38,10 @@ public class PlaceholderReplacerTests extends TestCase {
         String template = wrap(key1);
         String result = PlaceholderReplacer.replacePlaceholders(env, template);
         Assert.assertEquals(value1, result);
+        
+        String templateRound = wrapRound(key1);
+        String resultRound = PlaceholderReplacer.replacePlaceholders(env, templateRound);
+        Assert.assertEquals(value1, resultRound);
     }
 
     public void test2() throws Exception {
@@ -50,6 +54,10 @@ public class PlaceholderReplacerTests extends TestCase {
         String template = wrap(key1) + wrap(key1);
         String result = PlaceholderReplacer.replacePlaceholders(env, template);
         Assert.assertEquals(value1 + value1, result);
+        
+        String templateRound = wrapRound(key1) + wrapRound(key1);
+        String resultRound = PlaceholderReplacer.replacePlaceholders(env, templateRound);
+        Assert.assertEquals(value1 + value1, resultRound);
     }
 
     public void test3() throws Exception {
@@ -64,6 +72,10 @@ public class PlaceholderReplacerTests extends TestCase {
         String template = wrap(key1) + filler + wrap(key1);
         String result = PlaceholderReplacer.replacePlaceholders(env, template);
         Assert.assertEquals(value1 + filler + value1, result);
+        
+        String templateRound = wrapRound(key1) + filler + wrapRound(key1);
+        String resultRound = PlaceholderReplacer.replacePlaceholders(env, templateRound);
+        Assert.assertEquals(value1 + filler + value1, resultRound);
     }
     
     public void test4() {
@@ -76,8 +88,8 @@ public class PlaceholderReplacerTests extends TestCase {
         String result = PlaceholderReplacer.replacePlaceholders(env, template);
         Assert.assertEquals("style", result);
         
-    }
-    
+    }    
+  
     public void testInvalid1() {
         String key1 = "VALUE";
         
@@ -111,5 +123,9 @@ public class PlaceholderReplacerTests extends TestCase {
 
     private static String wrap(String key) {
         return "${" + key + "}";
+    }
+    
+    private static String wrapRound(String key) {
+        return "$(" + key + ")";
     }
 }
