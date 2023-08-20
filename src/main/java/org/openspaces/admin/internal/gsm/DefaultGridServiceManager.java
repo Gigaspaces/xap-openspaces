@@ -375,8 +375,10 @@ public class DefaultGridServiceManager extends AbstractAgentGridComponent implem
         } catch (SecurityException se) {
             throw new AdminException("No privileges to relocate a processing unit instance "+ processingUnitInstance.getProcessingUnitInstanceName() , se);
         } catch (Exception e) {
-            String gsc = "GSC-"+gridServiceContainer.getAgentId()+"["+gridServiceContainer.getVirtualMachine().getDetails().getPid()+"]@" + gridServiceContainer.getMachine().getHostName();
-            throw new AdminException("Failed to relocate processing unit instance "+ processingUnitInstance.getProcessingUnitInstanceName() + " to " + gsc, e);
+            String gsc = gridServiceContainer == null
+            			? ""
+            			: (" to GSC-"+gridServiceContainer.getAgentId()+"["+gridServiceContainer.getVirtualMachine().getDetails().getPid()+"]@" + gridServiceContainer.getMachine().getHostName());
+            throw new AdminException("Failed to relocate processing unit instance "+ processingUnitInstance.getProcessingUnitInstanceName() + gsc, e);
         }
     }
 
