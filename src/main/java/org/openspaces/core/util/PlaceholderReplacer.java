@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.openspaces.core.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
@@ -37,21 +39,30 @@ public class PlaceholderReplacer {
      *      or a place holder with no suitable value in 'variables'
      */
     public static String replacePlaceholders(final Map<String, String> variables, final String value) throws PlaceholderResolutionException {
-        PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper("${","}");
-        return helper.replacePlaceholders(value, new PlaceholderResolver() {
-            public String resolvePlaceholder(String key) {
-                if (key.isEmpty()) {
-                    throw new PlaceholderResolutionException("Placeholder in '" + value + "' has to have a length of at least 1");
-                }
-                
-                String result = variables.get(key);
-                if (result == null) {
-                    throw new PlaceholderResolutionException("Missing value for placeholder: '" + key + "' in '" + value + "'");
-                }
-                
-                return result;
-            }
-        });
+    	ArrayList<PropertyPlaceholderHelper> helpers = new ArrayList<PropertyPlaceholderHelper>(
+    			Arrays.asList(
+    					new PropertyPlaceholderHelper("${","}"),
+    					new PropertyPlaceholderHelper("$(",")")));
+    	
+    	String result = value;    	
+        for (PropertyPlaceholderHelper helper : helpers) {
+        	final String str = result;
+        	result = helper.replacePlaceholders(str, new PlaceholderResolver() {
+	            public String resolvePlaceholder(String key) {
+	                if (key.isEmpty()) {
+	                    throw new PlaceholderResolutionException("Placeholder in '" + str + "' has to have a length of at least 1");
+	                }
+	                
+	                String val = variables.get(key);
+	                if (val == null) {
+	                    throw new PlaceholderResolutionException("Missing value for placeholder: '" + key + "' in '" + str + "'");
+	                }
+	                
+	                return val;
+	            }
+	        });
+        }        
+        return result;
     }
     
     // this class extends RuntimeException so it can be thrown from PlaceholderResolver#resolvePlaceholder as done above
